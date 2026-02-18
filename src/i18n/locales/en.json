@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Home",
+    "login": "Log in",
+    "signup": "Sign up",
+    "dashboard": "Dashboard",
+    "logout": "Log out",
+    "pricing": "Pricing"
+  },
+  "hero": {
+    "title": "All your links,",
+    "titleHighlight": "one place.",
+    "subtitle": "Create your personalized link page in seconds. Share everything that matters with your audience.",
+    "cta": "Create my page for free",
+    "ctaSecondary": "See an example"
+  },
+  "features": {
+    "title": "Everything you need",
+    "subtitle": "Powerful tools to manage and share your links.",
+    "links": "Unlimited links",
+    "linksDesc": "Add as many links as you want with Pro plan.",
+    "themes": "Custom themes",
+    "themesDesc": "Choose from 6 visual themes for your page.",
+    "analytics": "Detailed analytics",
+    "analyticsDesc": "Track clicks on each of your links.",
+    "dragDrop": "Drag & Drop",
+    "dragDropDesc": "Reorder your links with drag and drop.",
+    "multilingual": "Multilingual",
+    "multilingualDesc": "Interface available in 6 languages.",
+    "mobile": "100% Responsive",
+    "mobileDesc": "Perfect on mobile, tablet and desktop."
+  },
+  "pricing": {
+    "title": "Simple pricing",
+    "subtitle": "Start for free, go Pro when you're ready.",
+    "free": "Free",
+    "pro": "Pro",
+    "month": "/month",
+    "currentPlan": "Current plan",
+    "upgrade": "Go Pro",
+    "freeFeatures": ["Up to 5 links", "3 themes", "Basic stats", "MyTaptap badge"],
+    "proFeatures": ["Unlimited links", "6 themes", "Detailed analytics", "No badge", "Priority support"]
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "by": "MyTaptap"
+  },
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "displayName": "Display name",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signupBtn": "Sign up",
+    "loginBtn": "Log in",
+    "googleBtn": "Continue with Google",
+    "resetPassword": "Reset password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "sendReset": "Send reset link",
+    "resetSent": "A reset link has been sent to your email address.",
+    "usernameTaken": "This username is already taken.",
+    "usernameAvailable": "Username available!",
+    "checkingUsername": "Checking..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "profile": "Profile",
+    "links": "Links",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "addLink": "Add a link",
+    "editLink": "Edit link",
+    "deleteLink": "Delete link",
+    "linkTitle": "Title",
+    "linkUrl": "URL",
+    "linkIcon": "Icon",
+    "save": "Save",
+    "cancel": "Cancel",
+    "bio": "Bio",
+    "totalClicks": "Total clicks",
+    "theme": "Theme",
+    "preview": "Preview",
+    "maxLinks": "You've reached the 5-link limit. Go Pro to add more!",
+    "plan": "Plan"
+  },
+  "public": {
+    "madeWith": "Made with MyTaptap"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred.",
+    "success": "Success!",
+    "delete": "Delete",
+    "edit": "Edit",
+    "language": "Language"
+  }
+}

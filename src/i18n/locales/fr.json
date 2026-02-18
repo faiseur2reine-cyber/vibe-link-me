@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "dashboard": "Tableau de bord",
+    "logout": "Déconnexion",
+    "pricing": "Tarifs"
+  },
+  "hero": {
+    "title": "Tous vos liens,",
+    "titleHighlight": "un seul endroit.",
+    "subtitle": "Créez votre page de liens personnalisée en quelques secondes. Partagez tout ce qui compte avec votre audience.",
+    "cta": "Créer ma page gratuitement",
+    "ctaSecondary": "Voir un exemple"
+  },
+  "features": {
+    "title": "Tout ce dont vous avez besoin",
+    "subtitle": "Des outils puissants pour gérer et partager vos liens.",
+    "links": "Liens illimités",
+    "linksDesc": "Ajoutez autant de liens que vous voulez avec le plan Pro.",
+    "themes": "Thèmes personnalisés",
+    "themesDesc": "Choisissez parmi 6 thèmes visuels pour votre page.",
+    "analytics": "Analytics détaillés",
+    "analyticsDesc": "Suivez les clics sur chacun de vos liens.",
+    "dragDrop": "Drag & Drop",
+    "dragDropDesc": "Réorganisez vos liens par glisser-déposer.",
+    "multilingual": "Multilingue",
+    "multilingualDesc": "Interface disponible en 6 langues.",
+    "mobile": "100% Responsive",
+    "mobileDesc": "Parfait sur mobile, tablette et desktop."
+  },
+  "pricing": {
+    "title": "Tarifs simples",
+    "subtitle": "Commencez gratuitement, passez Pro quand vous êtes prêt.",
+    "free": "Gratuit",
+    "pro": "Pro",
+    "month": "/mois",
+    "currentPlan": "Plan actuel",
+    "upgrade": "Passer Pro",
+    "freeFeatures": ["Jusqu'à 5 liens", "3 thèmes", "Statistiques de base", "Badge MyTaptap"],
+    "proFeatures": ["Liens illimités", "6 thèmes", "Analytics détaillés", "Sans badge", "Support prioritaire"]
+  },
+  "footer": {
+    "madeWith": "Créé avec",
+    "by": "MyTaptap"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "username": "Nom d'utilisateur",
+    "displayName": "Nom affiché",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "signupBtn": "S'inscrire",
+    "loginBtn": "Se connecter",
+    "googleBtn": "Continuer avec Google",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "sendReset": "Envoyer le lien",
+    "resetSent": "Un lien de réinitialisation a été envoyé à votre adresse email.",
+    "usernameTaken": "Ce nom d'utilisateur est déjà pris.",
+    "usernameAvailable": "Nom d'utilisateur disponible !",
+    "checkingUsername": "Vérification..."
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "profile": "Profil",
+    "links": "Liens",
+    "analytics": "Analytics",
+    "settings": "Paramètres",
+    "addLink": "Ajouter un lien",
+    "editLink": "Modifier le lien",
+    "deleteLink": "Supprimer le lien",
+    "linkTitle": "Titre",
+    "linkUrl": "URL",
+    "linkIcon": "Icône",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "bio": "Bio",
+    "totalClicks": "Clics totaux",
+    "theme": "Thème",
+    "preview": "Aperçu",
+    "maxLinks": "Vous avez atteint la limite de 5 liens. Passez Pro pour en ajouter plus !",
+    "plan": "Plan"
+  },
+  "public": {
+    "madeWith": "Créé avec MyTaptap"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue.",
+    "success": "Succès !",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "language": "Langue"
+  }
+}
