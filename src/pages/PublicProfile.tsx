@@ -62,7 +62,6 @@ const PublicProfile = () => {
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [ageVerified, setAgeVerified] = useState(false);
   const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
 
   useEffect(() => {
