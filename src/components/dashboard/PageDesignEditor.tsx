@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles } from 'lucide-react';
+import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye } from 'lucide-react';
+import DesignLivePreview from './DesignLivePreview';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
