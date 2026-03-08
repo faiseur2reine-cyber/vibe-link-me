@@ -1,8 +1,11 @@
 import { CreatorPage } from '@/hooks/useCreatorPages';
+import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Users } from 'lucide-react';
+import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 interface PagesListViewProps {
   pages: CreatorPage[];
