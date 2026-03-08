@@ -28,6 +28,15 @@ const Dashboard = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const isMobile = useIsMobile();
+
+  const tabs = [
+    { value: 'links', icon: Link2, label: t('dashboard.links') },
+    { value: 'profile', icon: User, label: t('dashboard.profile') },
+    { value: 'theme', icon: Palette, label: t('dashboard.theme') },
+    { value: 'analytics', icon: BarChart3, label: t('dashboard.analytics') },
+    { value: 'plan', icon: CreditCard, label: t('dashboard.plan') },
+  ];
 
   // After checkout success, refresh subscription
   useEffect(() => {
