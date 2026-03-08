@@ -204,7 +204,24 @@ const PublicProfile = () => {
               <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${theme.text}`}>{displayName}</h1>
               <p className={`text-sm ${theme.subtleText}`}>@{page.username}</p>
               {page.bio && (
-                <p className={`text-sm mt-2 leading-relaxed ${theme.text} opacity-70 max-w-sm mx-auto`}>{page.bio}</p>
+                <p className={`text-sm mt-2 leading-relaxed ${theme.text} opacity-70 max-w-sm mx-auto`}>
+                  {page.bio.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+                    /^https?:\/\//.test(part) ? (
+                      <a
+                        key={i}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${theme.accent} underline underline-offset-2 hover:opacity-80 transition-opacity`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {part.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                      </a>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    )
+                  )}
+                </p>
               )}
             </motion.div>
 
