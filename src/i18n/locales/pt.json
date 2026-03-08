@@ -52,6 +52,7 @@
     "mockupClicksSub": "esta semana",
     "mockupDesign": "Design custom ✓",
     "mockupDesignSub": "CSS + fontes",
-    "mockupBio": "Criador digital · Paris 🇫🇷"
+    "mockupBio": "Criador digital · Paris 🇫🇷",
+    "mockupLinks": ["Meu portfólio", "YouTube", "Newsletter", "Coaching 1:1"]
   }
 }
