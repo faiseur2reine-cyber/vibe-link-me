@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const container = {
   hidden: {},
