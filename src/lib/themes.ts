@@ -1,4 +1,6 @@
-export const THEMES: Record<string, { name: string; bg: string; btn: string; text: string; accent: string; preview: string; free: boolean }> = {
+export type ThemeTier = 'free' | 'starter' | 'pro';
+
+export const THEMES: Record<string, { name: string; bg: string; btn: string; text: string; accent: string; preview: string; tier: ThemeTier }> = {
   default: {
     name: 'Default',
     bg: 'bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50',
