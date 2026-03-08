@@ -815,7 +815,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             <Button
               onClick={handleSaveAsTemplate}
               disabled={savingTemplate || !templateName.trim()}
-              className="rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              className=""
             >
               {savingTemplate ? <Loader2 className="animate-spin" /> : 'Sauvegarder'}
             </Button>

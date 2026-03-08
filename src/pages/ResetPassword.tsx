@@ -82,7 +82,7 @@ const ResetPassword = () => {
                 <Label>{t('auth.confirmPassword')}</Label>
                 <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} />
               </div>
-              <Button type="submit" className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? <Loader2 className="animate-spin" /> : t('auth.resetPassword')}
               </Button>
             </form>

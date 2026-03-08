@@ -93,7 +93,7 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialog
             <Button
               type="submit"
               disabled={saving || usernameStatus !== 'available'}
-              className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              className="w-full"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Créer la page'}
             </Button>

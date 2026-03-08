@@ -193,7 +193,7 @@ const ProfileEditor = ({ profile, onUpdate, onRefetch }: ProfileEditorProps) => 
         <Switch checked={isNsfw} onCheckedChange={setIsNsfw} />
       </div>
 
-      <Button onClick={handleSave} disabled={saving} className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+      <Button onClick={handleSave} disabled={saving} className="w-full">
         {saving ? <Loader2 className="animate-spin" /> : t('dashboard.save')}
       </Button>
     </div>

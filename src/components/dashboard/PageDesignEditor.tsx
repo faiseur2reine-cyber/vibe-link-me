@@ -256,7 +256,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
 
       {/* Actions */}
       <div className="flex gap-2">
-        <Button variant="outline" onClick={handleReset} className="rounded-full gap-1.5 flex-1">
+        <Button variant="outline" onClick={handleReset} className="gap-1.5 flex-1">
           <RotateCcw className="w-3.5 h-3.5" /> Réinitialiser
         </Button>
         <Button onClick={handleSave} disabled={saving} className="flex-1">

@@ -95,7 +95,7 @@ const SetUsername = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                className="w-full"
                 disabled={saving || usernameStatus !== 'available'}
               >
                 {saving ? <Loader2 className="animate-spin" /> : t('dashboard.save')}
