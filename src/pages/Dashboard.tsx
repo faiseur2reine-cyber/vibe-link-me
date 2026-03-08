@@ -9,8 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import LinksManager from '@/components/dashboard/LinksManager';
 import LinkPreview from '@/components/dashboard/LinkPreview';
+import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import LanguageSelector from '@/components/LanguageSelector';
-import { LogOut, User, Link2, Eye, ExternalLink } from 'lucide-react';
+import { LogOut, User, Link2, Eye, ExternalLink, Palette } from 'lucide-react';
 
 const Dashboard = () => {
   const { t } = useTranslation();
