@@ -83,7 +83,7 @@ const ColorInput = ({ label, value, onChange, placeholder }: { label: string; va
   </div>
 );
 
-const PageDesignEditor = ({ page, onUpdate }: PageDesignEditorProps) => {
+const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps) => {
   const [bgColor, setBgColor] = useState(page.custom_bg_color || '');
   const [textColor, setTextColor] = useState(page.custom_text_color || '');
   const [accentColor, setAccentColor] = useState(page.custom_accent_color || '');
