@@ -380,6 +380,7 @@ const PublicProfile = () => {
                       </motion.a>
                     );
                   })}
+                  </div>
                 </div>
               ));
             })()}
