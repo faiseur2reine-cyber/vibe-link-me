@@ -45,6 +45,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
     { value: 'links', icon: Link2, label: 'Liens' },
     { value: 'profile', icon: User, label: 'Profil' },
     { value: 'design', icon: Paintbrush, label: 'Design' },
+    { value: 'urgency', icon: Flame, label: 'Urgence' },
     { value: 'theme', icon: Palette, label: 'Thème' },
     { value: 'analytics', icon: BarChart3, label: 'Analytics' },
   ];
