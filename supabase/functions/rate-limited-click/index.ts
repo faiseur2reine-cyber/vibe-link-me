@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { link_id, referrer } = await req.json();
+    const { link_id, referrer, ab_variant } = await req.json();
 
     if (!link_id || typeof link_id !== "string") {
       return new Response(JSON.stringify({ error: "Invalid link_id" }), {
