@@ -259,7 +259,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
         <Button variant="outline" onClick={handleReset} className="rounded-full gap-1.5 flex-1">
           <RotateCcw className="w-3.5 h-3.5" /> Réinitialiser
         </Button>
-        <Button onClick={handleSave} disabled={saving} className="rounded-full flex-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+        <Button onClick={handleSave} disabled={saving} className="flex-1">
           {saving ? <Loader2 className="animate-spin" /> : 'Sauvegarder le design'}
         </Button>
       </div>
