@@ -101,8 +101,8 @@ const HeroSection = () => {
               transition={{ delay: 0.5 }}
               className="absolute -left-8 top-16 bg-card border border-border rounded-xl px-3 py-2 shadow-lg"
             >
-              <p className="text-[10px] font-semibold text-foreground">+248 clics</p>
-              <p className="text-[9px] text-muted-foreground">cette semaine</p>
+              <p className="text-[10px] font-semibold text-foreground">{t('landing.mockupClicks')}</p>
+              <p className="text-[9px] text-muted-foreground">{t('landing.mockupClicksSub')}</p>
             </motion.div>
 
             <motion.div
