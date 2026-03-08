@@ -294,7 +294,7 @@ const Dashboard = () => {
             {tabs.map(({ value, icon: Icon, label }) => (
               <button
                 key={value}
-                onClick={() => setActiveTab(value)}
+                onClick={() => handleTabChange(value)}
                 className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
                   activeTab === value
                     ? 'text-primary'
