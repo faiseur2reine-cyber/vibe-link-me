@@ -108,28 +108,31 @@ const HeroSection = () => {
                   </div>
                   <p className="text-[10px] text-muted-foreground text-center mb-5 leading-relaxed">{t('landing.mockupBio')}</p>
 
-                  {/* Links — redesigned */}
-                  <div className="space-y-2">
+                  {/* Links — pill cards style */}
+                  <div className="space-y-2.5">
                     {[
-                      { label: 'Mon portfolio', icon: '🎨', accent: false },
-                      { label: 'YouTube', icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>, accent: false },
-                      { label: 'Newsletter', icon: '📧', accent: false },
-                      { label: '1:1 Coaching', icon: '🚀', accent: true },
-                    ].map(({ label, icon, accent }, i) => (
+                      { label: 'Mon portfolio', sub: 'Découvrir mes projets', iconBg: '#8B5CF6', icon: '🎨' },
+                      { label: 'YouTube', sub: 'Vidéos & tutoriels', iconBg: '#FF0000', icon: <svg viewBox="0 0 24 24" className="w-4 h-4"><path fill="#fff" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
+                      { label: 'Newsletter', sub: 'Rejoins la communauté', iconBg: '#3B82F6', icon: '📧' },
+                      { label: '1:1 Coaching', sub: 'Réserve ta session', iconBg: '#10B981', icon: '🚀' },
+                    ].map(({ label, sub, iconBg, icon }, i) => (
                       <motion.div
                         key={label}
-                        initial={{ opacity: 0, y: 6 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8 + i * 0.1, ease: 'easeOut' }}
-                        className={`group h-10 rounded-xl flex items-center gap-2.5 px-3.5 text-[11px] font-semibold transition-all cursor-pointer ${
-                          accent 
-                            ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02]'
-                            : 'border border-border/80 bg-card hover:bg-secondary/50 text-foreground hover:border-border hover:shadow-sm hover:scale-[1.01]'
-                        }`}
+                        transition={{ delay: 0.8 + i * 0.12, ease: 'easeOut' }}
+                        className="group flex items-center gap-3 bg-white dark:bg-white/95 rounded-2xl px-3 py-2.5 shadow-sm hover:shadow-md transition-all cursor-pointer hover:scale-[1.02]"
                       >
-                        <span className="text-sm shrink-0">{typeof icon === 'string' ? icon : icon}</span>
-                        <span className="flex-1">{label}</span>
-                        <ExternalLink className={`w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity ${accent ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
+                        <div 
+                          className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white"
+                          style={{ backgroundColor: iconBg }}
+                        >
+                          <span className="text-sm">{icon}</span>
+                        </div>
+                        <div className="flex-1 min-w-0 text-left">
+                          <p className="text-[11px] font-bold text-gray-900 leading-tight truncate">{label}</p>
+                          <p className="text-[9px] text-gray-500 leading-tight truncate">{sub}</p>
+                        </div>
                       </motion.div>
                     ))}
                   </div>
