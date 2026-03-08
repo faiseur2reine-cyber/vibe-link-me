@@ -42,7 +42,7 @@ const Dashboard = () => {
       <nav className="flex items-center justify-between px-4 md:px-6 py-4 max-w-7xl mx-auto border-b border-border">
         <button
           onClick={() => setSelectedPageId(null)}
-          className="font-display text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+          className="text-lg font-bold text-foreground tracking-tight"
         >
           MyTaptap
         </button>
