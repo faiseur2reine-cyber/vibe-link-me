@@ -338,6 +338,18 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
 
             {showCustomization && (
               <div className="space-y-4 p-4 rounded-xl bg-muted/50 border border-border">
+                {/* Section / Category */}
+                <div className="space-y-2">
+                  <Label>Section / Catégorie</Label>
+                  <Input 
+                    value={sectionTitle} 
+                    onChange={(e) => setSectionTitle(e.target.value)} 
+                    maxLength={50} 
+                    placeholder="Ex: Marie, Réseaux sociaux, Boutique..."
+                  />
+                  <p className="text-xs text-muted-foreground">Les liens avec la même section seront regroupés ensemble</p>
+                </div>
+
                 {/* Link Style */}
                 <div className="space-y-2">
                   <Label>Style d'affichage</Label>
