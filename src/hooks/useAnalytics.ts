@@ -86,13 +86,13 @@ export function useAnalytics() {
   return { clickStats, dailyClicks, totalClicks, loading, refetch: fetchStats };
 }
 
-export async function recordClick(linkId: string) {
+export async function recordClick(linkId: string, abVariant?: string | null) {
   const referrer = document.referrer || null;
   try {
     await supabase.functions.invoke('rate-limited-click', {
-      body: { link_id: linkId, referrer },
+      body: { link_id: linkId, referrer, ab_variant: abVariant || null },
     });
   } catch {
-    // Fail silently — don't block the user's navigation
+    // Fail silently
   }
 }

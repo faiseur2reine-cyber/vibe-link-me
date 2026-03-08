@@ -87,6 +87,7 @@ Deno.serve(async (req) => {
       p_referrer: referrer || null,
       p_country: null,
       p_city: null,
+      p_ab_variant: ab_variant || null,
     });
 
     if (error) {
