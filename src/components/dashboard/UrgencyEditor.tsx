@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { Input } from '@/components/ui/input';
@@ -7,8 +7,11 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
-import { Clock, Flame, Users, MapPin, Zap, Eye } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Clock, Flame, Users, MapPin, Zap, Eye, Save, Trash2, BookmarkPlus } from 'lucide-react';
 
 export interface UrgencyConfig {
   banner: {
