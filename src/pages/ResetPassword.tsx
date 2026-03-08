@@ -66,7 +66,7 @@ const ResetPassword = () => {
       <div className="w-full max-w-md">
         <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          <span className="font-display text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">MyTaptap</span>
+          <span className="text-lg font-bold text-foreground tracking-tight">MyTaptap</span>
         </Link>
         <Card className="border-border/50 shadow-xl">
           <CardHeader className="text-center">
