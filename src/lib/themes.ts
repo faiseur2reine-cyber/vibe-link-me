@@ -1,58 +1,89 @@
 export type ThemeTier = 'free' | 'starter' | 'pro';
 
-export const THEMES: Record<string, { name: string; bg: string; btn: string; text: string; accent: string; preview: string; tier: ThemeTier }> = {
+export interface ThemeConfig {
+  name: string;
+  bg: string;
+  btn: string;
+  text: string;
+  accent: string;
+  preview: string;
+  tier: ThemeTier;
+  cardBg: string;
+  avatarRing: string;
+  subtleText: string;
+}
+
+export const THEMES: Record<string, ThemeConfig> = {
   default: {
     name: 'Default',
     bg: 'bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50',
-    btn: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600',
+    btn: 'bg-white/70 backdrop-blur-sm text-gray-800 border border-white/50 shadow-sm hover:shadow-md hover:bg-white/90 hover:-translate-y-0.5',
     text: 'text-gray-900',
+    subtleText: 'text-gray-500',
     accent: 'text-purple-600',
     preview: 'bg-gradient-to-br from-purple-400 to-pink-400',
+    cardBg: 'bg-white/40 backdrop-blur-md border border-white/60',
+    avatarRing: 'ring-4 ring-white/60 shadow-xl',
     tier: 'free',
   },
   sunset: {
     name: 'Sunset',
-    bg: 'bg-gradient-to-br from-orange-100 via-red-50 to-yellow-50',
-    btn: 'bg-gradient-to-r from-orange-400 to-red-500 text-white hover:from-orange-500 hover:to-red-600',
+    bg: 'bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100',
+    btn: 'bg-white/60 backdrop-blur-sm text-gray-800 border border-orange-200/50 shadow-sm hover:shadow-md hover:bg-white/80 hover:-translate-y-0.5',
     text: 'text-gray-900',
+    subtleText: 'text-orange-700/60',
     accent: 'text-orange-600',
     preview: 'bg-gradient-to-br from-orange-400 to-red-400',
+    cardBg: 'bg-white/30 backdrop-blur-md border border-orange-200/40',
+    avatarRing: 'ring-4 ring-orange-200/60 shadow-xl',
     tier: 'free',
   },
   ocean: {
     name: 'Ocean',
-    bg: 'bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100',
-    btn: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700',
+    bg: 'bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100',
+    btn: 'bg-white/60 backdrop-blur-sm text-gray-800 border border-blue-200/50 shadow-sm hover:shadow-md hover:bg-white/80 hover:-translate-y-0.5',
     text: 'text-gray-900',
+    subtleText: 'text-blue-700/60',
     accent: 'text-cyan-600',
     preview: 'bg-gradient-to-br from-cyan-400 to-blue-500',
+    cardBg: 'bg-white/30 backdrop-blur-md border border-blue-200/40',
+    avatarRing: 'ring-4 ring-blue-200/60 shadow-xl',
     tier: 'free',
   },
   midnight: {
     name: 'Midnight',
-    bg: 'bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900',
-    btn: 'bg-blue-600 text-white hover:bg-blue-700 border border-blue-500/30',
+    bg: 'bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900',
+    btn: 'bg-white/10 backdrop-blur-md text-white border border-white/10 shadow-lg shadow-blue-500/5 hover:bg-white/15 hover:border-white/20 hover:-translate-y-0.5',
     text: 'text-white',
+    subtleText: 'text-blue-300/60',
     accent: 'text-blue-400',
     preview: 'bg-gradient-to-br from-gray-800 to-blue-900',
+    cardBg: 'bg-white/5 backdrop-blur-md border border-white/10',
+    avatarRing: 'ring-4 ring-blue-500/30 shadow-xl shadow-blue-500/20',
     tier: 'starter',
   },
   forest: {
     name: 'Forest',
-    bg: 'bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50',
-    btn: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600',
+    bg: 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50',
+    btn: 'bg-white/60 backdrop-blur-sm text-gray-800 border border-emerald-200/50 shadow-sm hover:shadow-md hover:bg-white/80 hover:-translate-y-0.5',
     text: 'text-gray-900',
+    subtleText: 'text-emerald-700/60',
     accent: 'text-emerald-600',
     preview: 'bg-gradient-to-br from-emerald-400 to-teal-500',
+    cardBg: 'bg-white/30 backdrop-blur-md border border-emerald-200/40',
+    avatarRing: 'ring-4 ring-emerald-200/60 shadow-xl',
     tier: 'starter',
   },
   neon: {
     name: 'Neon',
     bg: 'bg-gray-950',
-    btn: 'bg-transparent border-2 border-fuchsia-500 text-fuchsia-400 hover:bg-fuchsia-500/10 shadow-[0_0_15px_rgba(217,70,239,0.3)]',
+    btn: 'bg-fuchsia-500/10 backdrop-blur-md text-fuchsia-300 border border-fuchsia-500/30 shadow-lg shadow-fuchsia-500/10 hover:bg-fuchsia-500/20 hover:shadow-fuchsia-500/20 hover:border-fuchsia-400/50 hover:-translate-y-0.5',
     text: 'text-white',
+    subtleText: 'text-fuchsia-400/60',
     accent: 'text-fuchsia-400',
     preview: 'bg-gradient-to-br from-fuchsia-600 to-purple-900',
+    cardBg: 'bg-white/5 backdrop-blur-md border border-fuchsia-500/20',
+    avatarRing: 'ring-4 ring-fuchsia-500/30 shadow-xl shadow-fuchsia-500/20',
     tier: 'starter',
   },
 };
