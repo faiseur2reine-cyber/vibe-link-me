@@ -286,19 +286,20 @@ const PublicProfile = () => {
                       transition={{ delay: 0.25 + sIdx * 0.05 }}
                       className="flex items-center gap-3 pt-2"
                     >
-                      <div className={`h-px flex-1 ${theme.text} opacity-10`} />
-                      <span className={`text-xs font-semibold uppercase tracking-widest ${theme.subtleText}`}>{section.title}</span>
-                      <div className={`h-px flex-1 ${theme.text} opacity-10`} />
+                      <div className={`h-px flex-1 ${hasCustomColors ? '' : theme.text} opacity-10`} style={page.custom_text_color ? { backgroundColor: page.custom_text_color } : {}} />
+                      <span className={`text-xs font-semibold uppercase tracking-widest ${hasCustomColors ? 'opacity-60' : theme.subtleText}`} style={page.custom_text_color ? { color: page.custom_text_color } : {}}>{section.title}</span>
+                      <div className={`h-px flex-1 ${hasCustomColors ? '' : theme.text} opacity-10`} style={page.custom_text_color ? { backgroundColor: page.custom_text_color } : {}} />
                     </motion.div>
                   )}
+                  <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
                   {section.links.map((link) => {
                     const i = globalIndex++;
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
-                    const isMinimal = link.style === 'minimal';
+                    const isMinimal = link.style === 'minimal' || linkLayout === 'minimal';
                     const customStyle: React.CSSProperties = {
-                      ...(link.bg_color ? { backgroundColor: link.bg_color } : {}),
-                      ...(link.text_color ? { color: link.text_color } : {}),
+                      ...(link.bg_color ? { backgroundColor: link.bg_color } : page.custom_btn_color ? { backgroundColor: page.custom_btn_color } : {}),
+                      ...(link.text_color ? { color: link.text_color } : page.custom_btn_text_color ? { color: page.custom_btn_text_color } : {}),
                     };
 
                     if (isCard && link.thumbnail_url) {
