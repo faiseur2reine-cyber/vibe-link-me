@@ -111,5 +111,22 @@
     "delete": "Delete",
     "edit": "Edit",
     "language": "Language"
+  },
+  "landing": {
+    "socialProof": "Used by creators on",
+    "ctaTitle": "Ready to centralize your links?",
+    "ctaSubtitle": "Create your page in 30 seconds. Free, no credit card required.",
+    "ctaButton": "Create my page for free",
+    "featuresLabel": "Features",
+    "pricingLabel": "Pricing",
+    "startFree": "Get started",
+    "freeToStart": "Free to start",
+    "noCardRequired": "No credit card required",
+    "heroRating": "4.9/5 · 2,000+ creators",
+    "mockupClicks": "+248 clicks",
+    "mockupClicksSub": "this week",
+    "mockupDesign": "Custom design ✓",
+    "mockupDesignSub": "CSS + fonts",
+    "mockupBio": "Digital creator · Paris 🇫🇷"
   }
 }

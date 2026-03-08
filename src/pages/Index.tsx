@@ -67,7 +67,7 @@ const Index = () => {
       {/* Social proof bar */}
       <div className="border-y border-border bg-secondary/30 py-6 px-4">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-xs text-muted-foreground">
-          <span className="font-medium">Utilisé par des créateurs sur</span>
+          <span className="font-medium">{t('landing.socialProof')}</span>
           {['YouTube', 'TikTok', 'Instagram', 'Twitch', 'X'].map(p => (
             <span key={p} className="font-semibold text-foreground/60">{p}</span>
           ))}
@@ -80,10 +80,10 @@ const Index = () => {
       {/* CTA */}
       <section className="px-4 sm:px-6 py-20 sm:py-28 text-center">
         <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Prêt à centraliser tes liens ?</h2>
-          <p className="mt-3 text-muted-foreground text-sm">Crée ta page en 30 secondes. Gratuit, sans carte bancaire.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('landing.ctaTitle')}</h2>
+          <p className="mt-3 text-muted-foreground text-sm">{t('landing.ctaSubtitle')}</p>
           <Button size="lg" asChild className="mt-6 h-11 px-6 text-sm font-semibold">
-            <Link to="/auth?tab=signup">Créer ma page gratuitement</Link>
+            <Link to="/auth?tab=signup">{t('landing.ctaButton')}</Link>
           </Button>
         </div>
       </section>
@@ -92,8 +92,8 @@ const Index = () => {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} MyTaptap</span>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <Link to="/auth" className="hover:text-foreground transition-colors">Connexion</Link>
-            <Link to="/auth?tab=signup" className="hover:text-foreground transition-colors">Inscription</Link>
+            <Link to="/auth" className="hover:text-foreground transition-colors">{t('nav.login')}</Link>
+            <Link to="/auth?tab=signup" className="hover:text-foreground transition-colors">{t('nav.signup')}</Link>
           </div>
         </div>
       </footer>

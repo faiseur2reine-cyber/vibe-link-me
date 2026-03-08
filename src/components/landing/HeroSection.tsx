@@ -20,7 +20,7 @@ const HeroSection = () => {
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-4 h-4 fill-primary text-primary" />
             ))}
-            <span className="text-xs text-muted-foreground ml-2">4.9/5 · 2 000+ créateurs</span>
+            <span className="text-xs text-muted-foreground ml-2">{t('landing.heroRating')}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.15] tracking-tight text-foreground">
@@ -45,8 +45,8 @@ const HeroSection = () => {
           </div>
 
           <div className="mt-8 flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> Gratuit pour commencer</span>
-            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> Aucune carte requise</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> {t('landing.freeToStart')}</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> {t('landing.noCardRequired')}</span>
           </div>
         </motion.div>
 
@@ -73,7 +73,7 @@ const HeroSection = () => {
                   <p className="text-sm font-bold text-foreground">Alex Martin</p>
                   <p className="text-[11px] text-muted-foreground">@alexmartin</p>
                 </div>
-                <p className="text-[10px] text-muted-foreground text-center mb-4">Créateur digital · Paris 🇫🇷</p>
+                <p className="text-[10px] text-muted-foreground text-center mb-4">{t('landing.mockupBio')}</p>
                 
                 <div className="space-y-2">
                   {['Mon portfolio', 'YouTube', 'Newsletter', 'Coaching 1:1'].map((label, i) => (
@@ -101,8 +101,8 @@ const HeroSection = () => {
               transition={{ delay: 0.5 }}
               className="absolute -left-8 top-16 bg-card border border-border rounded-xl px-3 py-2 shadow-lg"
             >
-              <p className="text-[10px] font-semibold text-foreground">+248 clics</p>
-              <p className="text-[9px] text-muted-foreground">cette semaine</p>
+              <p className="text-[10px] font-semibold text-foreground">{t('landing.mockupClicks')}</p>
+              <p className="text-[9px] text-muted-foreground">{t('landing.mockupClicksSub')}</p>
             </motion.div>
 
             <motion.div
@@ -111,8 +111,8 @@ const HeroSection = () => {
               transition={{ delay: 0.65 }}
               className="absolute -right-6 bottom-24 bg-card border border-border rounded-xl px-3 py-2 shadow-lg"
             >
-              <p className="text-[10px] font-semibold text-primary">Design custom ✓</p>
-              <p className="text-[9px] text-muted-foreground">CSS + polices</p>
+              <p className="text-[10px] font-semibold text-primary">{t('landing.mockupDesign')}</p>
+              <p className="text-[9px] text-muted-foreground">{t('landing.mockupDesignSub')}</p>
             </motion.div>
           </div>
         </motion.div>

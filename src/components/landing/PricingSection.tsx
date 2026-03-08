@@ -16,7 +16,7 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
     <section className="px-4 sm:px-6 py-20 sm:py-28 bg-secondary/30">
       <div className="max-w-5xl mx-auto">
         <div className="text-center max-w-lg mx-auto mb-14">
-          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">Tarifs</p>
+          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">{t('landing.pricingLabel')}</p>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('pricing.title')}</h2>
           <p className="mt-3 text-muted-foreground text-sm">{t('pricing.subtitle')}</p>
         </div>
@@ -41,7 +41,7 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
               ))}
             </ul>
             <Button variant="outline" className="w-full mt-6 h-10 text-sm" asChild>
-              <Link to="/auth?tab=signup">Commencer</Link>
+              <Link to="/auth?tab=signup">{t('landing.startFree')}</Link>
             </Button>
           </motion.div>
 
