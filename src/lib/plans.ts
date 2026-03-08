@@ -6,13 +6,15 @@ export const PLANS = {
     product_id: null,
     maxLinks: 5,
     price: 0,
+    interval: null,
   },
   starter: {
     name: 'Starter',
-    price_id: 'price_1T8hiMF6s5PSwitkNpc5qktD',
-    product_id: 'prod_U6vZCdjIF29SN7',
+    price_id: 'price_1T8hm0F6s5PSwitkpD9F97lO',
+    product_id: 'prod_U6vdnK2jJJR2CL',
     maxLinks: 20,
     price: 1999, // cents
+    interval: 'month',
   },
   pro: {
     name: 'Pro',
@@ -20,6 +22,7 @@ export const PLANS = {
     product_id: 'prod_U6vZTPcXRFWtXQ',
     maxLinks: Infinity,
     price: 11500, // cents
+    interval: 'year',
   },
 } as const;
 

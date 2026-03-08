@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const PRICE_TO_PLAN: Record<string, string> = {
-  "price_1T8hiMF6s5PSwitkNpc5qktD": "starter",
+  "price_1T8hm0F6s5PSwitkpD9F97lO": "starter",
   "price_1T8hiXF6s5PSwitkQraXZXeN": "pro",
 };
 
