@@ -86,6 +86,43 @@ export const THEMES: Record<string, ThemeConfig> = {
     avatarRing: 'ring-4 ring-fuchsia-500/30 shadow-xl shadow-fuchsia-500/20',
     tier: 'starter',
   },
+  // --- PRO THEMES ---
+  glass_dark: {
+    name: 'Glass Dark',
+    bg: 'bg-gradient-to-br from-gray-900 via-slate-900 to-zinc-900',
+    btn: 'bg-white/[0.07] backdrop-blur-xl text-white/90 border border-white/[0.12] shadow-lg shadow-black/20 hover:bg-white/[0.12] hover:border-white/20 hover:-translate-y-0.5',
+    text: 'text-white',
+    subtleText: 'text-white/40',
+    accent: 'text-sky-400',
+    preview: 'bg-gradient-to-br from-gray-800 to-slate-900',
+    cardBg: 'bg-white/[0.04] backdrop-blur-2xl border border-white/[0.08] shadow-2xl shadow-black/30',
+    avatarRing: 'ring-4 ring-white/10 shadow-2xl shadow-sky-500/10',
+    tier: 'pro',
+  },
+  pastel: {
+    name: 'Pastel Dream',
+    bg: 'bg-gradient-to-br from-pink-100 via-violet-100 to-cyan-100',
+    btn: 'bg-white/80 backdrop-blur-sm text-violet-900 border border-violet-200/40 shadow-sm hover:shadow-md hover:bg-white/95 hover:-translate-y-0.5',
+    text: 'text-violet-950',
+    subtleText: 'text-violet-400',
+    accent: 'text-pink-500',
+    preview: 'bg-gradient-to-br from-pink-300 to-violet-300',
+    cardBg: 'bg-white/50 backdrop-blur-md border border-violet-200/30',
+    avatarRing: 'ring-4 ring-violet-200/50 shadow-xl shadow-pink-200/30',
+    tier: 'pro',
+  },
+  brutalist: {
+    name: 'Brutalist',
+    bg: 'bg-yellow-50',
+    btn: 'bg-white text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]',
+    text: 'text-black',
+    subtleText: 'text-gray-600',
+    accent: 'text-red-600',
+    preview: 'bg-yellow-300 border-2 border-black',
+    cardBg: 'bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]',
+    avatarRing: 'ring-4 ring-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+    tier: 'pro',
+  },
 };
 
 const PLAN_RANK: Record<string, number> = { free: 0, starter: 1, pro: 2 };
