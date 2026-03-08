@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { Navigate, Link, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from '@/hooks/use-toast';
 import { LogOut, Plus, Loader2 } from 'lucide-react';
-import { useEffect } from 'react';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
@@ -29,7 +28,7 @@ const Dashboard = () => {
 
   if (authLoading || pagesLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
       </div>
     );
@@ -39,32 +38,32 @@ const Dashboard = () => {
   const selectedPage = pages.find(p => p.id === selectedPageId) || null;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 max-w-6xl mx-auto">
+    <div className="min-h-screen bg-muted/30">
+      {/* Nav — minimal & clean */}
+      <nav className="sticky top-0 z-50 bg-background border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-6 h-14 max-w-5xl mx-auto">
           <button
             onClick={() => setSelectedPageId(null)}
-            className="text-base font-bold text-foreground tracking-tight"
+            className="text-base font-bold text-foreground tracking-tight hover:opacity-80 transition-opacity"
           >
             MyTaptap
           </button>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {!selectedPageId && (
-              <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="h-8 gap-1 text-sm">
-                <Plus className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Nouvelle page</span>
+              <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="h-8 rounded-full gap-1.5 text-xs font-medium px-3">
+                <Plus className="w-3.5 h-3.5" /> Nouvelle page
               </Button>
             )}
             <LanguageSelector />
-            <Button variant="ghost" size="sm" onClick={signOut} className="h-8 gap-1 text-sm">
-              <LogOut className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t('nav.logout')}</span>
+            <Button variant="ghost" size="icon" onClick={signOut} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
       </nav>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {selectedPage ? (
           <PageDetailView
             page={selectedPage}
