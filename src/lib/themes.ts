@@ -26,7 +26,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-cyan-600',
     preview: 'bg-gradient-to-br from-cyan-400 to-blue-500',
-    free: true,
+    tier: 'free',
   },
   midnight: {
     name: 'Midnight',
