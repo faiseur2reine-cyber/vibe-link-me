@@ -12,6 +12,7 @@ interface PagesListViewProps {
   pages: CreatorPage[];
   onSelectPage: (id: string) => void;
   onCreatePage: () => void;
+  onDuplicatePage?: (id: string) => Promise<{ error: any; data?: any }>;
 }
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage }: PagesListViewProps) => {
