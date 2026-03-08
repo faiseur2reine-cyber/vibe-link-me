@@ -37,6 +37,10 @@ interface LinkItem {
   icon: string;
   position: number;
   thumbnail_url: string | null;
+  description: string | null;
+  bg_color: string | null;
+  text_color: string | null;
+  style: string;
 }
 
 const PublicProfile = () => {
