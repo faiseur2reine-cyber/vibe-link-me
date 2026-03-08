@@ -38,6 +38,7 @@ interface CreatorPageData {
   custom_font?: string;
   link_layout?: string;
   custom_css?: string | null;
+  urgency_config?: UrgencyConfig | null;
 }
 
 interface LinkItem {
