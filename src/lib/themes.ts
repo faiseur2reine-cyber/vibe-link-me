@@ -44,7 +44,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-emerald-600',
     preview: 'bg-gradient-to-br from-emerald-400 to-teal-500',
-    free: false,
+    tier: 'starter',
   },
   neon: {
     name: 'Neon',
