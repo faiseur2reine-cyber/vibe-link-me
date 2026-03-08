@@ -265,7 +265,7 @@ const PublicProfile = () => {
           </div>
 
           {/* Links */}
-          <div className="mt-6 space-y-6">
+          <div className={`mt-6 space-y-6`}>
             {(() => {
               const sections: { title: string | null; links: LinkItem[] }[] = [];
               links.forEach(link => {
