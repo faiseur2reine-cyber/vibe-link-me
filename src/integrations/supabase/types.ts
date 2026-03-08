@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      creator_pages: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          cover_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          is_nsfw: boolean
+          social_links: Json
+          theme: string
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          cover_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_nsfw?: boolean
+          social_links?: Json
+          theme?: string
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          cover_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_nsfw?: boolean
+          social_links?: Json
+          theme?: string
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       custom_templates: {
         Row: {
           created_at: string
@@ -43,6 +88,7 @@ export type Database = {
       }
       link_clicks: {
         Row: {
+          city: string | null
           clicked_at: string
           country: string | null
           id: string
@@ -50,6 +96,7 @@ export type Database = {
           referrer: string | null
         }
         Insert: {
+          city?: string | null
           clicked_at?: string
           country?: string | null
           id?: string
@@ -57,6 +104,7 @@ export type Database = {
           referrer?: string | null
         }
         Update: {
+          city?: string | null
           clicked_at?: string
           country?: string | null
           id?: string
@@ -80,6 +128,7 @@ export type Database = {
           description: string | null
           icon: string | null
           id: string
+          page_id: string | null
           position: number
           section_title: string | null
           style: string
@@ -96,6 +145,7 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          page_id?: string | null
           position?: number
           section_title?: string | null
           style?: string
@@ -112,6 +162,7 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          page_id?: string | null
           position?: number
           section_title?: string | null
           style?: string
@@ -122,7 +173,15 @@ export type Database = {
           url?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "links_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "creator_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
