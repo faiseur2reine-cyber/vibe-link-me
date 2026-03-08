@@ -91,11 +91,27 @@ const PublicProfile = () => {
         const result = await res.json();
 
         if (result.page) {
-          setPage({
+          const pageData = {
             ...result.page,
             social_links: (result.page.social_links as unknown as SocialLink[]) || [],
-          } as CreatorPageData);
+          } as CreatorPageData;
+          setPage(pageData);
           setLinks((result.links as LinkItem[]) || []);
+
+          // A/B test assignment
+          const uc = pageData.urgency_config;
+          if (uc?.abTest?.enabled) {
+            const storageKey = `ab_${pageData.id}`;
+            const stored = sessionStorage.getItem(storageKey);
+            if (stored === 'A' || stored === 'B') {
+              setAbVariant(stored);
+            } else {
+              const split = uc.abTest.splitPercent ?? 50;
+              const variant = Math.random() * 100 < split ? 'A' : 'B';
+              sessionStorage.setItem(storageKey, variant);
+              setAbVariant(variant);
+            }
+          }
         } else {
           setNotFound(true);
         }
