@@ -330,5 +330,5 @@ export function usePageAnalytics(pageId: string | null) {
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
-  return { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, loading, refetch: fetchStats };
+  return { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, abStats, loading, refetch: fetchStats };
 }
