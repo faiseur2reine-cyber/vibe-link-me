@@ -35,7 +35,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-white',
     accent: 'text-blue-400',
     preview: 'bg-gradient-to-br from-gray-800 to-blue-900',
-    free: false,
+    tier: 'starter',
   },
   forest: {
     name: 'Forest',
