@@ -56,9 +56,13 @@ export function useProfile() {
 
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return;
+    const dbUpdates = { ...updates } as any;
+    if (updates.social_links) {
+      dbUpdates.social_links = JSON.parse(JSON.stringify(updates.social_links));
+    }
     const { error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(dbUpdates)
       .eq('user_id', user.id);
     if (!error) await fetchProfile();
     return { error };
