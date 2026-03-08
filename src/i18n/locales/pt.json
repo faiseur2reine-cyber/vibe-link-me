@@ -2,10 +2,36 @@
   "nav": { "home": "Início", "login": "Entrar", "signup": "Cadastrar", "dashboard": "Painel", "logout": "Sair", "pricing": "Preços" },
   "hero": { "title": "Todos os seus links,", "titleHighlight": "um só lugar.", "subtitle": "Crie sua página de links personalizada em segundos. Compartilhe tudo que importa com seu público.", "cta": "Criar minha página grátis", "ctaSecondary": "Ver um exemplo" },
   "features": { "title": "Tudo o que você precisa", "subtitle": "Ferramentas poderosas para gerenciar e compartilhar seus links.", "links": "Links ilimitados", "linksDesc": "Adicione quantos links quiser com o plano Pro.", "themes": "Temas personalizados", "themesDesc": "Escolha entre 6 temas visuais para sua página.", "analytics": "Análises detalhadas", "analyticsDesc": "Acompanhe os cliques em cada um dos seus links.", "dragDrop": "Arrastar e soltar", "dragDropDesc": "Reorganize seus links arrastando e soltando.", "multilingual": "Multilíngue", "multilingualDesc": "Interface disponível em 6 idiomas.", "mobile": "100% Responsivo", "mobileDesc": "Perfeito em celular, tablet e desktop." },
-  "pricing": { "title": "Preços simples", "subtitle": "Comece de graça, vá Pro quando estiver pronto.", "free": "Grátis", "pro": "Pro", "month": "/mês", "currentPlan": "Plano atual", "upgrade": "Ir Pro", "freeFeatures": ["Até 5 links", "3 temas", "Estatísticas básicas", "Badge MyTaptap"], "proFeatures": ["Links ilimitados", "6 temas", "Análises detalhadas", "Sem badge", "Suporte prioritário"] },
+  "pricing": {
+    "title": "Preços simples",
+    "subtitle": "Comece de graça, faça upgrade quando estiver pronto.",
+    "launchBadge": "🚀 Preço de lançamento",
+    "year": "/ano",
+    "free": "Grátis",
+    "starter": "Starter",
+    "pro": "Pro",
+    "popular": "Mais popular",
+    "month": "/mês",
+    "currentPlan": "Plano atual",
+    "upgrade": "Ir Pro",
+    "upgradeStarter": "Ir Starter",
+    "freeFeatures": ["Até 5 links", "3 temas básicos", "Badge MyTaptap"],
+    "starterFeatures": ["Até 20 links", "Todos os temas", "Análises 90 dias", "Badge MyTaptap"],
+    "proFeatures": ["Links ilimitados", "Todos os temas", "Análises ilimitadas + gráficos", "Domínio personalizado", "Suporte prioritário", "Badge MyTaptap"]
+  },
   "footer": { "madeWith": "Feito com", "by": "MyTaptap" },
   "auth": { "login": "Entrar", "signup": "Cadastrar", "email": "Email", "password": "Senha", "username": "Nome de usuário", "displayName": "Nome exibido", "forgotPassword": "Esqueceu a senha?", "noAccount": "Não tem conta?", "hasAccount": "Já tem uma conta?", "signupBtn": "Cadastrar", "loginBtn": "Entrar", "googleBtn": "Continuar com Google", "resetPassword": "Redefinir senha", "newPassword": "Nova senha", "confirmPassword": "Confirmar senha", "sendReset": "Enviar link", "resetSent": "Um link de redefinição foi enviado para seu email.", "usernameTaken": "Este nome de usuário já está em uso.", "usernameAvailable": "Nome de usuário disponível!", "checkingUsername": "Verificando..." },
-  "dashboard": { "title": "Painel", "profile": "Perfil", "links": "Links", "analytics": "Análises", "settings": "Configurações", "addLink": "Adicionar link", "editLink": "Editar link", "deleteLink": "Excluir link", "linkTitle": "Título", "linkUrl": "URL", "linkIcon": "Ícone", "save": "Salvar", "cancel": "Cancelar", "bio": "Bio", "totalClicks": "Cliques totais", "theme": "Tema", "preview": "Pré-visualização", "maxLinks": "Você atingiu o limite de 5 links. Vá Pro para adicionar mais!", "plan": "Plano" },
+  "dashboard": {
+    "title": "Painel", "profile": "Perfil", "links": "Links", "analytics": "Análises", "settings": "Configurações",
+    "addLink": "Adicionar link", "editLink": "Editar link", "deleteLink": "Excluir link",
+    "linkTitle": "Título", "linkUrl": "URL", "linkIcon": "Ícone",
+    "save": "Salvar", "cancel": "Cancelar", "bio": "Bio",
+    "totalClicks": "Cliques totais", "theme": "Tema", "preview": "Pré-visualização",
+    "maxLinks5": "Você atingiu o limite de 5 links. Passe para Starter ou Pro!",
+    "maxLinks20": "Você atingiu o limite de 20 links. Vá Pro para links ilimitados!",
+    "maxLinks": "Você atingiu o limite de links.",
+    "plan": "Plano"
+  },
   "public": { "madeWith": "Feito com MyTaptap" },
   "common": { "loading": "Carregando...", "error": "Ocorreu um erro.", "success": "Sucesso!", "delete": "Excluir", "edit": "Editar", "language": "Idioma" }
 }
