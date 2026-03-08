@@ -76,7 +76,7 @@ const HeroSection = () => {
                 <p className="text-[10px] text-muted-foreground text-center mb-4">{t('landing.mockupBio')}</p>
                 
                 <div className="space-y-2">
-                  {['Mon portfolio', 'YouTube', 'Newsletter', 'Coaching 1:1'].map((label, i) => (
+                  {(t('landing.mockupLinks', { returnObjects: true }) as string[]).map((label, i) => (
                     <div
                       key={label}
                       className="h-10 rounded-lg border border-border bg-secondary/50 flex items-center justify-center text-xs font-medium text-foreground"
