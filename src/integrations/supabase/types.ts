@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      link_clicks: {
+        Row: {
+          clicked_at: string
+          country: string | null
+          id: string
+          link_id: string
+          referrer: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          country?: string | null
+          id?: string
+          link_id: string
+          referrer?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          country?: string | null
+          id?: string
+          link_id?: string
+          referrer?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       links: {
         Row: {
           created_at: string
@@ -91,7 +123,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      record_click: { Args: { p_link_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
