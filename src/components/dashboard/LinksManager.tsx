@@ -47,6 +47,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const [bgColor, setBgColor] = useState('');
   const [textColor, setTextColor] = useState('');
   const [linkStyle, setLinkStyle] = useState('default');
+  const [sectionTitle, setSectionTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -70,6 +71,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setBgColor('');
     setTextColor('');
     setLinkStyle('default');
+    setSectionTitle('');
     setThumbnailFile(null);
     setThumbnailPreview(null);
     setShowCustomization(false);
@@ -85,9 +87,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setBgColor(link.bg_color || '');
     setTextColor(link.text_color || '');
     setLinkStyle(link.style || 'default');
+    setSectionTitle(link.section_title || '');
     setThumbnailFile(null);
     setThumbnailPreview(link.thumbnail_url || null);
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default'));
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
     setDialogOpen(true);
   };
 
@@ -126,6 +129,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
       bg_color: bgColor.trim() || null,
       text_color: textColor.trim() || null,
       style: linkStyle,
+      section_title: sectionTitle.trim() || null,
     };
 
     if (editingLink) {
@@ -187,54 +191,78 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
         <Droppable droppableId="links">
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
-              {links.map((link, index) => (
-                <Draggable key={link.id} draggableId={link.id} index={index}>
-                  {(provided, snapshot) => (
-                    <Card
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      className={`p-3 flex items-center gap-3 transition-shadow ${snapshot.isDragging ? 'shadow-lg' : ''}`}
-                    >
-                      <div {...provided.dragHandleProps} className="cursor-grab text-muted-foreground hover:text-foreground">
-                        <GripVertical className="w-5 h-5" />
-                      </div>
-                      {/* Color indicator */}
-                      {link.bg_color && (
-                        <div 
-                          className="w-3 h-8 rounded-full shrink-0" 
-                          style={{ backgroundColor: link.bg_color }}
-                        />
-                      )}
-                      {link.thumbnail_url && (
-                        <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate text-foreground">{link.title}</p>
-                        {link.description && (
-                          <p className="text-xs text-muted-foreground truncate">{link.description}</p>
-                        )}
-                        <p className="text-xs text-muted-foreground/60 truncate">{link.url}</p>
-                      </div>
-                      {link.style !== 'default' && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0 capitalize">
-                          {link.style}
+              {links.map((link, index) => {
+                // Show section header if this link starts a new section
+                const prevLink = index > 0 ? links[index - 1] : null;
+                const showSectionHeader = link.section_title && 
+                  (!prevLink || prevLink.section_title !== link.section_title);
+
+                return (
+                  <div key={link.id}>
+                    {showSectionHeader && (
+                      <div className="flex items-center gap-2 pt-4 pb-1 first:pt-0">
+                        <div className="h-px flex-1 bg-border" />
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                          {link.section_title}
                         </span>
-                      )}
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => openEdit(link)}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => window.open(link.url, '_blank')}>
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(link.id)} className="text-destructive hover:text-destructive">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="h-px flex-1 bg-border" />
                       </div>
-                    </Card>
-                  )}
-                </Draggable>
-              ))}
+                    )}
+                    <Draggable draggableId={link.id} index={index}>
+                      {(provided, snapshot) => (
+                        <Card
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`p-3 flex items-center gap-3 transition-shadow ${snapshot.isDragging ? 'shadow-lg' : ''}`}
+                        >
+                          <div {...provided.dragHandleProps} className="cursor-grab text-muted-foreground hover:text-foreground">
+                            <GripVertical className="w-5 h-5" />
+                          </div>
+                          {link.bg_color && (
+                            <div 
+                              className="w-3 h-8 rounded-full shrink-0" 
+                              style={{ backgroundColor: link.bg_color }}
+                            />
+                          )}
+                          {link.thumbnail_url && (
+                            <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-medium truncate text-foreground">{link.title}</p>
+                              {link.section_title && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 truncate max-w-[80px]">
+                                  {link.section_title}
+                                </span>
+                              )}
+                            </div>
+                            {link.description && (
+                              <p className="text-xs text-muted-foreground truncate">{link.description}</p>
+                            )}
+                            <p className="text-xs text-muted-foreground/60 truncate">{link.url}</p>
+                          </div>
+                          {link.style !== 'default' && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0 capitalize">
+                              {link.style}
+                            </span>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="icon" onClick={() => openEdit(link)}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => window.open(link.url, '_blank')}>
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(link.id)} className="text-destructive hover:text-destructive">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </Card>
+                      )}
+                    </Draggable>
+                  </div>
+                );
+              })}
               {provided.placeholder}
             </div>
           )}
@@ -310,6 +338,18 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
 
             {showCustomization && (
               <div className="space-y-4 p-4 rounded-xl bg-muted/50 border border-border">
+                {/* Section / Category */}
+                <div className="space-y-2">
+                  <Label>Section / Catégorie</Label>
+                  <Input 
+                    value={sectionTitle} 
+                    onChange={(e) => setSectionTitle(e.target.value)} 
+                    maxLength={50} 
+                    placeholder="Ex: Marie, Réseaux sociaux, Boutique..."
+                  />
+                  <p className="text-xs text-muted-foreground">Les liens avec la même section seront regroupés ensemble</p>
+                </div>
+
                 {/* Link Style */}
                 <div className="space-y-2">
                   <Label>Style d'affichage</Label>
