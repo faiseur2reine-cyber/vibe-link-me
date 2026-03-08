@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
+import { recordClick } from '@/hooks/useAnalytics';
 
 interface Profile {
   username: string;
