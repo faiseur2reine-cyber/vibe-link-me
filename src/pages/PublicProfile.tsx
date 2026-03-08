@@ -377,9 +377,16 @@ const PublicProfile = () => {
                       const customBtnBg = link.bg_color || page.custom_btn_color;
                       const customBtnText = link.text_color || page.custom_btn_text_color;
 
+                      const wrapNsfw = (node: React.ReactNode) =>
+                        isNsfwPage ? (
+                          <NsfwLinkOverlay key={link.id} url={link.url} onRevealClick={() => recordClick(link.id, clickVariant)}>
+                            {node}
+                          </NsfwLinkOverlay>
+                        ) : node;
+
                       // Card with thumbnail
                       if (isCard && link.thumbnail_url) {
-                        return (
+                        return wrapNsfw(
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -402,7 +409,7 @@ const PublicProfile = () => {
 
                       // Featured — prominent CTA
                       if (isFeatured) {
-                        return (
+                        return wrapNsfw(
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -427,7 +434,7 @@ const PublicProfile = () => {
 
                       // Minimal
                       if (isMinimal) {
-                        return (
+                        return wrapNsfw(
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -450,7 +457,7 @@ const PublicProfile = () => {
                       }
 
                       // Default — premium pill card with favicon circle
-                      return (
+                      return wrapNsfw(
                         <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
