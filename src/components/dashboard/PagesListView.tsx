@@ -2,7 +2,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2, Search, Filter, X } from 'lucide-react';
+import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2, Search, Filter, X, LayoutGrid, List } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
