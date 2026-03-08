@@ -54,6 +54,7 @@ const LAYOUT_OPTIONS = [
 
 interface PageDesignEditorProps {
   page: CreatorPage;
+  links?: import('@/hooks/useDashboard').LinkItem[];
   onUpdate: (updates: Partial<CreatorPage>) => Promise<{ error: any }>;
 }
 
