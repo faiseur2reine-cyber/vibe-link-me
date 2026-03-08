@@ -136,8 +136,22 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
     setLayout(preset.layout);
   };
 
+  const designState = { bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout, customCss };
+
   return (
     <div className="space-y-6">
+      {/* Live Preview */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4 text-primary" />
+          <h3 className="font-display font-semibold text-sm text-foreground">Aperçu en direct</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Les changements s'affichent en temps réel avant de sauvegarder.</p>
+        <div className="max-w-xs mx-auto">
+          <DesignLivePreview page={page} links={links} designState={designState} />
+        </div>
+      </div>
+
       {/* Presets Section */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
