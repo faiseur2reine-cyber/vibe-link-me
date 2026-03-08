@@ -6,7 +6,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from '@/hooks/use-toast';
-import { LogOut, Plus, Loader2 } from 'lucide-react';
+import { LogOut, Plus, Loader2, Sun, Moon } from 'lucide-react';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
@@ -18,6 +18,13 @@ const Dashboard = () => {
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle('dark', next);
+  };
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -55,6 +62,9 @@ const Dashboard = () => {
               </Button>
             )}
             <LanguageSelector />
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             <Button variant="ghost" size="icon" onClick={signOut} className="h-8 w-8 text-muted-foreground hover:text-foreground">
               <LogOut className="w-4 h-4" />
             </Button>
