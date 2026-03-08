@@ -117,16 +117,64 @@ interface Props {
 
 const UrgencyEditor = ({ page, onUpdate }: Props) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const existing = (page as any).urgency_config as UrgencyConfig | null;
   const [config, setConfig] = useState<UrgencyConfig>(existing || defaultUrgencyConfig);
   const [saving, setSaving] = useState(false);
 
-  const applyPreset = (preset: typeof urgencyPresets[0]) => {
+  // Custom templates state
+  const [customTemplates, setCustomTemplates] = useState<{ id: string; name: string; config: UrgencyConfig }[]>([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
+  // Load custom templates
+  useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      const { data } = await supabase
+        .from('urgency_templates')
+        .select('id, name, config')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (data) setCustomTemplates(data.map(d => ({ id: d.id, name: d.name, config: d.config as unknown as UrgencyConfig })));
+    };
+    load();
+  }, [user]);
+
+  const saveAsTemplate = async () => {
+    if (!user || !templateName.trim()) return;
+    setSavingTemplate(true);
+    const { data, error } = await supabase
+      .from('urgency_templates')
+      .insert({ user_id: user.id, name: templateName.trim(), config: config as any })
+      .select('id, name, config')
+      .single();
+    setSavingTemplate(false);
+    if (error) {
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    } else if (data) {
+      setCustomTemplates(prev => [{ id: data.id, name: data.name, config: data.config as unknown as UrgencyConfig }, ...prev]);
+      setShowSaveDialog(false);
+      setTemplateName('');
+      toast({ title: `Template "${data.name}" sauvegardé !` });
+    }
+  };
+
+  const deleteTemplate = async (id: string, name: string) => {
+    const { error } = await supabase.from('urgency_templates').delete().eq('id', id);
+    if (!error) {
+      setCustomTemplates(prev => prev.filter(t => t.id !== id));
+      toast({ title: `Template "${name}" supprimé` });
+    }
+  };
+
+  const applyPreset = (preset: { config: UrgencyConfig; label?: string; name?: string }) => {
     setConfig(c => ({
       ...preset.config,
-      abTest: c.abTest, // preserve A/B test settings
+      abTest: c.abTest,
     }));
-    toast({ title: `Template "${preset.label}" appliqué !`, description: 'Personnalisez puis sauvegardez.' });
+    toast({ title: `Template "${preset.label || preset.name}" appliqué !`, description: 'Personnalisez puis sauvegardez.' });
   };
 
   const updateBanner = (updates: Partial<UrgencyConfig['banner']>) => {
@@ -154,7 +202,13 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
     <div className="space-y-8">
       {/* === PRESETS === */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Templates rapides</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-foreground">Templates rapides</h3>
+          <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => setShowSaveDialog(true)}>
+            <BookmarkPlus className="w-3 h-3" />
+            Sauvegarder ma config
+          </Button>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {urgencyPresets.map(preset => (
             <button
@@ -169,6 +223,64 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
           ))}
         </div>
       </section>
+
+      {/* === CUSTOM TEMPLATES === */}
+      {customTemplates.length > 0 && (
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">Mes templates</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {customTemplates.map(tpl => (
+              <div
+                key={tpl.id}
+                className="group relative text-left p-3 rounded-xl border border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all"
+              >
+                <button onClick={() => applyPreset({ config: tpl.config, name: tpl.name })} className="w-full text-left">
+                  <span className="text-lg">💾</span>
+                  <p className="text-xs font-semibold text-foreground mt-1 truncate">{tpl.name}</p>
+                  <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Template personnalisé</p>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deleteTemplate(tpl.id, tpl.name); }}
+                  className="absolute top-2 right-2 p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-destructive/10 text-destructive transition-all"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Save template dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base">Sauvegarder comme template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div>
+              <Label className="text-xs">Nom du template</Label>
+              <Input
+                value={templateName}
+                onChange={e => setTemplateName(e.target.value)}
+                placeholder="Ex: Ma config soldes été"
+                className="text-sm h-9 mt-1"
+                autoFocus
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              La configuration actuelle (bandeau, widgets de rareté) sera sauvegardée.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setShowSaveDialog(false)}>Annuler</Button>
+            <Button size="sm" onClick={saveAsTemplate} disabled={!templateName.trim() || savingTemplate} className="gap-1">
+              <Save className="w-3 h-3" />
+              {savingTemplate ? 'Sauvegarde...' : 'Sauvegarder'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* === BANNER === */}
       <section className="space-y-4">
