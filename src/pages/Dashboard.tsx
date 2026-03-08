@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useLinks } from '@/hooks/useDashboard';
 import { Navigate, Link, useSearchParams } from 'react-router-dom';
@@ -25,6 +26,15 @@ const Dashboard = () => {
   const { profile, loading: profileLoading, updateProfile, refetch: refetchProfile } = useProfile();
   const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks } = useLinks();
   const [activeTab, setActiveTab] = useState('links');
+  const prevTabRef = useRef('links');
+  const tabOrder = ['links', 'profile', 'theme', 'analytics', 'plan'];
+
+  const handleTabChange = (value: string) => {
+    prevTabRef.current = activeTab;
+    setActiveTab(value);
+  };
+
+  const direction = tabOrder.indexOf(activeTab) >= tabOrder.indexOf(prevTabRef.current) ? 1 : -1;
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [searchParams] = useSearchParams();
@@ -114,7 +124,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main */}
           <div className="lg:col-span-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={handleTabChange}>
               {/* Desktop tabs */}
               {!isMobile && (
                 <div className="mb-6">
@@ -128,7 +138,16 @@ const Dashboard = () => {
                 </div>
               )}
 
-              <TabsContent value="links">
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={activeTab}
+                  custom={direction}
+                  initial={{ opacity: 0, x: direction * 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: direction * -30 }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                >
+              <TabsContent value="links" forceMount={activeTab === 'links' ? true : undefined} className={activeTab !== 'links' ? 'hidden' : ''}>
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <LinksManager
@@ -143,7 +162,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="profile">
+              <TabsContent value="profile" forceMount={activeTab === 'profile' ? true : undefined} className={activeTab !== 'profile' ? 'hidden' : ''}>
                 <Card>
                   <CardHeader>
                     <CardTitle className="font-display">{t('dashboard.profile')}</CardTitle>
@@ -154,7 +173,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="theme">
+              <TabsContent value="theme" forceMount={activeTab === 'theme' ? true : undefined} className={activeTab !== 'theme' ? 'hidden' : ''}>
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <ThemeSelector profile={profile} onUpdate={updateProfile} />
@@ -162,7 +181,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="analytics">
+              <TabsContent value="analytics" forceMount={activeTab === 'analytics' ? true : undefined} className={activeTab !== 'analytics' ? 'hidden' : ''}>
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <AnalyticsPanel links={links} plan={profile.plan} />
@@ -170,7 +189,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="plan">
+              <TabsContent value="plan" forceMount={activeTab === 'plan' ? true : undefined} className={activeTab !== 'plan' ? 'hidden' : ''}>
                 <div className="space-y-4">
                   {/* Current plan */}
                   <Card>
@@ -250,6 +269,8 @@ const Dashboard = () => {
                   </div>
                 </div>
               </TabsContent>
+                </motion.div>
+              </AnimatePresence>
             </Tabs>
           </div>
 
@@ -273,7 +294,7 @@ const Dashboard = () => {
             {tabs.map(({ value, icon: Icon, label }) => (
               <button
                 key={value}
-                onClick={() => setActiveTab(value)}
+                onClick={() => handleTabChange(value)}
                 className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
                   activeTab === value
                     ? 'text-primary'
