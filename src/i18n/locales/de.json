@@ -2,10 +2,36 @@
   "nav": { "home": "Startseite", "login": "Anmelden", "signup": "Registrieren", "dashboard": "Dashboard", "logout": "Abmelden", "pricing": "Preise" },
   "hero": { "title": "Alle deine Links,", "titleHighlight": "ein Ort.", "subtitle": "Erstelle deine personalisierte Linkseite in Sekunden. Teile alles, was zählt, mit deinem Publikum.", "cta": "Meine Seite kostenlos erstellen", "ctaSecondary": "Beispiel ansehen" },
   "features": { "title": "Alles was du brauchst", "subtitle": "Leistungsstarke Tools zum Verwalten und Teilen deiner Links.", "links": "Unbegrenzte Links", "linksDesc": "Füge so viele Links hinzu, wie du möchtest, mit dem Pro-Plan.", "themes": "Benutzerdefinierte Themen", "themesDesc": "Wähle aus 6 visuellen Themen für deine Seite.", "analytics": "Detaillierte Analysen", "analyticsDesc": "Verfolge Klicks auf jedem deiner Links.", "dragDrop": "Drag & Drop", "dragDropDesc": "Ordne deine Links per Drag & Drop neu.", "multilingual": "Mehrsprachig", "multilingualDesc": "Oberfläche in 6 Sprachen verfügbar.", "mobile": "100% Responsive", "mobileDesc": "Perfekt auf Handy, Tablet und Desktop." },
-  "pricing": { "title": "Einfache Preise", "subtitle": "Starte kostenlos, werde Pro wenn du bereit bist.", "free": "Kostenlos", "pro": "Pro", "month": "/Monat", "currentPlan": "Aktueller Plan", "upgrade": "Pro werden", "freeFeatures": ["Bis zu 5 Links", "3 Themen", "Grundlegende Statistiken", "MyTaptap-Badge"], "proFeatures": ["Unbegrenzte Links", "6 Themen", "Detaillierte Analysen", "Kein Badge", "Prioritäts-Support"] },
+  "pricing": {
+    "title": "Einfache Preise",
+    "subtitle": "Starte kostenlos, upgrade wenn du bereit bist.",
+    "launchBadge": "🚀 Einführungspreis",
+    "year": "/Jahr",
+    "free": "Kostenlos",
+    "starter": "Starter",
+    "pro": "Pro",
+    "popular": "Am beliebtesten",
+    "month": "/Monat",
+    "currentPlan": "Aktueller Plan",
+    "upgrade": "Pro werden",
+    "upgradeStarter": "Starter werden",
+    "freeFeatures": ["Bis zu 5 Links", "3 Basis-Themen", "MyTaptap-Badge"],
+    "starterFeatures": ["Bis zu 20 Links", "Alle Themen", "Analysen 90 Tage", "MyTaptap-Badge"],
+    "proFeatures": ["Unbegrenzte Links", "Alle Themen", "Unbegrenzte Analysen + Diagramme", "Eigene Domain", "Prioritäts-Support", "MyTaptap-Badge"]
+  },
   "footer": { "madeWith": "Erstellt mit", "by": "MyTaptap" },
   "auth": { "login": "Anmelden", "signup": "Registrieren", "email": "E-Mail", "password": "Passwort", "username": "Benutzername", "displayName": "Anzeigename", "forgotPassword": "Passwort vergessen?", "noAccount": "Noch kein Konto?", "hasAccount": "Schon ein Konto?", "signupBtn": "Registrieren", "loginBtn": "Anmelden", "googleBtn": "Mit Google fortfahren", "resetPassword": "Passwort zurücksetzen", "newPassword": "Neues Passwort", "confirmPassword": "Passwort bestätigen", "sendReset": "Link senden", "resetSent": "Ein Zurücksetzungslink wurde an deine E-Mail gesendet.", "usernameTaken": "Dieser Benutzername ist bereits vergeben.", "usernameAvailable": "Benutzername verfügbar!", "checkingUsername": "Überprüfung..." },
-  "dashboard": { "title": "Dashboard", "profile": "Profil", "links": "Links", "analytics": "Analysen", "settings": "Einstellungen", "addLink": "Link hinzufügen", "editLink": "Link bearbeiten", "deleteLink": "Link löschen", "linkTitle": "Titel", "linkUrl": "URL", "linkIcon": "Symbol", "save": "Speichern", "cancel": "Abbrechen", "bio": "Bio", "totalClicks": "Gesamtklicks", "theme": "Thema", "preview": "Vorschau", "maxLinks": "Du hast das Limit von 5 Links erreicht. Werde Pro für mehr!", "plan": "Plan" },
+  "dashboard": {
+    "title": "Dashboard", "profile": "Profil", "links": "Links", "analytics": "Analysen", "settings": "Einstellungen",
+    "addLink": "Link hinzufügen", "editLink": "Link bearbeiten", "deleteLink": "Link löschen",
+    "linkTitle": "Titel", "linkUrl": "URL", "linkIcon": "Symbol",
+    "save": "Speichern", "cancel": "Abbrechen", "bio": "Bio",
+    "totalClicks": "Gesamtklicks", "theme": "Thema", "preview": "Vorschau",
+    "maxLinks5": "Du hast das 5-Link-Limit erreicht. Upgrade auf Starter oder Pro!",
+    "maxLinks20": "Du hast das 20-Link-Limit erreicht. Werde Pro für unbegrenzte Links!",
+    "maxLinks": "Du hast das Link-Limit erreicht.",
+    "plan": "Plan"
+  },
   "public": { "madeWith": "Erstellt mit MyTaptap" },
   "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" }
 }
