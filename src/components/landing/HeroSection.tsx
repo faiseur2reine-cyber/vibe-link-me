@@ -20,7 +20,7 @@ const HeroSection = () => {
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-4 h-4 fill-primary text-primary" />
             ))}
-            <span className="text-xs text-muted-foreground ml-2">4.9/5 · 2 000+ créateurs</span>
+            <span className="text-xs text-muted-foreground ml-2">{t('landing.heroRating')}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.15] tracking-tight text-foreground">
