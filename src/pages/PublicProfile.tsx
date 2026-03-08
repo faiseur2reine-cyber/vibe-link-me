@@ -196,7 +196,7 @@ const PublicProfile = () => {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className={`w-full max-w-lg px-4 ${page.cover_url ? '-mt-16' : 'pt-12'} pb-8 relative z-10`}
         >
-          <div className="text-center relative">
+          <div className="profile-header text-center relative">
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
