@@ -154,7 +154,7 @@ const PublicProfile = () => {
                 to="/"
                 className={`flex items-center justify-center gap-1 text-xs opacity-50 hover:opacity-80 transition-opacity ${theme.text}`}
               >
-                Créé avec <Heart className="w-3 h-3" /> MyTaptap
+                {t('footer.madeWith')} <Heart className="w-3 h-3" /> MyTaptap
               </Link>
             </motion.div>
           )}
