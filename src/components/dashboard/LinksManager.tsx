@@ -71,6 +71,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setBgColor('');
     setTextColor('');
     setLinkStyle('default');
+    setSectionTitle('');
     setThumbnailFile(null);
     setThumbnailPreview(null);
     setShowCustomization(false);
