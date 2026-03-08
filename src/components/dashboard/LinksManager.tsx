@@ -79,6 +79,7 @@ interface LinksManagerProps {
   onDelete: (id: string) => Promise<{ error: any } | undefined>;
   onReorder: (links: LinkItem[]) => Promise<void>;
   onRefetch?: () => Promise<void>;
+  pageId?: string;
 }
 
 const LINK_STYLES = [
@@ -93,7 +94,7 @@ const PRESET_COLORS = [
   '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1', '#F43F5E',
 ];
 
-const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch }: LinksManagerProps) => {
+const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId }: LinksManagerProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -179,6 +180,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       position: startPosition + idx, style: tl.style,
       section_title: tl.section_title, description: tl.description,
       bg_color: tl.bg_color, text_color: tl.text_color,
+      ...(pageId ? { page_id: pageId } : {}),
     }));
     const { error } = await supabase.from('links').insert(inserts);
     if (error) {
@@ -215,6 +217,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       description: tl.description,
       bg_color: tl.bg_color,
       text_color: tl.text_color,
+      ...(pageId ? { page_id: pageId } : {}),
     }));
     const { error } = await supabase.from('links').insert(inserts);
     if (error) {

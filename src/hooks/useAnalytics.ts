@@ -87,5 +87,9 @@ export function useAnalytics() {
 }
 
 export async function recordClick(linkId: string) {
-  await supabase.rpc('record_click', { p_link_id: linkId });
+  const referrer = document.referrer || null;
+  await supabase.rpc('record_click', { 
+    p_link_id: linkId, 
+    p_referrer: referrer,
+  });
 }
