@@ -9,27 +9,27 @@ const FeaturesSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="px-4 sm:px-6 py-16 sm:py-24 bg-muted/50">
-      <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold">{t('features.title')}</h2>
-        <p className="mt-3 text-muted-foreground text-base sm:text-lg">{t('features.subtitle')}</p>
-        <div className="mt-10 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+    <section className="px-4 sm:px-6 py-16 sm:py-24 border-t border-border">
+      <div className="max-w-5xl mx-auto text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('features.title')}</h2>
+        <p className="mt-2 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">{t('features.subtitle')}</p>
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {featureKeys.map((key, i) => {
             const Icon = featureIcons[i];
             return (
               <motion.div
                 key={key}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-card rounded-2xl p-5 sm:p-6 border border-border shadow-sm hover:shadow-lg transition-shadow"
+                transition={{ delay: i * 0.06 }}
+                className="bg-card rounded-xl p-5 border border-border text-left hover:border-primary/30 transition-colors"
               >
-                <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mb-4 mx-auto">
-                  <Icon className="w-5 sm:w-6 h-5 sm:h-6 text-primary-foreground" />
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                  <Icon className="w-4.5 h-4.5 text-primary" />
                 </div>
-                <h3 className="font-display font-semibold text-base sm:text-lg">{t(`features.${key}`)}</h3>
-                <p className="mt-2 text-muted-foreground text-xs sm:text-sm">{t(`features.${key}Desc`)}</p>
+                <h3 className="font-semibold text-sm">{t(`features.${key}`)}</h3>
+                <p className="mt-1 text-muted-foreground text-xs leading-relaxed">{t(`features.${key}Desc`)}</p>
               </motion.div>
             );
           })}
