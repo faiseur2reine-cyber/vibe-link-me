@@ -43,6 +43,9 @@
     "currentPlan": "Plan actuel",
     "upgrade": "Passer Pro",
     "upgradeStarter": "Passer Starter",
+    "proMonthly": "≈ 9,58€/mois",
+    "includedInPro": "Inclus dans Pro",
+    "manageSubscription": "Gérer l'abonnement",
     "freeFeatures": ["Jusqu'à 5 liens", "3 thèmes basiques", "Badge MyTaptap"],
     "starterFeatures": ["Jusqu'à 20 liens", "Tous les thèmes", "Analytics 90 jours", "Badge MyTaptap"],
     "proFeatures": ["Liens illimités", "Tous les thèmes", "Analytics illimités + graphiques", "Domaine personnalisé", "Support prioritaire", "Badge MyTaptap"]
