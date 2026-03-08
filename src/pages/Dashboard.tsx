@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useLinks } from '@/hooks/useDashboard';
 import { Navigate, Link, useSearchParams } from 'react-router-dom';
