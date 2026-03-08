@@ -251,6 +251,7 @@ export function usePageAnalytics(pageId: string | null) {
   const [countryStats, setCountryStats] = useState<{ country: string; clicks: number }[]>([]);
   const [cityStats, setCityStats] = useState<{ city: string; clicks: number }[]>([]);
   const [referrerStats, setReferrerStats] = useState<{ referrer: string; clicks: number }[]>([]);
+  const [abStats, setAbStats] = useState<{ variant: string; clicks: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
