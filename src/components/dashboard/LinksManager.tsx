@@ -10,9 +10,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette, LayoutTemplate } from 'lucide-react';
+import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette, LayoutTemplate, Save, BookmarkPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+
+interface CustomTemplate {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  links: Array<{ title: string; url: string; icon: string; style: string; section_title: string | null; description: string | null; bg_color: string | null; text_color: string | null }>;
+  created_at: string;
+}
 
 const LINK_TEMPLATES = [
   {
@@ -104,6 +113,83 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const [showCustomization, setShowCustomization] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
+  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDesc, setTemplateDesc] = useState('');
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
+  const fetchCustomTemplates = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('custom_templates')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+    if (data) setCustomTemplates(data as unknown as CustomTemplate[]);
+  };
+
+  const handleSaveAsTemplate = async () => {
+    if (!user || !templateName.trim() || links.length === 0) return;
+    setSavingTemplate(true);
+    const templateLinks = links.map(l => ({
+      title: l.title, url: l.url, icon: l.icon, style: l.style,
+      section_title: l.section_title, description: l.description,
+      bg_color: l.bg_color, text_color: l.text_color,
+    }));
+    const { error } = await supabase.from('custom_templates').insert({
+      user_id: user.id,
+      name: templateName.trim(),
+      description: templateDesc.trim() || null,
+      links: templateLinks as any,
+    });
+    if (error) {
+      toast({ title: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Template sauvegardé ! 🎉' });
+      setSaveTemplateOpen(false);
+      setTemplateName('');
+      setTemplateDesc('');
+      await fetchCustomTemplates();
+    }
+    setSavingTemplate(false);
+  };
+
+  const handleDeleteCustomTemplate = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { error } = await supabase.from('custom_templates').delete().eq('id', id);
+    if (!error) {
+      setCustomTemplates(prev => prev.filter(t => t.id !== id));
+      toast({ title: 'Template supprimé' });
+    }
+  };
+
+  const handleApplyCustomTemplate = async (template: CustomTemplate) => {
+    if (!user) return;
+    const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
+    const templateLinks = template.links.slice(0, remaining === Infinity ? undefined : remaining);
+    if (templateLinks.length === 0) {
+      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
+      return;
+    }
+    setApplyingTemplate(true);
+    const startPosition = links.length;
+    const inserts = templateLinks.map((tl, idx) => ({
+      title: tl.title, url: tl.url, icon: tl.icon, user_id: user.id,
+      position: startPosition + idx, style: tl.style,
+      section_title: tl.section_title, description: tl.description,
+      bg_color: tl.bg_color, text_color: tl.text_color,
+    }));
+    const { error } = await supabase.from('links').insert(inserts);
+    if (error) {
+      toast({ title: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: `Template "${template.name}" appliqué ! 🎉` });
+      if (onRefetch) await onRefetch();
+    }
+    setApplyingTemplate(false);
+    setTemplateDialogOpen(false);
+  };
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
@@ -263,9 +349,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-lg">{t('dashboard.links')} ({links.length}{plan !== 'pro' ? `/${maxLinks}` : ''})</h3>
         <div className="flex items-center gap-2">
-          <Button onClick={() => setTemplateDialogOpen(true)} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
+          <Button onClick={() => { setTemplateDialogOpen(true); fetchCustomTemplates(); }} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
             <LayoutTemplate className="w-4 h-4" /> Templates
           </Button>
+          {links.length > 0 && (
+            <Button onClick={() => setSaveTemplateOpen(true)} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
+              <BookmarkPlus className="w-4 h-4" /> Sauvegarder
+            </Button>
+          )}
           <Button onClick={openNew} size="sm" className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
             <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
           </Button>
@@ -548,13 +639,84 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display flex items-center gap-2">
-              <LayoutTemplate className="w-5 h-5" /> Templates pré-configurés
+              <LayoutTemplate className="w-5 h-5" /> Templates
             </DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Choisis un template pour ajouter rapidement un ensemble de liens pré-configurés. Tu pourras ensuite les modifier.
+            Choisis un template pour ajouter rapidement un ensemble de liens pré-configurés.
           </p>
-          <div className="space-y-3 py-2">
+
+          {/* Custom Templates */}
+          {customTemplates.length > 0 && (
+            <>
+              <div className="flex items-center gap-2 pt-2">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">Mes templates</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <div className="space-y-3">
+                {customTemplates.map(template => (
+                  <Card
+                    key={template.id}
+                    className="p-4 cursor-pointer hover:border-primary/50 transition-colors group"
+                    onClick={() => !applyingTemplate && handleApplyCustomTemplate(template)}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-foreground">{template.name}</h4>
+                        {template.description && <p className="text-xs text-muted-foreground mt-0.5">{template.description}</p>}
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {template.links.slice(0, 6).map((tl, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                              style={{
+                                backgroundColor: tl.bg_color || 'hsl(var(--muted))',
+                                color: tl.text_color || 'hsl(var(--muted-foreground))',
+                              }}
+                            >
+                              {tl.title}
+                            </span>
+                          ))}
+                          {template.links.length > 6 && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
+                              +{template.links.length - 6}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="rounded-full text-destructive hover:text-destructive h-8 w-8 p-0"
+                          onClick={(e) => handleDeleteCustomTemplate(template.id, e)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                          disabled={applyingTemplate}
+                        >
+                          {applyingTemplate ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Appliquer'}
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Built-in Templates */}
+          <div className="flex items-center gap-2 pt-2">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">Pré-configurés</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <div className="space-y-3">
             {LINK_TEMPLATES.map(template => (
               <Card
                 key={template.id}
@@ -592,6 +754,69 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               </Card>
             ))}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Save Template Dialog */}
+      <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <BookmarkPlus className="w-5 h-5" /> Sauvegarder comme template
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Sauvegarde tes {links.length} liens actuels comme template réutilisable.
+          </p>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Nom du template</Label>
+              <Input
+                value={templateName}
+                onChange={e => setTemplateName(e.target.value)}
+                placeholder="Ex: Setup créatrice Marie"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Description (optionnel)</Label>
+              <Input
+                value={templateDesc}
+                onChange={e => setTemplateDesc(e.target.value)}
+                placeholder="Ex: Liens standards pour créatrices OnlyFans"
+              />
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {links.slice(0, 8).map((l, idx) => (
+                <span
+                  key={idx}
+                  className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                  style={{
+                    backgroundColor: l.bg_color || 'hsl(var(--muted))',
+                    color: l.text_color || 'hsl(var(--muted-foreground))',
+                  }}
+                >
+                  {l.title}
+                </span>
+              ))}
+              {links.length > 8 && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
+                  +{links.length - 8}
+                </span>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveTemplateOpen(false)} className="rounded-full">
+              Annuler
+            </Button>
+            <Button
+              onClick={handleSaveAsTemplate}
+              disabled={savingTemplate || !templateName.trim()}
+              className="rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+            >
+              {savingTemplate ? <Loader2 className="animate-spin" /> : 'Sauvegarder'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
