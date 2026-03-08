@@ -2,6 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
+export interface SocialLink {
+  platform: string;
+  url: string;
+}
+
 export interface Profile {
   id: string;
   user_id: string;
@@ -9,8 +14,11 @@ export interface Profile {
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  cover_url: string | null;
   theme: string;
   plan: string;
+  is_nsfw: boolean;
+  social_links: SocialLink[];
 }
 
 export interface LinkItem {
@@ -20,6 +28,7 @@ export interface LinkItem {
   url: string;
   icon: string;
   position: number;
+  thumbnail_url: string | null;
 }
 
 export function useProfile() {
@@ -34,7 +43,12 @@ export function useProfile() {
       .select('*')
       .eq('user_id', user.id)
       .single();
-    setProfile(data as Profile | null);
+    if (data) {
+      setProfile({
+        ...data,
+        social_links: (data.social_links as unknown as SocialLink[]) || [],
+      } as Profile);
+    }
     setLoading(false);
   }, [user]);
 
@@ -42,9 +56,13 @@ export function useProfile() {
 
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return;
+    const dbUpdates = { ...updates } as any;
+    if (updates.social_links) {
+      dbUpdates.social_links = JSON.parse(JSON.stringify(updates.social_links));
+    }
     const { error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(dbUpdates)
       .eq('user_id', user.id);
     if (!error) await fetchProfile();
     return { error };
