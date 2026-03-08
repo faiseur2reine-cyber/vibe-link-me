@@ -12,6 +12,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import PricingSection from '@/components/landing/PricingSection';
+import UrgencyWidgets from '@/components/landing/UrgencyWidgets';
 
 const Index = () => {
   const { t } = useTranslation();
@@ -94,7 +95,7 @@ const Index = () => {
       <PricingSection checkoutLoading={checkoutLoading} onUpgrade={handleUpgrade} />
 
       {/* CTA — with subtle background */}
-      <section className="px-4 sm:px-6 py-24 sm:py-32 text-center relative overflow-hidden">
+      <section className="px-4 sm:px-6 pt-16 pb-24 sm:pt-20 sm:pb-32 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.04),transparent_70%)]" />
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -103,6 +104,7 @@ const Index = () => {
           transition={{ duration: 0.5 }}
           className="relative max-w-md mx-auto"
         >
+          <UrgencyWidgets />
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('landing.ctaTitle')}</h2>
           <p className="mt-3 text-muted-foreground text-sm">{t('landing.ctaSubtitle')}</p>
           <Button size="lg" asChild className="mt-7 h-12 px-6 text-sm font-semibold group">

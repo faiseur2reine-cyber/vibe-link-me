@@ -129,5 +129,11 @@
     "mockupDesignSub": "CSS + fonts",
     "mockupBio": "Digital creator · Paris 🇫🇷",
     "mockupLinks": ["My portfolio", "YouTube", "Newsletter", "1:1 Coaching"]
+  },
+  "urgency": {
+    "offerEnds": "Offer ends in",
+    "spotsLeft": "Only {{count}} free spots left",
+    "liveNow": "{{count}} people online now",
+    "justSignedUp": "Signed up from {{city}} · {{ago}} ago"
   }
 }
