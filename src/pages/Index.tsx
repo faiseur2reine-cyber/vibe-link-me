@@ -1,15 +1,44 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Link2, Palette, BarChart3, GripVertical, Globe, Smartphone, Check, Heart, Rocket } from 'lucide-react';
+import { Link2, Palette, BarChart3, GripVertical, Globe, Smartphone, Check, Heart, Rocket, Loader2 } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { PLANS } from '@/lib/plans';
+import { toast } from '@/hooks/use-toast';
 
 const featureIcons = [Link2, Palette, BarChart3, GripVertical, Globe, Smartphone];
 const featureKeys = ['links', 'themes', 'analytics', 'dragDrop', 'multilingual', 'mobile'] as const;
 
 const Index = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleUpgrade = async (planKey: 'starter' | 'pro') => {
+    if (!user) {
+      navigate('/auth?tab=signup');
+      return;
+    }
+    const plan = PLANS[planKey];
+    if (!plan.price_id) return;
+    setCheckoutLoading(planKey);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId: plan.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch (e: any) {
+      toast({ title: t('common.error'), description: e.message, variant: 'destructive' });
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
