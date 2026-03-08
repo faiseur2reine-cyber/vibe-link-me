@@ -315,7 +315,13 @@ const PublicProfile = () => {
                 <SocialIcons links={page.social_links} theme={theme} />
               </motion.div>
             )}
+
+            {/* Scarcity widgets — below bio position */}
+            {urgency?.scarcity?.position === 'below-bio' && <ScarcityBlock />}
           </div>
+
+          {/* Scarcity widgets — above links position */}
+          {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* Links — premium pill cards */}
           <div className="mt-8 space-y-6">
