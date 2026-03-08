@@ -267,7 +267,7 @@ export function usePageAnalytics(pageId: string | null) {
 
     const { data: clicks } = await supabase
       .from('link_clicks')
-      .select('link_id, clicked_at, country, city, referrer')
+      .select('link_id, clicked_at, country, city, referrer, ab_variant')
       .in('link_id', linkIds);
 
     if (!clicks) { setLoading(false); return; }
