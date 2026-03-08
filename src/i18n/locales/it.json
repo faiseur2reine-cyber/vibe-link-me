@@ -15,6 +15,9 @@
     "currentPlan": "Piano attuale",
     "upgrade": "Vai Pro",
     "upgradeStarter": "Vai Starter",
+    "proMonthly": "≈ 9,58€/mese",
+    "includedInPro": "Incluso in Pro",
+    "manageSubscription": "Gestisci abbonamento",
     "freeFeatures": ["Fino a 5 link", "3 temi base", "Badge MyTaptap"],
     "starterFeatures": ["Fino a 20 link", "Tutti i temi", "Analisi 90 giorni", "Badge MyTaptap"],
     "proFeatures": ["Link illimitati", "Tutti i temi", "Analisi illimitate + grafici", "Dominio personalizzato", "Supporto prioritario", "Badge MyTaptap"]
