@@ -207,7 +207,7 @@ const HeroSection = () => {
                 <p className="text-[10px] font-bold text-primary">{t('landing.mockupDesign')}</p>
                 <p className="text-[8px] text-muted-foreground">{t('landing.mockupDesignSub')}</p>
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>
