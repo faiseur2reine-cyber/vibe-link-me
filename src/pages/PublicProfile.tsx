@@ -129,7 +129,7 @@ const PublicProfile = () => {
   const displayName = profile.display_name || profile.username;
   const pageTitle = `${displayName} | MyTaptap`;
   const pageDescription = profile.bio || `Check out ${displayName}'s links on MyTaptap`;
-  const hasThumb = links.some(l => l.thumbnail_url);
+  
 
   return (
     <>
