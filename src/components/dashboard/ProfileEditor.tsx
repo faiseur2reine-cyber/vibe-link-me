@@ -117,7 +117,7 @@ const ProfileEditor = ({ profile, onUpdate, onRefetch }: ProfileEditorProps) => 
       {/* Avatar */}
       <div className="flex items-center gap-4">
         <div className="relative group cursor-pointer" onClick={() => fileRef.current?.click()}>
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary overflow-hidden flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-primary overflow-hidden flex items-center justify-center">
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
