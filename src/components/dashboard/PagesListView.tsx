@@ -29,6 +29,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
   const [themeFilter, setThemeFilter] = useState<string>('all');
   const [nsfwFilter, setNsfwFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const activeFilterCount = [themeFilter !== 'all', nsfwFilter !== 'all'].filter(Boolean).length;
 
