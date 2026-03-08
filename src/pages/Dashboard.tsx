@@ -90,6 +90,14 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              <TabsContent value="theme">
+                <Card>
+                  <CardContent className="p-4 md:p-6">
+                    <ThemeSelector profile={profile} onUpdate={updateProfile} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
 
