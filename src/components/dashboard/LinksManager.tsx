@@ -349,9 +349,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-lg">{t('dashboard.links')} ({links.length}{plan !== 'pro' ? `/${maxLinks}` : ''})</h3>
         <div className="flex items-center gap-2">
-          <Button onClick={() => setTemplateDialogOpen(true)} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
+          <Button onClick={() => { setTemplateDialogOpen(true); fetchCustomTemplates(); }} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
             <LayoutTemplate className="w-4 h-4" /> Templates
           </Button>
+          {links.length > 0 && (
+            <Button onClick={() => setSaveTemplateOpen(true)} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
+              <BookmarkPlus className="w-4 h-4" /> Sauvegarder
+            </Button>
+          )}
           <Button onClick={openNew} size="sm" className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
             <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
           </Button>
