@@ -105,23 +105,25 @@ const Dashboard = () => {
           {/* Main */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-6 bg-muted rounded-full p-1 flex-wrap h-auto gap-1">
-                <TabsTrigger value="links" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
-                  <Link2 className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.links')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
-                  <User className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.profile')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
-                  <Palette className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.theme')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
-                  <BarChart3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.analytics')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="plan" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
-                  <CreditCard className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.plan')}</span>
-                </TabsTrigger>
-              </TabsList>
+              <div className="mb-6 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+                <TabsList className="bg-muted rounded-full p-1 gap-1 inline-flex w-auto min-w-max">
+                  <TabsTrigger value="links" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
+                    <Link2 className="w-4 h-4 shrink-0" /> {t('dashboard.links')}
+                  </TabsTrigger>
+                  <TabsTrigger value="profile" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
+                    <User className="w-4 h-4 shrink-0" /> {t('dashboard.profile')}
+                  </TabsTrigger>
+                  <TabsTrigger value="theme" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
+                    <Palette className="w-4 h-4 shrink-0" /> {t('dashboard.theme')}
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
+                    <BarChart3 className="w-4 h-4 shrink-0" /> {t('dashboard.analytics')}
+                  </TabsTrigger>
+                  <TabsTrigger value="plan" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
+                    <CreditCard className="w-4 h-4 shrink-0" /> {t('dashboard.plan')}
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               <TabsContent value="links">
                 <Card>
