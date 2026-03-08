@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      custom_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          links: Json
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          links?: Json
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          links?: Json
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       link_clicks: {
         Row: {
           clicked_at: string
