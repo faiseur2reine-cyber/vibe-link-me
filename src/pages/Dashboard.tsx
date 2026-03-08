@@ -78,6 +78,7 @@ const Dashboard = () => {
             pages={pages}
             onSelectPage={(id) => setSelectedPageId(id)}
             onCreatePage={() => setCreateDialogOpen(true)}
+            onDuplicatePage={duplicatePage}
           />
         )}
       </div>
