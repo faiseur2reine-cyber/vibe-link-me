@@ -111,8 +111,8 @@ const HeroSection = () => {
               transition={{ delay: 0.65 }}
               className="absolute -right-6 bottom-24 bg-card border border-border rounded-xl px-3 py-2 shadow-lg"
             >
-              <p className="text-[10px] font-semibold text-primary">Design custom ✓</p>
-              <p className="text-[9px] text-muted-foreground">CSS + polices</p>
+              <p className="text-[10px] font-semibold text-primary">{t('landing.mockupDesign')}</p>
+              <p className="text-[9px] text-muted-foreground">{t('landing.mockupDesignSub')}</p>
             </motion.div>
           </div>
         </motion.div>

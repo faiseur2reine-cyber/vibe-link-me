@@ -36,5 +36,22 @@
     "plan": "Piano"
   },
   "public": { "madeWith": "Creato con MyTaptap", "notFound": "Questa pagina non esiste.", "backHome": "Torna alla home" },
-  "common": { "loading": "Caricamento...", "error": "Si è verificato un errore.", "success": "Successo!", "delete": "Elimina", "edit": "Modifica", "language": "Lingua" }
+  "common": { "loading": "Caricamento...", "error": "Si è verificato un errore.", "success": "Successo!", "delete": "Elimina", "edit": "Modifica", "language": "Lingua" },
+  "landing": {
+    "socialProof": "Usato da creator su",
+    "ctaTitle": "Pronto a centralizzare i tuoi link?",
+    "ctaSubtitle": "Crea la tua pagina in 30 secondi. Gratis, senza carta di credito.",
+    "ctaButton": "Crea la mia pagina gratis",
+    "featuresLabel": "Funzionalità",
+    "pricingLabel": "Prezzi",
+    "startFree": "Inizia",
+    "freeToStart": "Gratis per iniziare",
+    "noCardRequired": "Nessuna carta richiesta",
+    "heroRating": "4.9/5 · 2 000+ creator",
+    "mockupClicks": "+248 clic",
+    "mockupClicksSub": "questa settimana",
+    "mockupDesign": "Design custom ✓",
+    "mockupDesignSub": "CSS + font",
+    "mockupBio": "Creator digitale · Parigi 🇫🇷"
+  }
 }

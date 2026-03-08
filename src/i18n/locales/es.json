@@ -104,5 +104,22 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "language": "Idioma"
+  },
+  "landing": {
+    "socialProof": "Usado por creadores en",
+    "ctaTitle": "¿Listo para centralizar tus enlaces?",
+    "ctaSubtitle": "Crea tu página en 30 segundos. Gratis, sin tarjeta de crédito.",
+    "ctaButton": "Crear mi página gratis",
+    "featuresLabel": "Funcionalidades",
+    "pricingLabel": "Precios",
+    "startFree": "Empezar",
+    "freeToStart": "Gratis para empezar",
+    "noCardRequired": "Sin tarjeta de crédito",
+    "heroRating": "4.9/5 · 2 000+ creadores",
+    "mockupClicks": "+248 clics",
+    "mockupClicksSub": "esta semana",
+    "mockupDesign": "Diseño custom ✓",
+    "mockupDesignSub": "CSS + fuentes",
+    "mockupBio": "Creador digital · París 🇫🇷"
   }
 }

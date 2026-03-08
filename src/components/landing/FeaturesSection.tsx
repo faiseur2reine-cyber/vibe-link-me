@@ -18,7 +18,7 @@ const FeaturesSection = () => {
     <section className="px-4 sm:px-6 py-20 sm:py-28">
       <div className="max-w-6xl mx-auto">
         <div className="max-w-lg mb-12">
-          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">Fonctionnalités</p>
+          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">{t('landing.featuresLabel')}</p>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">{t('features.title')}</h2>
           <p className="mt-3 text-muted-foreground text-sm leading-relaxed">{t('features.subtitle')}</p>
         </div>

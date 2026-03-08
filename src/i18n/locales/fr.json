@@ -111,5 +111,22 @@
     "delete": "Supprimer",
     "edit": "Modifier",
     "language": "Langue"
+  },
+  "landing": {
+    "socialProof": "Utilisé par des créateurs sur",
+    "ctaTitle": "Prêt à centraliser tes liens ?",
+    "ctaSubtitle": "Crée ta page en 30 secondes. Gratuit, sans carte bancaire.",
+    "ctaButton": "Créer ma page gratuitement",
+    "featuresLabel": "Fonctionnalités",
+    "pricingLabel": "Tarifs",
+    "startFree": "Commencer",
+    "freeToStart": "Gratuit pour commencer",
+    "noCardRequired": "Aucune carte requise",
+    "heroRating": "4.9/5 · 2 000+ créateurs",
+    "mockupClicks": "+248 clics",
+    "mockupClicksSub": "cette semaine",
+    "mockupDesign": "Design custom ✓",
+    "mockupDesignSub": "CSS + polices",
+    "mockupBio": "Créateur digital · Paris 🇫🇷"
   }
 }

@@ -41,7 +41,7 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
               ))}
             </ul>
             <Button variant="outline" className="w-full mt-6 h-10 text-sm" asChild>
-              <Link to="/auth?tab=signup">Commencer</Link>
+              <Link to="/auth?tab=signup">{t('landing.startFree')}</Link>
             </Button>
           </motion.div>
 

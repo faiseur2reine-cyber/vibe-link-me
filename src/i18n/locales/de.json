@@ -36,5 +36,22 @@
     "plan": "Plan"
   },
   "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht.", "backHome": "Zurück zur Startseite" },
-  "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" }
+  "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" },
+  "landing": {
+    "socialProof": "Genutzt von Creatorn auf",
+    "ctaTitle": "Bereit, deine Links zu zentralisieren?",
+    "ctaSubtitle": "Erstelle deine Seite in 30 Sekunden. Kostenlos, keine Kreditkarte nötig.",
+    "ctaButton": "Meine Seite kostenlos erstellen",
+    "featuresLabel": "Funktionen",
+    "pricingLabel": "Preise",
+    "startFree": "Loslegen",
+    "freeToStart": "Kostenlos starten",
+    "noCardRequired": "Keine Kreditkarte nötig",
+    "heroRating": "4.9/5 · 2 000+ Creator",
+    "mockupClicks": "+248 Klicks",
+    "mockupClicksSub": "diese Woche",
+    "mockupDesign": "Custom Design ✓",
+    "mockupDesignSub": "CSS + Schriften",
+    "mockupBio": "Digital Creator · Paris 🇫🇷"
+  }
 }
