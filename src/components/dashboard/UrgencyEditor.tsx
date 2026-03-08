@@ -85,6 +85,9 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
   const updateScarcity = (updates: Partial<UrgencyConfig['scarcity']>) => {
     setConfig(c => ({ ...c, scarcity: { ...c.scarcity, ...updates } }));
   };
+  const updateAbTest = (updates: Partial<NonNullable<UrgencyConfig['abTest']>>) => {
+    setConfig(c => ({ ...c, abTest: { enabled: false, splitPercent: 50, ...c.abTest, ...updates } }));
+  };
 
   const handleSave = async () => {
     setSaving(true);
