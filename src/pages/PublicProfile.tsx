@@ -182,10 +182,12 @@ const PublicProfile = () => {
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
 
   const urgency = page.urgency_config;
+  const showUrgencyWidgets = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
+  const clickVariant = urgency?.abTest?.enabled ? abVariant : null;
 
   // Scarcity widget renderer
   const ScarcityBlock = () => (
-    urgency?.scarcity?.enabled ? (
+    showUrgencyWidgets && urgency?.scarcity?.enabled ? (
       <div className="mt-4">
         <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
       </div>
