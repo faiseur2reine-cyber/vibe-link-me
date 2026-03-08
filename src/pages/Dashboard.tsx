@@ -203,7 +203,7 @@ const Dashboard = () => {
                         {currentPlan === 'starter' ? (
                           <Button disabled className="w-full rounded-full">{t('pricing.currentPlan')}</Button>
                         ) : currentPlan === 'pro' ? (
-                          <Button disabled variant="outline" className="w-full rounded-full">Inclus dans Pro</Button>
+                          <Button disabled variant="outline" className="w-full rounded-full">{t('pricing.includedInPro')}</Button>
                         ) : (
                           <Button
                             className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
