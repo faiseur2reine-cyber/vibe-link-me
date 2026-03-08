@@ -113,6 +113,43 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage }: PagesListViewProps
               </CardContent>
             </Card>
           )}
+
+          {/* Top pages ranking */}
+          {globalStats.topPages.length > 0 && (
+            <Card className="border-border">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                  <h4 className="font-display font-semibold text-sm text-foreground">Classement par clics</h4>
+                </div>
+                <div className="space-y-2">
+                  {globalStats.topPages.map((page, i) => (
+                    <div
+                      key={page.pageId}
+                      onClick={() => onSelectPage(page.pageId)}
+                      className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/40 hover:bg-muted/70 cursor-pointer transition-colors"
+                    >
+                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                        i === 0 ? 'bg-primary text-primary-foreground' :
+                        i === 1 ? 'bg-secondary text-secondary-foreground' :
+                        'bg-muted text-muted-foreground'
+                      }`}>
+                        {i + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{page.displayName || page.username}</p>
+                        <p className="text-xs text-muted-foreground">@{page.username}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <MousePointerClick className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="text-sm font-bold text-foreground">{page.clicks}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </motion.div>
       )}
 
