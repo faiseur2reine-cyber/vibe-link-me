@@ -32,14 +32,20 @@
   },
   "pricing": {
     "title": "Tarifs simples",
-    "subtitle": "Commencez gratuitement, passez Pro quand vous êtes prêt.",
+    "subtitle": "Commencez gratuitement, passez au niveau supérieur quand vous êtes prêt.",
+    "launchBadge": "🚀 Prix de lancement",
+    "year": "/an",
     "free": "Gratuit",
+    "starter": "Starter",
     "pro": "Pro",
+    "popular": "Le + populaire",
     "month": "/mois",
     "currentPlan": "Plan actuel",
     "upgrade": "Passer Pro",
-    "freeFeatures": ["Jusqu'à 5 liens", "3 thèmes", "Statistiques de base", "Badge MyTaptap"],
-    "proFeatures": ["Liens illimités", "6 thèmes", "Analytics détaillés", "Sans badge", "Support prioritaire"]
+    "upgradeStarter": "Passer Starter",
+    "freeFeatures": ["Jusqu'à 5 liens", "3 thèmes basiques", "Badge MyTaptap"],
+    "starterFeatures": ["Jusqu'à 20 liens", "Tous les thèmes", "Analytics 90 jours", "Badge MyTaptap"],
+    "proFeatures": ["Liens illimités", "Tous les thèmes", "Analytics illimités + graphiques", "Domaine personnalisé", "Support prioritaire", "Badge MyTaptap"]
   },
   "footer": {
     "madeWith": "Créé avec",
@@ -85,7 +91,9 @@
     "totalClicks": "Clics totaux",
     "theme": "Thème",
     "preview": "Aperçu",
-    "maxLinks": "Vous avez atteint la limite de 5 liens. Passez Pro pour en ajouter plus !",
+    "maxLinks5": "Vous avez atteint la limite de 5 liens. Passez Starter ou Pro pour en ajouter plus !",
+    "maxLinks20": "Vous avez atteint la limite de 20 liens. Passez Pro pour des liens illimités !",
+    "maxLinks": "Vous avez atteint la limite de liens.",
     "plan": "Plan"
   },
   "public": {

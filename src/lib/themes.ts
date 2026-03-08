@@ -1,4 +1,6 @@
-export const THEMES: Record<string, { name: string; bg: string; btn: string; text: string; accent: string; preview: string; free: boolean }> = {
+export type ThemeTier = 'free' | 'starter' | 'pro';
+
+export const THEMES: Record<string, { name: string; bg: string; btn: string; text: string; accent: string; preview: string; tier: ThemeTier }> = {
   default: {
     name: 'Default',
     bg: 'bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50',
@@ -6,7 +8,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-purple-600',
     preview: 'bg-gradient-to-br from-purple-400 to-pink-400',
-    free: true,
+    tier: 'free',
   },
   sunset: {
     name: 'Sunset',
@@ -15,7 +17,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-orange-600',
     preview: 'bg-gradient-to-br from-orange-400 to-red-400',
-    free: true,
+    tier: 'free',
   },
   ocean: {
     name: 'Ocean',
@@ -24,7 +26,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-cyan-600',
     preview: 'bg-gradient-to-br from-cyan-400 to-blue-500',
-    free: true,
+    tier: 'free',
   },
   midnight: {
     name: 'Midnight',
@@ -33,7 +35,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-white',
     accent: 'text-blue-400',
     preview: 'bg-gradient-to-br from-gray-800 to-blue-900',
-    free: false,
+    tier: 'starter',
   },
   forest: {
     name: 'Forest',
@@ -42,7 +44,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-emerald-600',
     preview: 'bg-gradient-to-br from-emerald-400 to-teal-500',
-    free: false,
+    tier: 'starter',
   },
   neon: {
     name: 'Neon',
@@ -51,8 +53,14 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-white',
     accent: 'text-fuchsia-400',
     preview: 'bg-gradient-to-br from-fuchsia-600 to-purple-900',
-    free: false,
+    tier: 'starter',
   },
+};
+
+const PLAN_RANK: Record<string, number> = { free: 0, starter: 1, pro: 2 };
+
+export const canAccessTheme = (themeTier: ThemeTier, userPlan: string): boolean => {
+  return (PLAN_RANK[userPlan] ?? 0) >= (PLAN_RANK[themeTier] ?? 0);
 };
 
 export const getTheme = (key: string) => THEMES[key] || THEMES.default;
