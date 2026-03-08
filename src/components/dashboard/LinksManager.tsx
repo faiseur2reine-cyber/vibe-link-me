@@ -360,7 +360,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               <BookmarkPlus className="w-4 h-4" /> Sauvegarder
             </Button>
           )}
-          <Button onClick={openNew} size="sm" className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+          <Button onClick={openNew} size="sm" className="gap-1">
             <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
           </Button>
         </div>
@@ -630,7 +630,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             <Button variant="outline" onClick={() => setDialogOpen(false)} className="rounded-full">
               {t('dashboard.cancel')}
             </Button>
-            <Button onClick={handleSave} disabled={saving || !title.trim() || !url.trim()} className="rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+            <Button onClick={handleSave} disabled={saving || !title.trim() || !url.trim()}>
               {saving ? <Loader2 className="animate-spin" /> : t('dashboard.save')}
             </Button>
           </DialogFooter>
@@ -815,7 +815,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             <Button
               onClick={handleSaveAsTemplate}
               disabled={savingTemplate || !templateName.trim()}
-              className="rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              className=""
             >
               {savingTemplate ? <Loader2 className="animate-spin" /> : 'Sauvegarder'}
             </Button>

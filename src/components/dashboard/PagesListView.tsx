@@ -301,14 +301,14 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center justify-center py-20 text-center"
         >
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mb-4">
+          <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center mb-4">
             <Users className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-xl font-display font-bold text-foreground mb-2">Aucune page créateur</h2>
           <p className="text-muted-foreground mb-6 max-w-sm">
             Créez votre première page créateur pour commencer à partager vos liens.
           </p>
-          <Button onClick={onCreatePage} className="rounded-full gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+          <Button onClick={onCreatePage} className="gap-2">
             <Plus className="w-4 h-4" /> Créer une page
           </Button>
         </motion.div>
@@ -331,14 +331,14 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                       <img src={page.cover_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                   ) : (
-                    <div className="h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-t-xl" />
+                    <div className="h-24 bg-secondary rounded-t-xl" />
                   )}
                   <div className="p-4 -mt-8 relative">
                     <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-background shadow-lg">
                       {page.avatar_url ? (
                         <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                        <div className="w-full h-full bg-primary flex items-center justify-center">
                           <span className="text-lg font-bold text-primary-foreground">
                             {(page.display_name || page.username)?.[0]?.toUpperCase()}
                           </span>
@@ -397,7 +397,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     {page.avatar_url ? (
                       <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                      <div className="w-full h-full bg-primary flex items-center justify-center">
                         <span className="text-sm font-bold text-primary-foreground">
                           {(page.display_name || page.username)?.[0]?.toUpperCase()}
                         </span>

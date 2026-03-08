@@ -92,7 +92,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               {page.avatar_url ? (
                 <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <div className="w-full h-full bg-primary flex items-center justify-center">
                   <span className="text-sm font-bold text-primary-foreground">
                     {(page.display_name || page.username)?.[0]?.toUpperCase()}
                   </span>

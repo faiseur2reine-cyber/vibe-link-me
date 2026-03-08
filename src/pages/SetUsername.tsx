@@ -56,7 +56,7 @@ const SetUsername = () => {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <span className="font-display text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="text-2xl font-bold text-foreground tracking-tight">
             MyTaptap
           </span>
         </div>
@@ -95,7 +95,7 @@ const SetUsername = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                className="w-full"
                 disabled={saving || usernameStatus !== 'available'}
               >
                 {saving ? <Loader2 className="animate-spin" /> : t('dashboard.save')}

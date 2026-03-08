@@ -12,99 +12,98 @@ interface PricingSectionProps {
 const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => {
   const { t } = useTranslation();
 
+  const tiers = [
+    {
+      key: 'free',
+      name: t('pricing.free'),
+      price: '0€',
+      sub: '',
+      features: t('pricing.freeFeatures', { returnObjects: true }) as string[],
+      action: (
+        <Button variant="outline" className="w-full" asChild>
+          <Link to="/auth?tab=signup">{t('hero.cta')}</Link>
+        </Button>
+      ),
+      highlight: false,
+    },
+    {
+      key: 'starter',
+      name: t('pricing.starter'),
+      price: '19,99€',
+      sub: t('pricing.month'),
+      badge: t('pricing.launchBadge'),
+      features: t('pricing.starterFeatures', { returnObjects: true }) as string[],
+      action: (
+        <Button className="w-full" onClick={() => onUpgrade('starter')} disabled={checkoutLoading === 'starter'}>
+          {checkoutLoading === 'starter' && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+          {t('pricing.upgradeStarter')}
+        </Button>
+      ),
+      highlight: false,
+    },
+    {
+      key: 'pro',
+      name: t('pricing.pro'),
+      price: '115€',
+      sub: t('pricing.year'),
+      subNote: t('pricing.proMonthly'),
+      badge: t('pricing.popular'),
+      features: t('pricing.proFeatures', { returnObjects: true }) as string[],
+      action: (
+        <Button className="w-full" onClick={() => onUpgrade('pro')} disabled={checkoutLoading === 'pro'}>
+          {checkoutLoading === 'pro' && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+          {t('pricing.upgrade')}
+        </Button>
+      ),
+      highlight: true,
+    },
+  ];
+
   return (
-    <section className="px-4 sm:px-6 py-16 sm:py-24">
-      <div className="max-w-5xl mx-auto text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold">{t('pricing.title')}</h2>
-        <p className="mt-3 text-muted-foreground text-base sm:text-lg">{t('pricing.subtitle')}</p>
-        <div className="mt-10 sm:mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
-          {/* Free */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0 }}
-            className="rounded-2xl border border-border bg-card p-6 sm:p-8 text-left"
-          >
-            <h3 className="font-display font-bold text-xl">{t('pricing.free')}</h3>
-            <p className="mt-2 text-3xl sm:text-4xl font-bold">0€</p>
-            <p className="text-sm text-muted-foreground mt-1">&nbsp;</p>
-            <ul className="mt-6 space-y-3">
-              {(t('pricing.freeFeatures', { returnObjects: true }) as string[]).map((f, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <Button variant="outline" className="w-full mt-8 rounded-full" asChild>
-              <Link to="/auth?tab=signup">{t('hero.cta')}</Link>
-            </Button>
-          </motion.div>
-
-          {/* Starter */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="rounded-2xl border border-border bg-card p-6 sm:p-8 text-left relative overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary/80 to-secondary/80 text-primary-foreground text-xs font-bold px-4 py-1.5 text-center">
-              {t('pricing.launchBadge')}
-            </div>
-            <h3 className="font-display font-bold text-xl mt-4">{t('pricing.starter')}</h3>
-            <p className="mt-2 text-3xl sm:text-4xl font-bold">19,99€<span className="text-base sm:text-lg font-normal text-muted-foreground">{t('pricing.month')}</span></p>
-            <p className="text-sm text-muted-foreground mt-1">&nbsp;</p>
-            <ul className="mt-6 space-y-3">
-              {(t('pricing.starterFeatures', { returnObjects: true }) as string[]).map((f, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <Button
-              className="w-full mt-8 rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
-              onClick={() => onUpgrade('starter')}
-              disabled={checkoutLoading === 'starter'}
+    <section className="px-4 sm:px-6 py-16 sm:py-24 border-t border-border">
+      <div className="max-w-4xl mx-auto text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('pricing.title')}</h2>
+        <p className="mt-2 text-muted-foreground text-sm sm:text-base">{t('pricing.subtitle')}</p>
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {tiers.map((tier, i) => (
+            <motion.div
+              key={tier.key}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className={`rounded-xl border p-6 text-left relative ${
+                tier.highlight
+                  ? 'border-primary bg-primary/[0.02] shadow-sm'
+                  : 'border-border bg-card'
+              }`}
             >
-              {checkoutLoading === 'starter' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              {t('pricing.upgradeStarter')}
-            </Button>
-          </motion.div>
-
-          {/* Pro */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/5 to-secondary/5 p-6 sm:p-8 text-left relative overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary to-secondary text-primary-foreground text-xs font-bold px-4 py-1.5 text-center">
-              {t('pricing.launchBadge')} · {t('pricing.popular')}
-            </div>
-            <h3 className="font-display font-bold text-xl mt-4">{t('pricing.pro')}</h3>
-            <p className="mt-2 text-3xl sm:text-4xl font-bold">115€<span className="text-base sm:text-lg font-normal text-muted-foreground">{t('pricing.year')}</span></p>
-            <p className="text-sm text-muted-foreground mt-1">{t('pricing.proMonthly')}</p>
-            <ul className="mt-6 space-y-3">
-              {(t('pricing.proFeatures', { returnObjects: true }) as string[]).map((f, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-secondary flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <Button
-              className="w-full mt-8 rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity shadow-lg"
-              onClick={() => onUpgrade('pro')}
-              disabled={checkoutLoading === 'pro'}
-            >
-              {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              {t('pricing.upgrade')}
-            </Button>
-          </motion.div>
+              {tier.badge && (
+                <span className={`absolute -top-3 left-4 text-[11px] font-medium px-2.5 py-0.5 rounded-full ${
+                  tier.highlight
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-foreground border border-border'
+                }`}>
+                  {tier.badge}
+                </span>
+              )}
+              <h3 className="font-semibold text-base mt-1">{tier.name}</h3>
+              <p className="mt-3">
+                <span className="text-3xl font-bold">{tier.price}</span>
+                {tier.sub && <span className="text-sm text-muted-foreground ml-1">{tier.sub}</span>}
+              </p>
+              {tier.subNote && <p className="text-xs text-muted-foreground mt-0.5">{tier.subNote}</p>}
+              <ul className="mt-5 space-y-2.5">
+                {tier.features.map((f, j) => (
+                  <li key={j} className="flex items-start gap-2 text-sm text-foreground">
+                    <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6">{tier.action}</div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

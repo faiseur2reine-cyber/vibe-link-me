@@ -106,7 +106,7 @@ const Auth = () => {
       <Button
         type="button"
         variant="outline"
-        className="w-full rounded-full gap-2"
+        className="w-full gap-2"
         onClick={handleGoogleSignIn}
         disabled={googleLoading}
       >
@@ -125,24 +125,25 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="font-display text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">MyTaptap</span>
+      <div className="w-full max-w-sm">
+        <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors text-sm">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Retour
         </Link>
 
-        <Card className="border-border/50 shadow-xl">
-          <CardHeader className="text-center">
-            <CardTitle className="font-display text-2xl">
-              {tab === 'login' && t('auth.login')}
-              {tab === 'signup' && t('auth.signup')}
-              {tab === 'forgot' && t('auth.resetPassword')}
-            </CardTitle>
-            <CardDescription>
-              {(tab === 'login' || tab === 'signup') && t('hero.subtitle').split('.')[0] + '.'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="mb-6">
+          <h1 className="text-xl font-bold tracking-tight">
+            {tab === 'login' && t('auth.login')}
+            {tab === 'signup' && t('auth.signup')}
+            {tab === 'forgot' && t('auth.resetPassword')}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {(tab === 'login' || tab === 'signup') && t('hero.subtitle').split('.')[0] + '.'}
+          </p>
+        </div>
+
+        <Card className="border-border shadow-none">
+          <CardContent className="pt-6">
             {tab === 'login' && (
               <div className="space-y-4">
                 <form onSubmit={handleLogin} className="space-y-4">
@@ -154,18 +155,18 @@ const Auth = () => {
                     <Label htmlFor="password">{t('auth.password')}</Label>
                     <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   </div>
-                  <Button type="submit" className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" disabled={loading}>
+                  <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? <Loader2 className="animate-spin" /> : t('auth.loginBtn')}
                   </Button>
                 </form>
                 <GoogleButton />
                 <div className="text-center space-y-2 text-sm">
-                  <button type="button" onClick={() => setTab('forgot')} className="text-primary hover:underline block mx-auto">
+                  <button type="button" onClick={() => setTab('forgot')} className="text-muted-foreground hover:text-foreground block mx-auto text-xs">
                     {t('auth.forgotPassword')}
                   </button>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {t('auth.noAccount')}{' '}
-                    <button type="button" onClick={() => setTab('signup')} className="text-primary hover:underline">{t('auth.signupBtn')}</button>
+                    <button type="button" onClick={() => setTab('signup')} className="text-primary hover:underline font-medium">{t('auth.signupBtn')}</button>
                   </p>
                 </div>
               </div>
@@ -180,12 +181,12 @@ const Auth = () => {
                       <Input id="username" value={username} onChange={(e) => checkUsername(e.target.value)} placeholder="mon-pseudo" required minLength={3} maxLength={30} />
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
-                        {usernameStatus === 'available' && <Check className="w-4 h-4 text-green-500" />}
+                        {usernameStatus === 'available' && <Check className="w-4 h-4 text-primary" />}
                         {usernameStatus === 'taken' && <X className="w-4 h-4 text-destructive" />}
                       </div>
                     </div>
                     {usernameStatus === 'taken' && <p className="text-xs text-destructive">{t('auth.usernameTaken')}</p>}
-                    {usernameStatus === 'available' && <p className="text-xs text-green-500">{t('auth.usernameAvailable')}</p>}
+                    {usernameStatus === 'available' && <p className="text-xs text-primary">{t('auth.usernameAvailable')}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="displayName">{t('auth.displayName')}</Label>
@@ -199,14 +200,14 @@ const Auth = () => {
                     <Label htmlFor="signup-password">{t('auth.password')}</Label>
                     <Input id="signup-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
                   </div>
-                  <Button type="submit" className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" disabled={loading || usernameStatus !== 'available'}>
+                  <Button type="submit" className="w-full" disabled={loading || usernameStatus !== 'available'}>
                     {loading ? <Loader2 className="animate-spin" /> : t('auth.signupBtn')}
                   </Button>
                 </form>
                 <GoogleButton />
-                <p className="text-center text-sm text-muted-foreground">
+                <p className="text-center text-xs text-muted-foreground">
                   {t('auth.hasAccount')}{' '}
-                  <button type="button" onClick={() => setTab('login')} className="text-primary hover:underline">{t('auth.loginBtn')}</button>
+                  <button type="button" onClick={() => setTab('login')} className="text-primary hover:underline font-medium">{t('auth.loginBtn')}</button>
                 </p>
               </div>
             )}
@@ -217,11 +218,11 @@ const Auth = () => {
                   <Label htmlFor="reset-email">{t('auth.email')}</Label>
                   <Input id="reset-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
-                <Button type="submit" className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" disabled={loading}>
+                <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? <Loader2 className="animate-spin" /> : t('auth.sendReset')}
                 </Button>
-                <p className="text-center text-sm text-muted-foreground">
-                  <button type="button" onClick={() => setTab('login')} className="text-primary hover:underline">{t('auth.loginBtn')}</button>
+                <p className="text-center text-xs text-muted-foreground">
+                  <button type="button" onClick={() => setTab('login')} className="text-primary hover:underline font-medium">{t('auth.loginBtn')}</button>
                 </p>
               </form>
             )}

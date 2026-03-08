@@ -41,7 +41,7 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <div className="w-full h-full bg-primary flex items-center justify-center">
                   <span className="text-xl font-bold text-white">{displayName?.[0]?.toUpperCase()}</span>
                 </div>
               )}

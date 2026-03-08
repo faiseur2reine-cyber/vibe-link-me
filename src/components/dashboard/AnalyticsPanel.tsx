@@ -28,7 +28,7 @@ const AnalyticsPanel = ({ links, plan }: AnalyticsPanelProps) => {
     <div className="space-y-6">
       {/* Total clicks */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
           <MousePointerClick className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
