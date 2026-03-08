@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,28 +11,25 @@ interface NsfwLinkOverlayProps {
 const NsfwLinkOverlay = ({ children, url, onRevealClick }: NsfwLinkOverlayProps) => {
   const [showWarning, setShowWarning] = useState(false);
 
+  const handleFirstClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowWarning(true);
+  }, []);
+
   return (
     <div className="relative">
-      {/* Original link — intercept click to show warning */}
-      <div
-        onClick={(e) => {
-          if (!showWarning) {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowWarning(true);
-          }
-        }}
-        onClickCapture={(e) => {
-          if (!showWarning) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        }}
-      >
-        {children}
-      </div>
+      {children}
 
-      {/* NSFW warning overlay — appears on first click */}
+      {/* Invisible click interceptor — catches first click before the <a> */}
+      {!showWarning && (
+        <div
+          onClick={handleFirstClick}
+          className="absolute inset-0 z-10 cursor-pointer"
+        />
+      )}
+
+      {/* NSFW warning overlay — appears on first click, is itself an <a> */}
       <AnimatePresence>
         {showWarning && (
           <motion.a
@@ -42,10 +39,8 @@ const NsfwLinkOverlay = ({ children, url, onRevealClick }: NsfwLinkOverlayProps)
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={(e) => {
-              onRevealClick();
-            }}
-            className="absolute inset-0 w-full rounded-2xl bg-black border border-white/10 flex items-center gap-4 px-5 py-3.5 text-left cursor-pointer hover:border-white/20 transition-colors z-10"
+            onClick={() => onRevealClick()}
+            className="absolute inset-0 w-full rounded-2xl bg-black border border-white/10 flex items-center gap-4 px-5 py-3.5 text-left cursor-pointer hover:border-white/20 transition-colors z-20"
           >
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
               <EyeOff className="w-5 h-5 text-white/70" />
