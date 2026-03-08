@@ -1,7 +1,8 @@
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 const container = {
@@ -15,6 +16,25 @@ const item = {
 
 const HeroSection = () => {
   const { t } = useTranslation();
+  const phoneRef = useRef<HTMLDivElement>(null);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [12, -12]), { stiffness: 200, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-12, 12]), { stiffness: 200, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = phoneRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
 
   return (
     <section className="relative overflow-hidden">
@@ -85,8 +105,15 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
             className="mt-16 relative"
+            style={{ perspective: 800 }}
           >
-            <div className="relative w-[260px] sm:w-[280px] mx-auto">
+            <motion.div
+              ref={phoneRef}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+              className="relative w-[260px] sm:w-[280px] mx-auto"
+            >
               {/* Glow behind phone */}
               <div className="absolute -inset-10 bg-primary/6 rounded-[3rem] blur-3xl" />
               
@@ -180,7 +207,7 @@ const HeroSection = () => {
                 <p className="text-[10px] font-bold text-primary">{t('landing.mockupDesign')}</p>
                 <p className="text-[8px] text-muted-foreground">{t('landing.mockupDesignSub')}</p>
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>
