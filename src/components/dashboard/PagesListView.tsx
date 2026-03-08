@@ -2,8 +2,11 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2, Search } from 'lucide-react';
+import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2, Search, Filter, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { THEMES } from '@/lib/themes';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
@@ -18,20 +21,58 @@ interface PagesListViewProps {
   onDeletePage?: (id: string) => Promise<{ error: any }>;
 }
 
+type SortOption = 'newest' | 'oldest' | 'alpha';
+
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const [search, setSearch] = useState('');
+  const [themeFilter, setThemeFilter] = useState<string>('all');
+  const [nsfwFilter, setNsfwFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
+
+  const activeFilterCount = [themeFilter !== 'all', nsfwFilter !== 'all'].filter(Boolean).length;
+
   const filteredPages = useMemo(() => {
-    if (!search.trim()) return pages;
-    const q = search.toLowerCase();
-    return pages.filter(p =>
-      (p.display_name || '').toLowerCase().includes(q) ||
-      p.username.toLowerCase().includes(q) ||
-      (p.bio || '').toLowerCase().includes(q)
-    );
-  }, [pages, search]);
+    let result = pages;
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(p =>
+        (p.display_name || '').toLowerCase().includes(q) ||
+        p.username.toLowerCase().includes(q) ||
+        (p.bio || '').toLowerCase().includes(q)
+      );
+    }
+
+    if (themeFilter !== 'all') {
+      result = result.filter(p => p.theme === themeFilter);
+    }
+
+    if (nsfwFilter === 'nsfw') {
+      result = result.filter(p => p.is_nsfw);
+    } else if (nsfwFilter === 'safe') {
+      result = result.filter(p => !p.is_nsfw);
+    }
+
+    result = [...result].sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      if (sortBy === 'oldest') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      return (a.display_name || a.username).localeCompare(b.display_name || b.username);
+    });
+
+    return result;
+  }, [pages, search, themeFilter, nsfwFilter, sortBy]);
+
+  const usedThemes = useMemo(() => [...new Set(pages.map(p => p.theme))], [pages]);
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
+
+  const clearFilters = () => {
+    setSearch('');
+    setThemeFilter('all');
+    setNsfwFilter('all');
+    setSortBy('newest');
+  };
 
   return (
     <div className="space-y-6">
@@ -52,6 +93,62 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           </div>
         )}
       </div>
+
+      {/* Filters row */}
+      {pages.length > 1 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-muted-foreground mr-1">
+            <Filter className="w-3.5 h-3.5" />
+            <span className="text-xs font-medium">Filtres</span>
+          </div>
+
+          <Select value={themeFilter} onValueChange={setThemeFilter}>
+            <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs rounded-full bg-muted/50 border-border">
+              <SelectValue placeholder="Thème" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les thèmes</SelectItem>
+              {usedThemes.map(t => (
+                <SelectItem key={t} value={t}>{THEMES[t]?.name || t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={nsfwFilter} onValueChange={setNsfwFilter}>
+            <SelectTrigger className="w-auto min-w-[100px] h-8 text-xs rounded-full bg-muted/50 border-border">
+              <SelectValue placeholder="Contenu" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tout contenu</SelectItem>
+              <SelectItem value="safe">Safe only</SelectItem>
+              <SelectItem value="nsfw">NSFW only</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+            <SelectTrigger className="w-auto min-w-[130px] h-8 text-xs rounded-full bg-muted/50 border-border">
+              <SelectValue placeholder="Trier par" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Plus récentes</SelectItem>
+              <SelectItem value="oldest">Plus anciennes</SelectItem>
+              <SelectItem value="alpha">Alphabétique</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {activeFilterCount > 0 && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8 text-xs rounded-full gap-1 text-muted-foreground hover:text-foreground">
+              <X className="w-3 h-3" /> Réinitialiser
+            </Button>
+          )}
+
+          {(search || activeFilterCount > 0) && (
+            <Badge variant="secondary" className="text-xs rounded-full">
+              {filteredPages.length} résultat{filteredPages.length !== 1 ? 's' : ''}
+            </Badge>
+          )}
+        </div>
+      )}
 
       {/* Global Stats Summary */}
       {pages.length > 0 && (
