@@ -48,10 +48,14 @@ export type Database = {
       }
       links: {
         Row: {
+          bg_color: string | null
           created_at: string
+          description: string | null
           icon: string | null
           id: string
           position: number
+          style: string
+          text_color: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -59,10 +63,14 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          bg_color?: string | null
           created_at?: string
+          description?: string | null
           icon?: string | null
           id?: string
           position?: number
+          style?: string
+          text_color?: string | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -70,10 +78,14 @@ export type Database = {
           user_id: string
         }
         Update: {
+          bg_color?: string | null
           created_at?: string
+          description?: string | null
           icon?: string | null
           id?: string
           position?: number
+          style?: string
+          text_color?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
