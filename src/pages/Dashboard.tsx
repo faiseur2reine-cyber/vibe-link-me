@@ -194,7 +194,7 @@ const Dashboard = () => {
                           <h3 className="font-display font-bold text-lg">Starter</h3>
                           <span className="text-xs bg-gradient-to-r from-primary/10 to-secondary/10 text-primary px-2 py-1 rounded-full">🚀 {t('pricing.launchBadge')}</span>
                         </div>
-                        <p className="text-3xl font-bold">19,99€<span className="text-sm font-normal text-muted-foreground">{t('pricing.year')}</span></p>
+                        <p className="text-3xl font-bold">19,99€<span className="text-sm font-normal text-muted-foreground">{t('pricing.month')}</span></p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           {(t('pricing.starterFeatures', { returnObjects: true }) as string[]).map((f, i) => (
                             <li key={i}>✓ {f}</li>
