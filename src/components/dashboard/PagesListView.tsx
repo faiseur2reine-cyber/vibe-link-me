@@ -148,6 +148,23 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
               {filteredPages.length} résultat{filteredPages.length !== 1 ? 's' : ''}
             </Badge>
           )}
+
+          <div className="ml-auto flex items-center border border-border rounded-full overflow-hidden">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              title="Grille"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              title="Liste"
+            >
+              <List className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 
