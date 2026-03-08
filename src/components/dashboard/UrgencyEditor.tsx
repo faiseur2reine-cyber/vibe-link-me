@@ -68,6 +68,45 @@ export const defaultUrgencyConfig: UrgencyConfig = {
   },
 };
 
+// Presets
+const urgencyPresets: { id: string; label: string; emoji: string; desc: string; config: UrgencyConfig }[] = [
+  {
+    id: 'flash-sale', label: 'Flash Sale', emoji: '⚡', desc: 'Countdown rouge + places limitées',
+    config: {
+      banner: { enabled: true, text: '⚡ FLASH SALE — Prix cassé pendant', ctaText: 'Acheter maintenant', ctaLink: '', bgColor: '#dc2626', textColor: '#ffffff', ctaBgColor: '#ffffff', ctaTextColor: '#dc2626', position: 'top', showCountdown: true, countdownMinutes: 30, emoji: '🔥' },
+      scarcity: { enabled: true, spotsEnabled: true, spotsInitial: 5, spotsText: 'Plus que {{count}} à ce prix', liveViewersEnabled: true, liveViewersText: '{{count}} personnes regardent', locationToastEnabled: true, position: 'below-bio' },
+    },
+  },
+  {
+    id: 'launch', label: 'Lancement', emoji: '🚀', desc: 'Offre early bird + hype',
+    config: {
+      banner: { enabled: true, text: '🚀 Lancement exclusif — Accès early bird', ctaText: 'Rejoindre', ctaLink: '', bgColor: '#7c3aed', textColor: '#ffffff', ctaBgColor: '#fbbf24', ctaTextColor: '#1e1b4b', position: 'top', showCountdown: true, countdownMinutes: 60, emoji: '🎉' },
+      scarcity: { enabled: true, spotsEnabled: true, spotsInitial: 12, spotsText: '{{count}} places early bird restantes', liveViewersEnabled: true, liveViewersText: '{{count}} en attente', locationToastEnabled: true, position: 'above-links' },
+    },
+  },
+  {
+    id: 'event', label: 'Événement', emoji: '🎤', desc: 'Countdown event + places limitées',
+    config: {
+      banner: { enabled: true, text: '🎤 L\'événement commence dans', ctaText: 'Réserver ma place', ctaLink: '', bgColor: '#0ea5e9', textColor: '#ffffff', ctaBgColor: '#ffffff', ctaTextColor: '#0369a1', position: 'top', showCountdown: true, countdownMinutes: 120, emoji: '🎫' },
+      scarcity: { enabled: true, spotsEnabled: true, spotsInitial: 8, spotsText: '{{count}} places disponibles', liveViewersEnabled: false, liveViewersText: '', locationToastEnabled: true, position: 'below-bio' },
+    },
+  },
+  {
+    id: 'exclusive', label: 'Contenu exclusif', emoji: '🔒', desc: 'Rareté + FOMO discret',
+    config: {
+      banner: { enabled: false, text: '', ctaText: '', ctaLink: '', bgColor: '#18181b', textColor: '#ffffff', ctaBgColor: '#ffffff', ctaTextColor: '#18181b', position: 'top', showCountdown: false, countdownMinutes: 15, emoji: '🔒' },
+      scarcity: { enabled: true, spotsEnabled: true, spotsInitial: 3, spotsText: 'Accès limité — {{count}} restants', liveViewersEnabled: true, liveViewersText: '{{count}} personnes connectées', locationToastEnabled: true, position: 'below-bio' },
+    },
+  },
+  {
+    id: 'drop', label: 'Drop / Restock', emoji: '👟', desc: 'Urgence stock limité',
+    config: {
+      banner: { enabled: true, text: '👟 DROP EN COURS — Stock très limité', ctaText: 'Shop now', ctaLink: '', bgColor: '#000000', textColor: '#ffffff', ctaBgColor: '#22c55e', ctaTextColor: '#000000', position: 'top', showCountdown: true, countdownMinutes: 10, emoji: '🏃' },
+      scarcity: { enabled: true, spotsEnabled: true, spotsInitial: 4, spotsText: 'Seulement {{count}} en stock', liveViewersEnabled: true, liveViewersText: '{{count}} acheteurs actifs', locationToastEnabled: true, position: 'above-links' },
+    },
+  },
+];
+
 interface Props {
   page: CreatorPage;
   onUpdate: (updates: Partial<CreatorPage>) => Promise<{ error: any }>;
@@ -78,6 +117,14 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
   const existing = (page as any).urgency_config as UrgencyConfig | null;
   const [config, setConfig] = useState<UrgencyConfig>(existing || defaultUrgencyConfig);
   const [saving, setSaving] = useState(false);
+
+  const applyPreset = (preset: typeof urgencyPresets[0]) => {
+    setConfig(c => ({
+      ...preset.config,
+      abTest: c.abTest, // preserve A/B test settings
+    }));
+    toast({ title: `Template "${preset.label}" appliqué !`, description: 'Personnalisez puis sauvegardez.' });
+  };
 
   const updateBanner = (updates: Partial<UrgencyConfig['banner']>) => {
     setConfig(c => ({ ...c, banner: { ...c.banner, ...updates } }));
