@@ -10,7 +10,8 @@ import LinkPreview from '@/components/dashboard/LinkPreview';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
 import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2 } from 'lucide-react';
+import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
