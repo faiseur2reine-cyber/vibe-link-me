@@ -8,7 +8,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-purple-600',
     preview: 'bg-gradient-to-br from-purple-400 to-pink-400',
-    free: true,
+    tier: 'free',
   },
   sunset: {
     name: 'Sunset',
