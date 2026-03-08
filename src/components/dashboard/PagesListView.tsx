@@ -246,6 +246,18 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                             <Copy className="w-3 h-3" /> Dupliquer
                           </button>
                         )}
+                        {onDeletePage && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteTarget(page);
+                            }}
+                            className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
                         <a
                           href={`/${page.username}`}
                           target="_blank"
