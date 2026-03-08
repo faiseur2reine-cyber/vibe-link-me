@@ -37,38 +37,61 @@ const ThemeSelector = ({ profile, onUpdate }: ThemeSelectorProps) => {
           const tierLabel = theme.tier === 'free' ? null : theme.tier.toUpperCase();
 
           return (
-            <button
-              key={key}
-              onClick={() => handleSelect(key)}
-              className={`relative rounded-2xl p-3 border-2 transition-all text-left ${
-                isSelected
-                  ? 'border-primary shadow-md ring-2 ring-primary/20'
-                  : 'border-border hover:border-primary/40'
-              } ${isLocked ? 'opacity-70' : ''}`}
-            >
-              {/* Preview swatch */}
-              <div className={`h-16 rounded-xl mb-2 ${theme.preview}`}>
-                <div className="flex flex-col items-center justify-center h-full gap-1">
-                  <div className="w-6 h-6 rounded-full bg-white/30" />
-                  <div className="w-12 h-1.5 rounded-full bg-white/30" />
-                  <div className="w-16 h-2 rounded-full bg-white/20" />
+              <motion.button
+                key={key}
+                onClick={() => handleSelect(key)}
+                layout
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className={`relative rounded-2xl p-3 border-2 transition-colors text-left ${
+                  isSelected
+                    ? 'border-primary shadow-md ring-2 ring-primary/20'
+                    : 'border-border hover:border-primary/40'
+                } ${isLocked ? 'opacity-70' : ''}`}
+              >
+                {/* Preview swatch */}
+                <div className={`h-16 rounded-xl mb-2 overflow-hidden ${theme.preview}`}>
+                  <motion.div
+                    className="flex flex-col items-center justify-center h-full gap-1"
+                    initial={false}
+                    animate={isSelected ? { scale: 1.1 } : { scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  >
+                    <motion.div
+                      className="w-6 h-6 rounded-full bg-white/30"
+                      animate={isSelected ? { y: -2, scale: 1.15 } : { y: 0, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                    />
+                    <div className="w-12 h-1.5 rounded-full bg-white/30" />
+                    <div className="w-16 h-2 rounded-full bg-white/20" />
+                  </motion.div>
                 </div>
-              </div>
 
-              {/* Name */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">{theme.name}</span>
-                {isSelected && <Check className="w-4 h-4 text-primary" />}
-                {isLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
-              </div>
+                {/* Name */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">{theme.name}</span>
+                  <AnimatePresence mode="wait">
+                    {isSelected && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                      >
+                        <Check className="w-4 h-4 text-primary" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {isLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
+                </div>
 
-              {/* Tier badge */}
-              {tierLabel && (
-                <Badge variant="secondary" className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5">
-                  {tierLabel}
-                </Badge>
-              )}
-            </button>
+                {/* Tier badge */}
+                {tierLabel && (
+                  <Badge variant="secondary" className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5">
+                    {tierLabel}
+                  </Badge>
+                )}
+              </motion.button>
           );
         })}
       </div>
