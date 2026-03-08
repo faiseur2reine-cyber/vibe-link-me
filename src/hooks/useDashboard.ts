@@ -51,8 +51,6 @@ export function useProfile() {
     }
     setLoading(false);
   }, [user]);
-    setLoading(false);
-  }, [user]);
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
