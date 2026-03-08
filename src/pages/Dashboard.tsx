@@ -60,6 +60,9 @@ const Dashboard = () => {
                 <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background">
                   <User className="w-4 h-4" /> {t('dashboard.profile')}
                 </TabsTrigger>
+                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background">
+                  <Palette className="w-4 h-4" /> {t('dashboard.theme')}
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="links">
