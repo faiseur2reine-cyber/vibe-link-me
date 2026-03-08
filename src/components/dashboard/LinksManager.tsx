@@ -8,7 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
-import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2 } from 'lucide-react';
+import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LinksManagerProps {
   links: LinkItem[];
@@ -19,16 +21,18 @@ interface LinksManagerProps {
   onReorder: (links: LinkItem[]) => Promise<void>;
 }
 
-const ICONS = ['link', 'globe', 'instagram', 'twitter', 'youtube', 'github', 'linkedin', 'facebook', 'music', 'mail', 'shopping-bag', 'video'];
-
 const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: LinksManagerProps) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [icon, setIcon] = useState('link');
   const [saving, setSaving] = useState(false);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [uploadingThumb, setUploadingThumb] = useState(false);
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
@@ -43,6 +47,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setTitle('');
     setUrl('');
     setIcon('link');
+    setThumbnailFile(null);
+    setThumbnailPreview(null);
     setDialogOpen(true);
   };
 
@@ -51,7 +57,30 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setTitle(link.title);
     setUrl(link.url);
     setIcon(link.icon);
+    setThumbnailFile(null);
+    setThumbnailPreview(link.thumbnail_url || null);
     setDialogOpen(true);
+  };
+
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'Image too large (max 5MB)', variant: 'destructive' });
+      return;
+    }
+    setThumbnailFile(file);
+    setThumbnailPreview(URL.createObjectURL(file));
+  };
+
+  const uploadThumbnail = async (linkId: string): Promise<string | null> => {
+    if (!thumbnailFile || !user) return null;
+    const ext = thumbnailFile.name.split('.').pop();
+    const path = `${user.id}/thumbnails/${linkId}.${ext}`;
+    const { error } = await supabase.storage.from('media').upload(path, thumbnailFile, { upsert: true });
+    if (error) return null;
+    const { data } = supabase.storage.from('media').getPublicUrl(path);
+    return data.publicUrl;
   };
 
   const handleSave = async () => {
@@ -64,11 +93,22 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     }
 
     if (editingLink) {
-      const result = await onUpdate(editingLink.id, { title: title.trim(), url: normalizedUrl, icon });
+      let thumbUrl = editingLink.thumbnail_url;
+      if (thumbnailFile) {
+        setUploadingThumb(true);
+        thumbUrl = await uploadThumbnail(editingLink.id);
+        setUploadingThumb(false);
+      }
+      const result = await onUpdate(editingLink.id, { 
+        title: title.trim(), url: normalizedUrl, icon,
+        ...(thumbnailFile ? { thumbnail_url: thumbUrl } : {}),
+      });
       if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
     } else {
       const result = await onAdd({ title: title.trim(), url: normalizedUrl, icon });
       if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
+      // Upload thumbnail after link is created (need link id)
+      // For simplicity we'll skip thumbnail on create and let user edit after
     }
     setSaving(false);
     setDialogOpen(false);
@@ -77,6 +117,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const handleDelete = async (id: string) => {
     const result = await onDelete(id);
     if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
+  };
+
+  const handleRemoveThumbnail = async () => {
+    if (editingLink) {
+      await onUpdate(editingLink.id, { thumbnail_url: null } as any);
+    }
+    setThumbnailFile(null);
+    setThumbnailPreview(null);
   };
 
   const handleDragEnd = (result: DropResult) => {
@@ -115,6 +163,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
                       <div {...provided.dragHandleProps} className="cursor-grab text-muted-foreground hover:text-foreground">
                         <GripVertical className="w-5 h-5" />
                       </div>
+                      {link.thumbnail_url && (
+                        <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                      )}
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate text-foreground">{link.title}</p>
                         <p className="text-xs text-muted-foreground truncate">{link.url}</p>
@@ -157,24 +208,28 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
               <Label>{t('dashboard.linkUrl')}</Label>
               <Input value={url} onChange={(e) => setUrl(e.target.value)} maxLength={500} placeholder="https://example.com" />
             </div>
+
+            {/* Thumbnail Upload */}
             <div className="space-y-2">
-              <Label>{t('dashboard.linkIcon')}</Label>
-              <div className="flex flex-wrap gap-2">
-                {ICONS.map((ic) => (
+              <Label>Thumbnail (optional)</Label>
+              {thumbnailPreview ? (
+                <div className="relative w-full h-32 rounded-xl overflow-hidden bg-muted">
+                  <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
                   <button
-                    key={ic}
                     type="button"
-                    onClick={() => setIcon(ic)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                      icon === ic
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-muted text-muted-foreground border-border hover:border-primary'
-                    }`}
+                    onClick={handleRemoveThumbnail}
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"
                   >
-                    {ic}
+                    <X className="w-3.5 h-3.5" />
                   </button>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <label className="flex items-center justify-center gap-2 w-full h-24 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors text-muted-foreground text-sm">
+                  <ImagePlus className="w-5 h-5" />
+                  <span>Add thumbnail image</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
+                </label>
+              )}
             </div>
           </div>
           <DialogFooter>

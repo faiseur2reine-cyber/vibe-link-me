@@ -2,6 +2,7 @@ import { Profile, LinkItem } from '@/hooks/useDashboard';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, Heart } from 'lucide-react';
 import LinkFavicon from '@/components/LinkFavicon';
+import SocialIcons from '@/components/profile/SocialIcons';
 import { getTheme } from '@/lib/themes';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,6 +15,7 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
   const { t } = useTranslation();
   const theme = getTheme(profile.theme);
   const displayName = profile.display_name || profile.username;
+  const hasThumb = links.some(l => l.thumbnail_url);
 
   return (
     <AnimatePresence mode="wait">
@@ -23,58 +25,78 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.97 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className={`rounded-3xl overflow-hidden ${theme.bg} transition-colors duration-300 relative`}
+        className={`rounded-3xl overflow-hidden ${theme.bg} relative`}
       >
-      {/* Decorative blur */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-purple-300/15 to-pink-300/15 blur-3xl pointer-events-none" />
+        {/* Cover */}
+        {profile.cover_url && (
+          <div className="w-full h-24 overflow-hidden">
+            <img src={profile.cover_url} alt="" className="w-full h-full object-cover" />
+          </div>
+        )}
 
-      <div className="relative z-10 p-6">
-        {/* Header card */}
-        <div className={`rounded-2xl p-5 text-center ${theme.cardBg} mb-4`}>
+        <div className={`relative z-10 p-5 ${profile.cover_url ? '-mt-8' : 'pt-6'}`}>
           {/* Avatar */}
-          <div className={`w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 mx-auto overflow-hidden ${theme.avatarRing}`}>
-            {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">
-                  {displayName?.[0]?.toUpperCase()}
-                </span>
+          <div className="text-center">
+            <div className={`w-16 h-16 rounded-full mx-auto overflow-hidden ring-3 ring-background shadow-lg ${!profile.cover_url ? theme.avatarRing : ''}`}>
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <span className="text-xl font-bold text-white">{displayName?.[0]?.toUpperCase()}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-2 space-y-0.5">
+              <h3 className={`font-bold text-sm tracking-tight ${theme.text}`}>{displayName}</h3>
+              <p className={`text-[11px] ${theme.subtleText}`}>@{profile.username}</p>
+              {profile.bio && <p className={`text-[11px] mt-1 opacity-70 ${theme.text}`}>{profile.bio}</p>}
+            </div>
+
+            {/* Social icons */}
+            {profile.social_links?.length > 0 && (
+              <div className="mt-2">
+                <SocialIcons links={profile.social_links} theme={theme} size="sm" />
               </div>
             )}
           </div>
 
-          {/* Name & Bio */}
-          <div className="mt-3 space-y-1">
-            <h3 className={`font-display font-bold text-lg tracking-tight ${theme.text}`}>{displayName}</h3>
-            <p className={`text-xs font-medium ${theme.subtleText}`}>@{profile.username}</p>
-            {profile.bio && <p className={`text-xs mt-2 leading-relaxed opacity-75 ${theme.text}`}>{profile.bio}</p>}
+          {/* Links */}
+          <div className={`mt-3 ${hasThumb ? 'grid grid-cols-2 gap-2' : 'space-y-1.5'}`}>
+            {links.map((link) => (
+              <div
+                key={link.id}
+                className={
+                  link.thumbnail_url
+                    ? `relative rounded-xl overflow-hidden aspect-square ${theme.cardBg}`
+                    : `group flex items-center gap-2 px-3 py-2.5 rounded-xl text-[11px] font-medium ${theme.btn}`
+                }
+              >
+                {link.thumbnail_url ? (
+                  <>
+                    <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <p className="absolute bottom-1.5 left-2 right-2 text-white text-[10px] font-semibold truncate">{link.title}</p>
+                  </>
+                ) : (
+                  <>
+                    <LinkFavicon url={link.url} size="sm" />
+                    <span className="flex-1 text-center">{link.title}</span>
+                  </>
+                )}
+              </div>
+            ))}
+            {links.length === 0 && (
+              <p className={`text-[11px] py-4 text-center opacity-40 ${theme.text}`}>No links yet</p>
+            )}
           </div>
-        </div>
 
-        {/* Links */}
-        <div className="space-y-2">
-          {links.map((link) => (
-            <div
-              key={link.id}
-              className={`group flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 ${theme.btn}`}
-            >
-              <LinkFavicon url={link.url} size="sm" />
-              <span className="flex-1 text-center">{link.title}</span>
-              <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
-            </div>
-          ))}
-          {links.length === 0 && (
-            <p className={`text-xs py-6 text-center opacity-40 ${theme.text}`}>No links yet</p>
+          {/* Badge */}
+          {profile.plan !== 'pro' && (
+            <p className={`text-[9px] pt-4 opacity-30 flex items-center justify-center gap-1 font-medium ${theme.text}`}>
+              Créé avec <Heart className="w-2 h-2" /> MyTaptap
+            </p>
           )}
-        </div>
-
-        {/* Badge */}
-        {profile.plan !== 'pro' && (
-          <p className={`text-[10px] pt-5 opacity-40 flex items-center justify-center gap-1 font-medium ${theme.text}`}>
-            Créé avec <Heart className="w-2.5 h-2.5" /> MyTaptap
-          </p>
-        )}
         </div>
       </motion.div>
     </AnimatePresence>
