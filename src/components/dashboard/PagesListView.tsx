@@ -2,10 +2,11 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy } from 'lucide-react';
+import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 interface PagesListViewProps {
@@ -13,9 +14,11 @@ interface PagesListViewProps {
   onSelectPage: (id: string) => void;
   onCreatePage: () => void;
   onDuplicatePage?: (id: string) => Promise<{ error: any; data?: any }>;
+  onDeletePage?: (id: string) => Promise<{ error: any }>;
 }
 
-const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: PagesListViewProps) => {
+const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
+  const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
 
@@ -243,6 +246,18 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: P
                             <Copy className="w-3 h-3" /> Dupliquer
                           </button>
                         )}
+                        {onDeletePage && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteTarget(page);
+                            }}
+                            className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
                         <a
                           href={`/${page.username}`}
                           target="_blank"
@@ -278,6 +293,35 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: P
           </motion.div>
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette page ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              La page <span className="font-semibold">@{deleteTarget?.username}</span> et tous ses liens seront définitivement supprimés. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (!deleteTarget || !onDeletePage) return;
+                const result = await onDeletePage(deleteTarget.id);
+                if (result?.error) {
+                  toast.error('Erreur lors de la suppression');
+                } else {
+                  toast.success('Page supprimée');
+                }
+                setDeleteTarget(null);
+              }}
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

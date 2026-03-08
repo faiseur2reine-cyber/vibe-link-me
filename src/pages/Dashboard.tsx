@@ -79,6 +79,7 @@ const Dashboard = () => {
             onSelectPage={(id) => setSelectedPageId(id)}
             onCreatePage={() => setCreateDialogOpen(true)}
             onDuplicatePage={duplicatePage}
+            onDeletePage={deletePage}
           />
         )}
       </div>
