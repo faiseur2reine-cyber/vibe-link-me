@@ -144,6 +144,7 @@ const Dashboard = () => {
                       onUpdate={updateLink}
                       onDelete={deleteLink}
                       onReorder={reorderLinks}
+                      onRefetch={refetchLinks}
                     />
                   </CardContent>
                 </Card>
