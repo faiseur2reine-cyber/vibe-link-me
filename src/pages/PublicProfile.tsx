@@ -383,7 +383,7 @@ const PublicProfile = () => {
                       if (isCard && link.thumbnail_url) {
                         return (
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                            onClick={() => recordClick(link.id)}
+                            onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 + i * 0.04 }}
                             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
