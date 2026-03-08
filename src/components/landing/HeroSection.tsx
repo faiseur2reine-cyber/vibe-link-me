@@ -73,7 +73,7 @@ const HeroSection = () => {
                   <p className="text-sm font-bold text-foreground">Alex Martin</p>
                   <p className="text-[11px] text-muted-foreground">@alexmartin</p>
                 </div>
-                <p className="text-[10px] text-muted-foreground text-center mb-4">Créateur digital · Paris 🇫🇷</p>
+                <p className="text-[10px] text-muted-foreground text-center mb-4">{t('landing.mockupBio')}</p>
                 
                 <div className="space-y-2">
                   {['Mon portfolio', 'YouTube', 'Newsletter', 'Coaching 1:1'].map((label, i) => (
