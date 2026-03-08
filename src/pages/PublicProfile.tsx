@@ -158,9 +158,7 @@ const PublicProfile = () => {
     );
   }
 
-  if (page.is_nsfw && !ageVerified) {
-    return <AgeGate onVerified={() => setAgeVerified(true)} profile={page} />;
-  }
+  const isNsfwPage = page.is_nsfw;
 
   const theme = getTheme(page.theme);
   const displayName = page.display_name || page.username;
