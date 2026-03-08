@@ -95,7 +95,7 @@ const Index = () => {
       <PricingSection checkoutLoading={checkoutLoading} onUpgrade={handleUpgrade} />
 
       {/* CTA — with subtle background */}
-      <section className="px-4 sm:px-6 py-24 sm:py-32 text-center relative overflow-hidden">
+      <section className="px-4 sm:px-6 pt-16 pb-24 sm:pt-20 sm:pb-32 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.04),transparent_70%)]" />
         <motion.div
           initial={{ opacity: 0, y: 16 }}
