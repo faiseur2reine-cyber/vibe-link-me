@@ -228,8 +228,8 @@ const PublicProfile = () => {
               transition={{ delay: 0.2 }}
               className="mt-4 space-y-1"
             >
-              <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${theme.text}`}>{displayName}</h1>
-              <p className={`text-sm ${theme.subtleText}`}>@{page.username}</p>
+              <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${hasCustomColors ? '' : theme.text}`} style={page.custom_text_color ? { color: page.custom_text_color } : {}}>{displayName}</h1>
+              <p className={`text-sm ${hasCustomColors ? 'opacity-60' : theme.subtleText}`} style={page.custom_text_color ? { color: page.custom_text_color } : {}}>@{page.username}</p>
               {page.bio && (
                 <p className={`text-sm mt-2 leading-relaxed ${theme.text} opacity-70 max-w-sm mx-auto`}>
                   {page.bio.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
