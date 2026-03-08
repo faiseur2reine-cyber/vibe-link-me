@@ -20,6 +20,16 @@ interface PagesListViewProps {
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
+  const [search, setSearch] = useState('');
+  const filteredPages = useMemo(() => {
+    if (!search.trim()) return pages;
+    const q = search.toLowerCase();
+    return pages.filter(p =>
+      (p.display_name || '').toLowerCase().includes(q) ||
+      p.username.toLowerCase().includes(q) ||
+      (p.bio || '').toLowerCase().includes(q)
+    );
+  }, [pages, search]);
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
 
