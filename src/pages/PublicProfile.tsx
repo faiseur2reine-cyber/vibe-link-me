@@ -164,8 +164,27 @@ const PublicProfile = () => {
   const isDarkTheme = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'glass_dark' ||
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
 
+  const urgency = page.urgency_config;
+
+  // Scarcity widget renderer
+  const ScarcityBlock = () => (
+    urgency?.scarcity?.enabled ? (
+      <div className="mt-4">
+        <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
+      </div>
+    ) : null
+  );
+
   return (
     <>
+      {/* Urgency Banner */}
+      {urgency?.banner?.enabled && (
+        <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />
+      )}
+      {/* Location Toast */}
+      {urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && (
+        <ProfileLocationToast enabled={true} pageId={page.id} />
+      )}
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
