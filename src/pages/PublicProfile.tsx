@@ -10,7 +10,7 @@ import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
 import SocialIcons from '@/components/profile/SocialIcons';
-import AgeGate from '@/components/profile/AgeGate';
+import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
 import type { UrgencyConfig } from '@/components/dashboard/UrgencyEditor';
 
