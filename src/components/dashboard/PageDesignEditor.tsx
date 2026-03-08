@@ -124,8 +124,41 @@ const PageDesignEditor = ({ page, onUpdate }: PageDesignEditorProps) => {
     setCustomCss('');
   };
 
+  const applyPreset = (preset: DesignPreset) => {
+    setBgColor(preset.bgColor);
+    setTextColor(preset.textColor);
+    setAccentColor(preset.accentColor);
+    setBtnColor(preset.btnColor);
+    setBtnTextColor(preset.btnTextColor);
+    setFont(preset.font);
+    setLayout(preset.layout);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Presets Section */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-primary" />
+          <h3 className="font-display font-semibold text-sm text-foreground">Presets</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Applique un style prédéfini en un clic, puis personnalise-le.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {DESIGN_PRESETS.map((preset) => (
+            <button
+              key={preset.name}
+              onClick={() => applyPreset(preset)}
+              className="group relative rounded-xl border border-border hover:border-primary/50 transition-all overflow-hidden"
+            >
+              <div className="h-10 flex items-center justify-center text-xs font-medium" style={{ backgroundColor: preset.bgColor, color: preset.textColor }}>
+                <span className="opacity-80 group-hover:opacity-100 transition-opacity">{preset.emoji}</span>
+              </div>
+              <div className="px-2 py-1.5 text-[10px] font-medium text-foreground text-center truncate">{preset.name}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Colors Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
