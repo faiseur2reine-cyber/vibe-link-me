@@ -308,7 +308,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           <p className="text-muted-foreground mb-6 max-w-sm">
             Créez votre première page créateur pour commencer à partager vos liens.
           </p>
-          <Button onClick={onCreatePage} className="rounded-full gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+          <Button onClick={onCreatePage} className="gap-2">
             <Plus className="w-4 h-4" /> Créer une page
           </Button>
         </motion.div>
