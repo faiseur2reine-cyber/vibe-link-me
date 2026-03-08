@@ -1,6 +1,7 @@
 import { Profile, LinkItem } from '@/hooks/useDashboard';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, Heart } from 'lucide-react';
+import LinkFavicon from '@/components/LinkFavicon';
 import { getTheme } from '@/lib/themes';
 
 interface LinkPreviewProps {
