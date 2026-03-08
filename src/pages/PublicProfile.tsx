@@ -3,21 +3,31 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2 } from 'lucide-react';
-import LinkFavicon from '@/components/LinkFavicon';
+import { ExternalLink, Heart, Share2, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
+import LinkFavicon from '@/components/LinkFavicon';
+import SocialIcons from '@/components/profile/SocialIcons';
+import AgeGate from '@/components/profile/AgeGate';
+
+interface SocialLink {
+  platform: string;
+  url: string;
+}
 
 interface Profile {
   username: string;
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  cover_url: string | null;
   theme: string;
   plan: string;
   user_id: string;
+  is_nsfw: boolean;
+  social_links: SocialLink[];
 }
 
 interface LinkItem {
@@ -26,6 +36,7 @@ interface LinkItem {
   url: string;
   icon: string;
   position: number;
+  thumbnail_url: string | null;
 }
 
 const PublicProfile = () => {
@@ -35,8 +46,14 @@ const PublicProfile = () => {
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [ageVerified, setAgeVerified] = useState(false);
 
   useEffect(() => {
+    // Block known social media crawlers
+    const ua = navigator.userAgent.toLowerCase();
+    const isCrawler = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|pinterest|slackbot|discordbot|googlebot/i.test(ua);
+    if (isCrawler) return;
+
     const fetchData = async () => {
       if (!username) return;
       const { data: profileData } = await supabase
@@ -46,12 +63,17 @@ const PublicProfile = () => {
         .single();
 
       if (!profileData) { setNotFound(true); setLoading(false); return; }
-      setProfile(profileData as Profile);
+      
+      const p = {
+        ...profileData,
+        social_links: (profileData.social_links as unknown as SocialLink[]) || [],
+      } as Profile;
+      setProfile(p);
 
       const { data: linksData } = await supabase
         .from('links')
         .select('*')
-        .eq('user_id', (profileData as Profile).user_id)
+        .eq('user_id', p.user_id)
         .order('position', { ascending: true });
 
       setLinks((linksData as LinkItem[]) || []);
@@ -72,11 +94,11 @@ const PublicProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-          className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent"
+          className="w-8 h-8 rounded-full border-2 border-white/30 border-t-white"
         />
       </div>
     );
@@ -84,20 +106,26 @@ const PublicProfile = () => {
 
   if (notFound || !profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black gap-4 px-4">
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-          <h1 className="text-6xl font-display font-bold text-foreground">404</h1>
+          <h1 className="text-7xl font-bold text-white">404</h1>
         </motion.div>
-        <p className="text-muted-foreground">{t('public.notFound')}</p>
-        <Link to="/" className="text-primary hover:underline font-medium">{t('public.backHome')}</Link>
+        <p className="text-white/50">{t('public.notFound')}</p>
+        <Link to="/" className="text-white/70 hover:text-white underline font-medium">{t('public.backHome')}</Link>
       </div>
     );
+  }
+
+  // Age gate for NSFW profiles
+  if (profile.is_nsfw && !ageVerified) {
+    return <AgeGate onVerified={() => setAgeVerified(true)} profile={profile} />;
   }
 
   const theme = getTheme(profile.theme);
   const displayName = profile.display_name || profile.username;
   const pageTitle = `${displayName} | MyTaptap`;
-  const pageDescription = profile.bio || `Découvrez les liens de ${displayName} sur MyTaptap`;
+  const pageDescription = profile.bio || `Check out ${displayName}'s links on MyTaptap`;
+  const hasThumb = links.some(l => l.thumbnail_url);
 
   return (
     <>
@@ -109,31 +137,41 @@ const PublicProfile = () => {
         <meta property="og:type" content="profile" />
         <meta property="og:url" content={`${window.location.origin}/${username}`} />
         {profile.avatar_url && <meta property="og:image" content={profile.avatar_url} />}
+        {profile.is_nsfw && <meta name="rating" content="adult" />}
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
       </Helmet>
 
-      <div className={`min-h-screen ${theme.bg} flex flex-col items-center px-4 py-8 sm:py-16 relative overflow-hidden`}>
-        {/* Decorative blurred shapes */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-300/20 to-pink-300/20 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-orange-300/10 to-yellow-300/10 blur-3xl pointer-events-none" />
+      <div className={`min-h-screen ${theme.bg} flex flex-col items-center relative overflow-hidden`}>
+        
+        {/* Cover Photo */}
+        {profile.cover_url && (
+          <div className="w-full h-48 sm:h-64 relative">
+            <img 
+              src={profile.cover_url} 
+              alt="" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
+          </div>
+        )}
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-md space-y-8 relative z-10"
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className={`w-full max-w-lg px-4 ${profile.cover_url ? '-mt-16' : 'pt-12'} pb-8 relative z-10`}
         >
-          {/* Header Card */}
-          <div className={`rounded-3xl p-8 text-center ${theme.cardBg}`}>
+          {/* Profile Header */}
+          <div className="text-center relative">
             {/* Share button */}
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.3 }}
               onClick={handleShare}
-              className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${theme.subtleText} hover:opacity-100 opacity-60`}
+              className={`absolute top-0 right-0 p-2.5 rounded-full ${theme.cardBg} transition-colors ${theme.subtleText} hover:opacity-100 opacity-70`}
             >
               <Share2 className="w-4 h-4" />
             </motion.button>
@@ -142,35 +180,51 @@ const PublicProfile = () => {
             <motion.div
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.15, type: 'spring', stiffness: 200, damping: 15 }}
-              className={`w-28 h-28 rounded-full mx-auto overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 ${theme.avatarRing}`}
+              transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 15 }}
+              className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full mx-auto overflow-hidden ring-4 ring-background shadow-2xl ${profile.cover_url ? '' : theme.avatarRing}`}
             >
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-4xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
+                <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
                 </div>
               )}
             </motion.div>
 
             {/* Name & Bio */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="mt-5 space-y-1.5"
+              transition={{ delay: 0.2 }}
+              className="mt-4 space-y-1"
             >
-              <h1 className={`text-2xl font-display font-bold tracking-tight ${theme.text}`}>{displayName}</h1>
-              <p className={`text-sm font-medium ${theme.subtleText}`}>@{profile.username}</p>
+              <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${theme.text}`}>
+                {displayName}
+              </h1>
+              <p className={`text-sm ${theme.subtleText}`}>@{profile.username}</p>
               {profile.bio && (
-                <p className={`text-sm mt-3 leading-relaxed ${theme.text} opacity-75 max-w-xs mx-auto`}>{profile.bio}</p>
+                <p className={`text-sm mt-2 leading-relaxed ${theme.text} opacity-70 max-w-sm mx-auto`}>
+                  {profile.bio}
+                </p>
               )}
             </motion.div>
+
+            {/* Social Icons */}
+            {profile.social_links.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="mt-4"
+              >
+                <SocialIcons links={profile.social_links} theme={theme} />
+              </motion.div>
+            )}
           </div>
 
           {/* Links */}
-          <div className="space-y-3">
+          <div className={`mt-6 ${hasThumb ? 'grid grid-cols-2 gap-3' : 'space-y-2.5'}`}>
             {links.map((link, i) => (
               <motion.a
                 key={link.id}
@@ -178,16 +232,39 @@ const PublicProfile = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => recordClick(link.id)}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: 0.3 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`group flex items-center gap-3 px-5 py-4 rounded-2xl font-medium text-sm transition-all duration-200 ${theme.btn}`}
+                className={
+                  link.thumbnail_url
+                    ? `group relative rounded-2xl overflow-hidden aspect-square ${theme.cardBg}`
+                    : `group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${theme.btn}`
+                }
               >
-                <LinkFavicon url={link.url} size="md" />
-                <span className="flex-1 text-center">{link.title}</span>
-                <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
+                {link.thumbnail_url ? (
+                  <>
+                    <img 
+                      src={link.thumbnail_url} 
+                      alt={link.title} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <p className="text-white text-sm font-semibold truncate">{link.title}</p>
+                    </div>
+                    <div className="absolute top-2 right-2">
+                      <LinkFavicon url={link.url} size="sm" className="opacity-80" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <LinkFavicon url={link.url} size="md" />
+                    <span className="flex-1 text-center">{link.title}</span>
+                    <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-50 transition-opacity shrink-0" />
+                  </>
+                )}
               </motion.a>
             ))}
           </div>
@@ -197,12 +274,12 @@ const PublicProfile = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="pt-4 pb-2"
+              transition={{ delay: 0.5 }}
+              className="pt-8 pb-2"
             >
               <Link
                 to="/"
-                className={`flex items-center justify-center gap-1.5 text-xs font-medium opacity-40 hover:opacity-70 transition-opacity ${theme.text}`}
+                className={`flex items-center justify-center gap-1.5 text-xs font-medium opacity-30 hover:opacity-60 transition-opacity ${theme.text}`}
               >
                 {t('footer.madeWith')} <Heart className="w-3 h-3" /> MyTaptap
               </Link>
