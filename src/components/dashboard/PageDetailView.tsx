@@ -11,7 +11,8 @@ import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
 import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
 import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush } from 'lucide-react';
+import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -44,6 +45,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
     { value: 'links', icon: Link2, label: 'Liens' },
     { value: 'profile', icon: User, label: 'Profil' },
     { value: 'design', icon: Paintbrush, label: 'Design' },
+    { value: 'urgency', icon: Flame, label: 'Urgence' },
     { value: 'theme', icon: Palette, label: 'Thème' },
     { value: 'analytics', icon: BarChart3, label: 'Analytics' },
   ];
@@ -186,6 +188,17 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                 </CardHeader>
                 <CardContent>
                   <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="urgency">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-display">Widgets d'urgence & rareté</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <UrgencyEditor page={page} onUpdate={handleUpdate} />
                 </CardContent>
               </Card>
             </TabsContent>

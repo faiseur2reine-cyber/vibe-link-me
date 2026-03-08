@@ -11,6 +11,8 @@ import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
 import SocialIcons from '@/components/profile/SocialIcons';
 import AgeGate from '@/components/profile/AgeGate';
+import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
+import type { UrgencyConfig } from '@/components/dashboard/UrgencyEditor';
 
 interface SocialLink {
   platform: string;
@@ -36,6 +38,7 @@ interface CreatorPageData {
   custom_font?: string;
   link_layout?: string;
   custom_css?: string | null;
+  urgency_config?: UrgencyConfig | null;
 }
 
 interface LinkItem {
@@ -161,8 +164,27 @@ const PublicProfile = () => {
   const isDarkTheme = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'glass_dark' ||
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
 
+  const urgency = page.urgency_config;
+
+  // Scarcity widget renderer
+  const ScarcityBlock = () => (
+    urgency?.scarcity?.enabled ? (
+      <div className="mt-4">
+        <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
+      </div>
+    ) : null
+  );
+
   return (
     <>
+      {/* Urgency Banner */}
+      {urgency?.banner?.enabled && (
+        <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />
+      )}
+      {/* Location Toast */}
+      {urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && (
+        <ProfileLocationToast enabled={true} pageId={page.id} />
+      )}
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -293,7 +315,13 @@ const PublicProfile = () => {
                 <SocialIcons links={page.social_links} theme={theme} />
               </motion.div>
             )}
+
+            {/* Scarcity widgets — below bio position */}
+            {urgency?.scarcity?.position === 'below-bio' && <ScarcityBlock />}
           </div>
+
+          {/* Scarcity widgets — above links position */}
+          {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* Links — premium pill cards */}
           <div className="mt-8 space-y-6">
@@ -435,6 +463,9 @@ const PublicProfile = () => {
               ));
             })()}
           </div>
+
+          {/* Scarcity widgets — bottom position */}
+          {urgency?.scarcity?.position === 'bottom' && <ScarcityBlock />}
 
           {/* Footer */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="pt-10 pb-4">
