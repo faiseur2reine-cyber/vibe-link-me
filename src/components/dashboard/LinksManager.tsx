@@ -79,6 +79,7 @@ interface LinksManagerProps {
   onDelete: (id: string) => Promise<{ error: any } | undefined>;
   onReorder: (links: LinkItem[]) => Promise<void>;
   onRefetch?: () => Promise<void>;
+  pageId?: string;
 }
 
 const LINK_STYLES = [
