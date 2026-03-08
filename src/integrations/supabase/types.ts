@@ -34,6 +34,7 @@ export type Database = {
           social_links: Json
           theme: string
           updated_at: string
+          urgency_config: Json | null
           user_id: string
           username: string
         }
@@ -56,6 +57,7 @@ export type Database = {
           social_links?: Json
           theme?: string
           updated_at?: string
+          urgency_config?: Json | null
           user_id: string
           username: string
         }
@@ -78,6 +80,7 @@ export type Database = {
           social_links?: Json
           theme?: string
           updated_at?: string
+          urgency_config?: Json | null
           user_id?: string
           username?: string
         }

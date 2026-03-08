@@ -1,0 +1,1 @@
+ALTER TABLE public.creator_pages ADD COLUMN IF NOT EXISTS urgency_config jsonb DEFAULT NULL;
