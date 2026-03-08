@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles } from 'lucide-react';
+import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye } from 'lucide-react';
+import DesignLivePreview from './DesignLivePreview';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
@@ -54,6 +55,7 @@ const LAYOUT_OPTIONS = [
 
 interface PageDesignEditorProps {
   page: CreatorPage;
+  links?: import('@/hooks/useDashboard').LinkItem[];
   onUpdate: (updates: Partial<CreatorPage>) => Promise<{ error: any }>;
 }
 
@@ -82,7 +84,7 @@ const ColorInput = ({ label, value, onChange, placeholder }: { label: string; va
   </div>
 );
 
-const PageDesignEditor = ({ page, onUpdate }: PageDesignEditorProps) => {
+const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps) => {
   const [bgColor, setBgColor] = useState(page.custom_bg_color || '');
   const [textColor, setTextColor] = useState(page.custom_text_color || '');
   const [accentColor, setAccentColor] = useState(page.custom_accent_color || '');
@@ -134,8 +136,22 @@ const PageDesignEditor = ({ page, onUpdate }: PageDesignEditorProps) => {
     setLayout(preset.layout);
   };
 
+  const designState = { bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout, customCss };
+
   return (
     <div className="space-y-6">
+      {/* Live Preview */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4 text-primary" />
+          <h3 className="font-display font-semibold text-sm text-foreground">Aperçu en direct</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Les changements s'affichent en temps réel avant de sauvegarder.</p>
+        <div className="max-w-xs mx-auto">
+          <DesignLivePreview page={page} links={links} designState={designState} />
+        </div>
+      </div>
+
       {/* Presets Section */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
@@ -174,34 +190,6 @@ const PageDesignEditor = ({ page, onUpdate }: PageDesignEditorProps) => {
           <ColorInput label="Texte des boutons" value={btnTextColor} onChange={setBtnTextColor} placeholder="#ffffff" />
         </div>
 
-        {/* Live preview strip */}
-        {(bgColor || btnColor) && (
-          <Card className="border-border overflow-hidden">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-2">Aperçu rapide</p>
-              <div
-                className="rounded-xl p-4 flex flex-col items-center gap-2"
-                style={{ backgroundColor: bgColor || '#1a1a2e' }}
-              >
-                <span className="text-sm font-bold" style={{ color: textColor || '#ffffff' }}>
-                  {page.display_name || page.username}
-                </span>
-                <div
-                  className="px-6 py-2 rounded-xl text-xs font-medium"
-                  style={{
-                    backgroundColor: btnColor || '#16213e',
-                    color: btnTextColor || '#ffffff',
-                  }}
-                >
-                  Exemple de lien
-                </div>
-                <span className="text-[10px]" style={{ color: accentColor || '#e94560' }}>
-                  Couleur d'accent
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Font Section */}
