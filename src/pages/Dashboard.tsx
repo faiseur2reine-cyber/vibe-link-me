@@ -86,10 +86,10 @@ const Dashboard = () => {
         <Link to="/" className="font-display text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
           MyTaptap
         </Link>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="rounded-full gap-1" asChild>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button variant="outline" size="sm" className="rounded-full gap-1 text-xs sm:text-sm" asChild>
             <a href={`/${profile.username}`} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="w-3 h-3" /> {t('dashboard.preview')}
+              <ExternalLink className="w-3 h-3" /> <span className="hidden sm:inline">{t('dashboard.preview')}</span>
             </a>
           </Button>
           <LanguageSelector />
