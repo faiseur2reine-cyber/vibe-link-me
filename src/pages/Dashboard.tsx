@@ -24,7 +24,7 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const { user, loading: authLoading, signOut, checkSubscription } = useAuth();
   const { profile, loading: profileLoading, updateProfile, refetch: refetchProfile } = useProfile();
-  const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks } = useLinks();
+  const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks, refetch: refetchLinks } = useLinks();
   const [activeTab, setActiveTab] = useState('links');
 
   const handleTabChange = (value: string) => {
