@@ -102,6 +102,14 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              <TabsContent value="analytics">
+                <Card>
+                  <CardContent className="p-4 md:p-6">
+                    <AnalyticsPanel links={links} plan={profile.plan} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
 
