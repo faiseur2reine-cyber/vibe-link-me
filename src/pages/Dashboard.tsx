@@ -17,6 +17,7 @@ import { PLANS } from '@/lib/plans';
 import { toast } from '@/hooks/use-toast';
 import { LogOut, User, Link2, Eye, ExternalLink, Palette, BarChart3, CreditCard, Loader2, Settings } from 'lucide-react';
 import { useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
   const { t } = useTranslation();
