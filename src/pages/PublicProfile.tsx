@@ -216,7 +216,7 @@ const PublicProfile = () => {
               {page.avatar_url ? (
                 <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <div className="w-full h-full bg-primary flex items-center justify-center">
                   <span className="text-3xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
                 </div>
               )}
