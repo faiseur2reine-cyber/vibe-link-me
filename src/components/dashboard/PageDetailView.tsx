@@ -11,7 +11,8 @@ import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
 import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
 import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush } from 'lucide-react';
+import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
