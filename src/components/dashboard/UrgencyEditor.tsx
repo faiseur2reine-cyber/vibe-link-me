@@ -35,6 +35,10 @@ export interface UrgencyConfig {
     locationToastEnabled: boolean;
     position: 'above-links' | 'below-bio' | 'bottom';
   };
+  abTest?: {
+    enabled: boolean;
+    splitPercent: number; // % shown variant A (with widgets)
+  };
 }
 
 export const defaultUrgencyConfig: UrgencyConfig = {
@@ -80,6 +84,9 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
   };
   const updateScarcity = (updates: Partial<UrgencyConfig['scarcity']>) => {
     setConfig(c => ({ ...c, scarcity: { ...c.scarcity, ...updates } }));
+  };
+  const updateAbTest = (updates: Partial<NonNullable<UrgencyConfig['abTest']>>) => {
+    setConfig(c => ({ ...c, abTest: { enabled: false, splitPercent: 50, ...c.abTest, ...updates } }));
   };
 
   const handleSave = async () => {
@@ -300,6 +307,54 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
               </div>
               <Switch checked={config.scarcity.locationToastEnabled} onCheckedChange={v => updateScarcity({ locationToastEnabled: v })} />
             </div>
+          </div>
+        )}
+      </section>
+
+      {/* === A/B TEST === */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Eye className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-foreground">A/B Test</h3>
+              <p className="text-xs text-muted-foreground">Compare avec/sans widgets</p>
+            </div>
+          </div>
+          <Switch
+            checked={config.abTest?.enabled ?? false}
+            onCheckedChange={(v) => updateAbTest({ enabled: v })}
+          />
+        </div>
+
+        {config.abTest?.enabled && (
+          <div className="space-y-4 pl-10 border-l-2 border-primary/20">
+            <div className="p-3 rounded-lg bg-secondary/50 space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 rounded bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">A</span>
+                  <span className="font-medium text-foreground">Avec widgets</span>
+                </div>
+                <span className="font-mono font-bold text-foreground">{config.abTest.splitPercent}%</span>
+              </div>
+              <Slider
+                value={[config.abTest.splitPercent ?? 50]}
+                onValueChange={([v]) => updateAbTest({ splitPercent: v })}
+                min={10} max={90} step={5}
+              />
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 rounded bg-muted text-muted-foreground flex items-center justify-center text-[10px] font-bold">B</span>
+                  <span className="font-medium text-foreground">Sans widgets</span>
+                </div>
+                <span className="font-mono font-bold text-foreground">{100 - (config.abTest.splitPercent ?? 50)}%</span>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              Les visiteurs sont assignés aléatoirement. Les clics sont taggés A ou B pour comparer les conversions dans l'onglet Analytics.
+            </p>
           </div>
         )}
       </section>

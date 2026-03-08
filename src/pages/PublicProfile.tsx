@@ -63,6 +63,7 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [ageVerified, setAgeVerified] = useState(false);
+  const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
@@ -90,11 +91,27 @@ const PublicProfile = () => {
         const result = await res.json();
 
         if (result.page) {
-          setPage({
+          const pageData = {
             ...result.page,
             social_links: (result.page.social_links as unknown as SocialLink[]) || [],
-          } as CreatorPageData);
+          } as CreatorPageData;
+          setPage(pageData);
           setLinks((result.links as LinkItem[]) || []);
+
+          // A/B test assignment
+          const uc = pageData.urgency_config;
+          if (uc?.abTest?.enabled) {
+            const storageKey = `ab_${pageData.id}`;
+            const stored = sessionStorage.getItem(storageKey);
+            if (stored === 'A' || stored === 'B') {
+              setAbVariant(stored);
+            } else {
+              const split = uc.abTest.splitPercent ?? 50;
+              const variant = Math.random() * 100 < split ? 'A' : 'B';
+              sessionStorage.setItem(storageKey, variant);
+              setAbVariant(variant);
+            }
+          }
         } else {
           setNotFound(true);
         }
@@ -165,10 +182,12 @@ const PublicProfile = () => {
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
 
   const urgency = page.urgency_config;
+  const showUrgencyWidgets = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
+  const clickVariant = urgency?.abTest?.enabled ? abVariant : null;
 
   // Scarcity widget renderer
   const ScarcityBlock = () => (
-    urgency?.scarcity?.enabled ? (
+    showUrgencyWidgets && urgency?.scarcity?.enabled ? (
       <div className="mt-4">
         <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
       </div>
@@ -178,11 +197,11 @@ const PublicProfile = () => {
   return (
     <>
       {/* Urgency Banner */}
-      {urgency?.banner?.enabled && (
+      {showUrgencyWidgets && urgency?.banner?.enabled && (
         <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />
       )}
       {/* Location Toast */}
-      {urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && (
+      {showUrgencyWidgets && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && (
         <ProfileLocationToast enabled={true} pageId={page.id} />
       )}
       <Helmet>
@@ -364,7 +383,7 @@ const PublicProfile = () => {
                       if (isCard && link.thumbnail_url) {
                         return (
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                            onClick={() => recordClick(link.id)}
+                            onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 + i * 0.04 }}
                             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -387,7 +406,7 @@ const PublicProfile = () => {
                       if (isFeatured) {
                         return (
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                            onClick={() => recordClick(link.id)}
+                            onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 + i * 0.04 }}
                             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -412,7 +431,7 @@ const PublicProfile = () => {
                       if (isMinimal) {
                         return (
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                            onClick={() => recordClick(link.id)}
+                            onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 + i * 0.04 }}
                             whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
@@ -435,7 +454,7 @@ const PublicProfile = () => {
                       // Default — premium pill card with favicon circle
                       return (
                         <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id)}
+                          onClick={() => recordClick(link.id, clickVariant)}
                           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.3 + i * 0.04 }}
                           whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}

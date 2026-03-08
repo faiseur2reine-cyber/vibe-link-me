@@ -251,6 +251,7 @@ export function usePageAnalytics(pageId: string | null) {
   const [countryStats, setCountryStats] = useState<{ country: string; clicks: number }[]>([]);
   const [cityStats, setCityStats] = useState<{ city: string; clicks: number }[]>([]);
   const [referrerStats, setReferrerStats] = useState<{ referrer: string; clicks: number }[]>([]);
+  const [abStats, setAbStats] = useState<{ variant: string; clicks: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
@@ -267,7 +268,7 @@ export function usePageAnalytics(pageId: string | null) {
 
     const { data: clicks } = await supabase
       .from('link_clicks')
-      .select('link_id, clicked_at, country, city, referrer')
+      .select('link_id, clicked_at, country, city, referrer, ab_variant')
       .in('link_id', linkIds);
 
     if (!clicks) { setLoading(false); return; }
@@ -316,10 +317,18 @@ export function usePageAnalytics(pageId: string | null) {
     });
     setReferrerStats(Object.entries(referrers).map(([referrer, clicks]) => ({ referrer, clicks })).sort((a, b) => b.clicks - a.clicks));
 
+    // A/B variant stats
+    const variants: Record<string, number> = {};
+    clicks.forEach(c => {
+      const v = (c as any).ab_variant || null;
+      if (v) variants[v] = (variants[v] || 0) + 1;
+    });
+    setAbStats(Object.entries(variants).map(([variant, clicks]) => ({ variant, clicks })).sort((a, b) => a.variant.localeCompare(b.variant)));
+
     setLoading(false);
   }, [user, pageId]);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
-  return { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, loading, refetch: fetchStats };
+  return { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, abStats, loading, refetch: fetchStats };
 }
