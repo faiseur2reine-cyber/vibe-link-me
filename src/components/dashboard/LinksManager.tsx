@@ -135,8 +135,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       toast({ title: error.message, variant: 'destructive' });
     } else {
       toast({ title: `Template "${template.name}" appliqué ! 🎉` });
-      // Trigger refetch via parent
-      await onAdd({ title: '__refetch__', url: '__refetch__', icon: '' }).catch(() => {});
+      if (onRefetch) await onRefetch();
     }
     setApplyingTemplate(false);
     setTemplateDialogOpen(false);
