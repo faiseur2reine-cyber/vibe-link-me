@@ -43,6 +43,9 @@
     "currentPlan": "Current plan",
     "upgrade": "Go Pro",
     "upgradeStarter": "Go Starter",
+    "proMonthly": "≈ €9.58/month",
+    "includedInPro": "Included in Pro",
+    "manageSubscription": "Manage subscription",
     "freeFeatures": ["Up to 5 links", "3 basic themes", "MyTaptap badge"],
     "starterFeatures": ["Up to 20 links", "All themes", "90-day analytics", "MyTaptap badge"],
     "proFeatures": ["Unlimited links", "All themes", "Unlimited analytics + charts", "Custom domain", "Priority support", "MyTaptap badge"]
