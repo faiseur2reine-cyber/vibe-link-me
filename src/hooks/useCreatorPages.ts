@@ -102,7 +102,75 @@ export function useCreatorPages() {
     return { error };
   };
 
-  return { pages, loading, createPage, updatePage, deletePage, refetch: fetchPages };
+  const duplicatePage = async (id: string) => {
+    if (!user) return { error: { message: 'Not authenticated' } };
+    const source = pages.find(p => p.id === id);
+    if (!source) return { error: { message: 'Page not found' } };
+
+    // Generate unique username
+    let newUsername = `${source.username}-copy`;
+    let suffix = 1;
+    const { data: existing } = await supabase
+      .from('creator_pages')
+      .select('username')
+      .like('username', `${source.username}-copy%`);
+    const taken = new Set(existing?.map(e => e.username) || []);
+    while (taken.has(newUsername)) {
+      suffix++;
+      newUsername = `${source.username}-copy-${suffix}`;
+    }
+
+    const { data: newPage, error } = await supabase
+      .from('creator_pages')
+      .insert({
+        user_id: user.id,
+        username: newUsername,
+        display_name: `${source.display_name || source.username} (copie)`,
+        bio: source.bio,
+        avatar_url: source.avatar_url,
+        cover_url: source.cover_url,
+        theme: source.theme,
+        is_nsfw: source.is_nsfw,
+        social_links: JSON.parse(JSON.stringify(source.social_links)),
+      })
+      .select()
+      .single();
+
+    if (error || !newPage) {
+      await fetchPages();
+      return { error };
+    }
+
+    // Duplicate links
+    const { data: sourceLinks } = await supabase
+      .from('links')
+      .select('*')
+      .eq('page_id', id)
+      .order('position', { ascending: true });
+
+    if (sourceLinks && sourceLinks.length > 0) {
+      const newLinks = sourceLinks.map(l => ({
+        user_id: user.id,
+        page_id: newPage.id,
+        title: l.title,
+        url: l.url,
+        icon: l.icon,
+        position: l.position,
+        thumbnail_url: l.thumbnail_url,
+        description: l.description,
+        bg_color: l.bg_color,
+        text_color: l.text_color,
+        style: l.style,
+        section_title: l.section_title,
+      }));
+      await supabase.from('links').insert(newLinks);
+    }
+
+    await fetchPages();
+    return { data: newPage, error: null };
+  };
+
+  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, refetch: fetchPages };
 }
 
 export function usePageLinks(pageId: string | null) {

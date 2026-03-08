@@ -16,7 +16,7 @@ import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user, loading: authLoading, signOut, checkSubscription } = useAuth();
-  const { pages, loading: pagesLoading, createPage, updatePage, deletePage, refetch: refetchPages } = useCreatorPages();
+  const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, refetch: refetchPages } = useCreatorPages();
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
@@ -78,6 +78,7 @@ const Dashboard = () => {
             pages={pages}
             onSelectPage={(id) => setSelectedPageId(id)}
             onCreatePage={() => setCreateDialogOpen(true)}
+            onDuplicatePage={duplicatePage}
           />
         )}
       </div>
