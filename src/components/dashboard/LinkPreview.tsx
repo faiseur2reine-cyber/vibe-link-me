@@ -75,6 +75,7 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
             Créé avec <Heart className="w-2.5 h-2.5" /> MyTaptap
           </p>
         )}
+        </div>
       </motion.div>
     </AnimatePresence>
   );
