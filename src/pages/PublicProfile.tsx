@@ -37,6 +37,10 @@ interface LinkItem {
   icon: string;
   position: number;
   thumbnail_url: string | null;
+  description: string | null;
+  bg_color: string | null;
+  text_color: string | null;
+  style: string;
 }
 
 const PublicProfile = () => {
@@ -125,7 +129,7 @@ const PublicProfile = () => {
   const displayName = profile.display_name || profile.username;
   const pageTitle = `${displayName} | MyTaptap`;
   const pageDescription = profile.bio || `Check out ${displayName}'s links on MyTaptap`;
-  const hasThumb = links.some(l => l.thumbnail_url);
+  
 
   return (
     <>
@@ -224,49 +228,139 @@ const PublicProfile = () => {
           </div>
 
           {/* Links */}
-          <div className={`mt-6 ${hasThumb ? 'grid grid-cols-2 gap-3' : 'space-y-2.5'}`}>
-            {links.map((link, i) => (
-              <motion.a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => recordClick(link.id)}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={
-                  link.thumbnail_url
-                    ? `group relative rounded-2xl overflow-hidden aspect-square ${theme.cardBg}`
-                    : `group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${theme.btn}`
-                }
-              >
-                {link.thumbnail_url ? (
-                  <>
+          <div className="mt-6 space-y-2.5">
+            {links.map((link, i) => {
+              const isFeatured = link.style === 'featured';
+              const isCard = link.style === 'card' || !!link.thumbnail_url;
+              const isMinimal = link.style === 'minimal';
+
+              const customStyle: React.CSSProperties = {
+                ...(link.bg_color ? { backgroundColor: link.bg_color } : {}),
+                ...(link.text_color ? { color: link.text_color } : {}),
+              };
+
+              // Card style with thumbnail
+              if (isCard && link.thumbnail_url) {
+                return (
+                  <motion.a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => recordClick(link.id)}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`group relative rounded-2xl overflow-hidden ${isFeatured ? 'aspect-[2/1]' : 'aspect-[3/2]'}`}
+                    style={customStyle}
+                  >
                     <img 
                       src={link.thumbnail_url} 
                       alt={link.title} 
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <p className="text-white text-sm font-semibold truncate">{link.title}</p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-white text-base font-bold truncate" style={link.text_color ? { color: link.text_color } : {}}>
+                        {link.title}
+                      </p>
+                      {link.description && (
+                        <p className="text-white/70 text-xs mt-0.5 truncate" style={link.text_color ? { color: link.text_color, opacity: 0.7 } : {}}>
+                          {link.description}
+                        </p>
+                      )}
                     </div>
-                    <div className="absolute top-2 right-2">
+                    <div className="absolute top-3 right-3">
                       <LinkFavicon url={link.url} size="sm" className="opacity-80" />
                     </div>
-                  </>
-                ) : (
-                  <>
+                  </motion.a>
+                );
+              }
+
+              // Featured style (no thumb)
+              if (isFeatured) {
+                return (
+                  <motion.a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => recordClick(link.id)}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`group flex flex-col items-center gap-1 px-6 py-5 rounded-2xl text-base font-bold transition-all duration-200 ${link.bg_color ? '' : theme.btn}`}
+                    style={customStyle}
+                  >
                     <LinkFavicon url={link.url} size="md" />
-                    <span className="flex-1 text-center">{link.title}</span>
-                    <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-50 transition-opacity shrink-0" />
-                  </>
-                )}
-              </motion.a>
-            ))}
+                    <span>{link.title}</span>
+                    {link.description && (
+                      <span className="text-xs font-normal opacity-60">{link.description}</span>
+                    )}
+                  </motion.a>
+                );
+              }
+
+              // Minimal style
+              if (isMinimal) {
+                return (
+                  <motion.a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => recordClick(link.id)}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 ${theme.text}`}
+                    style={customStyle}
+                  >
+                    <LinkFavicon url={link.url} size="sm" />
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium">{link.title}</span>
+                      {link.description && (
+                        <p className="text-xs opacity-50 truncate">{link.description}</p>
+                      )}
+                    </div>
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity shrink-0" />
+                  </motion.a>
+                );
+              }
+
+              // Default style
+              return (
+                <motion.a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => recordClick(link.id)}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${link.bg_color ? '' : theme.btn}`}
+                  style={customStyle}
+                >
+                  <LinkFavicon url={link.url} size="md" />
+                  <div className="flex-1 min-w-0 text-center">
+                    <span>{link.title}</span>
+                    {link.description && (
+                      <p className="text-xs font-normal opacity-60 truncate mt-0.5">{link.description}</p>
+                    )}
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-50 transition-opacity shrink-0" />
+                </motion.a>
+              );
+            })}
           </div>
 
           {/* Footer Badge */}
