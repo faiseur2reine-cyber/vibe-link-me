@@ -5,7 +5,6 @@ import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { Navigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { LogOut, Plus, Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
@@ -21,7 +20,6 @@ const Dashboard = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
 
-  // After checkout success, refresh subscription
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
       checkSubscription().then(() => refetchPages());
@@ -30,7 +28,11 @@ const Dashboard = () => {
   }, [searchParams]);
 
   if (authLoading || pagesLoading) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">{t('common.loading')}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
   if (!user) return <Navigate to="/auth" replace />;
 
@@ -39,32 +41,30 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-4 md:px-6 py-4 max-w-7xl mx-auto border-b border-border">
-        <button
-          onClick={() => setSelectedPageId(null)}
-          className="text-lg font-bold text-foreground tracking-tight"
-        >
-          MyTaptap
-        </button>
-        <div className="flex items-center gap-1 sm:gap-2">
-          {!selectedPageId && (
-            <Button
-              onClick={() => setCreateDialogOpen(true)}
-              size="sm"
-              className="rounded-lg gap-1"
-            >
-              <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Nouvelle page</span>
+      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 max-w-6xl mx-auto">
+          <button
+            onClick={() => setSelectedPageId(null)}
+            className="text-base font-bold text-foreground tracking-tight"
+          >
+            MyTaptap
+          </button>
+          <div className="flex items-center gap-1.5">
+            {!selectedPageId && (
+              <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="h-8 gap-1 text-sm">
+                <Plus className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Nouvelle page</span>
+              </Button>
+            )}
+            <LanguageSelector />
+            <Button variant="ghost" size="sm" onClick={signOut} className="h-8 gap-1 text-sm">
+              <LogOut className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t('nav.logout')}</span>
             </Button>
-          )}
-          <LanguageSelector />
-          <Button variant="ghost" size="sm" onClick={signOut} className="gap-1">
-            <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">{t('nav.logout')}</span>
-          </Button>
+          </div>
         </div>
       </nav>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {selectedPage ? (
           <PageDetailView
             page={selectedPage}
@@ -82,7 +82,7 @@ const Dashboard = () => {
             onDeletePage={deletePage}
           />
         )}
-      </div>
+      </main>
 
       <CreatePageDialog
         open={createDialogOpen}

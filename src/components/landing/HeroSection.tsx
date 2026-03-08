@@ -2,64 +2,121 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Star } from 'lucide-react';
 
 const HeroSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="px-4 sm:px-6 pt-16 sm:pt-28 pb-20 sm:pb-32 max-w-3xl mx-auto text-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-secondary text-xs font-medium text-muted-foreground mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-          Nouveau : Design personnalisé par page
-        </div>
-
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-foreground">
-          {t('hero.title')}
-          <br />
-          <span className="text-primary">
-            {t('hero.titleHighlight')}
-          </span>
-        </h1>
-        <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          {t('hero.subtitle')}
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-          <Button size="lg" asChild className="h-12 px-6 text-base">
-            <Link to="/auth?tab=signup">
-              {t('hero.cta')}
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          </Button>
-          <Button size="lg" variant="outline" asChild className="h-12 px-6 text-base">
-            <Link to="/demo">{t('hero.ctaSecondary')}</Link>
-          </Button>
-        </div>
-      </motion.div>
-
-      {/* Clean mock preview */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-16 mx-auto max-w-xs"
-      >
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-            <span className="text-2xl font-bold text-muted-foreground">M</span>
+    <section className="px-4 sm:px-6 pt-12 sm:pt-24 pb-16 sm:pb-28 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        {/* Left — Copy */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center gap-1.5 mb-5">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+            ))}
+            <span className="text-xs text-muted-foreground ml-2">4.9/5 · 2 000+ créateurs</span>
           </div>
-          <div className="h-3 w-28 bg-secondary rounded mx-auto mb-1.5" />
-          <div className="h-2.5 w-40 bg-secondary rounded mx-auto mb-6" />
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-11 rounded-lg bg-secondary border border-border mb-2.5 last:mb-0" />
-          ))}
-        </div>
-      </motion.div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.15] tracking-tight text-foreground">
+            {t('hero.title')}{' '}
+            <span className="text-primary">{t('hero.titleHighlight')}</span>
+          </h1>
+
+          <p className="mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-md">
+            {t('hero.subtitle')}
+          </p>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button size="lg" asChild className="h-11 px-5 text-sm font-semibold">
+              <Link to="/auth?tab=signup">
+                {t('hero.cta')}
+                <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild className="h-11 px-5 text-sm">
+              <Link to="/demo">{t('hero.ctaSecondary')}</Link>
+            </Button>
+          </div>
+
+          <div className="mt-8 flex items-center gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> Gratuit pour commencer</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> Aucune carte requise</span>
+          </div>
+        </motion.div>
+
+        {/* Right — Phone mockup */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="relative flex justify-center lg:justify-end"
+        >
+          <div className="relative w-[260px] sm:w-[280px]">
+            {/* Phone frame */}
+            <div className="rounded-[2.5rem] border-[6px] border-foreground/10 bg-card shadow-2xl overflow-hidden">
+              {/* Status bar */}
+              <div className="h-6 bg-foreground/[0.03] flex items-center justify-center">
+                <div className="w-16 h-1 rounded-full bg-foreground/10" />
+              </div>
+              {/* Content */}
+              <div className="px-5 pt-5 pb-6">
+                <div className="w-14 h-14 rounded-full bg-primary/15 mx-auto mb-3 flex items-center justify-center">
+                  <span className="text-lg font-bold text-primary">A</span>
+                </div>
+                <div className="text-center mb-1">
+                  <p className="text-sm font-bold text-foreground">Alex Martin</p>
+                  <p className="text-[11px] text-muted-foreground">@alexmartin</p>
+                </div>
+                <p className="text-[10px] text-muted-foreground text-center mb-4">Créateur digital · Paris 🇫🇷</p>
+                
+                <div className="space-y-2">
+                  {['Mon portfolio', 'YouTube', 'Newsletter', 'Coaching 1:1'].map((label, i) => (
+                    <div
+                      key={label}
+                      className="h-10 rounded-lg border border-border bg-secondary/50 flex items-center justify-center text-xs font-medium text-foreground"
+                    >
+                      {label}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-center gap-3 mt-4">
+                  {['X', 'IG', 'YT', 'TT'].map(s => (
+                    <div key={s} className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-[9px] font-bold text-muted-foreground">{s}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Floating badges */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="absolute -left-8 top-16 bg-card border border-border rounded-xl px-3 py-2 shadow-lg"
+            >
+              <p className="text-[10px] font-semibold text-foreground">+248 clics</p>
+              <p className="text-[9px] text-muted-foreground">cette semaine</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.65 }}
+              className="absolute -right-6 bottom-24 bg-card border border-border rounded-xl px-3 py-2 shadow-lg"
+            >
+              <p className="text-[10px] font-semibold text-primary">Design custom ✓</p>
+              <p className="text-[9px] text-muted-foreground">CSS + polices</p>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 };
