@@ -331,7 +331,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                       <img src={page.cover_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                   ) : (
-                    <div className="h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-t-xl" />
+                    <div className="h-24 bg-secondary rounded-t-xl" />
                   )}
                   <div className="p-4 -mt-8 relative">
                     <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-background shadow-lg">
