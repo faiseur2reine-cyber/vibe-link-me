@@ -17,7 +17,7 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-gray-900',
     accent: 'text-orange-600',
     preview: 'bg-gradient-to-br from-orange-400 to-red-400',
-    free: true,
+    tier: 'free',
   },
   ocean: {
     name: 'Ocean',
