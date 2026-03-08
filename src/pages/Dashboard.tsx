@@ -10,8 +10,9 @@ import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import LinksManager from '@/components/dashboard/LinksManager';
 import LinkPreview from '@/components/dashboard/LinkPreview';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
+import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import LanguageSelector from '@/components/LanguageSelector';
-import { LogOut, User, Link2, Eye, ExternalLink, Palette } from 'lucide-react';
+import { LogOut, User, Link2, Eye, ExternalLink, Palette, BarChart3 } from 'lucide-react';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -63,6 +64,9 @@ const Dashboard = () => {
                 <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background">
                   <Palette className="w-4 h-4" /> {t('dashboard.theme')}
                 </TabsTrigger>
+                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background">
+                  <BarChart3 className="w-4 h-4" /> {t('dashboard.analytics')}
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="links">
@@ -95,6 +99,14 @@ const Dashboard = () => {
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <ThemeSelector profile={profile} onUpdate={updateProfile} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="analytics">
+                <Card>
+                  <CardContent className="p-4 md:p-6">
+                    <AnalyticsPanel links={links} plan={profile.plan} />
                   </CardContent>
                 </Card>
               </TabsContent>

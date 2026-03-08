@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
+import { recordClick } from '@/hooks/useAnalytics';
 
 interface Profile {
   username: string;
@@ -132,6 +133,7 @@ const PublicProfile = () => {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => recordClick(link.id)}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + i * 0.05 }}
