@@ -43,6 +43,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const tabs = [
     { value: 'links', icon: Link2, label: 'Liens' },
     { value: 'profile', icon: User, label: 'Profil' },
+    { value: 'design', icon: Paintbrush, label: 'Design' },
     { value: 'theme', icon: Palette, label: 'Thème' },
     { value: 'analytics', icon: BarChart3, label: 'Analytics' },
   ];
