@@ -26,15 +26,11 @@ const Dashboard = () => {
   const { profile, loading: profileLoading, updateProfile, refetch: refetchProfile } = useProfile();
   const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks } = useLinks();
   const [activeTab, setActiveTab] = useState('links');
-  const prevTabRef = useRef('links');
-  const tabOrder = ['links', 'profile', 'theme', 'analytics', 'plan'];
 
   const handleTabChange = (value: string) => {
-    prevTabRef.current = activeTab;
     setActiveTab(value);
   };
 
-  const direction = tabOrder.indexOf(activeTab) >= tabOrder.indexOf(prevTabRef.current) ? 1 : -1;
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [searchParams] = useSearchParams();
