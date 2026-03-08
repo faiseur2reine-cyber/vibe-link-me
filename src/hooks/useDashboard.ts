@@ -2,6 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
+export interface SocialLink {
+  platform: string;
+  url: string;
+}
+
 export interface Profile {
   id: string;
   user_id: string;
@@ -9,8 +14,11 @@ export interface Profile {
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  cover_url: string | null;
   theme: string;
   plan: string;
+  is_nsfw: boolean;
+  social_links: SocialLink[];
 }
 
 export interface LinkItem {
@@ -20,6 +28,7 @@ export interface LinkItem {
   url: string;
   icon: string;
   position: number;
+  thumbnail_url: string | null;
 }
 
 export function useProfile() {
