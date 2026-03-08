@@ -10,8 +10,9 @@ import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import LinksManager from '@/components/dashboard/LinksManager';
 import LinkPreview from '@/components/dashboard/LinkPreview';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
+import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import LanguageSelector from '@/components/LanguageSelector';
-import { LogOut, User, Link2, Eye, ExternalLink, Palette } from 'lucide-react';
+import { LogOut, User, Link2, Eye, ExternalLink, Palette, BarChart3 } from 'lucide-react';
 
 const Dashboard = () => {
   const { t } = useTranslation();
