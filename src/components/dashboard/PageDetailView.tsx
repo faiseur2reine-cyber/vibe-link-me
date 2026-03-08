@@ -141,10 +141,10 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             {!isMobile && (
               <div className="mb-6">
-                <TabsList className="bg-muted rounded-full p-1 gap-1 inline-flex">
+                <TabsList className="bg-secondary rounded-lg p-0.5 gap-0.5 inline-flex">
                   {tabs.map(({ value, icon: Icon, label }) => (
-                    <TabsTrigger key={value} value={value} className="rounded-full gap-1.5 data-[state=active]:bg-background text-sm px-3 py-2">
-                      <Icon className="w-4 h-4 shrink-0" /> {label}
+                    <TabsTrigger key={value} value={value} className="rounded-md gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs px-3 py-1.5">
+                      <Icon className="w-3.5 h-3.5 shrink-0" /> {label}
                     </TabsTrigger>
                   ))}
                 </TabsList>
