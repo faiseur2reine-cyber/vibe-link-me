@@ -15,7 +15,7 @@ interface PagesListViewProps {
   onDuplicatePage?: (id: string) => Promise<{ error: any; data?: any }>;
 }
 
-const PagesListView = ({ pages, onSelectPage, onCreatePage }: PagesListViewProps) => {
+const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: PagesListViewProps) => {
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
 
