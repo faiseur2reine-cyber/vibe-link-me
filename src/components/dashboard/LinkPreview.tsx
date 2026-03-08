@@ -1,6 +1,7 @@
 import { Profile, LinkItem } from '@/hooks/useDashboard';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Heart } from 'lucide-react';
+import { getTheme } from '@/lib/themes';
 
 interface LinkPreviewProps {
   profile: Profile;
@@ -9,50 +10,51 @@ interface LinkPreviewProps {
 
 const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
   const { t } = useTranslation();
+  const theme = getTheme(profile.theme);
+  const displayName = profile.display_name || profile.username;
 
   return (
-    <div className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-3xl border border-border p-6 max-w-sm mx-auto">
+    <div className={`rounded-3xl p-6 max-w-sm mx-auto ${theme.bg} transition-all duration-300`}>
       <div className="text-center space-y-3">
         {/* Avatar */}
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary mx-auto overflow-hidden flex items-center justify-center">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 mx-auto overflow-hidden flex items-center justify-center shadow-lg">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
           ) : (
-            <span className="text-2xl font-bold text-primary-foreground">
-              {(profile.display_name || profile.username)?.[0]?.toUpperCase()}
+            <span className="text-2xl font-bold text-white">
+              {displayName?.[0]?.toUpperCase()}
             </span>
           )}
         </div>
 
         {/* Name & Bio */}
         <div>
-          <h3 className="font-display font-bold text-lg text-foreground">{profile.display_name || profile.username}</h3>
-          <p className="text-sm text-muted-foreground">@{profile.username}</p>
-          {profile.bio && <p className="text-sm text-foreground/80 mt-2">{profile.bio}</p>}
+          <h3 className={`font-display font-bold text-lg ${theme.text}`}>{displayName}</h3>
+          <p className={`text-sm opacity-60 ${theme.text}`}>@{profile.username}</p>
+          {profile.bio && <p className={`text-sm mt-2 opacity-80 ${theme.text}`}>{profile.bio}</p>}
         </div>
 
         {/* Links */}
         <div className="space-y-2 pt-2">
           {links.map((link) => (
-            <a
+            <div
               key={link.id}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 hover:from-primary/20 hover:to-secondary/20 border border-border transition-all text-sm font-medium text-foreground"
+              className={`flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${theme.btn}`}
             >
               {link.title}
-              <ExternalLink className="w-3 h-3 text-muted-foreground" />
-            </a>
+              <ExternalLink className="w-3 h-3 opacity-60" />
+            </div>
           ))}
           {links.length === 0 && (
-            <p className="text-xs text-muted-foreground py-4">No links yet</p>
+            <p className={`text-xs py-4 opacity-50 ${theme.text}`}>No links yet</p>
           )}
         </div>
 
         {/* Badge */}
         {profile.plan !== 'pro' && (
-          <p className="text-xs text-muted-foreground pt-4">{t('public.madeWith')}</p>
+          <p className={`text-xs pt-4 opacity-50 flex items-center justify-center gap-1 ${theme.text}`}>
+            Créé avec <Heart className="w-3 h-3" /> MyTaptap
+          </p>
         )}
       </div>
     </div>

@@ -9,8 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import LinksManager from '@/components/dashboard/LinksManager';
 import LinkPreview from '@/components/dashboard/LinkPreview';
+import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import LanguageSelector from '@/components/LanguageSelector';
-import { LogOut, User, Link2, Eye, ExternalLink } from 'lucide-react';
+import { LogOut, User, Link2, Eye, ExternalLink, Palette } from 'lucide-react';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -59,6 +60,9 @@ const Dashboard = () => {
                 <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background">
                   <User className="w-4 h-4" /> {t('dashboard.profile')}
                 </TabsTrigger>
+                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background">
+                  <Palette className="w-4 h-4" /> {t('dashboard.theme')}
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="links">
@@ -83,6 +87,14 @@ const Dashboard = () => {
                   </CardHeader>
                   <CardContent>
                     <ProfileEditor profile={profile} onUpdate={updateProfile} onRefetch={refetchProfile} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="theme">
+                <Card>
+                  <CardContent className="p-4 md:p-6">
+                    <ThemeSelector profile={profile} onUpdate={updateProfile} />
                   </CardContent>
                 </Card>
               </TabsContent>
