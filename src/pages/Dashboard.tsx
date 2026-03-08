@@ -138,16 +138,7 @@ const Dashboard = () => {
                 </div>
               )}
 
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={activeTab}
-                  custom={direction}
-                  initial={{ opacity: 0, x: direction * 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: direction * -30 }}
-                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                >
-              <TabsContent value="links" forceMount={activeTab === 'links' ? true : undefined} className={activeTab !== 'links' ? 'hidden' : ''}>
+              <TabsContent value="links">
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <LinksManager
@@ -162,7 +153,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="profile" forceMount={activeTab === 'profile' ? true : undefined} className={activeTab !== 'profile' ? 'hidden' : ''}>
+              <TabsContent value="profile">
                 <Card>
                   <CardHeader>
                     <CardTitle className="font-display">{t('dashboard.profile')}</CardTitle>
@@ -173,7 +164,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="theme" forceMount={activeTab === 'theme' ? true : undefined} className={activeTab !== 'theme' ? 'hidden' : ''}>
+              <TabsContent value="theme">
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <ThemeSelector profile={profile} onUpdate={updateProfile} />
@@ -181,7 +172,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="analytics" forceMount={activeTab === 'analytics' ? true : undefined} className={activeTab !== 'analytics' ? 'hidden' : ''}>
+              <TabsContent value="analytics">
                 <Card>
                   <CardContent className="p-4 md:p-6">
                     <AnalyticsPanel links={links} plan={profile.plan} />
@@ -189,7 +180,7 @@ const Dashboard = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="plan" forceMount={activeTab === 'plan' ? true : undefined} className={activeTab !== 'plan' ? 'hidden' : ''}>
+              <TabsContent value="plan">
                 <div className="space-y-4">
                   {/* Current plan */}
                   <Card>
@@ -269,8 +260,6 @@ const Dashboard = () => {
                   </div>
                 </div>
               </TabsContent>
-                </motion.div>
-              </AnimatePresence>
             </Tabs>
           </div>
 
