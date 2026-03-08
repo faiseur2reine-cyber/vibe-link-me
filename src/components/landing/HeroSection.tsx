@@ -105,8 +105,15 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
             className="mt-16 relative"
+            style={{ perspective: 800 }}
           >
-            <div className="relative w-[260px] sm:w-[280px] mx-auto">
+            <motion.div
+              ref={phoneRef}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+              className="relative w-[260px] sm:w-[280px] mx-auto"
+            >
               {/* Glow behind phone */}
               <div className="absolute -inset-10 bg-primary/6 rounded-[3rem] blur-3xl" />
               
