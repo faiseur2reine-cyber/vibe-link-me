@@ -43,7 +43,14 @@ export function useProfile() {
       .select('*')
       .eq('user_id', user.id)
       .single();
-    setProfile(data as Profile | null);
+    if (data) {
+      setProfile({
+        ...data,
+        social_links: (data.social_links as unknown as SocialLink[]) || [],
+      } as Profile);
+    }
+    setLoading(false);
+  }, [user]);
     setLoading(false);
   }, [user]);
 
