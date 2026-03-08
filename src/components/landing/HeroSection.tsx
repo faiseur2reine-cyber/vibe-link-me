@@ -45,8 +45,8 @@ const HeroSection = () => {
           </div>
 
           <div className="mt-8 flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> Gratuit pour commencer</span>
-            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> Aucune carte requise</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> {t('landing.freeToStart')}</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary" /> {t('landing.noCardRequired')}</span>
           </div>
         </motion.div>
 
