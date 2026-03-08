@@ -236,7 +236,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      record_click: { Args: { p_link_id: string }; Returns: undefined }
+      record_click:
+        | { Args: { p_link_id: string }; Returns: undefined }
+        | {
+            Args: {
+              p_city?: string
+              p_country?: string
+              p_link_id: string
+              p_referrer?: string
+            }
+            Returns: undefined
+          }
     }
     Enums: {
       [_ in never]: never
