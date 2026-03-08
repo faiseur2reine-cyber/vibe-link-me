@@ -30,7 +30,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const [icon, setIcon] = useState('link');
   const [saving, setSaving] = useState(false);
 
-  const maxLinks = plan === 'pro' ? Infinity : 5;
+  const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
 
   const openNew = () => {
