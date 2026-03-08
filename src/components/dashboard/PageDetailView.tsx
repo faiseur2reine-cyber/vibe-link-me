@@ -179,6 +179,17 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               </Card>
             </TabsContent>
 
+            <TabsContent value="design">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-display">Design personnalisé</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PageDesignEditor page={page} onUpdate={handleUpdate} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="theme">
               <Card>
                 <CardContent className="p-4 md:p-6">
