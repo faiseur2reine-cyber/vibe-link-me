@@ -53,8 +53,14 @@ export const THEMES: Record<string, { name: string; bg: string; btn: string; tex
     text: 'text-white',
     accent: 'text-fuchsia-400',
     preview: 'bg-gradient-to-br from-fuchsia-600 to-purple-900',
-    free: false,
+    tier: 'starter',
   },
+};
+
+const PLAN_RANK: Record<string, number> = { free: 0, starter: 1, pro: 2 };
+
+export const canAccessTheme = (themeTier: ThemeTier, userPlan: string): boolean => {
+  return (PLAN_RANK[userPlan] ?? 0) >= (PLAN_RANK[themeTier] ?? 0);
 };
 
 export const getTheme = (key: string) => THEMES[key] || THEMES.default;

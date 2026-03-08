@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { THEMES } from '@/lib/themes';
+import { THEMES, canAccessTheme } from '@/lib/themes';
 import { Profile } from '@/hooks/useDashboard';
 import { toast } from '@/hooks/use-toast';
 import { Lock, Check } from 'lucide-react';
@@ -12,12 +12,12 @@ interface ThemeSelectorProps {
 
 const ThemeSelector = ({ profile, onUpdate }: ThemeSelectorProps) => {
   const { t } = useTranslation();
-  const isPro = profile.plan === 'pro';
 
   const handleSelect = async (key: string) => {
     const theme = THEMES[key];
-    if (!theme.free && !isPro) {
-      toast({ title: t('pricing.upgrade'), description: 'Ce thème est réservé au plan Pro.' });
+    if (!canAccessTheme(theme.tier, profile.plan)) {
+      const label = theme.tier === 'starter' ? 'Starter' : 'Pro';
+      toast({ title: t('pricing.upgrade'), description: `Ce thème est réservé au plan ${label}.` });
       return;
     }
     const result = await onUpdate({ theme: key });
@@ -31,7 +31,8 @@ const ThemeSelector = ({ profile, onUpdate }: ThemeSelectorProps) => {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {Object.entries(THEMES).map(([key, theme]) => {
           const isSelected = profile.theme === key;
-          const isLocked = !theme.free && !isPro;
+          const isLocked = !canAccessTheme(theme.tier, profile.plan);
+          const tierLabel = theme.tier === 'free' ? null : theme.tier.toUpperCase();
 
           return (
             <button
@@ -59,10 +60,10 @@ const ThemeSelector = ({ profile, onUpdate }: ThemeSelectorProps) => {
                 {isLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
               </div>
 
-              {/* Pro badge */}
-              {!theme.free && (
+              {/* Tier badge */}
+              {tierLabel && (
                 <Badge variant="secondary" className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5">
-                  PRO
+                  {tierLabel}
                 </Badge>
               )}
             </button>

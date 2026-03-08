@@ -14,6 +14,7 @@ const AnalyticsPanel = ({ links, plan }: AnalyticsPanelProps) => {
   const { t } = useTranslation();
   const { clickStats, dailyClicks, totalClicks, loading } = useAnalytics();
   const isPro = plan === 'pro';
+  const hasAnalytics = plan === 'starter' || plan === 'pro';
 
   if (loading) {
     return <p className="text-center text-muted-foreground py-8">{t('common.loading')}</p>;

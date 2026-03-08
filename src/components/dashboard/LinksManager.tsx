@@ -35,7 +35,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
 
   const openNew = () => {
     if (!canAddMore) {
-      toast({ title: t('dashboard.maxLinks'), variant: 'destructive' });
+      const msgKey = plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5';
+      toast({ title: t(msgKey), variant: 'destructive' });
       return;
     }
     setEditingLink(null);
