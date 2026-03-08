@@ -64,6 +64,9 @@ const Dashboard = () => {
                 <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background">
                   <Palette className="w-4 h-4" /> {t('dashboard.theme')}
                 </TabsTrigger>
+                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background">
+                  <BarChart3 className="w-4 h-4" /> {t('dashboard.analytics')}
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="links">
