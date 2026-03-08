@@ -51,7 +51,7 @@ const Dashboard = () => {
             <Button
               onClick={() => setCreateDialogOpen(true)}
               size="sm"
-              className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              className="rounded-lg gap-1"
             >
               <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Nouvelle page</span>
             </Button>
