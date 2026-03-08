@@ -54,6 +54,7 @@ export type Database = {
           icon: string | null
           id: string
           position: number
+          section_title: string | null
           style: string
           text_color: string | null
           thumbnail_url: string | null
@@ -69,6 +70,7 @@ export type Database = {
           icon?: string | null
           id?: string
           position?: number
+          section_title?: string | null
           style?: string
           text_color?: string | null
           thumbnail_url?: string | null
@@ -84,6 +86,7 @@ export type Database = {
           icon?: string | null
           id?: string
           position?: number
+          section_title?: string | null
           style?: string
           text_color?: string | null
           thumbnail_url?: string | null
