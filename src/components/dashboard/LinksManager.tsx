@@ -10,9 +10,57 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette } from 'lucide-react';
+import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette, LayoutTemplate } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+
+const LINK_TEMPLATES = [
+  {
+    id: 'onlyfans-creator',
+    name: '🔥 OnlyFans Creator',
+    desc: 'Template pour créatrice OnlyFans avec liens essentiels',
+    links: [
+      { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: 'Subscribe to my exclusive content 💋', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Wishlist Amazon', url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: 'Cadeaux', description: 'Send me a gift 🎁', bg_color: '#FF9900', text_color: '#000000' },
+    ],
+  },
+  {
+    id: 'agency-multi',
+    name: '🏢 Agence Multi-Créatrices',
+    desc: 'Template agence avec sections par créatrice',
+    links: [
+      { title: 'OnlyFans - Créatrice 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 1', description: '@creatrice1 • Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans - Créatrice 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 2', description: '@creatrice2 • Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+    ],
+  },
+  {
+    id: 'instagram-influencer',
+    name: '📸 Influenceur Instagram',
+    desc: 'Liens standards pour influenceur/créateur de contenu',
+    links: [
+      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: 'Watch my latest videos 🎬', bg_color: '#FF0000', text_color: '#FFFFFF' },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Snapchat', url: 'https://snapchat.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#FFFC00', text_color: '#000000' },
+      { title: 'Contact Pro', url: 'mailto:contact@example.com', icon: 'link', style: 'default', section_title: 'Business', description: 'Collaborations & partenariats', bg_color: null, text_color: null },
+    ],
+  },
+  {
+    id: 'ecommerce',
+    name: '🛍️ E-commerce / Boutique',
+    desc: 'Liens vers vos boutiques et produits',
+    links: [
+      { title: 'Ma Boutique', url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: 'Découvrez ma collection 🛒', bg_color: '#96BF48', text_color: '#FFFFFF' },
+      { title: 'Nouveau Drop', url: 'https://example.com/drop', icon: 'link', style: 'card', section_title: 'Produits', description: 'Collection limitée 🔥', bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Promo -20%', url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: 'Produits', description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
+      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+    ],
+  },
+];
 
 interface LinksManagerProps {
   links: LinkItem[];
@@ -21,6 +69,7 @@ interface LinksManagerProps {
   onUpdate: (id: string, updates: Partial<LinkItem>) => Promise<{ error: any } | undefined>;
   onDelete: (id: string) => Promise<{ error: any } | undefined>;
   onReorder: (links: LinkItem[]) => Promise<void>;
+  onRefetch?: () => Promise<void>;
 }
 
 const LINK_STYLES = [
@@ -35,7 +84,7 @@ const PRESET_COLORS = [
   '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1', '#F43F5E',
 ];
 
-const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: LinksManagerProps) => {
+const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch }: LinksManagerProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -53,9 +102,44 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [uploadingThumb, setUploadingThumb] = useState(false);
   const [showCustomization, setShowCustomization] = useState(false);
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [applyingTemplate, setApplyingTemplate] = useState(false);
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
+
+  const handleApplyTemplate = async (template: typeof LINK_TEMPLATES[0]) => {
+    if (!user) return;
+    const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
+    const templateLinks = template.links.slice(0, remaining);
+    if (templateLinks.length === 0) {
+      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
+      return;
+    }
+    setApplyingTemplate(true);
+    const startPosition = links.length;
+    const inserts = templateLinks.map((tl, idx) => ({
+      title: tl.title,
+      url: tl.url,
+      icon: tl.icon,
+      user_id: user.id,
+      position: startPosition + idx,
+      style: tl.style,
+      section_title: tl.section_title,
+      description: tl.description,
+      bg_color: tl.bg_color,
+      text_color: tl.text_color,
+    }));
+    const { error } = await supabase.from('links').insert(inserts);
+    if (error) {
+      toast({ title: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: `Template "${template.name}" appliqué ! 🎉` });
+      if (onRefetch) await onRefetch();
+    }
+    setApplyingTemplate(false);
+    setTemplateDialogOpen(false);
+  };
 
   const openNew = () => {
     if (!canAddMore) {
@@ -178,9 +262,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-lg">{t('dashboard.links')} ({links.length}{plan !== 'pro' ? `/${maxLinks}` : ''})</h3>
-        <Button onClick={openNew} size="sm" className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
-          <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setTemplateDialogOpen(true)} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
+            <LayoutTemplate className="w-4 h-4" /> Templates
+          </Button>
+          <Button onClick={openNew} size="sm" className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+            <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
+          </Button>
+        </div>
       </div>
 
       {links.length === 0 && (
@@ -451,6 +540,58 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
               {saving ? <Loader2 className="animate-spin" /> : t('dashboard.save')}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Templates Dialog */}
+      <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <LayoutTemplate className="w-5 h-5" /> Templates pré-configurés
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Choisis un template pour ajouter rapidement un ensemble de liens pré-configurés. Tu pourras ensuite les modifier.
+          </p>
+          <div className="space-y-3 py-2">
+            {LINK_TEMPLATES.map(template => (
+              <Card
+                key={template.id}
+                className="p-4 cursor-pointer hover:border-primary/50 transition-colors group"
+                onClick={() => !applyingTemplate && handleApplyTemplate(template)}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground">{template.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{template.desc}</p>
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {template.links.map((tl, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                          style={{
+                            backgroundColor: tl.bg_color || 'hsl(var(--muted))',
+                            color: tl.text_color || 'hsl(var(--muted-foreground))',
+                          }}
+                        >
+                          {tl.title}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-full shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    disabled={applyingTemplate}
+                  >
+                    {applyingTemplate ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Appliquer'}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
