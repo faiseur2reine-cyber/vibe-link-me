@@ -15,6 +15,9 @@
     "currentPlan": "Plano atual",
     "upgrade": "Ir Pro",
     "upgradeStarter": "Ir Starter",
+    "proMonthly": "≈ 9,58€/mês",
+    "includedInPro": "Incluído no Pro",
+    "manageSubscription": "Gerenciar assinatura",
     "freeFeatures": ["Até 5 links", "3 temas básicos", "Badge MyTaptap"],
     "starterFeatures": ["Até 20 links", "Todos os temas", "Análises 90 dias", "Badge MyTaptap"],
     "proFeatures": ["Links ilimitados", "Todos os temas", "Análises ilimitadas + gráficos", "Domínio personalizado", "Suporte prioritário", "Badge MyTaptap"]
