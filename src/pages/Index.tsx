@@ -184,7 +184,12 @@ const Index = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full mt-8 rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
+              <Button 
+                className="w-full mt-8 rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
+                onClick={() => handleUpgrade('starter')}
+                disabled={checkoutLoading === 'starter'}
+              >
+                {checkoutLoading === 'starter' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 {t('pricing.upgradeStarter')}
               </Button>
             </motion.div>
