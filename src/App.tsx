@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
+import SetUsername from "./pages/SetUsername";
 import NotFound from "./pages/NotFound";
 import "@/i18n";
 
