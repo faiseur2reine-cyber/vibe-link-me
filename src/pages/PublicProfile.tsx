@@ -368,7 +368,7 @@ const PublicProfile = () => {
                         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 + i * 0.04 }}
                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                        className={`group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${link.bg_color ? '' : theme.btn}`}
+                        className={`link-item group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${link.bg_color || page.custom_btn_color ? '' : theme.btn}`}
                         style={customStyle}
                       >
                         <LinkFavicon url={link.url} size="md" />
