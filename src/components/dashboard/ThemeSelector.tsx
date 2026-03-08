@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { THEMES, canAccessTheme } from '@/lib/themes';
 import { Profile } from '@/hooks/useDashboard';
 import { toast } from '@/hooks/use-toast';
 import { Lock, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ThemeSelectorProps {
   profile: Profile;
