@@ -47,6 +47,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const [bgColor, setBgColor] = useState('');
   const [textColor, setTextColor] = useState('');
   const [linkStyle, setLinkStyle] = useState('default');
+  const [sectionTitle, setSectionTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
