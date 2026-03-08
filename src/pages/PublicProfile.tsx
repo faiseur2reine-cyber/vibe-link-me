@@ -28,6 +28,7 @@ interface LinkItem {
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
