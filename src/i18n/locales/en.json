@@ -32,14 +32,20 @@
   },
   "pricing": {
     "title": "Simple pricing",
-    "subtitle": "Start for free, go Pro when you're ready.",
+    "subtitle": "Start for free, upgrade when you're ready.",
+    "launchBadge": "🚀 Launch price",
+    "year": "/year",
     "free": "Free",
+    "starter": "Starter",
     "pro": "Pro",
+    "popular": "Most popular",
     "month": "/month",
     "currentPlan": "Current plan",
     "upgrade": "Go Pro",
-    "freeFeatures": ["Up to 5 links", "3 themes", "Basic stats", "MyTaptap badge"],
-    "proFeatures": ["Unlimited links", "6 themes", "Detailed analytics", "No badge", "Priority support"]
+    "upgradeStarter": "Go Starter",
+    "freeFeatures": ["Up to 5 links", "3 basic themes", "MyTaptap badge"],
+    "starterFeatures": ["Up to 20 links", "All themes", "90-day analytics", "MyTaptap badge"],
+    "proFeatures": ["Unlimited links", "All themes", "Unlimited analytics + charts", "Custom domain", "Priority support", "MyTaptap badge"]
   },
   "footer": {
     "madeWith": "Made with",
@@ -85,7 +91,9 @@
     "totalClicks": "Total clicks",
     "theme": "Theme",
     "preview": "Preview",
-    "maxLinks": "You've reached the 5-link limit. Go Pro to add more!",
+    "maxLinks5": "You've reached the 5-link limit. Upgrade to Starter or Pro!",
+    "maxLinks20": "You've reached the 20-link limit. Go Pro for unlimited links!",
+    "maxLinks": "You've reached the link limit.",
     "plan": "Plan"
   },
   "public": {

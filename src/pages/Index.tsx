@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Link2, Palette, BarChart3, GripVertical, Globe, Smartphone, Check, Heart } from 'lucide-react';
+import { Link2, Palette, BarChart3, GripVertical, Globe, Smartphone, Check, Heart, Rocket } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 
 const featureIcons = [Link2, Palette, BarChart3, GripVertical, Globe, Smartphone];
@@ -105,18 +105,25 @@ const Index = () => {
 
       {/* Pricing */}
       <section className="px-6 py-24">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold">{t('pricing.title')}</h2>
           <p className="mt-3 text-muted-foreground text-lg">{t('pricing.subtitle')}</p>
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {/* Free */}
-            <div className="rounded-2xl border border-border bg-card p-8 text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+              className="rounded-2xl border border-border bg-card p-8 text-left"
+            >
               <h3 className="font-display font-bold text-xl">{t('pricing.free')}</h3>
               <p className="mt-2 text-4xl font-bold">0€</p>
+              <p className="text-sm text-muted-foreground mt-1">&nbsp;</p>
               <ul className="mt-6 space-y-3">
                 {(t('pricing.freeFeatures', { returnObjects: true }) as string[]).map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-primary" />
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -124,24 +131,61 @@ const Index = () => {
               <Button variant="outline" className="w-full mt-8 rounded-full" asChild>
                 <Link to="/auth?tab=signup">{t('hero.cta')}</Link>
               </Button>
-            </div>
-            {/* Pro */}
-            <div className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/5 to-secondary/5 p-8 text-left relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-primary to-secondary text-primary-foreground text-xs font-bold px-4 py-1 rounded-bl-xl">PRO</div>
-              <h3 className="font-display font-bold text-xl">{t('pricing.pro')}</h3>
-              <p className="mt-2 text-4xl font-bold">9,99€<span className="text-lg font-normal text-muted-foreground">{t('pricing.month')}</span></p>
+            </motion.div>
+
+            {/* Starter */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="rounded-2xl border border-border bg-card p-8 text-left relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary/80 to-secondary/80 text-primary-foreground text-xs font-bold px-4 py-1.5 text-center">
+                {t('pricing.launchBadge')}
+              </div>
+              <h3 className="font-display font-bold text-xl mt-4">{t('pricing.starter')}</h3>
+              <p className="mt-2 text-4xl font-bold">19,99€<span className="text-lg font-normal text-muted-foreground">{t('pricing.year')}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">≈ 1,67€/mois</p>
               <ul className="mt-6 space-y-3">
-                {(t('pricing.proFeatures', { returnObjects: true }) as string[]).map((f, i) => (
+                {(t('pricing.starterFeatures', { returnObjects: true }) as string[]).map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-secondary" />
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Button className="w-full mt-8 rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
+                {t('pricing.upgradeStarter')}
+              </Button>
+            </motion.div>
+
+            {/* Pro */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/5 to-secondary/5 p-8 text-left relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary to-secondary text-primary-foreground text-xs font-bold px-4 py-1.5 text-center">
+                {t('pricing.launchBadge')} · {t('pricing.popular')}
+              </div>
+              <h3 className="font-display font-bold text-xl mt-4">{t('pricing.pro')}</h3>
+              <p className="mt-2 text-4xl font-bold">115€<span className="text-lg font-normal text-muted-foreground">{t('pricing.year')}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">≈ 9,58€/mois</p>
+              <ul className="mt-6 space-y-3">
+                {(t('pricing.proFeatures', { returnObjects: true }) as string[]).map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Check className="w-4 h-4 text-secondary flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Button className="w-full mt-8 rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity shadow-lg">
                 {t('pricing.upgrade')}
               </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
