@@ -5,14 +5,17 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette, LayoutTemplate, Save, BookmarkPlus } from 'lucide-react';
+import {
+  Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2,
+  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon,
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CustomTemplate {
   id: string;
@@ -27,7 +30,7 @@ const LINK_TEMPLATES = [
   {
     id: 'onlyfans-creator',
     name: '🔥 OnlyFans Creator',
-    desc: 'Template pour créatrice OnlyFans avec liens essentiels',
+    desc: 'Template pour créatrice OnlyFans',
     links: [
       { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: 'Subscribe to my exclusive content 💋', bg_color: '#00AFF0', text_color: '#FFFFFF' },
       { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
@@ -50,7 +53,7 @@ const LINK_TEMPLATES = [
   {
     id: 'instagram-influencer',
     name: '📸 Influenceur Instagram',
-    desc: 'Liens standards pour influenceur/créateur de contenu',
+    desc: 'Liens standards pour influenceur',
     links: [
       { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: 'Watch my latest videos 🎬', bg_color: '#FF0000', text_color: '#FFFFFF' },
       { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
@@ -83,15 +86,15 @@ interface LinksManagerProps {
 }
 
 const LINK_STYLES = [
-  { value: 'default', label: 'Standard', desc: 'Bouton classique' },
-  { value: 'featured', label: 'Featured', desc: 'Mis en avant, plus grand' },
-  { value: 'card', label: 'Card', desc: 'Carte avec thumbnail' },
-  { value: 'minimal', label: 'Minimal', desc: 'Texte simple' },
+  { value: 'default', label: 'Standard' },
+  { value: 'featured', label: 'Featured' },
+  { value: 'card', label: 'Card' },
+  { value: 'minimal', label: 'Minimal' },
 ];
 
 const PRESET_COLORS = [
   '#000000', '#FFFFFF', '#EF4444', '#F97316', '#EAB308', '#22C55E',
-  '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1', '#F43F5E',
+  '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6',
 ];
 
 const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId }: LinksManagerProps) => {
@@ -120,6 +123,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const [templateDesc, setTemplateDesc] = useState('');
   const [savingTemplate, setSavingTemplate] = useState(false);
 
+  const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
+  const canAddMore = links.length < maxLinks;
+
+  // --- Template logic ---
   const fetchCustomTemplates = async () => {
     if (!user) return;
     const { data } = await supabase
@@ -139,15 +146,13 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       bg_color: l.bg_color, text_color: l.text_color,
     }));
     const { error } = await supabase.from('custom_templates').insert({
-      user_id: user.id,
-      name: templateName.trim(),
-      description: templateDesc.trim() || null,
-      links: templateLinks as any,
+      user_id: user.id, name: templateName.trim(),
+      description: templateDesc.trim() || null, links: templateLinks as any,
     });
     if (error) {
       toast({ title: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Template sauvegardé ! 🎉' });
+      toast({ title: 'Template sauvegardé ✓' });
       setSaveTemplateOpen(false);
       setTemplateName('');
       setTemplateDesc('');
@@ -165,17 +170,17 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     }
   };
 
-  const handleApplyCustomTemplate = async (template: CustomTemplate) => {
+  const applyTemplateLinks = async (templateLinks: Array<{ title: string; url: string; icon: string; style: string; section_title: string | null; description: string | null; bg_color: string | null; text_color: string | null }>) => {
     if (!user) return;
     const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
-    const templateLinks = template.links.slice(0, remaining === Infinity ? undefined : remaining);
-    if (templateLinks.length === 0) {
+    const toInsert = templateLinks.slice(0, remaining === Infinity ? undefined : remaining);
+    if (toInsert.length === 0) {
       toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
       return;
     }
     setApplyingTemplate(true);
     const startPosition = links.length;
-    const inserts = templateLinks.map((tl, idx) => ({
+    const inserts = toInsert.map((tl, idx) => ({
       title: tl.title, url: tl.url, icon: tl.icon, user_id: user.id,
       position: startPosition + idx, style: tl.style,
       section_title: tl.section_title, description: tl.description,
@@ -186,83 +191,32 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     if (error) {
       toast({ title: error.message, variant: 'destructive' });
     } else {
-      toast({ title: `Template "${template.name}" appliqué ! 🎉` });
+      toast({ title: 'Template appliqué ✓' });
       if (onRefetch) await onRefetch();
     }
     setApplyingTemplate(false);
     setTemplateDialogOpen(false);
   };
 
-  const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
-  const canAddMore = links.length < maxLinks;
-
-  const handleApplyTemplate = async (template: typeof LINK_TEMPLATES[0]) => {
-    if (!user) return;
-    const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
-    const templateLinks = template.links.slice(0, remaining);
-    if (templateLinks.length === 0) {
-      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
-      return;
-    }
-    setApplyingTemplate(true);
-    const startPosition = links.length;
-    const inserts = templateLinks.map((tl, idx) => ({
-      title: tl.title,
-      url: tl.url,
-      icon: tl.icon,
-      user_id: user.id,
-      position: startPosition + idx,
-      style: tl.style,
-      section_title: tl.section_title,
-      description: tl.description,
-      bg_color: tl.bg_color,
-      text_color: tl.text_color,
-      ...(pageId ? { page_id: pageId } : {}),
-    }));
-    const { error } = await supabase.from('links').insert(inserts);
-    if (error) {
-      toast({ title: error.message, variant: 'destructive' });
-    } else {
-      toast({ title: `Template "${template.name}" appliqué ! 🎉` });
-      if (onRefetch) await onRefetch();
-    }
-    setApplyingTemplate(false);
-    setTemplateDialogOpen(false);
-  };
-
+  // --- Link CRUD ---
   const openNew = () => {
     if (!canAddMore) {
-      const msgKey = plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5';
-      toast({ title: t(msgKey), variant: 'destructive' });
+      toast({ title: t(plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5'), variant: 'destructive' });
       return;
     }
-    setEditingLink(null);
-    setTitle('');
-    setUrl('');
-    setIcon('link');
-    setDescription('');
-    setBgColor('');
-    setTextColor('');
-    setLinkStyle('default');
-    setSectionTitle('');
-    setThumbnailFile(null);
-    setThumbnailPreview(null);
-    setShowCustomization(false);
-    setDialogOpen(true);
+    setEditingLink(null); setTitle(''); setUrl(''); setIcon('link');
+    setDescription(''); setBgColor(''); setTextColor('');
+    setLinkStyle('default'); setSectionTitle('');
+    setThumbnailFile(null); setThumbnailPreview(null);
+    setShowCustomization(false); setDialogOpen(true);
   };
 
   const openEdit = (link: LinkItem) => {
-    setEditingLink(link);
-    setTitle(link.title);
-    setUrl(link.url);
-    setIcon(link.icon);
-    setDescription(link.description || '');
-    setBgColor(link.bg_color || '');
-    setTextColor(link.text_color || '');
-    setLinkStyle(link.style || 'default');
+    setEditingLink(link); setTitle(link.title); setUrl(link.url); setIcon(link.icon);
+    setDescription(link.description || ''); setBgColor(link.bg_color || '');
+    setTextColor(link.text_color || ''); setLinkStyle(link.style || 'default');
     setSectionTitle(link.section_title || '');
-    setThumbnailFile(null);
-    setThumbnailPreview(link.thumbnail_url || null);
+    setThumbnailFile(null); setThumbnailPreview(link.thumbnail_url || null);
     setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
     setDialogOpen(true);
   };
@@ -271,7 +225,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      toast({ title: 'Image too large (max 5MB)', variant: 'destructive' });
+      toast({ title: 'Image trop lourde (max 5 Mo)', variant: 'destructive' });
       return;
     }
     setThumbnailFile(file);
@@ -291,11 +245,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const handleSave = async () => {
     if (!title.trim() || !url.trim()) return;
     setSaving(true);
-
     let normalizedUrl = url.trim();
-    if (!/^https?:\/\//i.test(normalizedUrl)) {
-      normalizedUrl = 'https://' + normalizedUrl;
-    }
+    if (!/^https?:\/\//i.test(normalizedUrl)) normalizedUrl = 'https://' + normalizedUrl;
 
     const customFields = {
       description: description.trim() || null,
@@ -332,9 +283,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   };
 
   const handleRemoveThumbnail = async () => {
-    if (editingLink) {
-      await onUpdate(editingLink.id, { thumbnail_url: null } as any);
-    }
+    if (editingLink) await onUpdate(editingLink.id, { thumbnail_url: null } as any);
     setThumbnailFile(null);
     setThumbnailPreview(null);
   };
@@ -347,45 +296,76 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     onReorder(items);
   };
 
+  // --- Render ---
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-display font-semibold text-lg">{t('dashboard.links')} ({links.length}{plan !== 'pro' ? `/${maxLinks}` : ''})</h3>
-        <div className="flex items-center gap-2">
-          <Button onClick={() => { setTemplateDialogOpen(true); fetchCustomTemplates(); }} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
-            <LayoutTemplate className="w-4 h-4" /> Templates
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <LinkIcon className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-foreground">
+              {t('dashboard.links')}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} liens
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Button
+            onClick={() => { setTemplateDialogOpen(true); fetchCustomTemplates(); }}
+            size="sm" variant="ghost"
+            className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <LayoutTemplate className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Templates</span>
           </Button>
           {links.length > 0 && (
-            <Button onClick={() => setSaveTemplateOpen(true)} size="sm" variant="outline" className="rounded-full gap-1 text-xs">
-              <BookmarkPlus className="w-4 h-4" /> Sauvegarder
+            <Button
+              onClick={() => setSaveTemplateOpen(true)}
+              size="sm" variant="ghost"
+              className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            >
+              <BookmarkPlus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sauvegarder</span>
             </Button>
           )}
-          <Button onClick={openNew} size="sm" className="gap-1">
-            <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
+          <Button onClick={openNew} size="sm" className="h-8 rounded-lg gap-1.5 text-xs font-medium">
+            <Plus className="w-3.5 h-3.5" /> Ajouter
           </Button>
         </div>
       </div>
 
+      {/* Empty state */}
       {links.length === 0 && (
-        <p className="text-center text-muted-foreground py-8">{t('dashboard.addLink')} ✨</p>
+        <button
+          onClick={openNew}
+          className="w-full py-10 rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground"
+        >
+          <Plus className="w-5 h-5" />
+          <span className="text-sm font-medium">Ajouter votre premier lien</span>
+        </button>
       )}
 
+      {/* Links list */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="links">
           {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+            <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-1">
               {links.map((link, index) => {
-                // Show section header if this link starts a new section
                 const prevLink = index > 0 ? links[index - 1] : null;
-                const showSectionHeader = link.section_title && 
+                const showSectionHeader = link.section_title &&
                   (!prevLink || prevLink.section_title !== link.section_title);
 
                 return (
                   <div key={link.id}>
                     {showSectionHeader && (
-                      <div className="flex items-center gap-2 pt-4 pb-1 first:pt-0">
+                      <div className="flex items-center gap-2 pt-3 pb-1">
                         <div className="h-px flex-1 bg-border" />
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
                           {link.section_title}
                         </span>
                         <div className="h-px flex-1 bg-border" />
@@ -393,54 +373,85 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                     )}
                     <Draggable draggableId={link.id} index={index}>
                       {(provided, snapshot) => (
-                        <Card
+                        <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className={`p-3 flex items-center gap-3 transition-shadow ${snapshot.isDragging ? 'shadow-lg' : ''}`}
+                          className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all ${
+                            snapshot.isDragging
+                              ? 'bg-card shadow-lg ring-1 ring-border scale-[1.02]'
+                              : 'hover:bg-muted/60'
+                          }`}
                         >
-                          <div {...provided.dragHandleProps} className="cursor-grab text-muted-foreground hover:text-foreground">
-                            <GripVertical className="w-5 h-5" />
+                          {/* Drag handle */}
+                          <div
+                            {...provided.dragHandleProps}
+                            className="cursor-grab text-muted-foreground/40 hover:text-muted-foreground transition-colors shrink-0"
+                          >
+                            <GripVertical className="w-4 h-4" />
                           </div>
-                          {link.bg_color && (
-                            <div 
-                              className="w-3 h-8 rounded-full shrink-0" 
+
+                          {/* Color dot or thumbnail */}
+                          {link.thumbnail_url ? (
+                            <img src={link.thumbnail_url} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                          ) : link.bg_color ? (
+                            <div
+                              className="w-9 h-9 rounded-lg shrink-0 flex items-center justify-center"
                               style={{ backgroundColor: link.bg_color }}
-                            />
-                          )}
-                          {link.thumbnail_url && (
-                            <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <p className="font-medium truncate text-foreground">{link.title}</p>
-                              {link.section_title && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 truncate max-w-[80px]">
-                                  {link.section_title}
-                                </span>
+                            >
+                              {link.text_color && (
+                                <LinkIcon className="w-3.5 h-3.5" style={{ color: link.text_color }} />
                               )}
                             </div>
-                            {link.description && (
-                              <p className="text-xs text-muted-foreground truncate">{link.description}</p>
-                            )}
-                            <p className="text-xs text-muted-foreground/60 truncate">{link.url}</p>
-                          </div>
-                          {link.style !== 'default' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0 capitalize">
-                              {link.style}
-                            </span>
+                          ) : (
+                            <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                              <LinkIcon className="w-3.5 h-3.5 text-muted-foreground" />
+                            </div>
                           )}
-                          <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="icon" onClick={() => openEdit(link)}>
-                              <Pencil className="w-4 h-4" />
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate leading-tight">
+                              {link.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">
+                              {link.description || link.url}
+                            </p>
+                          </div>
+
+                          {/* Badges */}
+                          <div className="hidden sm:flex items-center gap-1 shrink-0">
+                            {link.style !== 'default' && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
+                                {link.style}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Actions — visible on hover */}
+                          <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                              onClick={() => openEdit(link)}
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => window.open(link.url, '_blank')}>
-                              <ExternalLink className="w-4 h-4" />
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                              onClick={() => window.open(link.url, '_blank')}
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(link.id)} className="text-destructive hover:text-destructive">
-                              <Trash2 className="w-4 h-4" />
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                              onClick={() => handleDelete(link.id)}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
                             </Button>
                           </div>
-                        </Card>
+                        </div>
                       )}
                     </Draggable>
                   </div>
@@ -452,58 +463,63 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </Droppable>
       </DragDropContext>
 
-      {/* Add/Edit Dialog */}
+      {/* ── Add / Edit Dialog ── */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display">
+            <DialogTitle className="text-base font-semibold">
               {editingLink ? t('dashboard.editLink') : t('dashboard.addLink')}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            {/* Title */}
-            <div className="space-y-2">
-              <Label>{t('dashboard.linkTitle')}</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder="Ex: OnlyFans - Marie" />
-            </div>
 
-            {/* Description / Creator name */}
-            <div className="space-y-2">
-              <Label>Description / Nom de la créatrice</Label>
-              <Textarea 
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)} 
-                maxLength={200} 
-                placeholder="Ex: @marie_official • Top 1% 🔥"
-                rows={2}
-                className="resize-none"
+          <div className="space-y-4 pt-1">
+            {/* Title */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">{t('dashboard.linkTitle')}</Label>
+              <Input
+                value={title} onChange={(e) => setTitle(e.target.value)}
+                maxLength={100} placeholder="Ex: OnlyFans - Marie"
+                className="h-9"
               />
             </div>
 
             {/* URL */}
-            <div className="space-y-2">
-              <Label>{t('dashboard.linkUrl')}</Label>
-              <Input value={url} onChange={(e) => setUrl(e.target.value)} maxLength={500} placeholder="https://example.com" />
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">{t('dashboard.linkUrl')}</Label>
+              <Input
+                value={url} onChange={(e) => setUrl(e.target.value)}
+                maxLength={500} placeholder="https://example.com"
+                className="h-9"
+              />
             </div>
 
-            {/* Thumbnail Upload */}
-            <div className="space-y-2">
-              <Label>Photo / Thumbnail</Label>
+            {/* Description */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Description</Label>
+              <Textarea
+                value={description} onChange={(e) => setDescription(e.target.value)}
+                maxLength={200} placeholder="Ex: @marie_official • Top 1% 🔥"
+                rows={2} className="resize-none text-sm"
+              />
+            </div>
+
+            {/* Thumbnail */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Photo</Label>
               {thumbnailPreview ? (
-                <div className="relative w-full h-32 rounded-xl overflow-hidden bg-muted">
+                <div className="relative w-full h-28 rounded-lg overflow-hidden bg-muted">
                   <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
                   <button
-                    type="button"
-                    onClick={handleRemoveThumbnail}
-                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"
+                    type="button" onClick={handleRemoveThumbnail}
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-foreground/60 text-background flex items-center justify-center hover:bg-foreground/80 transition-colors"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-3 h-3" />
                   </button>
                 </div>
               ) : (
-                <label className="flex items-center justify-center gap-2 w-full h-24 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors text-muted-foreground text-sm">
-                  <ImagePlus className="w-5 h-5" />
-                  <span>Ajouter une photo</span>
+                <label className="flex items-center justify-center gap-2 w-full h-20 rounded-lg border border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/40 transition-colors text-muted-foreground text-xs">
+                  <ImagePlus className="w-4 h-4" />
+                  <span>Ajouter une image</span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
                 </label>
               )}
@@ -513,286 +529,187 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             <button
               type="button"
               onClick={() => setShowCustomization(!showCustomization)}
-              className="flex items-center gap-2 text-sm text-primary hover:underline"
+              className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              <Palette className="w-4 h-4" />
-              {showCustomization ? 'Masquer la personnalisation' : 'Personnaliser le style'}
+              <Palette className="w-3.5 h-3.5" />
+              Personnalisation avancée
+              <ChevronDown className={`w-3 h-3 transition-transform ${showCustomization ? 'rotate-180' : ''}`} />
             </button>
 
-            {showCustomization && (
-              <div className="space-y-4 p-4 rounded-xl bg-muted/50 border border-border">
-                {/* Section / Category */}
-                <div className="space-y-2">
-                  <Label>Section / Catégorie</Label>
-                  <Input 
-                    value={sectionTitle} 
-                    onChange={(e) => setSectionTitle(e.target.value)} 
-                    maxLength={50} 
-                    placeholder="Ex: Marie, Réseaux sociaux, Boutique..."
-                  />
-                  <p className="text-xs text-muted-foreground">Les liens avec la même section seront regroupés ensemble</p>
-                </div>
-
-                {/* Link Style */}
-                <div className="space-y-2">
-                  <Label>Style d'affichage</Label>
-                  <Select value={linkStyle} onValueChange={setLinkStyle}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LINK_STYLES.map(s => (
-                        <SelectItem key={s.value} value={s.value}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{s.label}</span>
-                            <span className="text-xs text-muted-foreground">{s.desc}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Background Color */}
-                <div className="space-y-2">
-                  <Label>Couleur de fond</Label>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {PRESET_COLORS.map(color => (
-                      <button
-                        key={color}
-                        type="button"
-                        onClick={() => setBgColor(bgColor === color ? '' : color)}
-                        className={`w-7 h-7 rounded-full border-2 transition-all ${bgColor === color ? 'border-primary scale-110' : 'border-transparent'}`}
-                        style={{ backgroundColor: color }}
+            <AnimatePresence>
+              {showCustomization && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-4 p-3 rounded-lg bg-muted/40 border border-border">
+                    {/* Section */}
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Section</Label>
+                      <Input
+                        value={sectionTitle} onChange={(e) => setSectionTitle(e.target.value)}
+                        maxLength={50} placeholder="Ex: Réseaux sociaux"
+                        className="h-8 text-sm"
                       />
-                    ))}
-                    <Input
-                      type="color"
-                      value={bgColor || '#000000'}
-                      onChange={(e) => setBgColor(e.target.value)}
-                      className="w-8 h-8 p-0 border-0 cursor-pointer rounded-full overflow-hidden"
-                    />
-                    {bgColor && (
-                      <button type="button" onClick={() => setBgColor('')} className="text-xs text-muted-foreground hover:text-foreground">
-                        Reset
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Text Color */}
-                <div className="space-y-2">
-                  <Label>Couleur du texte</Label>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => setTextColor(textColor === '#FFFFFF' ? '' : '#FFFFFF')}
-                      className={`w-7 h-7 rounded-full border-2 bg-white transition-all ${textColor === '#FFFFFF' ? 'border-primary scale-110' : 'border-muted'}`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setTextColor(textColor === '#000000' ? '' : '#000000')}
-                      className={`w-7 h-7 rounded-full border-2 bg-black transition-all ${textColor === '#000000' ? 'border-primary scale-110' : 'border-muted'}`}
-                    />
-                    <Input
-                      type="color"
-                      value={textColor || '#FFFFFF'}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="w-8 h-8 p-0 border-0 cursor-pointer rounded-full overflow-hidden"
-                    />
-                    {textColor && (
-                      <button type="button" onClick={() => setTextColor('')} className="text-xs text-muted-foreground hover:text-foreground">
-                        Reset
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Preview */}
-                {(bgColor || textColor) && (
-                  <div className="space-y-1">
-                    <Label className="text-xs">Aperçu</Label>
-                    <div
-                      className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium"
-                      style={{
-                        backgroundColor: bgColor || undefined,
-                        color: textColor || undefined,
-                      }}
-                    >
-                      <span className="flex-1 text-center">{title || 'Titre du lien'}</span>
                     </div>
+
+                    {/* Style */}
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Style</Label>
+                      <Select value={linkStyle} onValueChange={setLinkStyle}>
+                        <SelectTrigger className="h-8 text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LINK_STYLES.map(s => (
+                            <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Colors */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Fond</Label>
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {PRESET_COLORS.map(color => (
+                            <button
+                              key={color} type="button"
+                              onClick={() => setBgColor(bgColor === color ? '' : color)}
+                              className={`w-5 h-5 rounded-full transition-all ${bgColor === color ? 'ring-2 ring-primary ring-offset-1 ring-offset-background scale-110' : 'hover:scale-110'}`}
+                              style={{ backgroundColor: color, border: color === '#FFFFFF' ? '1px solid hsl(var(--border))' : undefined }}
+                            />
+                          ))}
+                          {bgColor && (
+                            <button type="button" onClick={() => setBgColor('')} className="text-[10px] text-muted-foreground hover:text-foreground ml-1">✕</button>
+                          )}
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Texte</Label>
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {['#FFFFFF', '#000000'].map(color => (
+                            <button
+                              key={color} type="button"
+                              onClick={() => setTextColor(textColor === color ? '' : color)}
+                              className={`w-5 h-5 rounded-full transition-all ${textColor === color ? 'ring-2 ring-primary ring-offset-1 ring-offset-background scale-110' : 'hover:scale-110'}`}
+                              style={{ backgroundColor: color, border: color === '#FFFFFF' ? '1px solid hsl(var(--border))' : undefined }}
+                            />
+                          ))}
+                          <Input
+                            type="color" value={textColor || '#FFFFFF'}
+                            onChange={(e) => setTextColor(e.target.value)}
+                            className="w-5 h-5 p-0 border-0 cursor-pointer rounded-full overflow-hidden"
+                          />
+                          {textColor && (
+                            <button type="button" onClick={() => setTextColor('')} className="text-[10px] text-muted-foreground hover:text-foreground ml-1">✕</button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mini preview */}
+                    {(bgColor || textColor) && (
+                      <div
+                        className="flex items-center justify-center px-4 py-2.5 rounded-lg text-xs font-medium"
+                        style={{ backgroundColor: bgColor || undefined, color: textColor || undefined }}
+                      >
+                        {title || 'Aperçu du lien'}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="rounded-full">
+
+          <DialogFooter className="gap-2 pt-2">
+            <Button variant="ghost" onClick={() => setDialogOpen(false)} size="sm" className="rounded-lg">
               {t('dashboard.cancel')}
             </Button>
-            <Button onClick={handleSave} disabled={saving || !title.trim() || !url.trim()}>
-              {saving ? <Loader2 className="animate-spin" /> : t('dashboard.save')}
+            <Button onClick={handleSave} disabled={saving || !title.trim() || !url.trim()} size="sm" className="rounded-lg">
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('dashboard.save')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Templates Dialog */}
+      {/* ── Templates Dialog ── */}
       <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display flex items-center gap-2">
-              <LayoutTemplate className="w-5 h-5" /> Templates
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <LayoutTemplate className="w-4 h-4" /> Templates
             </DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            Choisis un template pour ajouter rapidement un ensemble de liens pré-configurés.
+          <p className="text-xs text-muted-foreground -mt-1">
+            Ajouter rapidement un ensemble de liens pré-configurés.
           </p>
 
-          {/* Custom Templates */}
-          {customTemplates.length > 0 && (
-            <>
-              <div className="flex items-center gap-2 pt-2">
-                <div className="h-px flex-1 bg-border" />
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">Mes templates</span>
-                <div className="h-px flex-1 bg-border" />
-              </div>
-              <div className="space-y-3">
+          <div className="space-y-2">
+            {/* Custom templates */}
+            {customTemplates.length > 0 && (
+              <>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">Mes templates</p>
                 {customTemplates.map(template => (
-                  <Card
+                  <TemplateCard
                     key={template.id}
-                    className="p-4 cursor-pointer hover:border-primary/50 transition-colors group"
-                    onClick={() => !applyingTemplate && handleApplyCustomTemplate(template)}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-foreground">{template.name}</h4>
-                        {template.description && <p className="text-xs text-muted-foreground mt-0.5">{template.description}</p>}
-                        <div className="flex flex-wrap gap-1.5 mt-2">
-                          {template.links.slice(0, 6).map((tl, idx) => (
-                            <span
-                              key={idx}
-                              className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                              style={{
-                                backgroundColor: tl.bg_color || 'hsl(var(--muted))',
-                                color: tl.text_color || 'hsl(var(--muted-foreground))',
-                              }}
-                            >
-                              {tl.title}
-                            </span>
-                          ))}
-                          {template.links.length > 6 && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
-                              +{template.links.length - 6}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="rounded-full text-destructive hover:text-destructive h-8 w-8 p-0"
-                          onClick={(e) => handleDeleteCustomTemplate(template.id, e)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                          disabled={applyingTemplate}
-                        >
-                          {applyingTemplate ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Appliquer'}
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
+                    name={template.name}
+                    desc={template.description}
+                    links={template.links}
+                    loading={applyingTemplate}
+                    onApply={() => applyTemplateLinks(template.links)}
+                    onDelete={(e) => handleDeleteCustomTemplate(template.id, e)}
+                  />
                 ))}
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {/* Built-in Templates */}
-          <div className="flex items-center gap-2 pt-2">
-            <div className="h-px flex-1 bg-border" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">Pré-configurés</span>
-            <div className="h-px flex-1 bg-border" />
-          </div>
-          <div className="space-y-3">
+            {/* Built-in */}
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">Pré-configurés</p>
             {LINK_TEMPLATES.map(template => (
-              <Card
+              <TemplateCard
                 key={template.id}
-                className="p-4 cursor-pointer hover:border-primary/50 transition-colors group"
-                onClick={() => !applyingTemplate && handleApplyTemplate(template)}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-foreground">{template.name}</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">{template.desc}</p>
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {template.links.map((tl, idx) => (
-                        <span
-                          key={idx}
-                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                          style={{
-                            backgroundColor: tl.bg_color || 'hsl(var(--muted))',
-                            color: tl.text_color || 'hsl(var(--muted-foreground))',
-                          }}
-                        >
-                          {tl.title}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="rounded-full shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                    disabled={applyingTemplate}
-                  >
-                    {applyingTemplate ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Appliquer'}
-                  </Button>
-                </div>
-              </Card>
+                name={template.name}
+                desc={template.desc}
+                links={template.links}
+                loading={applyingTemplate}
+                onApply={() => applyTemplateLinks(template.links)}
+              />
             ))}
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Save Template Dialog */}
+      {/* ── Save Template Dialog ── */}
       <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle className="font-display flex items-center gap-2">
-              <BookmarkPlus className="w-5 h-5" /> Sauvegarder comme template
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <BookmarkPlus className="w-4 h-4" /> Sauvegarder comme template
             </DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            Sauvegarde tes {links.length} liens actuels comme template réutilisable.
+          <p className="text-xs text-muted-foreground -mt-1">
+            {links.length} liens seront sauvegardés.
           </p>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label>Nom du template</Label>
-              <Input
-                value={templateName}
-                onChange={e => setTemplateName(e.target.value)}
-                placeholder="Ex: Setup créatrice Marie"
-              />
+          <div className="space-y-3 pt-1">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Nom</Label>
+              <Input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Ex: Setup Marie" className="h-9" />
             </div>
-            <div className="space-y-2">
-              <Label>Description (optionnel)</Label>
-              <Input
-                value={templateDesc}
-                onChange={e => setTemplateDesc(e.target.value)}
-                placeholder="Ex: Liens standards pour créatrices OnlyFans"
-              />
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Description</Label>
+              <Input value={templateDesc} onChange={e => setTemplateDesc(e.target.value)} placeholder="Optionnel" className="h-9" />
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {links.slice(0, 8).map((l, idx) => (
+            <div className="flex flex-wrap gap-1">
+              {links.slice(0, 6).map((l, idx) => (
                 <span
                   key={idx}
-                  className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                  className="text-[10px] px-1.5 py-0.5 rounded font-medium"
                   style={{
                     backgroundColor: l.bg_color || 'hsl(var(--muted))',
                     color: l.text_color || 'hsl(var(--muted-foreground))',
@@ -801,23 +718,17 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                   {l.title}
                 </span>
               ))}
-              {links.length > 8 && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
-                  +{links.length - 8}
+              {links.length > 6 && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-muted text-muted-foreground">
+                  +{links.length - 6}
                 </span>
               )}
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSaveTemplateOpen(false)} className="rounded-full">
-              Annuler
-            </Button>
-            <Button
-              onClick={handleSaveAsTemplate}
-              disabled={savingTemplate || !templateName.trim()}
-              className=""
-            >
-              {savingTemplate ? <Loader2 className="animate-spin" /> : 'Sauvegarder'}
+          <DialogFooter className="gap-2 pt-2">
+            <Button variant="ghost" onClick={() => setSaveTemplateOpen(false)} size="sm">Annuler</Button>
+            <Button onClick={handleSaveAsTemplate} disabled={savingTemplate || !templateName.trim()} size="sm">
+              {savingTemplate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Sauvegarder'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -825,5 +736,64 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     </div>
   );
 };
+
+/* ── Template Card sub-component ── */
+function TemplateCard({
+  name, desc, links, loading, onApply, onDelete,
+}: {
+  name: string;
+  desc: string | null;
+  links: Array<{ title: string; bg_color: string | null; text_color: string | null }>;
+  loading: boolean;
+  onApply: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <button
+      onClick={() => !loading && onApply()}
+      className="w-full text-left p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-muted/40 transition-all group"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-foreground">{name}</p>
+          {desc && <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{desc}</p>}
+          <div className="flex flex-wrap gap-1 mt-2">
+            {links.slice(0, 5).map((tl, idx) => (
+              <span
+                key={idx}
+                className="text-[9px] px-1.5 py-0.5 rounded font-medium"
+                style={{
+                  backgroundColor: tl.bg_color || 'hsl(var(--muted))',
+                  color: tl.text_color || 'hsl(var(--muted-foreground))',
+                }}
+              >
+                {tl.title}
+              </span>
+            ))}
+            {links.length > 5 && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded font-medium bg-muted text-muted-foreground">
+                +{links.length - 5}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          {onDelete && (
+            <span
+              role="button"
+              onClick={onDelete}
+              className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Trash2 className="w-3 h-3" />
+            </span>
+          )}
+          <span className="text-[11px] font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+            {loading ? '...' : 'Appliquer →'}
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}
 
 export default LinksManager;
