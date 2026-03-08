@@ -178,7 +178,7 @@ const Dashboard = () => {
                         {currentPlan !== 'free' && (
                           <Button variant="outline" size="sm" className="rounded-full gap-1" onClick={handlePortal} disabled={portalLoading}>
                             {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
-                            Gérer l'abonnement
+                            {t('pricing.manageSubscription')}
                           </Button>
                         )}
                       </div>
