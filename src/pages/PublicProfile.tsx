@@ -60,56 +60,37 @@ const PublicProfile = () => {
 
     const fetchData = async () => {
       if (!username) return;
-      
-      // Try creator_pages first
-      const { data: pageData } = await supabase
-        .from('creator_pages')
-        .select('*')
-        .eq('username', username)
-        .single();
 
-      if (pageData) {
-        const p = {
-          ...pageData,
-          social_links: (pageData.social_links as unknown as SocialLink[]) || [],
-        } as CreatorPageData;
-        setPage(p);
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-        // Fetch links by page_id
-        const { data: linksData } = await supabase
-          .from('links')
-          .select('*')
-          .eq('page_id', pageData.id)
-          .order('position', { ascending: true });
+      try {
+        const res = await fetch(
+          `${supabaseUrl}/functions/v1/public-profile?username=${encodeURIComponent(username)}`,
+          { headers: { 'apikey': anonKey } }
+        );
 
-        setLinks((linksData as LinkItem[]) || []);
-        setLoading(false);
-        return;
+        if (res.status === 429 || res.status === 404) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+
+        const result = await res.json();
+
+        if (result.page) {
+          setPage({
+            ...result.page,
+            social_links: (result.page.social_links as unknown as SocialLink[]) || [],
+          } as CreatorPageData);
+          setLinks((result.links as LinkItem[]) || []);
+        } else {
+          setNotFound(true);
+        }
+      } catch {
+        setNotFound(true);
       }
 
-      // Fallback: try profiles (legacy)
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('username', username)
-        .single();
-
-      if (!profileData) { setNotFound(true); setLoading(false); return; }
-
-      const p = {
-        id: profileData.id,
-        ...profileData,
-        social_links: (profileData.social_links as unknown as SocialLink[]) || [],
-      } as CreatorPageData;
-      setPage(p);
-
-      const { data: linksData } = await supabase
-        .from('links')
-        .select('*')
-        .eq('user_id', p.user_id)
-        .order('position', { ascending: true });
-
-      setLinks((linksData as LinkItem[]) || []);
       setLoading(false);
     };
     fetchData();

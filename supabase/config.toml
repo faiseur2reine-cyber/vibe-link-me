@@ -2,3 +2,6 @@ project_id = "deyoyodhtilhmzhjorsp"
 
 [functions.rate-limited-click]
 verify_jwt = false
+
+[functions.public-profile]
+verify_jwt = false
