@@ -20,9 +20,17 @@ export type Database = {
           bio: string | null
           cover_url: string | null
           created_at: string
+          custom_accent_color: string | null
+          custom_bg_color: string | null
+          custom_btn_color: string | null
+          custom_btn_text_color: string | null
+          custom_css: string | null
+          custom_font: string | null
+          custom_text_color: string | null
           display_name: string | null
           id: string
           is_nsfw: boolean
+          link_layout: string | null
           social_links: Json
           theme: string
           updated_at: string
@@ -34,9 +42,17 @@ export type Database = {
           bio?: string | null
           cover_url?: string | null
           created_at?: string
+          custom_accent_color?: string | null
+          custom_bg_color?: string | null
+          custom_btn_color?: string | null
+          custom_btn_text_color?: string | null
+          custom_css?: string | null
+          custom_font?: string | null
+          custom_text_color?: string | null
           display_name?: string | null
           id?: string
           is_nsfw?: boolean
+          link_layout?: string | null
           social_links?: Json
           theme?: string
           updated_at?: string
@@ -48,9 +64,17 @@ export type Database = {
           bio?: string | null
           cover_url?: string | null
           created_at?: string
+          custom_accent_color?: string | null
+          custom_bg_color?: string | null
+          custom_btn_color?: string | null
+          custom_btn_text_color?: string | null
+          custom_css?: string | null
+          custom_font?: string | null
+          custom_text_color?: string | null
           display_name?: string | null
           id?: string
           is_nsfw?: boolean
+          link_layout?: string | null
           social_links?: Json
           theme?: string
           updated_at?: string
