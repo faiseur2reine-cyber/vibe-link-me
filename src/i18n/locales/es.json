@@ -96,7 +96,7 @@
     "maxLinks": "Has alcanzado el límite de enlaces.",
     "plan": "Plan"
   },
-  "public": { "madeWith": "Hecho con MyTaptap" },
+  "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe.", "backHome": "Volver al inicio" },
   "common": {
     "loading": "Cargando...",
     "error": "Ha ocurrido un error.",

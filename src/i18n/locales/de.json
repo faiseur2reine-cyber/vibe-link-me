@@ -35,6 +35,6 @@
     "maxLinks": "Du hast das Link-Limit erreicht.",
     "plan": "Plan"
   },
-  "public": { "madeWith": "Erstellt mit MyTaptap" },
+  "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht.", "backHome": "Zurück zur Startseite" },
   "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" }
 }
