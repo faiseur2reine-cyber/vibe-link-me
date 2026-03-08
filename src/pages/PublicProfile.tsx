@@ -40,7 +40,7 @@ const fadeUp = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } };
 const stagger = { visible: { transition: { staggerChildren: 0.06 } } };
 const scaleIn = {
   hidden: { scale: 0.85, opacity: 0 },
-  visible: { scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 260, damping: 20 } },
+  visible: { scale: 1, opacity: 1, transition: { type: 'spring' as const, stiffness: 260, damping: 20 } },
 };
 
 const PublicProfile = () => {
