@@ -15,6 +15,9 @@
     "currentPlan": "Aktueller Plan",
     "upgrade": "Pro werden",
     "upgradeStarter": "Starter werden",
+    "proMonthly": "≈ 9,58€/Monat",
+    "includedInPro": "In Pro enthalten",
+    "manageSubscription": "Abo verwalten",
     "freeFeatures": ["Bis zu 5 Links", "3 Basis-Themen", "MyTaptap-Badge"],
     "starterFeatures": ["Bis zu 20 Links", "Alle Themen", "Analysen 90 Tage", "MyTaptap-Badge"],
     "proFeatures": ["Unbegrenzte Links", "Alle Themen", "Unbegrenzte Analysen + Diagramme", "Eigene Domain", "Prioritäts-Support", "MyTaptap-Badge"]
