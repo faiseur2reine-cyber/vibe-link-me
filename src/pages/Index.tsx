@@ -103,7 +103,6 @@ const Index = () => {
           transition={{ duration: 0.5 }}
           className="relative max-w-md mx-auto"
         >
-          <UrgencyWidgets />
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('landing.ctaTitle')}</h2>
           <p className="mt-3 text-muted-foreground text-sm">{t('landing.ctaSubtitle')}</p>
           <Button size="lg" asChild className="mt-7 h-12 px-6 text-sm font-semibold group">
