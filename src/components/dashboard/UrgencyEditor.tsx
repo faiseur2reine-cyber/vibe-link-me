@@ -149,6 +149,24 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
 
   return (
     <div className="space-y-8">
+      {/* === PRESETS === */}
+      <section className="space-y-3">
+        <h3 className="text-sm font-semibold text-foreground">Templates rapides</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {urgencyPresets.map(preset => (
+            <button
+              key={preset.id}
+              onClick={() => applyPreset(preset)}
+              className="group text-left p-3 rounded-xl border border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all"
+            >
+              <span className="text-lg">{preset.emoji}</span>
+              <p className="text-xs font-semibold text-foreground mt-1">{preset.label}</p>
+              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">{preset.desc}</p>
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/* === BANNER === */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
