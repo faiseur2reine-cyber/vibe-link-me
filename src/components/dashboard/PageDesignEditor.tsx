@@ -190,34 +190,6 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
           <ColorInput label="Texte des boutons" value={btnTextColor} onChange={setBtnTextColor} placeholder="#ffffff" />
         </div>
 
-        {/* Live preview strip */}
-        {(bgColor || btnColor) && (
-          <Card className="border-border overflow-hidden">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-2">Aperçu rapide</p>
-              <div
-                className="rounded-xl p-4 flex flex-col items-center gap-2"
-                style={{ backgroundColor: bgColor || '#1a1a2e' }}
-              >
-                <span className="text-sm font-bold" style={{ color: textColor || '#ffffff' }}>
-                  {page.display_name || page.username}
-                </span>
-                <div
-                  className="px-6 py-2 rounded-xl text-xs font-medium"
-                  style={{
-                    backgroundColor: btnColor || '#16213e',
-                    color: btnTextColor || '#ffffff',
-                  }}
-                >
-                  Exemple de lien
-                </div>
-                <span className="text-[10px]" style={{ color: accentColor || '#e94560' }}>
-                  Couleur d'accent
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Font Section */}

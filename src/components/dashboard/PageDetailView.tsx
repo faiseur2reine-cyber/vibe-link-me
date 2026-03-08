@@ -185,7 +185,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                   <CardTitle className="font-display">Design personnalisé</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <PageDesignEditor page={page} onUpdate={handleUpdate} />
+                  <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
                 </CardContent>
               </Card>
             </TabsContent>
