@@ -145,8 +145,8 @@ const Index = () => {
                 {t('pricing.launchBadge')}
               </div>
               <h3 className="font-display font-bold text-xl mt-4">{t('pricing.starter')}</h3>
-              <p className="mt-2 text-4xl font-bold">19,99€<span className="text-lg font-normal text-muted-foreground">{t('pricing.year')}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">≈ 1,67€/mois</p>
+              <p className="mt-2 text-4xl font-bold">19,99€<span className="text-lg font-normal text-muted-foreground">{t('pricing.month')}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">&nbsp;</p>
               <ul className="mt-6 space-y-3">
                 {(t('pricing.starterFeatures', { returnObjects: true }) as string[]).map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm">
