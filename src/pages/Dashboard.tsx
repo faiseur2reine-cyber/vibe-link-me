@@ -105,21 +105,21 @@ const Dashboard = () => {
           {/* Main */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-6 bg-muted rounded-full p-1">
-                <TabsTrigger value="links" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <Link2 className="w-4 h-4" /> {t('dashboard.links')}
+              <TabsList className="mb-6 bg-muted rounded-full p-1 flex-wrap h-auto gap-1">
+                <TabsTrigger value="links" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <Link2 className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.links')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <User className="w-4 h-4" /> {t('dashboard.profile')}
+                <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <User className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.profile')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <Palette className="w-4 h-4" /> {t('dashboard.theme')}
+                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <Palette className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.theme')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <BarChart3 className="w-4 h-4" /> {t('dashboard.analytics')}
+                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <BarChart3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.analytics')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="plan" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <CreditCard className="w-4 h-4" /> {t('dashboard.plan')}
+                <TabsTrigger value="plan" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <CreditCard className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.plan')}</span>
                 </TabsTrigger>
               </TabsList>
 
