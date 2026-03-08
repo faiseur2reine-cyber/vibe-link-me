@@ -23,7 +23,8 @@ const Dashboard = () => {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">{t('common.loading')}</div>;
   }
   if (!user) return <Navigate to="/auth" replace />;
-  if (!profile) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">{t('common.error')}</div>;
+  if (!profile) return <Navigate to="/set-username" replace />;
+  if (!profile.username || profile.username.startsWith('null')) return <Navigate to="/set-username" replace />;
 
   return (
     <div className="min-h-screen bg-background">
