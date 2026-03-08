@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/lib/plans';
 import { toast } from '@/hooks/use-toast';
-import { Heart, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
@@ -36,36 +36,65 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="flex items-center justify-between px-4 sm:px-6 py-4 max-w-5xl mx-auto">
-        <Link to="/" className="text-lg font-bold text-foreground tracking-tight">
-          MyTaptap
-        </Link>
-        <div className="flex items-center gap-2">
-          <LanguageSelector />
-          {user ? (
-            <Button size="sm" asChild>
-              <Link to="/dashboard">{t('nav.dashboard')}</Link>
-            </Button>
-          ) : (
-            <>
-              <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-                <Link to="/auth">{t('nav.login')}</Link>
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 max-w-6xl mx-auto">
+          <Link to="/" className="text-base font-bold text-foreground tracking-tight">
+            MyTaptap
+          </Link>
+          <div className="flex items-center gap-1.5">
+            <LanguageSelector />
+            {user ? (
+              <Button size="sm" variant="ghost" asChild className="text-sm">
+                <Link to="/dashboard">{t('nav.dashboard')}</Link>
               </Button>
-              <Button size="sm" asChild>
-                <Link to="/auth?tab=signup">{t('nav.signup')}</Link>
-              </Button>
-            </>
-          )}
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex text-sm">
+                  <Link to="/auth">{t('nav.login')}</Link>
+                </Button>
+                <Button size="sm" asChild className="text-sm h-8">
+                  <Link to="/auth?tab=signup">{t('nav.signup')}</Link>
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
       <HeroSection />
+
+      {/* Social proof bar */}
+      <div className="border-y border-border bg-secondary/30 py-6 px-4">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-xs text-muted-foreground">
+          <span className="font-medium">Utilisé par des créateurs sur</span>
+          {['YouTube', 'TikTok', 'Instagram', 'Twitch', 'X'].map(p => (
+            <span key={p} className="font-semibold text-foreground/60">{p}</span>
+          ))}
+        </div>
+      </div>
+
       <FeaturesSection />
       <PricingSection checkoutLoading={checkoutLoading} onUpgrade={handleUpgrade} />
 
-      <footer className="px-6 py-8 border-t border-border">
-        <div className="max-w-5xl mx-auto flex items-center justify-center gap-1 text-muted-foreground text-xs">
-          {t('footer.madeWith')} <Heart className="w-3 h-3" /> {t('footer.by')}
+      {/* CTA */}
+      <section className="px-4 sm:px-6 py-20 sm:py-28 text-center">
+        <div className="max-w-lg mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Prêt à centraliser tes liens ?</h2>
+          <p className="mt-3 text-muted-foreground text-sm">Crée ta page en 30 secondes. Gratuit, sans carte bancaire.</p>
+          <Button size="lg" asChild className="mt-6 h-11 px-6 text-sm font-semibold">
+            <Link to="/auth?tab=signup">Créer ma page gratuitement</Link>
+          </Button>
+        </div>
+      </section>
+
+      <footer className="border-t border-border py-6 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} MyTaptap</span>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <Link to="/auth" className="hover:text-foreground transition-colors">Connexion</Link>
+            <Link to="/auth?tab=signup" className="hover:text-foreground transition-colors">Inscription</Link>
+          </div>
         </div>
       </footer>
     </div>
