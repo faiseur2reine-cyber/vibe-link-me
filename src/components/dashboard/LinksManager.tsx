@@ -113,6 +113,83 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const [showCustomization, setShowCustomization] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
+  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDesc, setTemplateDesc] = useState('');
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
+  const fetchCustomTemplates = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('custom_templates')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+    if (data) setCustomTemplates(data as unknown as CustomTemplate[]);
+  };
+
+  const handleSaveAsTemplate = async () => {
+    if (!user || !templateName.trim() || links.length === 0) return;
+    setSavingTemplate(true);
+    const templateLinks = links.map(l => ({
+      title: l.title, url: l.url, icon: l.icon, style: l.style,
+      section_title: l.section_title, description: l.description,
+      bg_color: l.bg_color, text_color: l.text_color,
+    }));
+    const { error } = await supabase.from('custom_templates').insert({
+      user_id: user.id,
+      name: templateName.trim(),
+      description: templateDesc.trim() || null,
+      links: templateLinks as any,
+    });
+    if (error) {
+      toast({ title: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Template sauvegardé ! 🎉' });
+      setSaveTemplateOpen(false);
+      setTemplateName('');
+      setTemplateDesc('');
+      await fetchCustomTemplates();
+    }
+    setSavingTemplate(false);
+  };
+
+  const handleDeleteCustomTemplate = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { error } = await supabase.from('custom_templates').delete().eq('id', id);
+    if (!error) {
+      setCustomTemplates(prev => prev.filter(t => t.id !== id));
+      toast({ title: 'Template supprimé' });
+    }
+  };
+
+  const handleApplyCustomTemplate = async (template: CustomTemplate) => {
+    if (!user) return;
+    const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
+    const templateLinks = template.links.slice(0, remaining === Infinity ? undefined : remaining);
+    if (templateLinks.length === 0) {
+      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
+      return;
+    }
+    setApplyingTemplate(true);
+    const startPosition = links.length;
+    const inserts = templateLinks.map((tl, idx) => ({
+      title: tl.title, url: tl.url, icon: tl.icon, user_id: user.id,
+      position: startPosition + idx, style: tl.style,
+      section_title: tl.section_title, description: tl.description,
+      bg_color: tl.bg_color, text_color: tl.text_color,
+    }));
+    const { error } = await supabase.from('links').insert(inserts);
+    if (error) {
+      toast({ title: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: `Template "${template.name}" appliqué ! 🎉` });
+      if (onRefetch) await onRefetch();
+    }
+    setApplyingTemplate(false);
+    setTemplateDialogOpen(false);
+  };
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
