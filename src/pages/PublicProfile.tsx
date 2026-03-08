@@ -28,6 +28,14 @@ interface CreatorPageData {
   user_id: string;
   is_nsfw: boolean;
   social_links: SocialLink[];
+  custom_bg_color?: string | null;
+  custom_text_color?: string | null;
+  custom_accent_color?: string | null;
+  custom_btn_color?: string | null;
+  custom_btn_text_color?: string | null;
+  custom_font?: string;
+  link_layout?: string;
+  custom_css?: string | null;
 }
 
 interface LinkItem {
