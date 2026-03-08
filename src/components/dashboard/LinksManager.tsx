@@ -84,7 +84,7 @@ const PRESET_COLORS = [
   '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1', '#F43F5E',
 ];
 
-const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: LinksManagerProps) => {
+const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch }: LinksManagerProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
