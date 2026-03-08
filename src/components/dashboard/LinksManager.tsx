@@ -129,6 +129,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
       bg_color: bgColor.trim() || null,
       text_color: textColor.trim() || null,
       style: linkStyle,
+      section_title: sectionTitle.trim() || null,
     };
 
     if (editingLink) {
