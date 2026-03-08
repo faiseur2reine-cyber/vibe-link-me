@@ -86,10 +86,10 @@ const Dashboard = () => {
         <Link to="/" className="font-display text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
           MyTaptap
         </Link>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="rounded-full gap-1" asChild>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button variant="outline" size="sm" className="rounded-full gap-1 text-xs sm:text-sm" asChild>
             <a href={`/${profile.username}`} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="w-3 h-3" /> {t('dashboard.preview')}
+              <ExternalLink className="w-3 h-3" /> <span className="hidden sm:inline">{t('dashboard.preview')}</span>
             </a>
           </Button>
           <LanguageSelector />
@@ -105,21 +105,21 @@ const Dashboard = () => {
           {/* Main */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-6 bg-muted rounded-full p-1">
-                <TabsTrigger value="links" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <Link2 className="w-4 h-4" /> {t('dashboard.links')}
+              <TabsList className="mb-6 bg-muted rounded-full p-1 flex-wrap h-auto gap-1">
+                <TabsTrigger value="links" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <Link2 className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.links')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <User className="w-4 h-4" /> {t('dashboard.profile')}
+                <TabsTrigger value="profile" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <User className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.profile')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <Palette className="w-4 h-4" /> {t('dashboard.theme')}
+                <TabsTrigger value="theme" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <Palette className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.theme')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <BarChart3 className="w-4 h-4" /> {t('dashboard.analytics')}
+                <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <BarChart3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.analytics')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="plan" className="rounded-full gap-1 data-[state=active]:bg-background">
-                  <CreditCard className="w-4 h-4" /> {t('dashboard.plan')}
+                <TabsTrigger value="plan" className="rounded-full gap-1 data-[state=active]:bg-background text-xs sm:text-sm">
+                  <CreditCard className="w-4 h-4" /> <span className="hidden sm:inline">{t('dashboard.plan')}</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -178,7 +178,7 @@ const Dashboard = () => {
                         {currentPlan !== 'free' && (
                           <Button variant="outline" size="sm" className="rounded-full gap-1" onClick={handlePortal} disabled={portalLoading}>
                             {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
-                            Gérer l'abonnement
+                            {t('pricing.manageSubscription')}
                           </Button>
                         )}
                       </div>
@@ -203,7 +203,7 @@ const Dashboard = () => {
                         {currentPlan === 'starter' ? (
                           <Button disabled className="w-full rounded-full">{t('pricing.currentPlan')}</Button>
                         ) : currentPlan === 'pro' ? (
-                          <Button disabled variant="outline" className="w-full rounded-full">Inclus dans Pro</Button>
+                          <Button disabled variant="outline" className="w-full rounded-full">{t('pricing.includedInPro')}</Button>
                         ) : (
                           <Button
                             className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"

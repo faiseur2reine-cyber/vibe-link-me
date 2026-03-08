@@ -43,6 +43,9 @@
     "currentPlan": "Plan actual",
     "upgrade": "Ir a Pro",
     "upgradeStarter": "Ir a Starter",
+    "proMonthly": "≈ 9,58€/mes",
+    "includedInPro": "Incluido en Pro",
+    "manageSubscription": "Gestionar suscripción",
     "freeFeatures": ["Hasta 5 enlaces", "3 temas básicos", "Insignia MyTaptap"],
     "starterFeatures": ["Hasta 20 enlaces", "Todos los temas", "Analíticas 90 días", "Insignia MyTaptap"],
     "proFeatures": ["Enlaces ilimitados", "Todos los temas", "Analíticas ilimitadas + gráficos", "Dominio personalizado", "Soporte prioritario", "Insignia MyTaptap"]
@@ -93,7 +96,7 @@
     "maxLinks": "Has alcanzado el límite de enlaces.",
     "plan": "Plan"
   },
-  "public": { "madeWith": "Hecho con MyTaptap" },
+  "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe.", "backHome": "Volver al inicio" },
   "common": {
     "loading": "Cargando...",
     "error": "Ha ocurrido un error.",

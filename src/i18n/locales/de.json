@@ -15,6 +15,9 @@
     "currentPlan": "Aktueller Plan",
     "upgrade": "Pro werden",
     "upgradeStarter": "Starter werden",
+    "proMonthly": "≈ 9,58€/Monat",
+    "includedInPro": "In Pro enthalten",
+    "manageSubscription": "Abo verwalten",
     "freeFeatures": ["Bis zu 5 Links", "3 Basis-Themen", "MyTaptap-Badge"],
     "starterFeatures": ["Bis zu 20 Links", "Alle Themen", "Analysen 90 Tage", "MyTaptap-Badge"],
     "proFeatures": ["Unbegrenzte Links", "Alle Themen", "Unbegrenzte Analysen + Diagramme", "Eigene Domain", "Prioritäts-Support", "MyTaptap-Badge"]
@@ -32,6 +35,6 @@
     "maxLinks": "Du hast das Link-Limit erreicht.",
     "plan": "Plan"
   },
-  "public": { "madeWith": "Erstellt mit MyTaptap" },
+  "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht.", "backHome": "Zurück zur Startseite" },
   "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" }
 }

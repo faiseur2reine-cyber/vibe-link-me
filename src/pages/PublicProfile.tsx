@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Heart } from 'lucide-react';
@@ -27,6 +28,7 @@ interface LinkItem {
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,10 +68,10 @@ const PublicProfile = () => {
 
   if (notFound || !profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
         <h1 className="text-4xl font-display font-bold text-foreground">404</h1>
-        <p className="text-muted-foreground">Cette page n'existe pas.</p>
-        <Link to="/" className="text-primary hover:underline">Retour à l'accueil</Link>
+        <p className="text-muted-foreground">{t('public.notFound')}</p>
+        <Link to="/" className="text-primary hover:underline">{t('public.backHome')}</Link>
       </div>
     );
   }
@@ -152,7 +154,7 @@ const PublicProfile = () => {
                 to="/"
                 className={`flex items-center justify-center gap-1 text-xs opacity-50 hover:opacity-80 transition-opacity ${theme.text}`}
               >
-                Créé avec <Heart className="w-3 h-3" /> MyTaptap
+                {t('footer.madeWith')} <Heart className="w-3 h-3" /> MyTaptap
               </Link>
             </motion.div>
           )}
