@@ -17,7 +17,8 @@ interface PagesListViewProps {
   onDeletePage?: (id: string) => Promise<{ error: any }>;
 }
 
-const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: PagesListViewProps) => {
+const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
+  const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
 
