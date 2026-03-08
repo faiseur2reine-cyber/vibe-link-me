@@ -14,7 +14,7 @@ interface PageAnalyticsPanelProps {
 }
 
 const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
-  const { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, loading } = usePageAnalytics(pageId);
+  const { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, abStats, loading } = usePageAnalytics(pageId);
 
   if (loading) {
     return <p className="text-center text-muted-foreground py-8">Chargement...</p>;
