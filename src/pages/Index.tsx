@@ -12,8 +12,6 @@ import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import PricingSection from '@/components/landing/PricingSection';
-import UrgencyWidgets from '@/components/landing/UrgencyWidgets';
-import UrgencyBanner from '@/components/landing/UrgencyBanner';
 
 const Index = () => {
   const { t } = useTranslation();
