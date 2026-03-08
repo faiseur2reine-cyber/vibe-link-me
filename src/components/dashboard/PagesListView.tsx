@@ -293,6 +293,35 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           </motion.div>
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette page ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              La page <span className="font-semibold">@{deleteTarget?.username}</span> et tous ses liens seront définitivement supprimés. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (!deleteTarget || !onDeletePage) return;
+                const result = await onDeletePage(deleteTarget.id);
+                if (result?.error) {
+                  toast.error('Erreur lors de la suppression');
+                } else {
+                  toast.success('Page supprimée');
+                }
+                setDeleteTarget(null);
+              }}
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
