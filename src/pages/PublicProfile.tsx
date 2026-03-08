@@ -184,6 +184,12 @@ const PublicProfile = () => {
                 whileTap={{ scale: 0.98 }}
                 className={`group flex items-center gap-3 px-5 py-4 rounded-2xl font-medium text-sm transition-all duration-200 ${theme.btn}`}
               >
+                <img
+                  src={`https://www.google.com/s2/favicons?domain=${new URL(link.url).hostname}&sz=32`}
+                  alt=""
+                  className="w-5 h-5 rounded shrink-0"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
                 <span className="flex-1 text-center">{link.title}</span>
                 <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
               </motion.a>

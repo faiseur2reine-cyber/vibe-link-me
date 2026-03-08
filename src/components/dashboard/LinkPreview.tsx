@@ -49,6 +49,12 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
               key={link.id}
               className={`group flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 ${theme.btn}`}
             >
+              <img
+                src={`https://www.google.com/s2/favicons?domain=${(() => { try { return new URL(link.url).hostname; } catch { return ''; } })()}&sz=32`}
+                alt=""
+                className="w-4 h-4 rounded shrink-0"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
               <span className="flex-1 text-center">{link.title}</span>
               <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
             </div>
