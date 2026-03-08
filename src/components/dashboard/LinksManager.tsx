@@ -10,9 +10,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette, LayoutTemplate } from 'lucide-react';
+import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette, LayoutTemplate, Save, BookmarkPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+
+interface CustomTemplate {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  links: Array<{ title: string; url: string; icon: string; style: string; section_title: string | null; description: string | null; bg_color: string | null; text_color: string | null }>;
+  created_at: string;
+}
 
 const LINK_TEMPLATES = [
   {
