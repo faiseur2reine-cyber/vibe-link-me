@@ -542,6 +542,58 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Templates Dialog */}
+      <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <LayoutTemplate className="w-5 h-5" /> Templates pré-configurés
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Choisis un template pour ajouter rapidement un ensemble de liens pré-configurés. Tu pourras ensuite les modifier.
+          </p>
+          <div className="space-y-3 py-2">
+            {LINK_TEMPLATES.map(template => (
+              <Card
+                key={template.id}
+                className="p-4 cursor-pointer hover:border-primary/50 transition-colors group"
+                onClick={() => !applyingTemplate && handleApplyTemplate(template)}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground">{template.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{template.desc}</p>
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {template.links.map((tl, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                          style={{
+                            backgroundColor: tl.bg_color || 'hsl(var(--muted))',
+                            color: tl.text_color || 'hsl(var(--muted-foreground))',
+                          }}
+                        >
+                          {tl.title}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-full shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    disabled={applyingTemplate}
+                  >
+                    {applyingTemplate ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Appliquer'}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
