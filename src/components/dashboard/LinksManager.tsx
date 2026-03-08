@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X } from 'lucide-react';
+import { Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2, ImagePlus, X, Palette } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -21,6 +23,18 @@ interface LinksManagerProps {
   onReorder: (links: LinkItem[]) => Promise<void>;
 }
 
+const LINK_STYLES = [
+  { value: 'default', label: 'Standard', desc: 'Bouton classique' },
+  { value: 'featured', label: 'Featured', desc: 'Mis en avant, plus grand' },
+  { value: 'card', label: 'Card', desc: 'Carte avec thumbnail' },
+  { value: 'minimal', label: 'Minimal', desc: 'Texte simple' },
+];
+
+const PRESET_COLORS = [
+  '#000000', '#FFFFFF', '#EF4444', '#F97316', '#EAB308', '#22C55E',
+  '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1', '#F43F5E',
+];
+
 const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: LinksManagerProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -29,10 +43,15 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [icon, setIcon] = useState('link');
+  const [description, setDescription] = useState('');
+  const [bgColor, setBgColor] = useState('');
+  const [textColor, setTextColor] = useState('');
+  const [linkStyle, setLinkStyle] = useState('default');
   const [saving, setSaving] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [uploadingThumb, setUploadingThumb] = useState(false);
+  const [showCustomization, setShowCustomization] = useState(false);
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
@@ -47,8 +66,13 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setTitle('');
     setUrl('');
     setIcon('link');
+    setDescription('');
+    setBgColor('');
+    setTextColor('');
+    setLinkStyle('default');
     setThumbnailFile(null);
     setThumbnailPreview(null);
+    setShowCustomization(false);
     setDialogOpen(true);
   };
 
@@ -57,8 +81,13 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setTitle(link.title);
     setUrl(link.url);
     setIcon(link.icon);
+    setDescription(link.description || '');
+    setBgColor(link.bg_color || '');
+    setTextColor(link.text_color || '');
+    setLinkStyle(link.style || 'default');
     setThumbnailFile(null);
     setThumbnailPreview(link.thumbnail_url || null);
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default'));
     setDialogOpen(true);
   };
 
@@ -92,6 +121,13 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
       normalizedUrl = 'https://' + normalizedUrl;
     }
 
+    const customFields = {
+      description: description.trim() || null,
+      bg_color: bgColor.trim() || null,
+      text_color: textColor.trim() || null,
+      style: linkStyle,
+    };
+
     if (editingLink) {
       let thumbUrl = editingLink.thumbnail_url;
       if (thumbnailFile) {
@@ -99,16 +135,15 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
         thumbUrl = await uploadThumbnail(editingLink.id);
         setUploadingThumb(false);
       }
-      const result = await onUpdate(editingLink.id, { 
+      const result = await onUpdate(editingLink.id, {
         title: title.trim(), url: normalizedUrl, icon,
+        ...customFields,
         ...(thumbnailFile ? { thumbnail_url: thumbUrl } : {}),
       });
       if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
     } else {
       const result = await onAdd({ title: title.trim(), url: normalizedUrl, icon });
       if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
-      // Upload thumbnail after link is created (need link id)
-      // For simplicity we'll skip thumbnail on create and let user edit after
     }
     setSaving(false);
     setDialogOpen(false);
@@ -163,13 +198,28 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
                       <div {...provided.dragHandleProps} className="cursor-grab text-muted-foreground hover:text-foreground">
                         <GripVertical className="w-5 h-5" />
                       </div>
+                      {/* Color indicator */}
+                      {link.bg_color && (
+                        <div 
+                          className="w-3 h-8 rounded-full shrink-0" 
+                          style={{ backgroundColor: link.bg_color }}
+                        />
+                      )}
                       {link.thumbnail_url && (
                         <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate text-foreground">{link.title}</p>
-                        <p className="text-xs text-muted-foreground truncate">{link.url}</p>
+                        {link.description && (
+                          <p className="text-xs text-muted-foreground truncate">{link.description}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground/60 truncate">{link.url}</p>
                       </div>
+                      {link.style !== 'default' && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0 capitalize">
+                          {link.style}
+                        </span>
+                      )}
                       <div className="flex items-center gap-1">
                         <Button variant="ghost" size="icon" onClick={() => openEdit(link)}>
                           <Pencil className="w-4 h-4" />
@@ -193,17 +243,33 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
 
       {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display">
               {editingLink ? t('dashboard.editLink') : t('dashboard.addLink')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            {/* Title */}
             <div className="space-y-2">
               <Label>{t('dashboard.linkTitle')}</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder="My Website" />
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder="Ex: OnlyFans - Marie" />
             </div>
+
+            {/* Description / Creator name */}
+            <div className="space-y-2">
+              <Label>Description / Nom de la créatrice</Label>
+              <Textarea 
+                value={description} 
+                onChange={(e) => setDescription(e.target.value)} 
+                maxLength={200} 
+                placeholder="Ex: @marie_official • Top 1% 🔥"
+                rows={2}
+                className="resize-none"
+              />
+            </div>
+
+            {/* URL */}
             <div className="space-y-2">
               <Label>{t('dashboard.linkUrl')}</Label>
               <Input value={url} onChange={(e) => setUrl(e.target.value)} maxLength={500} placeholder="https://example.com" />
@@ -211,7 +277,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
 
             {/* Thumbnail Upload */}
             <div className="space-y-2">
-              <Label>Thumbnail (optional)</Label>
+              <Label>Photo / Thumbnail</Label>
               {thumbnailPreview ? (
                 <div className="relative w-full h-32 rounded-xl overflow-hidden bg-muted">
                   <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
@@ -226,11 +292,116 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
               ) : (
                 <label className="flex items-center justify-center gap-2 w-full h-24 rounded-xl border-2 border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors text-muted-foreground text-sm">
                   <ImagePlus className="w-5 h-5" />
-                  <span>Add thumbnail image</span>
+                  <span>Ajouter une photo</span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
                 </label>
               )}
             </div>
+
+            {/* Customization toggle */}
+            <button
+              type="button"
+              onClick={() => setShowCustomization(!showCustomization)}
+              className="flex items-center gap-2 text-sm text-primary hover:underline"
+            >
+              <Palette className="w-4 h-4" />
+              {showCustomization ? 'Masquer la personnalisation' : 'Personnaliser le style'}
+            </button>
+
+            {showCustomization && (
+              <div className="space-y-4 p-4 rounded-xl bg-muted/50 border border-border">
+                {/* Link Style */}
+                <div className="space-y-2">
+                  <Label>Style d'affichage</Label>
+                  <Select value={linkStyle} onValueChange={setLinkStyle}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LINK_STYLES.map(s => (
+                        <SelectItem key={s.value} value={s.value}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{s.label}</span>
+                            <span className="text-xs text-muted-foreground">{s.desc}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Background Color */}
+                <div className="space-y-2">
+                  <Label>Couleur de fond</Label>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {PRESET_COLORS.map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setBgColor(bgColor === color ? '' : color)}
+                        className={`w-7 h-7 rounded-full border-2 transition-all ${bgColor === color ? 'border-primary scale-110' : 'border-transparent'}`}
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                    <Input
+                      type="color"
+                      value={bgColor || '#000000'}
+                      onChange={(e) => setBgColor(e.target.value)}
+                      className="w-8 h-8 p-0 border-0 cursor-pointer rounded-full overflow-hidden"
+                    />
+                    {bgColor && (
+                      <button type="button" onClick={() => setBgColor('')} className="text-xs text-muted-foreground hover:text-foreground">
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Text Color */}
+                <div className="space-y-2">
+                  <Label>Couleur du texte</Label>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setTextColor(textColor === '#FFFFFF' ? '' : '#FFFFFF')}
+                      className={`w-7 h-7 rounded-full border-2 bg-white transition-all ${textColor === '#FFFFFF' ? 'border-primary scale-110' : 'border-muted'}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setTextColor(textColor === '#000000' ? '' : '#000000')}
+                      className={`w-7 h-7 rounded-full border-2 bg-black transition-all ${textColor === '#000000' ? 'border-primary scale-110' : 'border-muted'}`}
+                    />
+                    <Input
+                      type="color"
+                      value={textColor || '#FFFFFF'}
+                      onChange={(e) => setTextColor(e.target.value)}
+                      className="w-8 h-8 p-0 border-0 cursor-pointer rounded-full overflow-hidden"
+                    />
+                    {textColor && (
+                      <button type="button" onClick={() => setTextColor('')} className="text-xs text-muted-foreground hover:text-foreground">
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Preview */}
+                {(bgColor || textColor) && (
+                  <div className="space-y-1">
+                    <Label className="text-xs">Aperçu</Label>
+                    <div
+                      className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium"
+                      style={{
+                        backgroundColor: bgColor || undefined,
+                        color: textColor || undefined,
+                      }}
+                    >
+                      <span className="flex-1 text-center">{title || 'Titre du lien'}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)} className="rounded-full">
