@@ -62,6 +62,9 @@ const Dashboard = () => {
               </Button>
             )}
             <LanguageSelector />
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             <Button variant="ghost" size="icon" onClick={signOut} className="h-8 w-8 text-muted-foreground hover:text-foreground">
               <LogOut className="w-4 h-4" />
             </Button>
