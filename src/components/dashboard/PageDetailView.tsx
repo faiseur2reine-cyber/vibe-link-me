@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorPage } from '@/hooks/useCreatorPages';
-import { usePageLinks, usePageAnalytics } from '@/hooks/useCreatorPages';
+import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import LinksManager from '@/components/dashboard/LinksManager';
 import LinkPreview from '@/components/dashboard/LinkPreview';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
@@ -35,20 +34,20 @@ interface PageDetailViewProps {
   onRefetchPages: () => Promise<void>;
 }
 
+const TABS = [
+  { value: 'links', icon: Link2, label: 'Liens' },
+  { value: 'profile', icon: User, label: 'Profil' },
+  { value: 'design', icon: Paintbrush, label: 'Design' },
+  { value: 'urgency', icon: Flame, label: 'Urgence' },
+  { value: 'theme', icon: Palette, label: 'Thème' },
+  { value: 'analytics', icon: BarChart3, label: 'Stats' },
+];
+
 const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPages }: PageDetailViewProps) => {
   const { t } = useTranslation();
   const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks, refetch: refetchLinks } = usePageLinks(page.id);
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('links');
-
-  const tabs = [
-    { value: 'links', icon: Link2, label: 'Liens' },
-    { value: 'profile', icon: User, label: 'Profil' },
-    { value: 'design', icon: Paintbrush, label: 'Design' },
-    { value: 'urgency', icon: Flame, label: 'Urgence' },
-    { value: 'theme', icon: Palette, label: 'Thème' },
-    { value: 'analytics', icon: BarChart3, label: 'Analytics' },
-  ];
 
   const handleUpdate = async (updates: Partial<CreatorPage>) => {
     const result = await onUpdatePage(page.id, updates);
@@ -66,7 +65,6 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
     }
   };
 
-  // Build a profile-like object for components that expect it
   const profileLike = {
     id: page.id,
     user_id: page.user_id,
@@ -76,47 +74,47 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
     avatar_url: page.avatar_url,
     cover_url: page.cover_url,
     theme: page.theme,
-    plan: 'pro' as string, // Creator pages don't have plan limits individually
+    plan: 'pro' as string,
     is_nsfw: page.is_nsfw,
     social_links: page.social_links,
   };
 
   return (
     <div className="pb-24 md:pb-6">
-      {/* Header */}
+      {/* Header — compact & clean */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full">
-            <ArrowLeft className="w-5 h-5" />
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-border">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-border">
               {page.avatar_url ? (
                 <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-primary flex items-center justify-center">
-                  <span className="text-sm font-bold text-primary-foreground">
+                <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-xs font-bold text-primary">
                     {(page.display_name || page.username)?.[0]?.toUpperCase()}
                   </span>
                 </div>
               )}
             </div>
             <div>
-              <h2 className="font-display font-bold text-foreground">{page.display_name || page.username}</h2>
-              <p className="text-xs text-muted-foreground">@{page.username}</p>
+              <h2 className="text-sm font-semibold text-foreground leading-tight">{page.display_name || page.username}</h2>
+              <p className="text-[11px] text-muted-foreground">@{page.username}</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="rounded-full gap-1 text-xs" asChild>
+        <div className="flex items-center gap-1.5">
+          <Button variant="outline" size="sm" className="h-8 rounded-full gap-1.5 text-xs" asChild>
             <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3 h-3" /> Voir
             </a>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive rounded-full">
-                <Trash2 className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive rounded-full">
+                <Trash2 className="w-3.5 h-3.5" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -141,11 +139,16 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         {/* Main */}
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
+            {/* Desktop tabs — clean segmented control */}
             {!isMobile && (
-              <div className="mb-6">
-                <TabsList className="bg-secondary rounded-lg p-0.5 gap-0.5 inline-flex">
-                  {tabs.map(({ value, icon: Icon, label }) => (
-                    <TabsTrigger key={value} value={value} className="rounded-md gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs px-3 py-1.5">
+              <div className="mb-5">
+                <TabsList className="bg-background border border-border rounded-lg p-0.5 gap-0 inline-flex h-9">
+                  {TABS.map(({ value, icon: Icon, label }) => (
+                    <TabsTrigger
+                      key={value}
+                      value={value}
+                      className="rounded-md gap-1.5 text-xs px-3 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none font-medium transition-colors"
+                    >
                       <Icon className="w-3.5 h-3.5 shrink-0" /> {label}
                     </TabsTrigger>
                   ))}
@@ -153,91 +156,73 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               </div>
             )}
 
-            <TabsContent value="links">
-              <Card>
-                <CardContent className="p-4 md:p-6">
-                  <LinksManager
-                    links={links}
-                    plan="pro"
-                    onAdd={addLink}
-                    onUpdate={updateLink}
-                    onDelete={deleteLink}
-                    onReorder={reorderLinks}
-                    onRefetch={refetchLinks}
-                    pageId={page.id}
-                  />
-                </CardContent>
-              </Card>
+            <TabsContent value="links" className="mt-0">
+              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
+                <LinksManager
+                  links={links}
+                  plan="pro"
+                  onAdd={addLink}
+                  onUpdate={updateLink}
+                  onDelete={deleteLink}
+                  onReorder={reorderLinks}
+                  onRefetch={refetchLinks}
+                  pageId={page.id}
+                />
+              </div>
             </TabsContent>
 
-            <TabsContent value="profile">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="font-display">Profil de la page</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
-                </CardContent>
-              </Card>
+            <TabsContent value="profile" className="mt-0">
+              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
+                <h3 className="font-semibold text-sm mb-4">Profil de la page</h3>
+                <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
+              </div>
             </TabsContent>
 
-            <TabsContent value="design">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="font-display">Design personnalisé</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
-                </CardContent>
-              </Card>
+            <TabsContent value="design" className="mt-0">
+              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
+                <h3 className="font-semibold text-sm mb-4">Design personnalisé</h3>
+                <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
+              </div>
             </TabsContent>
 
-            <TabsContent value="urgency">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="font-display">Widgets d'urgence & rareté</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <UrgencyEditor page={page} onUpdate={handleUpdate} />
-                </CardContent>
-              </Card>
+            <TabsContent value="urgency" className="mt-0">
+              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
+                <h3 className="font-semibold text-sm mb-4">Widgets d'urgence & rareté</h3>
+                <UrgencyEditor page={page} onUpdate={handleUpdate} />
+              </div>
             </TabsContent>
 
-            <TabsContent value="theme">
-              <Card>
-                <CardContent className="p-4 md:p-6">
-                  <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
-                </CardContent>
-              </Card>
+            <TabsContent value="theme" className="mt-0">
+              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
+                <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
+              </div>
             </TabsContent>
 
-            <TabsContent value="analytics">
-              <Card>
-                <CardContent className="p-4 md:p-6">
-                  <PageAnalyticsPanel pageId={page.id} links={links} />
-                </CardContent>
-              </Card>
+            <TabsContent value="analytics" className="mt-0">
+              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
+                <PageAnalyticsPanel pageId={page.id} links={links} />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
 
         {/* Preview Sidebar */}
         <div className="hidden lg:block">
-          <div className="sticky top-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Eye className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">{t('dashboard.preview')}</span>
+          <div className="sticky top-20">
+            <div className="flex items-center gap-2 mb-3">
+              <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-xs font-medium text-muted-foreground">{t('dashboard.preview')}</span>
             </div>
             <LinkPreview profile={profileLike} links={links} />
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation — cleaner */}
       {isMobile && (
         <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-t border-border safe-area-bottom">
-          <div className="flex items-center justify-around h-16">
-            {tabs.map(({ value, icon: Icon, label }) => (
+          <div className="flex items-center justify-around h-14">
+            {TABS.map(({ value, icon: Icon, label }) => (
               <button
                 key={value}
                 onClick={() => setActiveTab(value)}
@@ -245,7 +230,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                   activeTab === value ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${activeTab === value ? 'text-primary' : ''}`} />
+                <Icon className="w-4.5 h-4.5" />
                 <span className="text-[10px] font-medium leading-tight">{label}</span>
               </button>
             ))}
