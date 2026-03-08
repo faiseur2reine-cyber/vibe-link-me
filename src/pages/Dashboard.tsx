@@ -110,30 +110,23 @@ const Dashboard = () => {
       </nav>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
+      <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 md:pb-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <div className="mb-6 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-                <TabsList className="bg-muted rounded-full p-1 gap-1 inline-flex w-auto min-w-max">
-                  <TabsTrigger value="links" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
-                    <Link2 className="w-4 h-4 shrink-0" /> {t('dashboard.links')}
-                  </TabsTrigger>
-                  <TabsTrigger value="profile" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
-                    <User className="w-4 h-4 shrink-0" /> {t('dashboard.profile')}
-                  </TabsTrigger>
-                  <TabsTrigger value="theme" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
-                    <Palette className="w-4 h-4 shrink-0" /> {t('dashboard.theme')}
-                  </TabsTrigger>
-                  <TabsTrigger value="analytics" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
-                    <BarChart3 className="w-4 h-4 shrink-0" /> {t('dashboard.analytics')}
-                  </TabsTrigger>
-                  <TabsTrigger value="plan" className="rounded-full gap-1.5 data-[state=active]:bg-background text-xs sm:text-sm px-3 py-2">
-                    <CreditCard className="w-4 h-4 shrink-0" /> {t('dashboard.plan')}
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+              {/* Desktop tabs */}
+              {!isMobile && (
+                <div className="mb-6">
+                  <TabsList className="bg-muted rounded-full p-1 gap-1 inline-flex">
+                    {tabs.map(({ value, icon: Icon, label }) => (
+                      <TabsTrigger key={value} value={value} className="rounded-full gap-1.5 data-[state=active]:bg-background text-sm px-3 py-2">
+                        <Icon className="w-4 h-4 shrink-0" /> {label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
+              )}
 
               <TabsContent value="links">
                 <Card>
@@ -272,6 +265,28 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-t border-border safe-area-bottom">
+          <div className="flex items-center justify-around h-16">
+            {tabs.map(({ value, icon: Icon, label }) => (
+              <button
+                key={value}
+                onClick={() => setActiveTab(value)}
+                className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
+                  activeTab === value
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${activeTab === value ? 'text-primary' : ''}`} />
+                <span className="text-[10px] font-medium leading-tight">{label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
     </div>
   );
 };
