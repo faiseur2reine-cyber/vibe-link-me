@@ -1,6 +1,6 @@
 import { usePageAnalytics, PageLink } from '@/hooks/useCreatorPages';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
-import { MousePointerClick, TrendingUp, Globe, MapPin, Link2 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { MousePointerClick, TrendingUp, Globe, MapPin, Link2, FlaskConical } from 'lucide-react';
 
 const COLORS = [
   'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
