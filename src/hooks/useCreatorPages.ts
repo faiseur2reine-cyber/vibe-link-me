@@ -20,6 +20,14 @@ export interface CreatorPage {
   social_links: SocialLink[];
   created_at: string;
   updated_at: string;
+  custom_bg_color: string | null;
+  custom_text_color: string | null;
+  custom_accent_color: string | null;
+  custom_btn_color: string | null;
+  custom_btn_text_color: string | null;
+  custom_font: string;
+  link_layout: string;
+  custom_css: string | null;
 }
 
 export interface PageLink {
