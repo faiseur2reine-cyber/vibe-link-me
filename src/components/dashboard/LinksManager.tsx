@@ -360,7 +360,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               <BookmarkPlus className="w-4 h-4" /> Sauvegarder
             </Button>
           )}
-          <Button onClick={openNew} size="sm" className="rounded-full gap-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+          <Button onClick={openNew} size="sm" className="gap-1">
             <Plus className="w-4 h-4" /> {t('dashboard.addLink')}
           </Button>
         </div>
