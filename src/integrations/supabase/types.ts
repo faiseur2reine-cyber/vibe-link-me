@@ -115,6 +115,7 @@ export type Database = {
       }
       link_clicks: {
         Row: {
+          ab_variant: string | null
           city: string | null
           clicked_at: string
           country: string | null
@@ -123,6 +124,7 @@ export type Database = {
           referrer: string | null
         }
         Insert: {
+          ab_variant?: string | null
           city?: string | null
           clicked_at?: string
           country?: string | null
@@ -131,6 +133,7 @@ export type Database = {
           referrer?: string | null
         }
         Update: {
+          ab_variant?: string | null
           city?: string | null
           clicked_at?: string
           country?: string | null
@@ -267,6 +270,16 @@ export type Database = {
         | { Args: { p_link_id: string }; Returns: undefined }
         | {
             Args: {
+              p_city?: string
+              p_country?: string
+              p_link_id: string
+              p_referrer?: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_ab_variant?: string
               p_city?: string
               p_country?: string
               p_link_id: string
