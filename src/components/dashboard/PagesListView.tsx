@@ -14,6 +14,9 @@ interface PagesListViewProps {
 }
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage }: PagesListViewProps) => {
+  const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
+  const globalStats = useGlobalAnalytics(pageIds);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -22,6 +25,96 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage }: PagesListViewProps
           <p className="text-sm text-muted-foreground mt-1">{pages.length} page{pages.length !== 1 ? 's' : ''} créée{pages.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
+
+      {/* Global Stats Summary */}
+      {pages.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+          {/* KPI Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Card className="border-border">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Users className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Pages</p>
+                  <p className="text-xl font-display font-bold text-foreground">{globalStats.totalPages}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-border">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
+                  <Link2 className="w-5 h-5 text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Liens</p>
+                  <p className="text-xl font-display font-bold text-foreground">{globalStats.totalLinks}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-border">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <MousePointerClick className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Clics totaux</p>
+                  <p className="text-xl font-display font-bold text-foreground">{globalStats.totalClicks}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-border">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
+                  <TrendingUp className="w-5 h-5 text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Moy./page</p>
+                  <p className="text-xl font-display font-bold text-foreground">
+                    {globalStats.totalPages > 0 ? Math.round(globalStats.totalClicks / globalStats.totalPages) : 0}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Mini chart */}
+          {globalStats.totalClicks > 0 && (
+            <Card className="border-border">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                  <h4 className="font-display font-semibold text-sm text-foreground">Activité globale (30 jours)</h4>
+                </div>
+                <ResponsiveContainer width="100%" height={120}>
+                  <BarChart data={globalStats.dailyClicks}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
+                      tickFormatter={(v) => { const d = new Date(v); return `${d.getDate()}/${d.getMonth() + 1}`; }}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} width={25} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '0.75rem',
+                        color: 'hsl(var(--foreground))',
+                        fontSize: '12px',
+                      }}
+                      labelFormatter={(v) => new Date(v).toLocaleDateString()}
+                    />
+                    <Bar dataKey="clicks" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
+        </motion.div>
+      )}
 
       {pages.length === 0 ? (
         <motion.div
