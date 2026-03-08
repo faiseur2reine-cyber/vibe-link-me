@@ -1,12 +1,53 @@
 import { usePageAnalytics, PageLink } from '@/hooks/useCreatorPages';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { MousePointerClick, TrendingUp, Globe, MapPin, Link2, FlaskConical } from 'lucide-react';
+import { MousePointerClick, TrendingUp, Globe, MapPin, Link2, FlaskConical, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
 
 const COLORS = [
   'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
   'hsl(200, 80%, 50%)', 'hsl(150, 60%, 45%)', 'hsl(45, 90%, 50%)',
   'hsl(0, 70%, 55%)', 'hsl(280, 60%, 65%)',
 ];
+
+// Two-tailed z-test for two proportions
+const computeABSignificance = (clicksA: number, clicksB: number) => {
+  const nA = clicksA + clicksB; // total impressions approximation not available, use clicks as proxy
+  // We treat this as a binomial test: proportion of clicks going to A vs expected 50%
+  const total = clicksA + clicksB;
+  if (total < 10) return { pValue: 1, significant: false, confidence: 0, sampleSize: total, needMore: Math.max(0, 30 - total) };
+
+  const pA = clicksA / total;
+  const pB = clicksB / total;
+  const pPool = 0.5; // null hypothesis: equal split
+  const se = Math.sqrt(pPool * (1 - pPool) * (1 / clicksA + 1 / clicksB));
+  
+  // Avoid division by zero
+  if (se === 0) return { pValue: 1, significant: false, confidence: 0, sampleSize: total, needMore: 0 };
+  
+  const z = (pA - pB) / se;
+  
+  // Approximate p-value from z-score (two-tailed)
+  const absZ = Math.abs(z);
+  // Using approximation: P(Z > z) ≈ erfc(z/√2)/2
+  const pValue = 2 * (1 - normalCDF(absZ));
+  const confidence = Math.round((1 - pValue) * 100);
+  const significant = pValue < 0.05;
+  
+  // Estimate samples needed for significance (rough)
+  const needMore = significant ? 0 : Math.max(0, Math.ceil(30 / Math.max(0.01, Math.abs(pA - pB))) - total);
+  
+  return { pValue, significant, confidence, sampleSize: total, needMore };
+};
+
+// Standard normal CDF approximation (Abramowitz & Stegun)
+const normalCDF = (x: number): number => {
+  const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+  const p = 0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x) / Math.SQRT2;
+  const t = 1 / (1 + p * x);
+  const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+  return 0.5 * (1 + sign * y);
+};
 
 interface PageAnalyticsPanelProps {
   pageId: string;
@@ -187,53 +228,128 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
         )}
       </div>
 
-      {/* A/B Test Results */}
-      {abStats.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <FlaskConical className="w-4 h-4 text-muted-foreground" />
-            <h4 className="font-display font-semibold text-foreground">Résultats A/B Test</h4>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {abStats.map(stat => {
-              const total = abStats.reduce((s, a) => s + a.clicks, 0);
-              const pct = total > 0 ? Math.round((stat.clicks / total) * 100) : 0;
-              const isA = stat.variant === 'A';
-              return (
-                <div key={stat.variant} className={`p-4 rounded-xl border ${isA ? 'bg-primary/5 border-primary/20' : 'bg-muted/50 border-border'}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`w-6 h-6 rounded text-[11px] font-bold flex items-center justify-center ${isA ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20 text-muted-foreground'}`}>
-                      {stat.variant}
-                    </span>
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {isA ? 'Avec widgets' : 'Sans widgets'}
-                    </span>
+      {/* A/B Test Results with Statistical Significance */}
+      {abStats.length > 0 && (() => {
+        const a = abStats.find(s => s.variant === 'A');
+        const b = abStats.find(s => s.variant === 'B');
+        const clicksA = a?.clicks || 0;
+        const clicksB = b?.clicks || 0;
+        const total = abStats.reduce((s, ab) => s + ab.clicks, 0);
+        const stats = (clicksA > 0 && clicksB > 0) ? computeABSignificance(clicksA, clicksB) : null;
+        const lift = clicksB > 0 ? Math.round(((clicksA - clicksB) / clicksB) * 100) : 0;
+
+        return (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <FlaskConical className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-display font-semibold text-foreground">Résultats A/B Test</h4>
+            </div>
+
+            {/* Variant cards */}
+            <div className="grid grid-cols-2 gap-3">
+              {abStats.map(stat => {
+                const pct = total > 0 ? Math.round((stat.clicks / total) * 100) : 0;
+                const isA = stat.variant === 'A';
+                return (
+                  <div key={stat.variant} className={`p-4 rounded-xl border ${isA ? 'bg-primary/5 border-primary/20' : 'bg-muted/50 border-border'}`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`w-6 h-6 rounded text-[11px] font-bold flex items-center justify-center ${isA ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20 text-muted-foreground'}`}>
+                        {stat.variant}
+                      </span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {isA ? 'Avec widgets' : 'Sans widgets'}
+                      </span>
+                    </div>
+                    <p className="text-2xl font-bold text-foreground">{stat.clicks}</p>
+                    <p className="text-xs text-muted-foreground">{pct}% des clics</p>
+                    <div className="mt-2 w-full h-2 rounded-full bg-muted overflow-hidden">
+                      <div className={`h-full rounded-full ${isA ? 'bg-primary' : 'bg-muted-foreground/40'}`} style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
-                  <p className="text-2xl font-bold text-foreground">{stat.clicks}</p>
-                  <p className="text-xs text-muted-foreground">{pct}% des clics</p>
-                  {/* CTR comparison bar */}
-                  <div className="mt-2 w-full h-2 rounded-full bg-muted overflow-hidden">
-                    <div className={`h-full rounded-full ${isA ? 'bg-primary' : 'bg-muted-foreground/40'}`} style={{ width: `${pct}%` }} />
+                );
+              })}
+            </div>
+
+            {/* Lift */}
+            {clicksB > 0 && (
+              <p className={`mt-3 text-xs font-medium ${lift > 0 ? 'text-green-600' : lift < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                {lift > 0 ? `↑ +${lift}%` : lift < 0 ? `↓ ${lift}%` : '='} {lift > 0 ? 'Les widgets augmentent les clics !' : lift < 0 ? 'Les widgets réduisent les clics.' : 'Pas de différence.'}
+              </p>
+            )}
+
+            {/* Statistical Significance Card */}
+            {stats ? (
+              <div className={`mt-4 p-4 rounded-xl border ${stats.significant ? 'bg-green-500/5 border-green-500/20' : 'bg-muted/30 border-border'}`}>
+                <div className="flex items-center gap-2 mb-3">
+                  {stats.significant ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  ) : stats.sampleSize < 30 ? (
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                  )}
+                  <h5 className="text-sm font-semibold text-foreground">
+                    {stats.significant ? 'Résultat statistiquement significatif ✓' : 'Test en cours…'}
+                  </h5>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-foreground">{stats.confidence}%</p>
+                    <p className="text-[10px] text-muted-foreground">Confiance</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-foreground font-mono">
+                      {stats.pValue < 0.001 ? '<0.001' : stats.pValue.toFixed(3)}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">p-value</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-foreground">{stats.sampleSize}</p>
+                    <p className="text-[10px] text-muted-foreground">Échantillon</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          {(() => {
-            const a = abStats.find(s => s.variant === 'A');
-            const b = abStats.find(s => s.variant === 'B');
-            if (a && b && b.clicks > 0) {
-              const lift = Math.round(((a.clicks - b.clicks) / b.clicks) * 100);
-              return (
-                <p className={`mt-3 text-xs font-medium ${lift > 0 ? 'text-green-600' : lift < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                  {lift > 0 ? `↑ +${lift}%` : lift < 0 ? `↓ ${lift}%` : '='} {lift > 0 ? 'Les widgets augmentent les clics !' : lift < 0 ? 'Les widgets réduisent les clics.' : 'Pas de différence significative.'}
+
+                {/* Progress bar toward significance */}
+                {!stats.significant && (
+                  <div className="mt-3 space-y-1.5">
+                    <div className="flex justify-between text-[10px] text-muted-foreground">
+                      <span>Progression vers la significativité</span>
+                      <span>{Math.min(100, Math.round(stats.confidence))}%</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-primary/60 transition-all"
+                        style={{ width: `${Math.min(100, stats.confidence)}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">
+                      {stats.sampleSize < 30
+                        ? `Besoin d'au moins 30 clics (encore ~${stats.needMore} à collecter)`
+                        : stats.needMore > 0
+                          ? `Estimé ~${stats.needMore} clics supplémentaires pour atteindre p < 0.05`
+                          : 'Collectez plus de données pour confirmer la tendance'}
+                    </p>
+                  </div>
+                )}
+
+                {stats.significant && (
+                  <p className="mt-3 text-xs text-green-700 dark:text-green-400">
+                    Le test est conclusif (p {'<'} 0.05). Vous pouvez désactiver le A/B test et appliquer la variante gagnante.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="mt-4 p-3 rounded-xl bg-muted/30 border border-border">
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  En attente de clics dans les deux variantes pour calculer la significativité.
                 </p>
-              );
-            }
-            return null;
-          })()}
-        </div>
-      )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 };
