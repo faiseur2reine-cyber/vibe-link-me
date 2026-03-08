@@ -101,9 +101,45 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [uploadingThumb, setUploadingThumb] = useState(false);
   const [showCustomization, setShowCustomization] = useState(false);
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [applyingTemplate, setApplyingTemplate] = useState(false);
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
+
+  const handleApplyTemplate = async (template: typeof LINK_TEMPLATES[0]) => {
+    if (!user) return;
+    const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
+    const templateLinks = template.links.slice(0, remaining);
+    if (templateLinks.length === 0) {
+      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
+      return;
+    }
+    setApplyingTemplate(true);
+    const startPosition = links.length;
+    const inserts = templateLinks.map((tl, idx) => ({
+      title: tl.title,
+      url: tl.url,
+      icon: tl.icon,
+      user_id: user.id,
+      position: startPosition + idx,
+      style: tl.style,
+      section_title: tl.section_title,
+      description: tl.description,
+      bg_color: tl.bg_color,
+      text_color: tl.text_color,
+    }));
+    const { error } = await supabase.from('links').insert(inserts);
+    if (error) {
+      toast({ title: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: `Template "${template.name}" appliqué ! 🎉` });
+      // Trigger refetch via parent
+      await onAdd({ title: '__refetch__', url: '__refetch__', icon: '' }).catch(() => {});
+    }
+    setApplyingTemplate(false);
+    setTemplateDialogOpen(false);
+  };
 
   const openNew = () => {
     if (!canAddMore) {
