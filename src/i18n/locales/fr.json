@@ -100,7 +100,9 @@
     "plan": "Plan"
   },
   "public": {
-    "madeWith": "Créé avec MyTaptap"
+    "madeWith": "Créé avec MyTaptap",
+    "notFound": "Cette page n'existe pas.",
+    "backHome": "Retour à l'accueil"
   },
   "common": {
     "loading": "Chargement...",
