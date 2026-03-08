@@ -68,10 +68,10 @@ const PublicProfile = () => {
 
   if (notFound || !profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
         <h1 className="text-4xl font-display font-bold text-foreground">404</h1>
-        <p className="text-muted-foreground">Cette page n'existe pas.</p>
-        <Link to="/" className="text-primary hover:underline">Retour à l'accueil</Link>
+        <p className="text-muted-foreground">{t('public.notFound')}</p>
+        <Link to="/" className="text-primary hover:underline">{t('public.backHome')}</Link>
       </div>
     );
   }
