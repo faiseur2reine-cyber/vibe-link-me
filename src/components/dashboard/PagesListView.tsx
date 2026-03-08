@@ -2,7 +2,8 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2 } from 'lucide-react';
+import { Plus, ExternalLink, Users, MousePointerClick, Link2, TrendingUp, BarChart3, Copy, Trash2, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
@@ -19,16 +20,37 @@ interface PagesListViewProps {
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
+  const [search, setSearch] = useState('');
+  const filteredPages = useMemo(() => {
+    if (!search.trim()) return pages;
+    const q = search.toLowerCase();
+    return pages.filter(p =>
+      (p.display_name || '').toLowerCase().includes(q) ||
+      p.username.toLowerCase().includes(q) ||
+      (p.bio || '').toLowerCase().includes(q)
+    );
+  }, [pages, search]);
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">Mes pages créateurs</h1>
           <p className="text-sm text-muted-foreground mt-1">{pages.length} page{pages.length !== 1 ? 's' : ''} créée{pages.length !== 1 ? 's' : ''}</p>
         </div>
+        {pages.length > 0 && (
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher une page..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 rounded-full bg-muted/50 border-border"
+            />
+          </div>
+        )}
       </div>
 
       {/* Global Stats Summary */}
@@ -177,7 +199,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {pages.map((page, i) => (
+          {filteredPages.map((page, i) => (
             <motion.div
               key={page.id}
               initial={{ opacity: 0, y: 20 }}
