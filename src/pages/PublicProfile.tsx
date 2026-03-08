@@ -464,6 +464,9 @@ const PublicProfile = () => {
             })()}
           </div>
 
+          {/* Scarcity widgets — bottom position */}
+          {urgency?.scarcity?.position === 'bottom' && <ScarcityBlock />}
+
           {/* Footer */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="pt-10 pb-4">
             <Link
