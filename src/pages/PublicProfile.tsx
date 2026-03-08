@@ -3,10 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart } from 'lucide-react';
+import { ExternalLink, Heart, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
+import { toast } from '@/hooks/use-toast';
 
 interface Profile {
   username: string;
@@ -58,10 +59,24 @@ const PublicProfile = () => {
     fetchData();
   }, [username]);
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      await navigator.share({ title: profile?.display_name || username, url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast({ title: t('common.success'), description: 'Link copied!' });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+          className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent"
+        />
       </div>
     );
   }
@@ -69,9 +84,11 @@ const PublicProfile = () => {
   if (notFound || !profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
-        <h1 className="text-4xl font-display font-bold text-foreground">404</h1>
+        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+          <h1 className="text-6xl font-display font-bold text-foreground">404</h1>
+        </motion.div>
         <p className="text-muted-foreground">{t('public.notFound')}</p>
-        <Link to="/" className="text-primary hover:underline">{t('public.backHome')}</Link>
+        <Link to="/" className="text-primary hover:underline font-medium">{t('public.backHome')}</Link>
       </div>
     );
   }
@@ -96,35 +113,59 @@ const PublicProfile = () => {
         <meta name="twitter:description" content={pageDescription} />
       </Helmet>
 
-      <div className={`min-h-screen ${theme.bg} flex flex-col items-center px-4 py-12`}>
+      <div className={`min-h-screen ${theme.bg} flex flex-col items-center px-4 py-8 sm:py-16 relative overflow-hidden`}>
+        {/* Decorative blurred shapes */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-300/20 to-pink-300/20 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-orange-300/10 to-yellow-300/10 blur-3xl pointer-events-none" />
+
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md space-y-6"
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full max-w-md space-y-8 relative z-10"
         >
-          {/* Avatar */}
-          <div className="text-center space-y-3">
+          {/* Header Card */}
+          <div className={`rounded-3xl p-8 text-center ${theme.cardBg}`}>
+            {/* Share button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              onClick={handleShare}
+              className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${theme.subtleText} hover:opacity-100 opacity-60`}
+            >
+              <Share2 className="w-4 h-4" />
+            </motion.button>
+
+            {/* Avatar */}
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="w-24 h-24 rounded-full mx-auto overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg"
+              transition={{ delay: 0.15, type: 'spring', stiffness: 200, damping: 15 }}
+              className={`w-28 h-28 rounded-full mx-auto overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 ${theme.avatarRing}`}
             >
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
               ) : (
-                <span className="text-3xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-4xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
+                </div>
               )}
             </motion.div>
 
-            <div>
-              <h1 className={`text-xl font-display font-bold ${theme.text}`}>{displayName}</h1>
-              <p className={`text-sm opacity-60 ${theme.text}`}>@{profile.username}</p>
+            {/* Name & Bio */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="mt-5 space-y-1.5"
+            >
+              <h1 className={`text-2xl font-display font-bold tracking-tight ${theme.text}`}>{displayName}</h1>
+              <p className={`text-sm font-medium ${theme.subtleText}`}>@{profile.username}</p>
               {profile.bio && (
-                <p className={`text-sm mt-2 opacity-80 ${theme.text} max-w-xs mx-auto`}>{profile.bio}</p>
+                <p className={`text-sm mt-3 leading-relaxed ${theme.text} opacity-75 max-w-xs mx-auto`}>{profile.bio}</p>
               )}
-            </div>
+            </motion.div>
           </div>
 
           {/* Links */}
@@ -136,23 +177,30 @@ const PublicProfile = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => recordClick(link.id)}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + i * 0.05 }}
-                className={`flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-medium text-sm transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-sm ${theme.btn}`}
+                transition={{ delay: 0.3 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`group flex items-center gap-3 px-5 py-4 rounded-2xl font-medium text-sm transition-all duration-200 ${theme.btn}`}
               >
-                {link.title}
-                <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+                <span className="flex-1 text-center">{link.title}</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
               </motion.a>
             ))}
           </div>
 
-          {/* Badge */}
+          {/* Footer Badge */}
           {profile.plan !== 'pro' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="pt-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="pt-4 pb-2"
+            >
               <Link
                 to="/"
-                className={`flex items-center justify-center gap-1 text-xs opacity-50 hover:opacity-80 transition-opacity ${theme.text}`}
+                className={`flex items-center justify-center gap-1.5 text-xs font-medium opacity-40 hover:opacity-70 transition-opacity ${theme.text}`}
               >
                 {t('footer.madeWith')} <Heart className="w-3 h-3" /> MyTaptap
               </Link>
