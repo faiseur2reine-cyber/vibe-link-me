@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw } from 'lucide-react';
+import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles } from 'lucide-react';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
@@ -20,6 +20,29 @@ const FONT_OPTIONS = [
   { value: 'dm-sans', label: 'DM Sans' },
   { value: 'outfit', label: 'Outfit' },
   { value: 'sora', label: 'Sora' },
+];
+
+interface DesignPreset {
+  name: string;
+  emoji: string;
+  bgColor: string;
+  textColor: string;
+  accentColor: string;
+  btnColor: string;
+  btnTextColor: string;
+  font: string;
+  layout: string;
+}
+
+const DESIGN_PRESETS: DesignPreset[] = [
+  { name: 'Dark Luxury', emoji: '🖤', bgColor: '#0a0a0a', textColor: '#f5f0e8', accentColor: '#c9a96e', btnColor: '#1a1a1a', btnTextColor: '#c9a96e', font: 'playfair', layout: 'list' },
+  { name: 'Neon Glow', emoji: '💜', bgColor: '#0d0221', textColor: '#ffffff', accentColor: '#ff00ff', btnColor: '#1a0533', btnTextColor: '#00ffff', font: 'space-grotesk', layout: 'list' },
+  { name: 'Pastel Soft', emoji: '🌸', bgColor: '#fdf2f8', textColor: '#4a2040', accentColor: '#e879a8', btnColor: '#ffffff', btnTextColor: '#9d4b7a', font: 'poppins', layout: 'cards' },
+  { name: 'Ocean Breeze', emoji: '🌊', bgColor: '#0c1929', textColor: '#e0f2fe', accentColor: '#38bdf8', btnColor: '#0f2942', btnTextColor: '#7dd3fc', font: 'dm-sans', layout: 'list' },
+  { name: 'Forest Zen', emoji: '🌿', bgColor: '#f0fdf4', textColor: '#14532d', accentColor: '#22c55e', btnColor: '#ffffff', btnTextColor: '#15803d', font: 'outfit', layout: 'minimal' },
+  { name: 'Retro Pop', emoji: '🟠', bgColor: '#fef3c7', textColor: '#78350f', accentColor: '#f97316', btnColor: '#ffffff', btnTextColor: '#ea580c', font: 'montserrat', layout: 'grid-2' },
+  { name: 'Monochrome', emoji: '⚪', bgColor: '#ffffff', textColor: '#171717', accentColor: '#525252', btnColor: '#171717', btnTextColor: '#ffffff', font: 'inter', layout: 'minimal' },
+  { name: 'Cyber Punk', emoji: '⚡', bgColor: '#18181b', textColor: '#fef08a', accentColor: '#facc15', btnColor: '#27272a', btnTextColor: '#fde047', font: 'space-grotesk', layout: 'grid-2' },
 ];
 
 const LAYOUT_OPTIONS = [
