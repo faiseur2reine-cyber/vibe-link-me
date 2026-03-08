@@ -87,9 +87,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder }: Lin
     setBgColor(link.bg_color || '');
     setTextColor(link.text_color || '');
     setLinkStyle(link.style || 'default');
+    setSectionTitle(link.section_title || '');
     setThumbnailFile(null);
     setThumbnailPreview(link.thumbnail_url || null);
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default'));
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
     setDialogOpen(true);
   };
 
