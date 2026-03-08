@@ -14,6 +14,7 @@ interface PagesListViewProps {
   onSelectPage: (id: string) => void;
   onCreatePage: () => void;
   onDuplicatePage?: (id: string) => Promise<{ error: any; data?: any }>;
+  onDeletePage?: (id: string) => Promise<{ error: any }>;
 }
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: PagesListViewProps) => {
