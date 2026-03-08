@@ -35,6 +35,10 @@ export interface UrgencyConfig {
     locationToastEnabled: boolean;
     position: 'above-links' | 'below-bio' | 'bottom';
   };
+  abTest?: {
+    enabled: boolean;
+    splitPercent: number; // % shown variant A (with widgets)
+  };
 }
 
 export const defaultUrgencyConfig: UrgencyConfig = {
