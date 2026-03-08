@@ -41,7 +41,7 @@ const Dashboard = () => {
   if (authLoading || pagesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -50,35 +50,45 @@ const Dashboard = () => {
   const selectedPage = pages.find(p => p.id === selectedPageId) || null;
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Nav — minimal & clean */}
-      <nav className="sticky top-0 z-50 bg-background border-b border-border">
-        <div className="flex items-center justify-between px-4 sm:px-6 h-14 max-w-5xl mx-auto">
+    <div className="min-h-screen bg-background">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/60">
+        <div className="flex items-center justify-between px-5 sm:px-8 h-[52px] max-w-5xl mx-auto">
           <button
             onClick={() => setSelectedPageId(null)}
-            className="text-base font-bold text-foreground tracking-tight hover:opacity-80 transition-opacity"
+            className="text-[15px] font-semibold text-foreground tracking-tight hover:opacity-70 transition-opacity font-display"
           >
             MyTaptap
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {!selectedPageId && (
-              <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="h-8 rounded-full gap-1.5 text-xs font-medium px-3">
-                <Plus className="w-3.5 h-3.5" /> Nouvelle page
+              <Button
+                onClick={() => setCreateDialogOpen(true)}
+                size="sm"
+                className="h-[30px] rounded-lg gap-1.5 text-[11px] font-medium px-2.5 shadow-none"
+              >
+                <Plus className="w-3 h-3" /> Nouveau
               </Button>
             )}
             <LanguageSelector />
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8 text-muted-foreground hover:text-foreground">
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={signOut} className="h-8 w-8 text-muted-foreground hover:text-foreground">
-              <LogOut className="w-4 h-4" />
-            </Button>
+            <button
+              onClick={toggleTheme}
+              className="h-[30px] w-[30px] inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
+            <button
+              onClick={signOut}
+              className="h-[30px] w-[30px] inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
         {selectedPage ? (
           <PageDetailView
             page={selectedPage}

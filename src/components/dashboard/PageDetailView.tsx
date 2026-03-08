@@ -15,15 +15,8 @@ import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
 interface PageDetailViewProps {
@@ -66,56 +59,49 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   };
 
   const profileLike = {
-    id: page.id,
-    user_id: page.user_id,
-    username: page.username,
-    display_name: page.display_name,
-    bio: page.bio,
-    avatar_url: page.avatar_url,
-    cover_url: page.cover_url,
-    theme: page.theme,
-    plan: 'pro' as string,
-    is_nsfw: page.is_nsfw,
-    social_links: page.social_links,
+    id: page.id, user_id: page.user_id, username: page.username,
+    display_name: page.display_name, bio: page.bio, avatar_url: page.avatar_url,
+    cover_url: page.cover_url, theme: page.theme, plan: 'pro' as string,
+    is_nsfw: page.is_nsfw, social_links: page.social_links,
   };
 
   return (
-    <div className="pb-24 md:pb-6">
-      {/* Header — compact & clean */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-border">
+    <div className="pb-20 md:pb-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-2.5">
+          <button onClick={onBack} className="h-7 w-7 rounded-lg inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full overflow-hidden bg-muted">
               {page.avatar_url ? (
                 <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-primary">
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-[10px] font-semibold text-muted-foreground">
                     {(page.display_name || page.username)?.[0]?.toUpperCase()}
                   </span>
                 </div>
               )}
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-foreground leading-tight">{page.display_name || page.username}</h2>
-              <p className="text-[11px] text-muted-foreground">@{page.username}</p>
+              <h2 className="text-[13px] font-semibold text-foreground leading-none">{page.display_name || page.username}</h2>
+              <p className="text-[11px] text-muted-foreground mt-0.5">@{page.username}</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <Button variant="outline" size="sm" className="h-8 rounded-full gap-1.5 text-xs" asChild>
+        <div className="flex items-center gap-1">
+          <Button variant="outline" size="sm" className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none" asChild>
             <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3 h-3" /> Voir
             </a>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive rounded-full">
-                <Trash2 className="w-3.5 h-3.5" />
-              </Button>
+              <button className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10 transition-colors">
+                <Trash2 className="w-3 h-3" />
+              </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -135,103 +121,102 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main */}
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            {/* Desktop tabs — clean segmented control */}
+            {/* Desktop tabs */}
             {!isMobile && (
-              <div className="mb-5">
-                <TabsList className="bg-background border border-border rounded-lg p-0.5 gap-0 inline-flex h-9">
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-0.5 border-b border-border/60">
                   {TABS.map(({ value, icon: Icon, label }) => (
-                    <TabsTrigger
+                    <button
                       key={value}
-                      value={value}
-                      className="rounded-md gap-1.5 text-xs px-3 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none font-medium transition-colors"
+                      onClick={() => setActiveTab(value)}
+                      className={`relative flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-colors ${
+                        activeTab === value
+                          ? 'text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
                     >
-                      <Icon className="w-3.5 h-3.5 shrink-0" /> {label}
-                    </TabsTrigger>
+                      <Icon className="w-3 h-3" />
+                      {label}
+                      {activeTab === value && (
+                        <span className="absolute bottom-0 left-3 right-3 h-[1.5px] bg-foreground rounded-full" />
+                      )}
+                    </button>
                   ))}
-                </TabsList>
+                </div>
               </div>
             )}
 
             <TabsContent value="links" className="mt-0">
-              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
-                <LinksManager
-                  links={links}
-                  plan="pro"
-                  onAdd={addLink}
-                  onUpdate={updateLink}
-                  onDelete={deleteLink}
-                  onReorder={reorderLinks}
-                  onRefetch={refetchLinks}
-                  pageId={page.id}
-                />
-              </div>
+              <LinksManager
+                links={links} plan="pro" onAdd={addLink} onUpdate={updateLink}
+                onDelete={deleteLink} onReorder={reorderLinks} onRefetch={refetchLinks} pageId={page.id}
+              />
             </TabsContent>
 
             <TabsContent value="profile" className="mt-0">
-              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
-                <h3 className="font-semibold text-sm mb-4">Profil de la page</h3>
-                <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Profil de la page</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Informations visibles sur votre page publique.</p>
               </div>
+              <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
             </TabsContent>
 
             <TabsContent value="design" className="mt-0">
-              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
-                <h3 className="font-semibold text-sm mb-4">Design personnalisé</h3>
-                <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Design personnalisé</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Couleurs, polices et mise en page.</p>
               </div>
+              <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
             </TabsContent>
 
             <TabsContent value="urgency" className="mt-0">
-              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
-                <h3 className="font-semibold text-sm mb-4">Widgets d'urgence & rareté</h3>
-                <UrgencyEditor page={page} onUpdate={handleUpdate} />
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Widgets d'urgence</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Stimulez l'engagement avec des indicateurs de rareté.</p>
               </div>
+              <UrgencyEditor page={page} onUpdate={handleUpdate} />
             </TabsContent>
 
             <TabsContent value="theme" className="mt-0">
-              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
-                <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
-              </div>
+              <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-0">
-              <div className="rounded-xl bg-background border border-border p-4 md:p-6">
-                <PageAnalyticsPanel pageId={page.id} links={links} />
-              </div>
+              <PageAnalyticsPanel pageId={page.id} links={links} />
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* Preview Sidebar */}
+        {/* Preview */}
         <div className="hidden lg:block">
-          <div className="sticky top-20">
-            <div className="flex items-center gap-2 mb-3">
-              <Eye className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-xs font-medium text-muted-foreground">{t('dashboard.preview')}</span>
+          <div className="sticky top-16">
+            <div className="flex items-center gap-1.5 mb-3">
+              <Eye className="w-3 h-3 text-muted-foreground" />
+              <span className="text-[11px] font-medium text-muted-foreground">{t('dashboard.preview')}</span>
             </div>
             <LinkPreview profile={profileLike} links={links} />
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation — cleaner */}
+      {/* Mobile Bottom Nav */}
       {isMobile && (
-        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-t border-border safe-area-bottom">
-          <div className="flex items-center justify-around h-14">
+        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/90 backdrop-blur-xl border-t border-border/60 safe-area-bottom">
+          <div className="flex items-center justify-around h-12">
             {TABS.map(({ value, icon: Icon, label }) => (
               <button
                 key={value}
                 onClick={() => setActiveTab(value)}
                 className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                  activeTab === value ? 'text-primary' : 'text-muted-foreground'
+                  activeTab === value ? 'text-foreground' : 'text-muted-foreground/60'
                 }`}
               >
-                <Icon className="w-4.5 h-4.5" />
-                <span className="text-[10px] font-medium leading-tight">{label}</span>
+                <Icon className={`w-4 h-4 ${activeTab === value ? '' : 'opacity-60'}`} />
+                <span className="text-[9px] font-medium leading-tight">{label}</span>
               </button>
             ))}
           </div>

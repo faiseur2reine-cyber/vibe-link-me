@@ -43,59 +43,57 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialog
     } else {
       toast({ title: 'Page créée ! 🎉' });
       onOpenChange(false);
-      setUsername('');
-      setDisplayName('');
-      setUsernameStatus('idle');
+      setUsername(''); setDisplayName(''); setUsernameStatus('idle');
     }
     setSaving(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle className="font-display">Nouvelle page créateur</DialogTitle>
+          <DialogTitle className="text-[15px] font-semibold font-display">Nouvelle page</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label>Username (URL publique)</Label>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          <div className="space-y-1.5">
+            <Label className="text-[12px]">Username</Label>
             <div className="relative">
               <Input
                 value={username}
                 onChange={(e) => checkUsername(e.target.value)}
                 placeholder="nom-createur"
-                required
-                minLength={3}
-                maxLength={30}
+                required minLength={3} maxLength={30}
+                className="h-8 text-[13px] pr-8"
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
-                {usernameStatus === 'available' && <Check className="w-4 h-4 text-green-500" />}
-                {usernameStatus === 'taken' && <X className="w-4 h-4 text-destructive" />}
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                {usernameStatus === 'checking' && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
+                {usernameStatus === 'available' && <Check className="w-3 h-3 text-primary" />}
+                {usernameStatus === 'taken' && <X className="w-3 h-3 text-destructive" />}
               </div>
             </div>
             {usernameStatus === 'available' && (
-              <p className="text-xs text-green-500">mytaptap.com/{username} est disponible ✓</p>
+              <p className="text-[11px] text-primary">mytaptap.com/{username} est disponible</p>
             )}
             {usernameStatus === 'taken' && (
-              <p className="text-xs text-destructive">Ce username est déjà pris</p>
+              <p className="text-[11px] text-destructive">Ce username est déjà pris</p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label>Nom affiché</Label>
+          <div className="space-y-1.5">
+            <Label className="text-[12px]">Nom affiché</Label>
             <Input
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Prénom ou pseudo"
+              className="h-8 text-[13px]"
             />
           </div>
-          <DialogFooter>
+          <DialogFooter className="pt-2">
             <Button
               type="submit"
               disabled={saving || usernameStatus !== 'available'}
-              className="w-full"
+              className="w-full h-8 text-[12px] shadow-none"
             >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Créer la page'}
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Créer la page'}
             </Button>
           </DialogFooter>
         </form>
