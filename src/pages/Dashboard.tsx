@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useLinks } from '@/hooks/useDashboard';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,14 +12,29 @@ import LinkPreview from '@/components/dashboard/LinkPreview';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import LanguageSelector from '@/components/LanguageSelector';
-import { LogOut, User, Link2, Eye, ExternalLink, Palette, BarChart3 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { PLANS } from '@/lib/plans';
+import { toast } from '@/hooks/use-toast';
+import { LogOut, User, Link2, Eye, ExternalLink, Palette, BarChart3, CreditCard, Loader2, Settings } from 'lucide-react';
+import { useEffect } from 'react';
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading, signOut, checkSubscription } = useAuth();
   const { profile, loading: profileLoading, updateProfile, refetch: refetchProfile } = useProfile();
   const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks } = useLinks();
   const [activeTab, setActiveTab] = useState('links');
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  // After checkout success, refresh subscription
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'success') {
+      checkSubscription().then(() => refetchProfile());
+      toast({ title: t('common.success'), description: '🎉' });
+    }
+  }, [searchParams]);
 
   if (authLoading || profileLoading) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">{t('common.loading')}</div>;
@@ -27,6 +42,42 @@ const Dashboard = () => {
   if (!user) return <Navigate to="/auth" replace />;
   if (!profile) return <Navigate to="/set-username" replace />;
   if (!profile.username || profile.username.startsWith('null')) return <Navigate to="/set-username" replace />;
+
+  const handleCheckout = async (planKey: 'starter' | 'pro') => {
+    const plan = PLANS[planKey];
+    if (!plan.price_id) return;
+    setCheckoutLoading(planKey);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId: plan.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (e: any) {
+      toast({ title: t('common.error'), description: e.message, variant: 'destructive' });
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
+
+  const handlePortal = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (e: any) {
+      toast({ title: t('common.error'), description: e.message, variant: 'destructive' });
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
+  const currentPlan = profile.plan || 'free';
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,6 +117,9 @@ const Dashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger value="analytics" className="rounded-full gap-1 data-[state=active]:bg-background">
                   <BarChart3 className="w-4 h-4" /> {t('dashboard.analytics')}
+                </TabsTrigger>
+                <TabsTrigger value="plan" className="rounded-full gap-1 data-[state=active]:bg-background">
+                  <CreditCard className="w-4 h-4" /> {t('dashboard.plan')}
                 </TabsTrigger>
               </TabsList>
 
@@ -109,6 +163,87 @@ const Dashboard = () => {
                     <AnalyticsPanel links={links} plan={profile.plan} />
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="plan">
+                <div className="space-y-4">
+                  {/* Current plan */}
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">{t('pricing.currentPlan')}</p>
+                          <p className="text-2xl font-display font-bold text-foreground capitalize">{currentPlan}</p>
+                        </div>
+                        {currentPlan !== 'free' && (
+                          <Button variant="outline" size="sm" className="rounded-full gap-1" onClick={handlePortal} disabled={portalLoading}>
+                            {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
+                            Gérer l'abonnement
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Upgrade cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Starter */}
+                    <Card className={`${currentPlan === 'starter' ? 'border-primary ring-2 ring-primary/20' : ''}`}>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-display font-bold text-lg">Starter</h3>
+                          <span className="text-xs bg-gradient-to-r from-primary/10 to-secondary/10 text-primary px-2 py-1 rounded-full">🚀 {t('pricing.launchBadge')}</span>
+                        </div>
+                        <p className="text-3xl font-bold">19,99€<span className="text-sm font-normal text-muted-foreground">{t('pricing.year')}</span></p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          {(t('pricing.starterFeatures', { returnObjects: true }) as string[]).map((f, i) => (
+                            <li key={i}>✓ {f}</li>
+                          ))}
+                        </ul>
+                        {currentPlan === 'starter' ? (
+                          <Button disabled className="w-full rounded-full">{t('pricing.currentPlan')}</Button>
+                        ) : currentPlan === 'pro' ? (
+                          <Button disabled variant="outline" className="w-full rounded-full">Inclus dans Pro</Button>
+                        ) : (
+                          <Button
+                            className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                            onClick={() => handleCheckout('starter')}
+                            disabled={!!checkoutLoading}
+                          >
+                            {checkoutLoading === 'starter' ? <Loader2 className="w-4 h-4 animate-spin" /> : t('pricing.upgradeStarter')}
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Pro */}
+                    <Card className={`${currentPlan === 'pro' ? 'border-primary ring-2 ring-primary/20' : 'border-primary/50'}`}>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-display font-bold text-lg">Pro</h3>
+                          <span className="text-xs bg-gradient-to-r from-primary to-secondary text-primary-foreground px-2 py-1 rounded-full">{t('pricing.popular')}</span>
+                        </div>
+                        <p className="text-3xl font-bold">115€<span className="text-sm font-normal text-muted-foreground">{t('pricing.year')}</span></p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          {(t('pricing.proFeatures', { returnObjects: true }) as string[]).map((f, i) => (
+                            <li key={i}>✓ {f}</li>
+                          ))}
+                        </ul>
+                        {currentPlan === 'pro' ? (
+                          <Button disabled className="w-full rounded-full">{t('pricing.currentPlan')}</Button>
+                        ) : (
+                          <Button
+                            className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                            onClick={() => handleCheckout('pro')}
+                            disabled={!!checkoutLoading}
+                          >
+                            {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 animate-spin" /> : t('pricing.upgrade')}
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
