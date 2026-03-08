@@ -147,6 +147,17 @@ const PublicProfile = () => {
   const pageTitle = `${displayName} | MyTaptap`;
   const pageDescription = page.bio || `Check out ${displayName}'s links on MyTaptap`;
 
+  const hasCustomColors = page.custom_bg_color || page.custom_text_color;
+  const fontFamily = page.custom_font && page.custom_font !== 'default'
+    ? `'${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}', sans-serif`
+    : undefined;
+  const linkLayout = page.link_layout || 'list';
+
+  // Google Fonts URL
+  const fontUrl = page.custom_font && page.custom_font !== 'default'
+    ? `https://fonts.googleapis.com/css2?family=${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('+')}&display=swap`
+    : null;
+
   return (
     <>
       <Helmet>
@@ -161,9 +172,17 @@ const PublicProfile = () => {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
+        {fontUrl && <link rel="stylesheet" href={fontUrl} />}
+        {page.custom_css && <style>{page.custom_css}</style>}
       </Helmet>
 
-      <div className={`min-h-screen ${theme.bg} flex flex-col items-center relative overflow-hidden`}>
+      <div
+        className={`page-container min-h-screen ${hasCustomColors ? '' : theme.bg} flex flex-col items-center relative overflow-hidden`}
+        style={{
+          ...(page.custom_bg_color ? { backgroundColor: page.custom_bg_color } : {}),
+          ...(fontFamily ? { fontFamily } : {}),
+        }}
+      >
         {page.cover_url && (
           <div className="w-full h-48 sm:h-64 relative">
             <img src={page.cover_url} alt="" className="w-full h-full object-cover" />
