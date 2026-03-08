@@ -317,6 +317,14 @@ export function usePageAnalytics(pageId: string | null) {
     });
     setReferrerStats(Object.entries(referrers).map(([referrer, clicks]) => ({ referrer, clicks })).sort((a, b) => b.clicks - a.clicks));
 
+    // A/B variant stats
+    const variants: Record<string, number> = {};
+    clicks.forEach(c => {
+      const v = (c as any).ab_variant || null;
+      if (v) variants[v] = (variants[v] || 0) + 1;
+    });
+    setAbStats(Object.entries(variants).map(([variant, clicks]) => ({ variant, clicks })).sort((a, b) => a.variant.localeCompare(b.variant)));
+
     setLoading(false);
   }, [user, pageId]);
 
