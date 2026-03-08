@@ -186,6 +186,54 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
           </div>
         )}
       </div>
+
+      {/* A/B Test Results */}
+      {abStats.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <FlaskConical className="w-4 h-4 text-muted-foreground" />
+            <h4 className="font-display font-semibold text-foreground">Résultats A/B Test</h4>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {abStats.map(stat => {
+              const total = abStats.reduce((s, a) => s + a.clicks, 0);
+              const pct = total > 0 ? Math.round((stat.clicks / total) * 100) : 0;
+              const isA = stat.variant === 'A';
+              return (
+                <div key={stat.variant} className={`p-4 rounded-xl border ${isA ? 'bg-primary/5 border-primary/20' : 'bg-muted/50 border-border'}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`w-6 h-6 rounded text-[11px] font-bold flex items-center justify-center ${isA ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20 text-muted-foreground'}`}>
+                      {stat.variant}
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {isA ? 'Avec widgets' : 'Sans widgets'}
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-foreground">{stat.clicks}</p>
+                  <p className="text-xs text-muted-foreground">{pct}% des clics</p>
+                  {/* CTR comparison bar */}
+                  <div className="mt-2 w-full h-2 rounded-full bg-muted overflow-hidden">
+                    <div className={`h-full rounded-full ${isA ? 'bg-primary' : 'bg-muted-foreground/40'}`} style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {(() => {
+            const a = abStats.find(s => s.variant === 'A');
+            const b = abStats.find(s => s.variant === 'B');
+            if (a && b && b.clicks > 0) {
+              const lift = Math.round(((a.clicks - b.clicks) / b.clicks) * 100);
+              return (
+                <p className={`mt-3 text-xs font-medium ${lift > 0 ? 'text-green-600' : lift < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  {lift > 0 ? `↑ +${lift}%` : lift < 0 ? `↓ ${lift}%` : '='} {lift > 0 ? 'Les widgets augmentent les clics !' : lift < 0 ? 'Les widgets réduisent les clics.' : 'Pas de différence significative.'}
+                </p>
+              );
+            }
+            return null;
+          })()}
+        </div>
+      )}
     </div>
   );
 };
