@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
     // Try creator_pages first
     const { data: pageData } = await supabase
       .from("creator_pages")
-      .select("id, username, display_name, bio, avatar_url, cover_url, theme, user_id, is_nsfw, social_links")
+      .select("id, username, display_name, bio, avatar_url, cover_url, theme, user_id, is_nsfw, social_links, custom_bg_color, custom_text_color, custom_accent_color, custom_btn_color, custom_btn_text_color, custom_font, link_layout, custom_css")
       .eq("username", username)
       .single();
 

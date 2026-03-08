@@ -28,6 +28,14 @@ interface CreatorPageData {
   user_id: string;
   is_nsfw: boolean;
   social_links: SocialLink[];
+  custom_bg_color?: string | null;
+  custom_text_color?: string | null;
+  custom_accent_color?: string | null;
+  custom_btn_color?: string | null;
+  custom_btn_text_color?: string | null;
+  custom_font?: string;
+  link_layout?: string;
+  custom_css?: string | null;
 }
 
 interface LinkItem {
@@ -139,6 +147,17 @@ const PublicProfile = () => {
   const pageTitle = `${displayName} | MyTaptap`;
   const pageDescription = page.bio || `Check out ${displayName}'s links on MyTaptap`;
 
+  const hasCustomColors = page.custom_bg_color || page.custom_text_color;
+  const fontFamily = page.custom_font && page.custom_font !== 'default'
+    ? `'${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}', sans-serif`
+    : undefined;
+  const linkLayout = page.link_layout || 'list';
+
+  // Google Fonts URL
+  const fontUrl = page.custom_font && page.custom_font !== 'default'
+    ? `https://fonts.googleapis.com/css2?family=${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('+')}&display=swap`
+    : null;
+
   return (
     <>
       <Helmet>
@@ -153,9 +172,17 @@ const PublicProfile = () => {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
+        {fontUrl && <link rel="stylesheet" href={fontUrl} />}
+        {page.custom_css && <style>{page.custom_css}</style>}
       </Helmet>
 
-      <div className={`min-h-screen ${theme.bg} flex flex-col items-center relative overflow-hidden`}>
+      <div
+        className={`page-container min-h-screen ${hasCustomColors ? '' : theme.bg} flex flex-col items-center relative overflow-hidden`}
+        style={{
+          ...(page.custom_bg_color ? { backgroundColor: page.custom_bg_color } : {}),
+          ...(fontFamily ? { fontFamily } : {}),
+        }}
+      >
         {page.cover_url && (
           <div className="w-full h-48 sm:h-64 relative">
             <img src={page.cover_url} alt="" className="w-full h-full object-cover" />
@@ -169,7 +196,7 @@ const PublicProfile = () => {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className={`w-full max-w-lg px-4 ${page.cover_url ? '-mt-16' : 'pt-12'} pb-8 relative z-10`}
         >
-          <div className="text-center relative">
+          <div className="profile-header text-center relative">
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -201,8 +228,8 @@ const PublicProfile = () => {
               transition={{ delay: 0.2 }}
               className="mt-4 space-y-1"
             >
-              <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${theme.text}`}>{displayName}</h1>
-              <p className={`text-sm ${theme.subtleText}`}>@{page.username}</p>
+              <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${hasCustomColors ? '' : theme.text}`} style={page.custom_text_color ? { color: page.custom_text_color } : {}}>{displayName}</h1>
+              <p className={`text-sm ${hasCustomColors ? 'opacity-60' : theme.subtleText}`} style={page.custom_text_color ? { color: page.custom_text_color } : {}}>@{page.username}</p>
               {page.bio && (
                 <p className={`text-sm mt-2 leading-relaxed ${theme.text} opacity-70 max-w-sm mx-auto`}>
                   {page.bio.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
@@ -238,7 +265,7 @@ const PublicProfile = () => {
           </div>
 
           {/* Links */}
-          <div className="mt-6 space-y-6">
+          <div className={`mt-6 space-y-6`}>
             {(() => {
               const sections: { title: string | null; links: LinkItem[] }[] = [];
               links.forEach(link => {
@@ -259,19 +286,20 @@ const PublicProfile = () => {
                       transition={{ delay: 0.25 + sIdx * 0.05 }}
                       className="flex items-center gap-3 pt-2"
                     >
-                      <div className={`h-px flex-1 ${theme.text} opacity-10`} />
-                      <span className={`text-xs font-semibold uppercase tracking-widest ${theme.subtleText}`}>{section.title}</span>
-                      <div className={`h-px flex-1 ${theme.text} opacity-10`} />
+                      <div className={`h-px flex-1 ${hasCustomColors ? '' : theme.text} opacity-10`} style={page.custom_text_color ? { backgroundColor: page.custom_text_color } : {}} />
+                      <span className={`text-xs font-semibold uppercase tracking-widest ${hasCustomColors ? 'opacity-60' : theme.subtleText}`} style={page.custom_text_color ? { color: page.custom_text_color } : {}}>{section.title}</span>
+                      <div className={`h-px flex-1 ${hasCustomColors ? '' : theme.text} opacity-10`} style={page.custom_text_color ? { backgroundColor: page.custom_text_color } : {}} />
                     </motion.div>
                   )}
+                  <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
                   {section.links.map((link) => {
                     const i = globalIndex++;
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
-                    const isMinimal = link.style === 'minimal';
+                    const isMinimal = link.style === 'minimal' || linkLayout === 'minimal';
                     const customStyle: React.CSSProperties = {
-                      ...(link.bg_color ? { backgroundColor: link.bg_color } : {}),
-                      ...(link.text_color ? { color: link.text_color } : {}),
+                      ...(link.bg_color ? { backgroundColor: link.bg_color } : page.custom_btn_color ? { backgroundColor: page.custom_btn_color } : {}),
+                      ...(link.text_color ? { color: link.text_color } : page.custom_btn_text_color ? { color: page.custom_btn_text_color } : {}),
                     };
 
                     if (isCard && link.thumbnail_url) {
@@ -304,7 +332,7 @@ const PublicProfile = () => {
                           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.3 + i * 0.04 }}
                           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                          className={`group flex flex-col items-center gap-1 px-6 py-5 rounded-2xl text-base font-bold transition-all duration-200 ${link.bg_color ? '' : theme.btn}`}
+                          className={`link-item group flex flex-col items-center gap-1 px-6 py-5 rounded-2xl text-base font-bold transition-all duration-200 ${link.bg_color || page.custom_btn_color ? '' : theme.btn}`}
                           style={customStyle}
                         >
                           <LinkFavicon url={link.url} size="md" />
@@ -340,7 +368,7 @@ const PublicProfile = () => {
                         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 + i * 0.04 }}
                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                        className={`group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${link.bg_color ? '' : theme.btn}`}
+                        className={`link-item group flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 ${link.bg_color || page.custom_btn_color ? '' : theme.btn}`}
                         style={customStyle}
                       >
                         <LinkFavicon url={link.url} size="md" />
@@ -352,6 +380,7 @@ const PublicProfile = () => {
                       </motion.a>
                     );
                   })}
+                  </div>
                 </div>
               ));
             })()}

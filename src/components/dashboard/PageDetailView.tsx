@@ -10,7 +10,8 @@ import LinkPreview from '@/components/dashboard/LinkPreview';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
 import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2 } from 'lucide-react';
+import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -42,6 +43,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const tabs = [
     { value: 'links', icon: Link2, label: 'Liens' },
     { value: 'profile', icon: User, label: 'Profil' },
+    { value: 'design', icon: Paintbrush, label: 'Design' },
     { value: 'theme', icon: Palette, label: 'Thème' },
     { value: 'analytics', icon: BarChart3, label: 'Analytics' },
   ];
@@ -173,6 +175,17 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                 </CardHeader>
                 <CardContent>
                   <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="design">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-display">Design personnalisé</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PageDesignEditor page={page} onUpdate={handleUpdate} />
                 </CardContent>
               </Card>
             </TabsContent>
