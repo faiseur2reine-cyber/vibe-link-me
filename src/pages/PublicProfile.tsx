@@ -197,11 +197,11 @@ const PublicProfile = () => {
   return (
     <>
       {/* Urgency Banner */}
-      {urgency?.banner?.enabled && (
+      {showUrgencyWidgets && urgency?.banner?.enabled && (
         <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />
       )}
       {/* Location Toast */}
-      {urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && (
+      {showUrgencyWidgets && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && (
         <ProfileLocationToast enabled={true} pageId={page.id} />
       )}
       <Helmet>
