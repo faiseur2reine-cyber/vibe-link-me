@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ExternalLink, Heart } from 'lucide-react';
 import LinkFavicon from '@/components/LinkFavicon';
 import { getTheme } from '@/lib/themes';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LinkPreviewProps {
   profile: Profile;
@@ -15,7 +16,15 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
   const displayName = profile.display_name || profile.username;
 
   return (
-    <div className={`rounded-3xl overflow-hidden ${theme.bg} transition-all duration-300 relative`}>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={profile.theme}
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.97 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className={`rounded-3xl overflow-hidden ${theme.bg} transition-colors duration-300 relative`}
+      >
       {/* Decorative blur */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-purple-300/15 to-pink-300/15 blur-3xl pointer-events-none" />
 
@@ -66,8 +75,9 @@ const LinkPreview = ({ profile, links }: LinkPreviewProps) => {
             Créé avec <Heart className="w-2.5 h-2.5" /> MyTaptap
           </p>
         )}
-      </div>
-    </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
