@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,87 +6,83 @@
 
 @layer base {
   :root {
-    --background: 270 30% 98%;
-    --foreground: 270 50% 10%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 270 50% 10%;
+    --card-foreground: 240 10% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 270 50% 10%;
+    --popover-foreground: 240 10% 4%;
 
-    --primary: 270 70% 55%;
+    --primary: 160 84% 39%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 330 80% 60%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
 
-    --muted: 270 20% 94%;
-    --muted-foreground: 270 10% 45%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
 
-    --accent: 25 95% 58%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 270 20% 90%;
-    --input: 270 20% 90%;
-    --ring: 270 70% 55%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 160 84% 39%;
 
-    --radius: 1rem;
+    --radius: 0.625rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(270 70% 55%), hsl(330 80% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(270 70% 55%), hsl(330 80% 60%), hsl(25 95% 58%));
-    --gradient-card: linear-gradient(135deg, hsl(270 30% 98%), hsl(330 30% 97%));
-
-    --sidebar-background: 270 30% 97%;
-    --sidebar-foreground: 270 50% 20%;
-    --sidebar-primary: 270 70% 55%;
+    --sidebar-background: 240 5% 98%;
+    --sidebar-foreground: 240 6% 20%;
+    --sidebar-primary: 160 84% 39%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 270 20% 94%;
-    --sidebar-accent-foreground: 270 50% 20%;
-    --sidebar-border: 270 20% 90%;
-    --sidebar-ring: 270 70% 55%;
+    --sidebar-accent: 240 5% 96%;
+    --sidebar-accent-foreground: 240 6% 20%;
+    --sidebar-border: 240 6% 90%;
+    --sidebar-ring: 160 84% 39%;
   }
 
   .dark {
-    --background: 270 30% 6%;
-    --foreground: 270 20% 95%;
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
 
-    --card: 270 30% 10%;
-    --card-foreground: 270 20% 95%;
+    --card: 240 10% 7%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 270 30% 10%;
-    --popover-foreground: 270 20% 95%;
+    --popover: 240 10% 7%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 270 70% 60%;
+    --primary: 160 84% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 330 80% 65%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 270 20% 18%;
-    --muted-foreground: 270 15% 60%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 25 95% 62%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 270 20% 18%;
-    --input: 270 20% 18%;
-    --ring: 270 70% 60%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 160 84% 45%;
 
-    --sidebar-background: 270 30% 8%;
-    --sidebar-foreground: 270 20% 90%;
-    --sidebar-primary: 270 70% 60%;
+    --sidebar-background: 240 10% 6%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 160 84% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 270 20% 15%;
-    --sidebar-accent-foreground: 270 20% 90%;
-    --sidebar-border: 270 20% 15%;
-    --sidebar-ring: 270 70% 60%;
+    --sidebar-accent: 240 4% 12%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 240 4% 14%;
+    --sidebar-ring: 160 84% 45%;
   }
 }
 
@@ -96,7 +92,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
 
