@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/lib/plans';
 import { toast } from '@/hooks/use-toast';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Instagram, Youtube, Music, Twitch, Twitter } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';
@@ -75,8 +75,17 @@ const Index = () => {
       >
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs text-muted-foreground">
           <span className="font-medium">{t('landing.socialProof')}</span>
-          {['YouTube', 'TikTok', 'Instagram', 'Twitch', 'X'].map(p => (
-            <span key={p} className="font-semibold text-foreground/40 text-[11px] uppercase tracking-wider">{p}</span>
+          {[
+            { name: 'YouTube', icon: Youtube },
+            { name: 'TikTok', icon: Music },
+            { name: 'Instagram', icon: Instagram },
+            { name: 'Twitch', icon: Twitch },
+            { name: 'X', icon: Twitter },
+          ].map(({ name, icon: Icon }) => (
+            <span key={name} className="flex items-center gap-1.5 text-foreground/40 text-[11px] uppercase tracking-wider font-semibold">
+              <Icon className="w-3.5 h-3.5" />
+              {name}
+            </span>
           ))}
         </div>
       </motion.div>
