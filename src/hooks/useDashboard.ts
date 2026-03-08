@@ -33,6 +33,7 @@ export interface LinkItem {
   bg_color: string | null;
   text_color: string | null;
   style: string;
+  section_title: string | null;
 }
 
 export function useProfile() {
