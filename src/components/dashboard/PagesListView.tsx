@@ -219,21 +219,40 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage }: P
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                       <div className="flex items-center gap-1.5">
                         {page.is_nsfw && (
-                          <span className="text-[10px] bg-orange-500/10 text-orange-500 px-1.5 py-0.5 rounded-full font-medium">+18</span>
+                          <span className="text-[10px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded-full font-medium">+18</span>
                         )}
                       </div>
-                      <a
-                        href={`/${page.username}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
-                      >
-                        <ExternalLink className="w-3 h-3" /> Voir
-                      </a>
+                      <div className="flex items-center gap-2">
+                        {onDuplicatePage && (
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              const result = await onDuplicatePage(page.id);
+                              if (result?.error) {
+                                toast.error('Erreur lors de la duplication');
+                              } else {
+                                toast.success('Page dupliquée avec succès');
+                              }
+                            }}
+                            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+                            title="Dupliquer"
+                          >
+                            <Copy className="w-3 h-3" /> Dupliquer
+                          </button>
+                        )}
+                        <a
+                          href={`/${page.username}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+                        >
+                          <ExternalLink className="w-3 h-3" /> Voir
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
