@@ -88,8 +88,11 @@ export function useAnalytics() {
 
 export async function recordClick(linkId: string) {
   const referrer = document.referrer || null;
-  await supabase.rpc('record_click', { 
-    p_link_id: linkId, 
-    p_referrer: referrer,
-  });
+  try {
+    await supabase.functions.invoke('rate-limited-click', {
+      body: { link_id: linkId, referrer },
+    });
+  } catch {
+    // Fail silently — don't block the user's navigation
+  }
 }

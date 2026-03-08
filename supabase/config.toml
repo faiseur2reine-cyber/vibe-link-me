@@ -1,1 +1,4 @@
 project_id = "deyoyodhtilhmzhjorsp"
+
+[functions.rate-limited-click]
+verify_jwt = false
