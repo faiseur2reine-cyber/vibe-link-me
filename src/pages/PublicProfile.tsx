@@ -10,7 +10,7 @@ import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
 import SocialIcons from '@/components/profile/SocialIcons';
-import AgeGate from '@/components/profile/AgeGate';
+import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
 import type { UrgencyConfig } from '@/components/dashboard/UrgencyEditor';
 
@@ -62,7 +62,6 @@ const PublicProfile = () => {
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [ageVerified, setAgeVerified] = useState(false);
   const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
 
   useEffect(() => {
@@ -158,9 +157,7 @@ const PublicProfile = () => {
     );
   }
 
-  if (page.is_nsfw && !ageVerified) {
-    return <AgeGate onVerified={() => setAgeVerified(true)} profile={page} />;
-  }
+  const isNsfwPage = page.is_nsfw;
 
   const theme = getTheme(page.theme);
   const displayName = page.display_name || page.username;
@@ -379,9 +376,16 @@ const PublicProfile = () => {
                       const customBtnBg = link.bg_color || page.custom_btn_color;
                       const customBtnText = link.text_color || page.custom_btn_text_color;
 
+                      const wrapNsfw = (node: React.ReactNode) =>
+                        isNsfwPage ? (
+                          <NsfwLinkOverlay key={link.id} url={link.url} onRevealClick={() => recordClick(link.id, clickVariant)}>
+                            {node}
+                          </NsfwLinkOverlay>
+                        ) : node;
+
                       // Card with thumbnail
                       if (isCard && link.thumbnail_url) {
-                        return (
+                        return wrapNsfw(
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -404,7 +408,7 @@ const PublicProfile = () => {
 
                       // Featured — prominent CTA
                       if (isFeatured) {
-                        return (
+                        return wrapNsfw(
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -429,7 +433,7 @@ const PublicProfile = () => {
 
                       // Minimal
                       if (isMinimal) {
-                        return (
+                        return wrapNsfw(
                           <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={() => recordClick(link.id, clickVariant)}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -452,7 +456,7 @@ const PublicProfile = () => {
                       }
 
                       // Default — premium pill card with favicon circle
-                      return (
+                      return wrapNsfw(
                         <motion.a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
