@@ -13,6 +13,7 @@ import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import PricingSection from '@/components/landing/PricingSection';
 import UrgencyWidgets from '@/components/landing/UrgencyWidgets';
+import UrgencyBanner from '@/components/landing/UrgencyBanner';
 
 const Index = () => {
   const { t } = useTranslation();
@@ -38,8 +39,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav — ultra clean */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
+      {/* Urgency sticky banner — fully configurable */}
+      <UrgencyBanner
+        config={{
+          enabled: true,
+          text: '🔥 Dernières heures — Accès gratuit limité',
+          ctaText: "J'en profite",
+          ctaLink: '/auth?tab=signup',
+          bgColor: '#dc2626',
+          textColor: '#ffffff',
+          ctaBgColor: '#ffffff',
+          ctaTextColor: '#dc2626',
+          position: 'top',
+          showCountdown: true,
+          countdownMinutes: 14,
+          closable: true,
+          emoji: '⚡',
+        }}
+      />
+
+      {/* Nav — offset for top banner */}
+      <nav className="sticky top-[40px] z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 max-w-5xl mx-auto">
           <Link to="/" className="text-base font-bold text-foreground tracking-tight">
             MyTaptap
