@@ -13,29 +13,45 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
   const { t } = useTranslation();
 
   return (
-    <section className="px-4 sm:px-6 py-20 sm:py-28 bg-secondary/30">
+    <section className="px-4 sm:px-6 py-24 sm:py-32 bg-secondary/20">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center max-w-lg mx-auto mb-14">
-          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">{t('landing.pricingLabel')}</p>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('pricing.title')}</h2>
-          <p className="mt-3 text-muted-foreground text-sm">{t('pricing.subtitle')}</p>
-        </div>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-lg mx-auto mb-14"
+        >
+          <p className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            {t('landing.pricingLabel')}
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            {t('pricing.title')}
+          </h2>
+          <p className="mt-3 text-muted-foreground text-sm">
+            {t('pricing.subtitle')}
+          </p>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
           {/* Free */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
             className="rounded-xl border border-border bg-card p-6"
           >
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('pricing.free')}</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {t('pricing.free')}
+            </p>
             <p className="mt-4 text-3xl font-bold">0€</p>
             <p className="text-xs text-muted-foreground mt-1 h-4" />
             <ul className="mt-6 space-y-2.5">
               {(t('pricing.freeFeatures', { returnObjects: true }) as string[]).map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
-                  <Check className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-muted-foreground/60 mt-0.5 shrink-0" />
                   <span className="text-muted-foreground">{f}</span>
                 </li>
               ))}
@@ -47,19 +63,26 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
 
           {/* Pro — highlighted */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.08 }}
-            className="rounded-xl border-2 border-primary bg-card p-6 relative md:-mt-2 md:mb-0 shadow-sm"
+            transition={{ delay: 0.06, duration: 0.4 }}
+            className="rounded-xl border-2 border-primary bg-card p-6 relative md:-mt-3 shadow-lg shadow-primary/5"
           >
             <div className="absolute -top-3 right-4">
               <span className="text-[10px] font-semibold bg-primary text-primary-foreground px-2.5 py-1 rounded-full">
                 {t('pricing.popular')}
               </span>
             </div>
-            <p className="text-xs font-semibold text-primary uppercase tracking-wider">{t('pricing.pro')}</p>
-            <p className="mt-4 text-3xl font-bold">115€<span className="text-sm font-normal text-muted-foreground ml-1">{t('pricing.year')}</span></p>
+            <p className="text-xs font-semibold text-primary uppercase tracking-wider">
+              {t('pricing.pro')}
+            </p>
+            <p className="mt-4 text-3xl font-bold">
+              115€
+              <span className="text-sm font-normal text-muted-foreground ml-1">
+                {t('pricing.year')}
+              </span>
+            </p>
             <p className="text-xs text-muted-foreground mt-1">{t('pricing.proMonthly')}</p>
             <ul className="mt-6 space-y-2.5">
               {(t('pricing.proFeatures', { returnObjects: true }) as string[]).map((f, i) => (
@@ -69,19 +92,25 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
                 </li>
               ))}
             </ul>
-            <Button className="w-full mt-6 h-10 text-sm" onClick={() => onUpgrade('pro')} disabled={checkoutLoading === 'pro'}>
-              {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
+            <Button
+              className="w-full mt-6 h-10 text-sm group"
+              onClick={() => onUpgrade('pro')}
+              disabled={checkoutLoading === 'pro'}
+            >
+              {checkoutLoading === 'pro' ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-1.5" />
+              ) : null}
               {t('pricing.upgrade')}
-              <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-0.5" />
             </Button>
           </motion.div>
 
           {/* Starter */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.16 }}
+            transition={{ delay: 0.12, duration: 0.4 }}
             className="rounded-xl border border-border bg-card p-6 relative"
           >
             <div className="absolute -top-3 right-4">
@@ -89,19 +118,33 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
                 {t('pricing.launchBadge')}
               </span>
             </div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('pricing.starter')}</p>
-            <p className="mt-4 text-3xl font-bold">19,99€<span className="text-sm font-normal text-muted-foreground ml-1">{t('pricing.month')}</span></p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {t('pricing.starter')}
+            </p>
+            <p className="mt-4 text-3xl font-bold">
+              19,99€
+              <span className="text-sm font-normal text-muted-foreground ml-1">
+                {t('pricing.month')}
+              </span>
+            </p>
             <p className="text-xs text-muted-foreground mt-1 h-4" />
             <ul className="mt-6 space-y-2.5">
               {(t('pricing.starterFeatures', { returnObjects: true }) as string[]).map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
-                  <Check className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-muted-foreground/60 mt-0.5 shrink-0" />
                   <span className="text-muted-foreground">{f}</span>
                 </li>
               ))}
             </ul>
-            <Button variant="outline" className="w-full mt-6 h-10 text-sm" onClick={() => onUpgrade('starter')} disabled={checkoutLoading === 'starter'}>
-              {checkoutLoading === 'starter' ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
+            <Button
+              variant="outline"
+              className="w-full mt-6 h-10 text-sm"
+              onClick={() => onUpgrade('starter')}
+              disabled={checkoutLoading === 'starter'}
+            >
+              {checkoutLoading === 'starter' ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-1.5" />
+              ) : null}
               {t('pricing.upgradeStarter')}
             </Button>
           </motion.div>
