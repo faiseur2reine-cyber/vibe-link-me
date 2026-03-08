@@ -35,11 +35,22 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">Mes pages créateurs</h1>
           <p className="text-sm text-muted-foreground mt-1">{pages.length} page{pages.length !== 1 ? 's' : ''} créée{pages.length !== 1 ? 's' : ''}</p>
         </div>
+        {pages.length > 0 && (
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher une page..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 rounded-full bg-muted/50 border-border"
+            />
+          </div>
+        )}
       </div>
 
       {/* Global Stats Summary */}
