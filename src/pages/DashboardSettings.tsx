@@ -24,6 +24,13 @@ const DashboardSettings = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   
+  // Username change state
+  const [currentUsername, setCurrentUsername] = useState('');
+  const [newUsername, setNewUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
+  const [usernameSaving, setUsernameSaving] = useState(false);
+
   // Custom domain state
   const [customDomain, setCustomDomain] = useState('');
   const [domainVerified, setDomainVerified] = useState(false);
