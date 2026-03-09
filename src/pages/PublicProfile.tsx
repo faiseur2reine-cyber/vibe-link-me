@@ -35,12 +35,12 @@ interface LinkItem {
 }
 
 /* ── Animation presets ── */
-const ease = [0.22, 1, 0.36, 1] as const;
-const fadeUp = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } };
-const stagger = { visible: { transition: { staggerChildren: 0.06 } } };
+const ease = [0.16, 1, 0.3, 1] as const;
+const fadeUp = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
+const stagger = { visible: { transition: { staggerChildren: 0.045 } } };
 const scaleIn = {
-  hidden: { scale: 0.85, opacity: 0 },
-  visible: { scale: 1, opacity: 1, transition: { type: 'spring' as const, stiffness: 260, damping: 20 } },
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
 };
 
 const PublicProfile = () => {
