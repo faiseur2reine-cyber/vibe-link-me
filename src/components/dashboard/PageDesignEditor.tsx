@@ -98,6 +98,8 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
   const [customCss, setCustomCss] = useState(page.custom_css || '');
   const [saving, setSaving] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
+  const isMobile = useIsMobile();
   const isMobile = useIsMobile();
 
   const handleSave = async () => {
