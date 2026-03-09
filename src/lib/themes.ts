@@ -159,6 +159,18 @@ export const THEMES: Record<string, ThemeConfig> = {
     avatarRing: 'ring-[3px] ring-stone-200/60 shadow-lg shadow-stone-200/20',
     tier: 'pro',
   },
+  minimal: {
+    name: 'Minimal',
+    bg: 'bg-white',
+    btn: 'bg-transparent text-[#1a1a1a] border border-[#e5e5e5] hover:border-[#1a1a1a] hover:bg-[#fafafa] hover:-translate-y-[1px]',
+    text: 'text-[#1a1a1a]',
+    subtleText: 'text-[#999]',
+    accent: 'text-[#1a1a1a]',
+    preview: 'bg-white border border-[#e5e5e5]',
+    cardBg: 'bg-white border border-[#f0f0f0]',
+    avatarRing: 'ring-[2px] ring-[#e5e5e5]',
+    tier: 'pro',
+  },
 };
 
 const PLAN_RANK: Record<string, number> = { free: 0, starter: 1, pro: 2 };
