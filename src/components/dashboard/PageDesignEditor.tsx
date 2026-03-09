@@ -12,6 +12,7 @@ import DesignLivePreview from './DesignLivePreview';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, PanInfo } from 'framer-motion';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
@@ -144,6 +145,18 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
   };
 
   const designState = { bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout, customCss };
+
+  const handleSwipe = (_event: any, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (Math.abs(info.offset.x) > swipeThreshold) {
+      // Swipe right → Edit mode, Swipe left → Preview mode
+      if (info.offset.x > 0 && previewMode) {
+        setPreviewMode(false);
+      } else if (info.offset.x < 0 && !previewMode) {
+        setPreviewMode(true);
+      }
+    }
+  };
 
   const editorContent = (
     <div className="space-y-6">
@@ -304,7 +317,13 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
             </div>
           </DrawerHeader>
           <ScrollArea className="flex-1 overflow-auto">
-            <div className="px-4 pb-4">
+            <motion.div
+              className="px-4 pb-4"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={handleSwipe}
+            >
               {previewMode ? (
                 <div className="py-4 max-w-xs mx-auto">
                   <DesignLivePreview page={page} links={links} designState={designState} />
@@ -312,7 +331,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
               ) : (
                 editorContent
               )}
-            </div>
+            </motion.div>
           </ScrollArea>
           <DrawerFooter className="border-t border-border/60 pt-3">
             <div className="flex gap-2">
