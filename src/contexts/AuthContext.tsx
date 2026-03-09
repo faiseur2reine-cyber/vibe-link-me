@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         // Reset subscription when logged out
         setSubscription(defaultSubscription);
+        setNeedsUsername(false);
       }
     });
 
