@@ -17,7 +17,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   default: {
     name: 'Default',
     bg: 'bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50',
-    btn: 'bg-white/70 backdrop-blur-sm text-gray-800 border border-white/50 shadow-sm hover:shadow-md hover:bg-white/90 hover:-translate-y-0.5',
+    btn: 'bg-white/80 backdrop-blur-xl text-gray-800 border border-white/60 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_16px_-2px_rgba(0,0,0,0.12),0_8px_24px_-4px_rgba(0,0,0,0.08)] hover:bg-white/95 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm',
     text: 'text-gray-900',
     subtleText: 'text-gray-500',
     accent: 'text-purple-600',
@@ -29,7 +29,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   sunset: {
     name: 'Sunset',
     bg: 'bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100',
-    btn: 'bg-white/60 backdrop-blur-sm text-gray-800 border border-orange-200/50 shadow-sm hover:shadow-md hover:bg-white/80 hover:-translate-y-0.5',
+    btn: 'bg-white/70 backdrop-blur-xl text-gray-800 border border-orange-200/40 shadow-[0_2px_8px_-2px_rgba(234,88,12,0.08),0_4px_16px_-4px_rgba(234,88,12,0.05)] hover:shadow-[0_4px_16px_-2px_rgba(234,88,12,0.15),0_8px_24px_-4px_rgba(234,88,12,0.08)] hover:bg-white/90 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm',
     text: 'text-gray-900',
     subtleText: 'text-orange-700/60',
     accent: 'text-orange-600',
@@ -41,7 +41,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   ocean: {
     name: 'Ocean',
     bg: 'bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100',
-    btn: 'bg-white/60 backdrop-blur-sm text-gray-800 border border-blue-200/50 shadow-sm hover:shadow-md hover:bg-white/80 hover:-translate-y-0.5',
+    btn: 'bg-white/70 backdrop-blur-xl text-gray-800 border border-blue-200/40 shadow-[0_2px_8px_-2px_rgba(14,165,233,0.08),0_4px_16px_-4px_rgba(14,165,233,0.05)] hover:shadow-[0_4px_16px_-2px_rgba(14,165,233,0.15),0_8px_24px_-4px_rgba(14,165,233,0.08)] hover:bg-white/90 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm',
     text: 'text-gray-900',
     subtleText: 'text-blue-700/60',
     accent: 'text-cyan-600',
@@ -53,7 +53,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   midnight: {
     name: 'Midnight',
     bg: 'bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900',
-    btn: 'bg-white/10 backdrop-blur-md text-white border border-white/10 shadow-lg shadow-blue-500/5 hover:bg-white/15 hover:border-white/20 hover:-translate-y-0.5',
+    btn: 'bg-white/[0.06] backdrop-blur-2xl text-white/90 border border-white/[0.08] shadow-[0_2px_12px_-2px_rgba(59,130,246,0.15),0_0_1px_0_rgba(255,255,255,0.1)_inset] hover:bg-white/[0.1] hover:border-white/[0.15] hover:shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_1px_0_rgba(255,255,255,0.15)_inset] hover:-translate-y-0.5 active:translate-y-0',
     text: 'text-white',
     subtleText: 'text-blue-300/60',
     accent: 'text-blue-400',
@@ -65,7 +65,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   forest: {
     name: 'Forest',
     bg: 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50',
-    btn: 'bg-white/60 backdrop-blur-sm text-gray-800 border border-emerald-200/50 shadow-sm hover:shadow-md hover:bg-white/80 hover:-translate-y-0.5',
+    btn: 'bg-white/70 backdrop-blur-xl text-gray-800 border border-emerald-200/40 shadow-[0_2px_8px_-2px_rgba(16,185,129,0.08),0_4px_16px_-4px_rgba(16,185,129,0.05)] hover:shadow-[0_4px_16px_-2px_rgba(16,185,129,0.15),0_8px_24px_-4px_rgba(16,185,129,0.08)] hover:bg-white/90 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm',
     text: 'text-gray-900',
     subtleText: 'text-emerald-700/60',
     accent: 'text-emerald-600',
@@ -77,7 +77,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   neon: {
     name: 'Neon',
     bg: 'bg-gray-950',
-    btn: 'bg-fuchsia-500/10 backdrop-blur-md text-fuchsia-300 border border-fuchsia-500/30 shadow-lg shadow-fuchsia-500/10 hover:bg-fuchsia-500/20 hover:shadow-fuchsia-500/20 hover:border-fuchsia-400/50 hover:-translate-y-0.5',
+    btn: 'bg-fuchsia-500/[0.08] backdrop-blur-2xl text-fuchsia-200 border border-fuchsia-500/20 shadow-[0_2px_16px_-2px_rgba(217,70,239,0.2),0_0_1px_0_rgba(217,70,239,0.3)_inset] hover:bg-fuchsia-500/[0.15] hover:border-fuchsia-400/40 hover:shadow-[0_4px_24px_-2px_rgba(217,70,239,0.35),0_0_1px_0_rgba(217,70,239,0.5)_inset] hover:-translate-y-0.5 active:translate-y-0',
     text: 'text-white',
     subtleText: 'text-fuchsia-400/60',
     accent: 'text-fuchsia-400',
@@ -90,7 +90,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   glass_dark: {
     name: 'Glass Dark',
     bg: 'bg-gradient-to-br from-gray-900 via-slate-900 to-zinc-900',
-    btn: 'bg-white/[0.07] backdrop-blur-xl text-white/90 border border-white/[0.12] shadow-lg shadow-black/20 hover:bg-white/[0.12] hover:border-white/20 hover:-translate-y-0.5',
+    btn: 'bg-white/[0.05] backdrop-blur-2xl text-white/90 border border-white/[0.08] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.5),0_0_1px_0_rgba(255,255,255,0.08)_inset] hover:bg-white/[0.1] hover:border-white/[0.14] hover:shadow-[0_8px_32px_-4px_rgba(0,0,0,0.6),0_0_1px_0_rgba(255,255,255,0.12)_inset] hover:-translate-y-0.5 active:translate-y-0',
     text: 'text-white',
     subtleText: 'text-white/40',
     accent: 'text-sky-400',
@@ -102,7 +102,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   pastel: {
     name: 'Pastel Dream',
     bg: 'bg-gradient-to-br from-pink-100 via-violet-100 to-cyan-100',
-    btn: 'bg-white/80 backdrop-blur-sm text-violet-900 border border-violet-200/40 shadow-sm hover:shadow-md hover:bg-white/95 hover:-translate-y-0.5',
+    btn: 'bg-white/80 backdrop-blur-xl text-violet-900 border border-violet-200/30 shadow-[0_2px_8px_-2px_rgba(139,92,246,0.1),0_4px_16px_-4px_rgba(236,72,153,0.06)] hover:shadow-[0_4px_20px_-2px_rgba(139,92,246,0.18),0_8px_28px_-4px_rgba(236,72,153,0.1)] hover:bg-white/95 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm',
     text: 'text-violet-950',
     subtleText: 'text-violet-400',
     accent: 'text-pink-500',
