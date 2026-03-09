@@ -199,7 +199,7 @@ const HeroSection = () => {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.15, duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
-                className="absolute -right-14 bottom-28 bg-card/95 backdrop-blur-sm border border-border/60 rounded-2xl px-4 py-3 shadow-xl shadow-foreground/5"
+                className="absolute -right-14 bottom-28 hidden sm:block bg-card/95 backdrop-blur-sm border border-border/60 rounded-2xl px-4 py-3 shadow-xl shadow-foreground/5"
               >
                 <p className="text-xs font-bold text-primary">{t('landing.mockupDesign')}</p>
                 <p className="text-[9px] text-muted-foreground font-medium">{t('landing.mockupDesignSub')}</p>
