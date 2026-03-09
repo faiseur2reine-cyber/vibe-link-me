@@ -12,6 +12,7 @@ import DesignLivePreview from './DesignLivePreview';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, PanInfo } from 'framer-motion';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
