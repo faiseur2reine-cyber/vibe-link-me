@@ -346,14 +346,14 @@ const PublicProfile = () => {
                           key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
-                          whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.97 }}
-                          className={`link-item group flex items-center gap-3 px-4 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold transition-shadow duration-300 shadow-md hover:shadow-xl active:shadow-sm ${customBtnBg ? '' : theme.btn}`}
+                          whileHover={{ scale: 1.025, y: -2 }} whileTap={{ scale: 0.97 }}
+                          className={`link-item group flex items-center gap-3.5 px-5 py-4 sm:py-5 rounded-2xl text-sm sm:text-base font-bold transition-all duration-300 ease-out ${customBtnBg ? '' : theme.btn}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
-                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                          <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
                             <LinkFavicon url={link.url} size="lg" />
                           </div>
                           <div className="flex-1 min-w-0">
