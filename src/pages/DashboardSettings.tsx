@@ -73,10 +73,14 @@ const DashboardSettings = () => {
   const handleSaveUsername = async () => {
     if (usernameStatus !== 'available') return;
     setUsernameSaving(true);
-    const { error } = await supabase
-      .from('profiles')
-      .update({ username: newUsername })
-      .eq('user_id', user!.id);
+
+    // Update profiles + all creator_pages in parallel
+    const [profileResult, pagesResult] = await Promise.all([
+      supabase.from('profiles').update({ username: newUsername }).eq('user_id', user!.id),
+      supabase.from('creator_pages').update({ username: newUsername }).eq('user_id', user!.id),
+    ]);
+
+    const error = profileResult.error || pagesResult.error;
     if (error) {
       toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
     } else {
