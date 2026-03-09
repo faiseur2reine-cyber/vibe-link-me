@@ -7,7 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/DashboardNew";
 import ResetPassword from "./pages/ResetPassword";
 import SetUsername from "./pages/SetUsername";
 import PublicProfile from "./pages/PublicProfile";
@@ -29,11 +29,10 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/*" element={<Dashboard />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/set-username" element={<SetUsername />} />
               <Route path="/:username" element={<PublicProfile />} />
-              {/* Catch-all must be last */}
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
