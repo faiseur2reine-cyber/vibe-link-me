@@ -9,10 +9,12 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles } from 'lucide-react';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
 
 const localeMap: Record<string, Locale> = {
+  fr, en: enUS, es, de, it, pt: ptBR
+};
   fr, en: enUS, es, de, it, pt: ptBR
 };
 
