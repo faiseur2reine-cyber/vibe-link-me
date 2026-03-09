@@ -174,7 +174,7 @@ const Dashboard = () => {
                   {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
                 </button>
                 <button
-                  onClick={() => user && useAuth().signOut()}
+                  onClick={signOut}
                   className="h-[30px] w-[30px] inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
