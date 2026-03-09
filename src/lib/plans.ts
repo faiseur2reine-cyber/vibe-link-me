@@ -27,3 +27,11 @@ export const PLANS = {
 } as const;
 
 export type PlanKey = keyof typeof PLANS;
+
+// Helper to get plan by price ID
+export const getPlanByPriceId = (priceId: string): PlanKey => {
+  for (const [key, plan] of Object.entries(PLANS)) {
+    if (plan.price_id === priceId) return key as PlanKey;
+  }
+  return 'free';
+};
