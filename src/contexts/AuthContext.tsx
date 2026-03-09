@@ -43,6 +43,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState<SubscriptionState>(defaultSubscription);
+  const [needsUsername, setNeedsUsername] = useState(false);
+
+  const checkUsernameNeeded = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('user_id', userId)
+      .maybeSingle();
+    setNeedsUsername(!!data?.username?.startsWith('user_'));
+  }, []);
 
   const checkSubscription = useCallback(async () => {
     try {
