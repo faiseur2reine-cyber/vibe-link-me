@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,11 +7,95 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Check, X, ArrowLeft } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { z } from 'zod';
+
+// ─── Password strength ───────────────────────────────────────────────────────
+
+interface PasswordStrength {
+  score: number; // 0-4
+  label: string;
+  color: string;
+  checks: {
+    length: boolean;
+    uppercase: boolean;
+    lowercase: boolean;
+    number: boolean;
+    special: boolean;
+  };
+}
+
+const getPasswordStrength = (password: string): PasswordStrength => {
+  const checks = {
+    length:    password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number:    /[0-9]/.test(password),
+    special:   /[^A-Za-z0-9]/.test(password),
+  };
+  const passed = Object.values(checks).filter(Boolean).length;
+  const labels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
+  const colors = [
+    'bg-destructive',
+    'bg-orange-500',
+    'bg-yellow-500',
+    'bg-primary/80',
+    'bg-primary',
+  ];
+  return { score: passed, label: labels[passed] ?? labels[0], color: colors[passed] ?? colors[0], checks };
+};
+
+interface PasswordStrengthMeterProps {
+  password: string;
+}
+
+const PasswordStrengthMeter = ({ password }: PasswordStrengthMeterProps) => {
+  const { score, label, color, checks } = useMemo(() => getPasswordStrength(password), [password]);
+  if (!password) return null;
+
+  const checkItems = [
+    { key: 'length',    label: '8 caractères minimum' },
+    { key: 'uppercase', label: 'Une majuscule' },
+    { key: 'lowercase', label: 'Une minuscule' },
+    { key: 'number',    label: 'Un chiffre' },
+    { key: 'special',   label: 'Un caractère spécial (!@#…)' },
+  ] as const;
+
+  return (
+    <div className="space-y-2 mt-1">
+      {/* Bar */}
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
+            className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+              i <= score ? color : 'bg-muted'
+            }`}
+          />
+        ))}
+      </div>
+      <p className={`text-xs font-medium ${score <= 1 ? 'text-destructive' : score <= 2 ? 'text-orange-500' : score <= 3 ? 'text-yellow-600' : 'text-primary'}`}>
+        {label}
+      </p>
+      {/* Checklist */}
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+        {checkItems.map(({ key, label }) => (
+          <li key={key} className={`flex items-center gap-1.5 text-xs ${checks[key] ? 'text-primary' : 'text-muted-foreground'}`}>
+            {checks[key]
+              ? <Check className="w-3 h-3 shrink-0" />
+              : <X className="w-3 h-3 shrink-0 opacity-50" />}
+            {label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 const Auth = () => {
   const { t } = useTranslation();
@@ -31,6 +115,9 @@ const Auth = () => {
 
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
+
+  const passwordStrength = useMemo(() => getPasswordStrength(password), [password]);
+  const isPasswordValid = passwordStrength.score === 5;
 
   useEffect(() => {
     if (user) navigate('/dashboard');
@@ -76,8 +163,17 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (usernameStatus !== 'available') return;
+    if (!isPasswordValid) {
+      toast({ title: 'Mot de passe trop faible', description: 'Remplissez tous les critères de sécurité.', variant: 'destructive' });
+      return;
+    }
     setLoading(true);
-    const schema = z.object({ email: z.string().email().max(255), password: z.string().min(6).max(128), username: z.string().min(3).max(30).regex(/^[a-z0-9_-]+$/), displayName: z.string().max(100).optional() });
+    const schema = z.object({
+      email: z.string().email().max(255),
+      password: z.string().min(8).max(128).regex(/[A-Z]/).regex(/[a-z]/).regex(/[0-9]/).regex(/[^A-Za-z0-9]/),
+      username: z.string().min(3).max(30).regex(/^[a-z0-9_-]+$/),
+      displayName: z.string().max(100).optional(),
+    });
     const result = schema.safeParse({ email, password, username, displayName: displayName || undefined });
     if (!result.success) { toast({ title: result.error.errors[0].message, variant: 'destructive' }); setLoading(false); return; }
     const { error } = await supabase.auth.signUp({ email, password, options: { data: { username, display_name: displayName || username }, emailRedirectTo: window.location.origin } });
@@ -198,9 +294,21 @@ const Auth = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">{t('auth.password')}</Label>
-                    <Input id="signup-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={8}
+                    />
+                    <PasswordStrengthMeter password={password} />
                   </div>
-                  <Button type="submit" className="w-full" disabled={loading || usernameStatus !== 'available'}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={loading || usernameStatus !== 'available' || !isPasswordValid}
+                  >
                     {loading ? <Loader2 className="animate-spin" /> : t('auth.signupBtn')}
                   </Button>
                 </form>
@@ -234,3 +342,4 @@ const Auth = () => {
 };
 
 export default Auth;
+
