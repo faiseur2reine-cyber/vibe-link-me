@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
 import SetUsername from "./pages/SetUsername";
 import PublicProfile from "./pages/PublicProfile";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import "@/i18n";
 
