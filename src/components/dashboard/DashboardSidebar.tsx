@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { RippleEffect } from '@/components/ui/ripple-effect';
 import { cn } from '@/lib/utils';
 
 const mainItems = [
