@@ -153,7 +153,7 @@ const Dashboard = () => {
         .eq('user_id', user.id)
         .single();
 
-      if (!data?.username) {
+      if (!data?.username || data.username.startsWith('user_')) {
         navigate('/set-username', { replace: true });
       } else {
         setProfileChecked(true);

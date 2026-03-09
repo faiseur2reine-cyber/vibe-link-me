@@ -15,6 +15,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   subscription: SubscriptionState;
+  needsUsername: boolean;
   signOut: () => Promise<void>;
   checkSubscription: () => Promise<void>;
 }
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   subscription: defaultSubscription,
+  needsUsername: false,
   signOut: async () => {},
   checkSubscription: async () => {},
 });
@@ -41,6 +43,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState<SubscriptionState>(defaultSubscription);
+  const [needsUsername, setNeedsUsername] = useState(false);
+
+  const checkUsernameNeeded = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('user_id', userId)
+      .maybeSingle();
+    setNeedsUsername(!!data?.username?.startsWith('user_'));
+  }, []);
 
   const checkSubscription = useCallback(async () => {
     try {
@@ -70,11 +82,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setLoading(false);
       if (session?.user) {
-        // Defer to avoid Supabase deadlock
-        setTimeout(() => checkSubscription(), 0);
+        setTimeout(() => {
+          checkSubscription();
+          checkUsernameNeeded(session.user.id);
+        }, 0);
       } else {
         // Reset subscription when logged out
         setSubscription(defaultSubscription);
+        setNeedsUsername(false);
       }
     });
 
@@ -83,6 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       if (session?.user) {
         checkSubscription();
+        checkUsernameNeeded(session.user.id);
       }
     });
 
@@ -112,6 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: session?.user ?? null, 
         loading, 
         subscription,
+        needsUsername,
         signOut, 
         checkSubscription 
       }}
