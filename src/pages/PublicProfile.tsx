@@ -396,21 +396,29 @@ const PublicProfile = () => {
                         key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                         onClick={() => recordClick(link.id, clickVariant)}
                         variants={fadeUp}
-                        whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.97 }}
-                        className={`link-item group flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ease-out ${customBtnBg ? '' : theme.btn}`}
+                        whileHover={{ scale: 1.018, y: -3 }} whileTap={{ scale: 0.975 }}
+                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-sm font-semibold transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${customBtnBg ? '' : theme.btn}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
                         }}
                       >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 ${isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'}`}>
+                        {/* Hover shine effect */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                          style={{
+                            background: isDarkTheme
+                              ? 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 55%, transparent 60%)'
+                              : 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.4) 55%, transparent 60%)',
+                          }}
+                        />
+                        <div className={`w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[-2deg] ${isDarkTheme ? 'bg-white/[0.07] group-hover:bg-white/[0.12]' : 'bg-black/[0.04] group-hover:bg-black/[0.07]'}`}>
                           <LinkFavicon url={link.url} size="md" />
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 relative z-[1]">
                           <span className="block truncate">{link.title}</span>
                           {link.description && <p className="text-xs font-normal opacity-40 truncate mt-0.5">{link.description}</p>}
                         </div>
-                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-30 transition-all duration-300 shrink-0 -translate-x-1 group-hover:translate-x-0" />
+                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-30 transition-all duration-500 shrink-0 -translate-x-2 group-hover:translate-x-0" />
                       </motion.a>,
                       link,
                     );
