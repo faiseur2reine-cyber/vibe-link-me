@@ -210,7 +210,7 @@ export function useCreatorPages() {
     return { data: newPage, error: null };
   };
 
-  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, refetch: fetchPages };
+  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, addMultipleLinks, refetch: fetchPages };
 }
 
 export function usePageLinks(pageId: string | null) {
