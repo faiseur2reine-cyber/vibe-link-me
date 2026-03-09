@@ -227,7 +227,7 @@ const PublicProfile = () => {
 
             {/* Avatar */}
             <motion.div variants={scaleIn} className="flex justify-center">
-              <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ${
                 page.cover_url
                   ? 'ring-[3px] ring-white/20 shadow-2xl shadow-black/30'
                   : theme.avatarRing
@@ -236,7 +236,7 @@ const PublicProfile = () => {
                   <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
                 ) : (
                   <div className={`w-full h-full flex items-center justify-center ${isDarkTheme ? 'bg-white/10' : 'bg-primary'}`}>
-                    <span className="text-3xl sm:text-4xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
                   </div>
                 )}
               </div>
