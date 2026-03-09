@@ -103,6 +103,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-1">
             {!selectedPageId && (
               <Button
+                data-tour="create-button"
                 onClick={() => setCreateDialogOpen(true)}
                 size="sm"
                 className="h-[30px] rounded-lg gap-1.5 text-[11px] font-medium px-2.5 shadow-none"
