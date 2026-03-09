@@ -194,12 +194,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
         {/* Preview */}
         <div className="hidden lg:block">
-          <div className="sticky top-16">
-            <div className="flex items-center gap-1.5 mb-3">
-              <Eye className="w-3 h-3 text-muted-foreground" />
-              <span className="text-[11px] font-medium text-muted-foreground">{t('dashboard.preview')}</span>
-            </div>
-            <LinkPreview profile={profileLike} links={links} />
+          <div className="sticky top-16 h-[calc(100vh-6rem)]">
+            <LivePreview page={page} links={links} />
           </div>
         </div>
       </div>
