@@ -100,7 +100,6 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const isMobile = useIsMobile();
-  const isMobile = useIsMobile();
 
   const handleSave = async () => {
     setSaving(true);
