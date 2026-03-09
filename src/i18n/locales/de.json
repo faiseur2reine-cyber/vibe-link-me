@@ -35,6 +35,29 @@
     "maxLinks": "Du hast das Link-Limit erreicht.",
     "plan": "Plan"
   },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalte dein Konto und Abo",
+    "subscription": "Abonnement",
+    "manageSubscription": "Verwalte deinen Plan und deine Abrechnung",
+    "premium": "Premium",
+    "free": "Kostenlos",
+    "unlimitedLinks": "Unbegrenzte Links",
+    "upToLinks": "Bis zu {{count}} Links",
+    "nextRenewal": "Nächste Verlängerung: {{date}}",
+    "manageBtn": "Abo verwalten",
+    "upgradePrompt": "Upgrade auf Premium für mehr Funktionen",
+    "perMonth": "/Monat",
+    "perYear": "/Jahr",
+    "accountActions": "Konto-Aktionen",
+    "accountActionsDesc": "Verwalte dein Konto und deine Daten",
+    "email": "E-Mail",
+    "signOut": "Abmelden",
+    "dangerZone": "Gefahrenbereich",
+    "dangerDesc": "Um dein Konto zu löschen, kontaktiere den Support unter support@mytaptap.com",
+    "refreshStatus": "Status aktualisiert",
+    "refreshDesc": "Dein Abo-Status wurde aktualisiert."
+  },
   "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht.", "backHome": "Zurück zur Startseite" },
   "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" },
   "landing": {
@@ -54,5 +77,11 @@
     "mockupDesignSub": "CSS + Schriften",
     "mockupBio": "Digital Creator · Paris 🇫🇷",
     "mockupLinks": ["Mein Portfolio", "YouTube", "Newsletter", "1:1 Coaching"]
+  },
+  "urgency": {
+    "offerEnds": "Angebot endet in",
+    "spotsLeft": "Nur noch {{count}} kostenlose Plätze",
+    "liveNow": "{{count}} Personen online",
+    "justSignedUp": "Hat sich aus {{city}} angemeldet · vor {{ago}}"
   }
 }
