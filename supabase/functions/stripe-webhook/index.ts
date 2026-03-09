@@ -7,16 +7,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
 
-// Map price IDs to plan names
 const PRICE_TO_PLAN: Record<string, string> = {
-  "price_1T8hm0F6s5PSwitkpD9F97lO": "starter", // 19,99€/month
-  "price_1T8hiXF6s5PSwitkQraXZXeN": "pro",     // 115€/year
+  "price_1T8hm0F6s5PSwitkpD9F97lO": "starter",
+  "price_1T8hiXF6s5PSwitkQraXZXeN": "pro",
 };
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
+
+async function findUserByEmail(supabase: ReturnType<typeof createClient>, email: string) {
+  const { data } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+  return data?.users?.find(u => u.email === email);
+}
+
+async function updateUserPlan(supabase: ReturnType<typeof createClient>, userId: string, plan: string) {
+  const { error } = await supabase
+    .from("profiles")
+    .update({ plan })
+    .eq("user_id", userId);
+
+  if (error) {
+    logStep("ERROR updating plan", { userId, plan, error: error.message });
+  } else {
+    logStep("Plan updated successfully", { userId, plan });
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,17 +42,9 @@ serve(async (req) => {
 
   const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
   const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
-  
-  if (!stripeKey) {
-    logStep("ERROR", { message: "STRIPE_SECRET_KEY is not set" });
-    return new Response(JSON.stringify({ error: "Configuration error" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
 
-  if (!webhookSecret) {
-    logStep("ERROR", { message: "STRIPE_WEBHOOK_SECRET is not set" });
+  if (!stripeKey || !webhookSecret) {
+    logStep("ERROR", { message: "Missing STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET" });
     return new Response(JSON.stringify({ error: "Configuration error" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
@@ -61,7 +70,7 @@ serve(async (req) => {
     logStep("Event received", { type: event.type, id: event.id });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    logStep("ERROR - Signature verification failed", { message });
+    logStep("Signature verification failed", { message });
     return new Response(JSON.stringify({ error: `Webhook Error: ${message}` }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,
@@ -80,52 +89,25 @@ serve(async (req) => {
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
-        
-        // Get customer email
+
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted || !("email" in customer) || !customer.email) {
           logStep("Customer not found or deleted", { customerId });
           break;
         }
 
-        const email = customer.email;
         const priceId = subscription.items.data[0]?.price.id;
         const plan = PRICE_TO_PLAN[priceId] || "free";
         const status = subscription.status;
 
-        logStep("Subscription update", { email, priceId, plan, status });
+        logStep("Subscription event", { email: customer.email, priceId, plan, status });
 
-        // Only update plan if subscription is active
         if (status === "active") {
-          const { error } = await supabase
-            .from("profiles")
-            .update({ plan })
-            .eq("user_id", (
-              await supabase
-                .from("profiles")
-                .select("user_id")
-                .ilike("user_id", `%`)
-                .limit(1)
-                .then(async () => {
-                  // Get user by email from auth
-                  const { data: users } = await supabase.auth.admin.listUsers();
-                  const user = users?.users?.find(u => u.email === email);
-                  return user?.id;
-                })
-            ));
-
-          // Alternative: Use RPC or direct query
-          const { data: authUsers } = await supabase.auth.admin.listUsers();
-          const targetUser = authUsers?.users?.find(u => u.email === email);
-          
-          if (targetUser) {
-            await supabase
-              .from("profiles")
-              .update({ plan })
-              .eq("user_id", targetUser.id);
-            logStep("Plan updated", { userId: targetUser.id, plan });
+          const user = await findUserByEmail(supabase, customer.email);
+          if (user) {
+            await updateUserPlan(supabase, user.id, plan);
           } else {
-            logStep("User not found for email", { email });
+            logStep("User not found", { email: customer.email });
           }
         }
         break;
@@ -135,37 +117,27 @@ serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
 
-        // Get customer email
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted || !("email" in customer) || !customer.email) {
           logStep("Customer not found or deleted", { customerId });
           break;
         }
 
-        const email = customer.email;
-        logStep("Subscription cancelled", { email });
+        logStep("Subscription cancelled", { email: customer.email });
 
-        // Find user and reset to free plan
-        const { data: authUsers } = await supabase.auth.admin.listUsers();
-        const targetUser = authUsers?.users?.find(u => u.email === email);
-
-        if (targetUser) {
-          await supabase
-            .from("profiles")
-            .update({ plan: "free" })
-            .eq("user_id", targetUser.id);
-          logStep("Plan reset to free", { userId: targetUser.id });
+        const user = await findUserByEmail(supabase, customer.email);
+        if (user) {
+          await updateUserPlan(supabase, user.id, "free");
         }
         break;
       }
 
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        logStep("Checkout completed", { 
-          sessionId: session.id, 
-          customerEmail: session.customer_email 
+        logStep("Checkout completed", {
+          sessionId: session.id,
+          email: session.customer_email,
         });
-        // Plan update is handled by subscription events
         break;
       }
 
