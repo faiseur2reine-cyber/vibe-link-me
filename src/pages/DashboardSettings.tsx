@@ -407,6 +407,45 @@ const DashboardSettings = () => {
           </Card>
         )}
 
+        {/* Username */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <AtSign className="w-4 h-4 text-primary" />
+              {t('auth.username') || 'Nom d\'utilisateur'}
+            </CardTitle>
+            <CardDescription>
+              Votre URL publique : mytaptap.com/<span className="font-medium">{currentUsername}</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Input
+                  value={newUsername}
+                  onChange={(e) => checkNewUsername(e.target.value)}
+                  placeholder={currentUsername}
+                  minLength={3}
+                  maxLength={30}
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+                  {usernameStatus === 'available' && <Check className="w-4 h-4 text-primary" />}
+                  {usernameStatus === 'taken' && <X className="w-4 h-4 text-destructive" />}
+                </div>
+              </div>
+              <Button
+                onClick={handleSaveUsername}
+                disabled={usernameSaving || usernameStatus !== 'available'}
+              >
+                {usernameSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('dashboard.save')}
+              </Button>
+            </div>
+            {usernameStatus === 'taken' && <p className="text-xs text-destructive">{t('auth.usernameTaken')}</p>}
+            {usernameStatus === 'available' && <p className="text-xs text-primary">{t('auth.usernameAvailable')}</p>}
+          </CardContent>
+        </Card>
+
         {/* Account Actions */}
         <Card>
           <CardHeader>
