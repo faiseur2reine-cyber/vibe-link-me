@@ -42,10 +42,51 @@ const DashboardSettings = () => {
   const isPro = subscription.plan === 'pro';
 
   useEffect(() => {
-    if (user && isPro) {
-      loadCustomDomain();
+    if (user) {
+      loadUsername();
+      if (isPro) loadCustomDomain();
     }
   }, [user, isPro]);
+
+  const loadUsername = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('user_id', user!.id)
+      .single();
+    if (data) setCurrentUsername(data.username);
+  };
+
+  const checkNewUsername = (value: string) => {
+    if (usernameTimer) clearTimeout(usernameTimer);
+    const cleaned = value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    setNewUsername(cleaned);
+    if (cleaned.length < 3 || cleaned === currentUsername) { setUsernameStatus('idle'); return; }
+    setUsernameStatus('checking');
+    const timer = setTimeout(async () => {
+      const { data } = await supabase.from('profiles').select('username').eq('username', cleaned).maybeSingle();
+      setUsernameStatus(data ? 'taken' : 'available');
+    }, 500);
+    setUsernameTimer(timer);
+  };
+
+  const handleSaveUsername = async () => {
+    if (usernameStatus !== 'available') return;
+    setUsernameSaving(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ username: newUsername })
+      .eq('user_id', user!.id);
+    if (error) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+    } else {
+      setCurrentUsername(newUsername);
+      setNewUsername('');
+      setUsernameStatus('idle');
+      toast({ title: t('settings.usernameSaved') || 'Nom d\'utilisateur mis à jour !' });
+    }
+    setUsernameSaving(false);
+  };
 
   const loadCustomDomain = async () => {
     setDomainLoading(true);
