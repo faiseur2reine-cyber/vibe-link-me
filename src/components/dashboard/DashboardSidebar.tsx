@@ -57,8 +57,8 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.end}
-                      className="hover:bg-accent/50 transition-colors"
-                      activeClassName="bg-accent text-primary font-medium"
+                      className="hover:bg-accent/50 transition-colors relative"
+                      activeClassName="bg-accent text-primary font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full"
                     >
                       <item.icon className={collapsed ? '' : 'mr-2 h-4 w-4'} />
                       {!collapsed && <span>{item.title}</span>}
