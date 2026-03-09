@@ -271,6 +271,48 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       </div>
     </div>
   );
+
+  // Mobile: Bottom sheet drawer
+  if (isMobile) {
+    return (
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerTrigger asChild>
+          <Button className="w-full gap-2">
+            <Paintbrush className="w-4 h-4" />
+            Ouvrir l'éditeur de design
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="max-h-[85vh]">
+          <DrawerHeader className="border-b border-border/60">
+            <DrawerTitle className="text-left">Éditeur de design</DrawerTitle>
+            <DrawerDescription className="text-left">
+              Personnalise les couleurs, polices et mise en page de ta page.
+            </DrawerDescription>
+          </DrawerHeader>
+          <ScrollArea className="flex-1 overflow-auto">
+            <div className="px-4 pb-4">
+              {editorContent}
+            </div>
+          </ScrollArea>
+          <DrawerFooter className="border-t border-border/60 pt-3">
+            <div className="flex gap-2">
+              <DrawerClose asChild>
+                <Button variant="outline" className="flex-1">
+                  Annuler
+                </Button>
+              </DrawerClose>
+              <Button onClick={handleSave} disabled={saving} className="flex-1">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sauvegarder'}
+              </Button>
+            </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  // Desktop: Inline editor
+  return editorContent;
 };
 
 export default PageDesignEditor;
