@@ -255,7 +255,9 @@ export type Database = {
           bio: string | null
           cover_url: string | null
           created_at: string
+          custom_domain: string | null
           display_name: string | null
+          domain_verified: boolean | null
           id: string
           is_nsfw: boolean
           onboarding_completed: boolean
@@ -271,7 +273,9 @@ export type Database = {
           bio?: string | null
           cover_url?: string | null
           created_at?: string
+          custom_domain?: string | null
           display_name?: string | null
+          domain_verified?: boolean | null
           id?: string
           is_nsfw?: boolean
           onboarding_completed?: boolean
@@ -287,7 +291,9 @@ export type Database = {
           bio?: string | null
           cover_url?: string | null
           created_at?: string
+          custom_domain?: string | null
           display_name?: string | null
+          domain_verified?: boolean | null
           id?: string
           is_nsfw?: boolean
           onboarding_completed?: boolean
