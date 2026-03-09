@@ -9,6 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye } from 'lucide-react';
 import DesignLivePreview from './DesignLivePreview';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
@@ -94,6 +97,8 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
   const [layout, setLayout] = useState(page.link_layout || 'list');
   const [customCss, setCustomCss] = useState(page.custom_css || '');
   const [saving, setSaving] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSave = async () => {
     setSaving(true);
@@ -111,6 +116,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       toast({ title: result.error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Design sauvegardé !' });
+      if (isMobile) setDrawerOpen(false);
     }
     setSaving(false);
   };
@@ -138,7 +144,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
 
   const designState = { bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout, customCss };
 
-  return (
+  const editorContent = (
     <div className="space-y-6">
       {/* Live Preview */}
       <div className="space-y-3">
@@ -265,6 +271,48 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       </div>
     </div>
   );
+
+  // Mobile: Bottom sheet drawer
+  if (isMobile) {
+    return (
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerTrigger asChild>
+          <Button className="w-full gap-2">
+            <Paintbrush className="w-4 h-4" />
+            Ouvrir l'éditeur de design
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="max-h-[85vh]">
+          <DrawerHeader className="border-b border-border/60">
+            <DrawerTitle className="text-left">Éditeur de design</DrawerTitle>
+            <DrawerDescription className="text-left">
+              Personnalise les couleurs, polices et mise en page de ta page.
+            </DrawerDescription>
+          </DrawerHeader>
+          <ScrollArea className="flex-1 overflow-auto">
+            <div className="px-4 pb-4">
+              {editorContent}
+            </div>
+          </ScrollArea>
+          <DrawerFooter className="border-t border-border/60 pt-3">
+            <div className="flex gap-2">
+              <DrawerClose asChild>
+                <Button variant="outline" className="flex-1">
+                  Annuler
+                </Button>
+              </DrawerClose>
+              <Button onClick={handleSave} disabled={saving} className="flex-1">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sauvegarder'}
+              </Button>
+            </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  // Desktop: Inline editor
+  return editorContent;
 };
 
 export default PageDesignEditor;
