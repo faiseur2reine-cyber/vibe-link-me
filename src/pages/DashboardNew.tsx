@@ -15,6 +15,10 @@ import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
 import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
 import { DashboardTour } from '@/components/dashboard/DashboardTour';
+import DashboardAnalytics from './DashboardAnalytics';
+import DashboardThemes from './DashboardThemes';
+import DashboardProfile from './DashboardProfile';
+import DashboardSettings from './DashboardSettings';
 
 const DashboardHome = () => {
   const { t } = useTranslation();
