@@ -128,6 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: session?.user ?? null, 
         loading, 
         subscription,
+        needsUsername,
         signOut, 
         checkSubscription 
       }}
