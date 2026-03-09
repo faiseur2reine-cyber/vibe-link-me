@@ -57,7 +57,7 @@ const Dashboard = () => {
     }
   }, [pages.length, selectedPageId]);
 
-  if (authLoading || pagesLoading) {
+  if (authLoading || pagesLoading || onboardingLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -67,6 +67,27 @@ const Dashboard = () => {
   if (!user) return <Navigate to="/auth" replace />;
 
   const selectedPage = pages.find(p => p.id === selectedPageId) || null;
+
+  const checklistItems = [
+    {
+      id: 'create-page',
+      label: 'Créer votre première page',
+      completed: pages.length > 0,
+      icon: Link2,
+    },
+    {
+      id: 'customize-theme',
+      label: 'Personnaliser le thème',
+      completed: pages.some(p => p.theme !== 'default'),
+      icon: Palette,
+    },
+    {
+      id: 'share-page',
+      label: 'Partager votre page',
+      completed: false, // À implémenter avec tracking
+      icon: Share2,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
