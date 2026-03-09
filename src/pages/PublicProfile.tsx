@@ -291,23 +291,22 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-7 space-y-5">
+          <motion.div variants={stagger} className="mt-6 space-y-4">
             {sections.map((section, sIdx) => (
-              <motion.div key={sIdx} variants={fadeUp} className="space-y-2.5">
+              <motion.div key={sIdx} variants={fadeUp} className="space-y-2">
                 {section.title && (
-                  <div className="flex items-center gap-3 px-1">
-                    <div className={`h-px flex-1 ${hasCustomColors ? '' : theme.text} opacity-[0.08]`} style={page.custom_text_color ? { backgroundColor: page.custom_text_color } : {}} />
+                  <div className="flex items-center gap-3 px-1 pb-1">
                     <span
-                      className={`text-[10px] font-semibold uppercase tracking-[0.15em] ${hasCustomColors ? 'opacity-40' : theme.subtleText}`}
+                      className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${hasCustomColors ? 'opacity-35' : theme.subtleText}`}
                       style={page.custom_text_color ? { color: page.custom_text_color } : {}}
                     >
                       {section.title}
                     </span>
-                    <div className={`h-px flex-1 ${hasCustomColors ? '' : theme.text} opacity-[0.08]`} style={page.custom_text_color ? { backgroundColor: page.custom_text_color } : {}} />
+                    <div className={`h-px flex-1 ${isDarkTheme ? 'bg-white/[0.06]' : 'bg-black/[0.06]'}`} />
                   </div>
                 )}
 
-                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
+                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2' : 'space-y-2'}>
                   {section.links.map((link) => {
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
@@ -322,17 +321,14 @@ const PublicProfile = () => {
                           key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
-                          whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.98 }}
-                          className="group relative rounded-2xl overflow-hidden aspect-[2.2/1] shadow-md active:shadow-sm transition-shadow"
+                          whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.985 }}
+                          className="group relative rounded-2xl overflow-hidden aspect-[2.4/1] transition-shadow duration-300 hover:shadow-lg"
                         >
-                          <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-4">
-                            <p className="text-white text-sm sm:text-base font-bold truncate" style={customBtnText ? { color: customBtnText } : {}}>{link.title}</p>
-                            {link.description && <p className="text-white/50 text-xs mt-0.5 truncate">{link.description}</p>}
-                          </div>
-                          <div className="absolute top-2.5 right-2.5">
-                            <LinkFavicon url={link.url} size="sm" className="opacity-70" />
+                          <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-3.5">
+                            <p className="text-white text-sm font-semibold truncate" style={customBtnText ? { color: customBtnText } : {}}>{link.title}</p>
+                            {link.description && <p className="text-white/45 text-xs mt-0.5 truncate">{link.description}</p>}
                           </div>
                         </motion.a>,
                         link,
@@ -346,29 +342,21 @@ const PublicProfile = () => {
                           key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
-                          whileHover={{ scale: 1.02, y: -3 }} whileTap={{ scale: 0.975 }}
-                          className={`link-item group relative flex items-center gap-4 px-5 py-4 sm:py-5 rounded-[20px] text-sm sm:text-base font-bold transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${customBtnBg ? '' : theme.btn}`}
+                          whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
+                          className={`link-item group flex items-center gap-3.5 px-4 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${customBtnBg ? '' : theme.btn}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
-                          {/* Hover shine */}
-                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                            style={{
-                              background: isDarkTheme
-                                ? 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.04) 42%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 58%, transparent 65%)'
-                                : 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.5) 42%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.5) 58%, transparent 65%)',
-                            }}
-                          />
-                          <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[-3deg] ${isDarkTheme ? 'bg-white/[0.1] group-hover:bg-white/[0.16]' : 'bg-white/30 group-hover:bg-white/50'}`}>
-                            <LinkFavicon url={link.url} size="lg" />
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'}`}>
+                            <LinkFavicon url={link.url} size="md" />
                           </div>
-                          <div className="flex-1 min-w-0 relative z-[1]">
+                          <div className="flex-1 min-w-0">
                             <span className="block truncate">{link.title}</span>
-                            {link.description && <span className="block text-xs font-normal opacity-50 truncate mt-0.5">{link.description}</span>}
+                            {link.description && <span className="block text-xs font-normal opacity-45 truncate mt-0.5">{link.description}</span>}
                           </div>
-                          <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-25 transition-all duration-500 shrink-0 -translate-x-2 group-hover:translate-x-0" />
+                          <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-opacity duration-300 shrink-0" />
                         </motion.a>,
                         link,
                       );
@@ -382,7 +370,7 @@ const PublicProfile = () => {
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
                           whileTap={{ scale: 0.98 }}
-                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-sm transition-all duration-400 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.06]' : 'hover:bg-black/[0.03]'}`}
+                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-300 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -391,43 +379,32 @@ const PublicProfile = () => {
                           <LinkFavicon url={link.url} size="sm" />
                           <div className="flex-1 min-w-0">
                             <span className="font-medium">{link.title}</span>
-                            {link.description && <p className="text-xs opacity-40 truncate">{link.description}</p>}
+                            {link.description && <p className="text-xs opacity-35 truncate">{link.description}</p>}
                           </div>
-                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-30 transition-all duration-400 shrink-0 -translate-x-1 group-hover:translate-x-0" />
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-300 shrink-0" />
                         </motion.a>,
                         link,
                       );
                     }
 
-                    /* Default */
+                    /* Default — clean & modern */
                     return wrapNsfw(
                       <motion.a
                         key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                         onClick={() => recordClick(link.id, clickVariant)}
                         variants={fadeUp}
-                        whileHover={{ scale: 1.018, y: -3 }} whileTap={{ scale: 0.975 }}
-                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-sm font-semibold transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${customBtnBg ? '' : theme.btn}`}
+                        whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}
+                        className={`link-item group flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 ${customBtnBg ? '' : theme.btn}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
                         }}
                       >
-                        {/* Hover shine effect */}
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                          style={{
-                            background: isDarkTheme
-                              ? 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 55%, transparent 60%)'
-                              : 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.4) 55%, transparent 60%)',
-                          }}
-                        />
-                        <div className={`w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[-2deg] ${isDarkTheme ? 'bg-white/[0.07] group-hover:bg-white/[0.12]' : 'bg-black/[0.04] group-hover:bg-black/[0.07]'}`}>
-                          <LinkFavicon url={link.url} size="md" />
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isDarkTheme ? 'bg-white/[0.06]' : 'bg-black/[0.03]'}`}>
+                          <LinkFavicon url={link.url} size="sm" />
                         </div>
-                        <div className="flex-1 min-w-0 relative z-[1]">
-                          <span className="block truncate">{link.title}</span>
-                          {link.description && <p className="text-xs font-normal opacity-40 truncate mt-0.5">{link.description}</p>}
-                        </div>
-                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-30 transition-all duration-500 shrink-0 -translate-x-2 group-hover:translate-x-0" />
+                        <span className="flex-1 truncate">{link.title}</span>
+                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-20 transition-opacity duration-300 shrink-0" />
                       </motion.a>,
                       link,
                     );
@@ -440,10 +417,10 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'bottom' && <ScarcityBlock />}
 
           {/* Footer */}
-          <motion.div variants={fadeUp} className="pt-10 pb-4 safe-area-bottom">
+          <motion.div variants={fadeUp} className="pt-12 pb-4 safe-area-bottom">
             <Link
               to="/"
-              className={`flex items-center justify-center gap-1.5 text-[11px] font-medium opacity-20 hover:opacity-40 transition-opacity ${theme.text}`}
+              className={`flex items-center justify-center gap-1.5 text-[11px] font-medium opacity-15 hover:opacity-35 transition-opacity ${theme.text}`}
             >
               {t('footer.madeWith')} <Heart className="w-3 h-3" /> MyTaptap
             </Link>
