@@ -169,7 +169,7 @@ const Dashboard = () => {
     localStorage.setItem('theme', next ? 'dark' : 'light');
   };
 
-  if (authLoading) {
+  if (authLoading || !profileChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
