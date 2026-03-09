@@ -97,6 +97,8 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
   const [layout, setLayout] = useState(page.link_layout || 'list');
   const [customCss, setCustomCss] = useState(page.custom_css || '');
   const [saving, setSaving] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSave = async () => {
     setSaving(true);
@@ -114,6 +116,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       toast({ title: result.error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Design sauvegardé !' });
+      if (isMobile) setDrawerOpen(false);
     }
     setSaving(false);
   };
@@ -141,7 +144,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
 
   const designState = { bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout, customCss };
 
-  return (
+  const editorContent = (
     <div className="space-y-6">
       {/* Live Preview */}
       <div className="space-y-3">
