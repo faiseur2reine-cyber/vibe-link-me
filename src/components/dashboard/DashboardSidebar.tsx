@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { RippleEffect } from '@/components/ui/ripple-effect';
 import { cn } from '@/lib/utils';
 
 const mainItems = [
@@ -41,40 +42,42 @@ const NavItem = ({ item, collapsed, isActive }: NavItemProps) => {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive}>
-        <NavLink
-          to={item.url}
-          end={item.end}
-          className={cn(
-            "relative overflow-hidden transition-all duration-300 ease-out",
-            "hover:bg-accent/50",
-            // Active indicator bar with animation
-            "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2",
-            "before:w-1 before:rounded-r-full before:bg-primary",
-            "before:transition-all before:duration-300 before:ease-out",
-            isActive 
-              ? "before:h-6 before:opacity-100" 
-              : "before:h-0 before:opacity-0"
-          )}
-          activeClassName="bg-accent/80 font-medium"
-        >
-          <Icon 
+        <RippleEffect rippleColor="bg-primary/30">
+          <NavLink
+            to={item.url}
+            end={item.end}
             className={cn(
-              "h-4 w-4 transition-all duration-200",
-              collapsed ? "" : "mr-2",
-              isActive ? "text-primary scale-110" : "text-muted-foreground"
-            )} 
-          />
-          {!collapsed && (
-            <span 
+              "relative overflow-hidden transition-all duration-300 ease-out",
+              "hover:bg-accent/50",
+              // Active indicator bar with animation
+              "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2",
+              "before:w-1 before:rounded-r-full before:bg-primary",
+              "before:transition-all before:duration-300 before:ease-out",
+              isActive 
+                ? "before:h-6 before:opacity-100" 
+                : "before:h-0 before:opacity-0"
+            )}
+            activeClassName="bg-accent/80 font-medium"
+          >
+            <Icon 
               className={cn(
-                "transition-colors duration-200",
-                isActive ? "text-primary" : "text-foreground"
-              )}
-            >
-              {item.title}
-            </span>
-          )}
-        </NavLink>
+                "h-4 w-4 transition-all duration-200",
+                collapsed ? "" : "mr-2",
+                isActive ? "text-primary scale-110" : "text-muted-foreground"
+              )} 
+            />
+            {!collapsed && (
+              <span 
+                className={cn(
+                  "transition-colors duration-200",
+                  isActive ? "text-primary" : "text-foreground"
+                )}
+              >
+                {item.title}
+              </span>
+            )}
+          </NavLink>
+        </RippleEffect>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
