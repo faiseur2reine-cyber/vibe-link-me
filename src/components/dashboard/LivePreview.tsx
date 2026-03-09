@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Monitor, Smartphone, Tablet } from 'lucide-react';
+import { Monitor, Smartphone, Tablet, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 
 interface LivePreviewProps {
   page: CreatorPage;
-  links: Array<{ id: string; title: string; url: string }>;
+  links: Array<{ id: string; title: string; url: string; [key: string]: any }>;
 }
 
 type DeviceSize = 'mobile' | 'tablet' | 'desktop';
@@ -19,23 +19,53 @@ const deviceSizes = {
 };
 
 export const LivePreview = ({ page, links }: LivePreviewProps) => {
-  const [device, setDevice] = useState<DeviceSize>('desktop');
+  const [device, setDevice] = useState<DeviceSize>('mobile');
   const [scale, setScale] = useState(1);
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [refreshKey, setRefreshKey] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const prevDataRef = useRef<string>('');
+
+  // Auto-refresh when page or links change
+  useEffect(() => {
+    const dataFingerprint = JSON.stringify({
+      username: page.username,
+      display_name: page.display_name,
+      bio: page.bio,
+      avatar_url: page.avatar_url,
+      cover_url: page.cover_url,
+      theme: page.theme,
+      custom_bg_color: page.custom_bg_color,
+      custom_text_color: page.custom_text_color,
+      custom_accent_color: page.custom_accent_color,
+      custom_btn_color: page.custom_btn_color,
+      custom_btn_text_color: page.custom_btn_text_color,
+      custom_font: page.custom_font,
+      link_layout: page.link_layout,
+      custom_css: page.custom_css,
+      social_links: page.social_links,
+      urgency_config: page.urgency_config,
+      links: links.map(l => ({ id: l.id, title: l.title, url: l.url })),
+    });
+
+    if (prevDataRef.current && prevDataRef.current !== dataFingerprint) {
+      // Debounce refresh
+      const timer = setTimeout(() => setRefreshKey(k => k + 1), 600);
+      return () => clearTimeout(timer);
+    }
+    prevDataRef.current = dataFingerprint;
+  }, [page, links]);
 
   useEffect(() => {
     const updateScale = () => {
       const container = document.getElementById('preview-container');
       if (!container) return;
-      
+
       const containerRect = container.getBoundingClientRect();
-      setContainerSize({ width: containerRect.width, height: containerRect.height });
-      
       const deviceWidth = deviceSizes[device].width;
       const deviceHeight = deviceSizes[device].height;
-      
-      const scaleX = (containerRect.width - 40) / deviceWidth;
-      const scaleY = (containerRect.height - 40) / deviceHeight;
+
+      const scaleX = (containerRect.width - 32) / deviceWidth;
+      const scaleY = (containerRect.height - 32) / deviceHeight;
       setScale(Math.min(scaleX, scaleY, 1));
     };
 
@@ -44,13 +74,18 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
     return () => window.removeEventListener('resize', updateScale);
   }, [device]);
 
+  const handleRefresh = useCallback(() => {
+    setRefreshKey(k => k + 1);
+  }, []);
+
   const currentDevice = deviceSizes[device];
+  const previewUrl = `/${page.username}`;
 
   return (
     <Card className="flex flex-col h-full border-border/60 bg-muted/30">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-2 p-3 border-b border-border/60">
-        <h3 className="text-sm font-semibold">Aperçu en direct</h3>
+        <h3 className="text-sm font-semibold text-foreground">Aperçu en direct</h3>
         <div className="flex items-center gap-1">
           {(Object.keys(deviceSizes) as DeviceSize[]).map((size) => {
             const DeviceIcon = deviceSizes[size].icon;
@@ -66,11 +101,21 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
               </Button>
             );
           })}
+          <div className="w-px h-4 bg-border mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            className="h-7 w-7 p-0"
+            title="Rafraîchir"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </Button>
         </div>
       </div>
 
       {/* Preview Frame */}
-      <div id="preview-container" className="flex-1 flex items-center justify-center p-5 overflow-hidden">
+      <div id="preview-container" className="flex-1 flex items-center justify-center p-4 overflow-hidden bg-muted/20">
         <AnimatePresence mode="wait">
           <motion.div
             key={device}
@@ -78,7 +123,7 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="relative bg-background rounded-xl shadow-2xl border border-border overflow-hidden"
+            className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-hidden"
             style={{
               width: currentDevice.width,
               height: currentDevice.height,
@@ -86,53 +131,19 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
               transformOrigin: 'center center',
             }}
           >
-            {/* Mock Preview Content */}
-            <div className="w-full h-full overflow-y-auto">
-              <div className="flex flex-col items-center p-6 space-y-4">
-                {/* Avatar */}
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                  {page.avatar_url ? (
-                    <img src={page.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    <span className="text-2xl font-bold text-primary">
-                      {(page.display_name || page.username)?.[0]?.toUpperCase()}
-                    </span>
-                  )}
-                </div>
+            <iframe
+              ref={iframeRef}
+              key={refreshKey}
+              src={previewUrl}
+              title="Aperçu de la page"
+              className="w-full h-full border-0"
+              style={{ pointerEvents: 'none' }}
+            />
 
-                {/* Info */}
-                <div className="text-center space-y-1">
-                  <h2 className="text-lg font-bold">{page.display_name || page.username}</h2>
-                  <p className="text-sm text-muted-foreground">@{page.username}</p>
-                  {page.bio && <p className="text-sm mt-2">{page.bio}</p>}
-                </div>
-
-                {/* Links */}
-                <div className="w-full max-w-md space-y-2 mt-4">
-                  {links.slice(0, 5).map((link, index) => (
-                    <motion.div
-                      key={link.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="w-full p-3 rounded-lg bg-card border border-border text-center text-sm font-medium hover:bg-accent/50 transition-colors cursor-pointer"
-                    >
-                      {link.title}
-                    </motion.div>
-                  ))}
-                  {links.length === 0 && (
-                    <div className="text-center text-sm text-muted-foreground py-8">
-                      Aucun lien pour le moment
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Device chrome for mobile/tablet */}
-            {device !== 'desktop' && (
-              <div className="absolute top-0 left-0 right-0 h-6 bg-background/95 backdrop-blur-sm border-b border-border/40 flex items-center justify-center">
-                <div className="w-16 h-1 rounded-full bg-border" />
+            {/* Device notch for mobile */}
+            {device === 'mobile' && (
+              <div className="absolute top-0 left-0 right-0 h-6 bg-background/80 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+                <div className="w-20 h-1 rounded-full bg-border" />
               </div>
             )}
           </motion.div>
