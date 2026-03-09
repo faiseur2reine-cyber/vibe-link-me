@@ -186,11 +186,11 @@ const Dashboard = () => {
           {/* Routes */}
           <Routes>
             <Route path="/" element={<DashboardHome />} />
-            <Route path="/pages" element={<div className="p-8">Pages (à implémenter)</div>} />
-            <Route path="/themes" element={<div className="p-8">Thèmes (à implémenter)</div>} />
-            <Route path="/analytics" element={<div className="p-8">Analytics (à implémenter)</div>} />
-            <Route path="/profile" element={<div className="p-8">Profil (à implémenter)</div>} />
-            <Route path="/settings" element={<div className="p-8">Paramètres (à implémenter)</div>} />
+            <Route path="/pages" element={<DashboardHome />} />
+            <Route path="/themes" element={<DashboardThemes />} />
+            <Route path="/analytics" element={<DashboardAnalytics />} />
+            <Route path="/profile" element={<DashboardProfile />} />
+            <Route path="/settings" element={<DashboardSettings />} />
           </Routes>
         </div>
       </div>
