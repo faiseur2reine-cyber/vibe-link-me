@@ -138,13 +138,20 @@ const Dashboard = () => {
             onRefetchPages={refetchPages}
           />
         ) : (
-          <PagesListView
-            pages={pages}
-            onSelectPage={(id) => setSelectedPageId(id)}
-            onCreatePage={() => setCreateDialogOpen(true)}
-            onDuplicatePage={duplicatePage}
-            onDeletePage={deletePage}
-          />
+          <div className="space-y-6">
+            {checklistItems.some(item => !item.completed) && (
+              <OnboardingChecklist items={checklistItems} />
+            )}
+            <div data-tour="pages-list">
+              <PagesListView
+                pages={pages}
+                onSelectPage={(id) => setSelectedPageId(id)}
+                onCreatePage={() => setCreateDialogOpen(true)}
+                onDuplicatePage={duplicatePage}
+                onDeletePage={deletePage}
+              />
+            </div>
+          </div>
         )}
       </main>
 
