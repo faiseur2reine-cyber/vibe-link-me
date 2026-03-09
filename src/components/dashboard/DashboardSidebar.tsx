@@ -70,7 +70,7 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup open={hasActiveTools}>
+        <SidebarGroup>
           <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>Outils</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
