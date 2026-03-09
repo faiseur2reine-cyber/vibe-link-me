@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -9,16 +9,22 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles } from 'lucide-react';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { format, type Locale } from 'date-fns';
+import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
+
+const localeMap: Record<string, Locale> = {
+  fr, en: enUS, es, de, it, pt: ptBR
+};
 
 const DashboardSettings = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, signOut, subscription, checkSubscription } = useAuth();
   const navigate = useNavigate();
   const [portalLoading, setPortalLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  const currentLocale = localeMap[i18n.language] || enUS;
 
   const handleManageSubscription = async () => {
     setPortalLoading(true);
@@ -26,12 +32,12 @@ const DashboardSettings = () => {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       
       if (error) {
-        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+        toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
       } else if (data?.url) {
         window.open(data.url, '_blank');
       }
     } catch (e) {
-      toast({ title: 'Erreur', description: 'Impossible d\'ouvrir le portail', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('common.error'), variant: 'destructive' });
     }
     setPortalLoading(false);
   };
@@ -47,12 +53,12 @@ const DashboardSettings = () => {
       });
 
       if (error) {
-        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+        toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
       } else if (data?.url) {
         window.open(data.url, '_blank');
       }
     } catch (e) {
-      toast({ title: 'Erreur', description: 'Impossible de créer la session de paiement', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('common.error'), variant: 'destructive' });
     }
     setCheckoutLoading(null);
   };
@@ -61,7 +67,7 @@ const DashboardSettings = () => {
     setRefreshing(true);
     await checkSubscription();
     setRefreshing(false);
-    toast({ title: 'Statut mis à jour', description: 'Votre statut d\'abonnement a été actualisé.' });
+    toast({ title: t('settings.refreshStatus'), description: t('settings.refreshDesc') });
   };
 
   const currentPlan = PLANS[subscription.plan as PlanKey] || PLANS.free;
@@ -71,9 +77,9 @@ const DashboardSettings = () => {
     <div className="flex-1 max-w-3xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Paramètres</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('settings.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Gérez votre compte et votre abonnement
+            {t('settings.subtitle')}
           </p>
         </div>
 
@@ -83,7 +89,7 @@ const DashboardSettings = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <Crown className="w-4 h-4 text-primary" />
-                Abonnement
+                {t('settings.subscription')}
               </CardTitle>
               <Button 
                 variant="ghost" 
@@ -94,7 +100,7 @@ const DashboardSettings = () => {
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               </Button>
             </div>
-            <CardDescription>Gérez votre plan et votre facturation</CardDescription>
+            <CardDescription>{t('settings.manageSubscription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {subscription.loading ? (
@@ -108,19 +114,21 @@ const DashboardSettings = () => {
                     <div className="flex items-center gap-2 mb-1">
                       <p className="font-semibold text-foreground">{currentPlan.name}</p>
                       <Badge variant={isPremium ? 'default' : 'secondary'}>
-                        {isPremium ? 'Premium' : 'Gratuit'}
+                        {isPremium ? t('settings.premium') : t('settings.free')}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {currentPlan.maxLinks === Infinity 
-                        ? 'Liens illimités' 
-                        : `Jusqu'à ${currentPlan.maxLinks} liens`
+                        ? t('settings.unlimitedLinks')
+                        : t('settings.upToLinks', { count: currentPlan.maxLinks })
                       }
                     </p>
                     {subscription.subscriptionEnd && (
                       <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        Prochain renouvellement: {format(new Date(subscription.subscriptionEnd), 'dd MMMM yyyy', { locale: fr })}
+                        {t('settings.nextRenewal', { 
+                          date: format(new Date(subscription.subscriptionEnd), 'dd MMMM yyyy', { locale: currentLocale })
+                        })}
                       </p>
                     )}
                   </div>
@@ -129,7 +137,7 @@ const DashboardSettings = () => {
                       <p className="text-2xl font-bold text-foreground">
                         {(currentPlan.price / 100).toFixed(2).replace('.', ',')} €
                         <span className="text-sm text-muted-foreground">
-                          /{currentPlan.interval === 'month' ? 'mois' : 'an'}
+                          {currentPlan.interval === 'month' ? t('settings.perMonth') : t('settings.perYear')}
                         </span>
                       </p>
                     )}
@@ -144,12 +152,12 @@ const DashboardSettings = () => {
                     disabled={portalLoading}
                   >
                     {portalLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CreditCard className="w-4 h-4 mr-2" />}
-                    Gérer l'abonnement
+                    {t('settings.manageBtn')}
                   </Button>
                 ) : (
                   <div className="space-y-3">
                     <p className="text-sm text-muted-foreground text-center">
-                      Passez à un plan premium pour débloquer plus de fonctionnalités
+                      {t('settings.upgradePrompt')}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       <Button 
@@ -163,7 +171,7 @@ const DashboardSettings = () => {
                         ) : (
                           <>
                             <span className="font-semibold">Starter</span>
-                            <span className="text-xs text-muted-foreground">19,99€/mois</span>
+                            <span className="text-xs text-muted-foreground">19,99€{t('settings.perMonth')}</span>
                           </>
                         )}
                       </Button>
@@ -178,7 +186,7 @@ const DashboardSettings = () => {
                           <>
                             <Sparkles className="w-4 h-4 mb-0.5" />
                             <span className="font-semibold">Pro</span>
-                            <span className="text-xs opacity-80">115€/an</span>
+                            <span className="text-xs opacity-80">115€{t('settings.perYear')}</span>
                           </>
                         )}
                       </Button>
@@ -193,13 +201,13 @@ const DashboardSettings = () => {
         {/* Account Actions */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Actions du compte</CardTitle>
-            <CardDescription>Gérez votre compte et vos données</CardDescription>
+            <CardTitle className="text-base">{t('settings.accountActions')}</CardTitle>
+            <CardDescription>{t('settings.accountActionsDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">Email:</span> {user?.email}
+                <span className="font-medium text-foreground">{t('settings.email')}:</span> {user?.email}
               </p>
             </div>
             <Button 
@@ -208,7 +216,7 @@ const DashboardSettings = () => {
               className="w-full justify-start"
             >
               <LogOut className="w-4 h-4 mr-2" />
-              Se déconnecter
+              {t('settings.signOut')}
             </Button>
           </CardContent>
         </Card>
@@ -218,10 +226,10 @@ const DashboardSettings = () => {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-4 h-4" />
-              Zone dangereuse
+              {t('settings.dangerZone')}
             </CardTitle>
             <CardDescription>
-              Pour supprimer votre compte, veuillez contacter le support à support@mytaptap.com
+              {t('settings.dangerDesc')}
             </CardDescription>
           </CardHeader>
         </Card>

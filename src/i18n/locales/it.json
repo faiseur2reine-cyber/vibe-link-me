@@ -35,6 +35,29 @@
     "maxLinks": "Hai raggiunto il limite di link.",
     "plan": "Piano"
   },
+  "settings": {
+    "title": "Impostazioni",
+    "subtitle": "Gestisci il tuo account e abbonamento",
+    "subscription": "Abbonamento",
+    "manageSubscription": "Gestisci il tuo piano e fatturazione",
+    "premium": "Premium",
+    "free": "Gratis",
+    "unlimitedLinks": "Link illimitati",
+    "upToLinks": "Fino a {{count}} link",
+    "nextRenewal": "Prossimo rinnovo: {{date}}",
+    "manageBtn": "Gestisci abbonamento",
+    "upgradePrompt": "Passa a premium per sbloccare più funzionalità",
+    "perMonth": "/mese",
+    "perYear": "/anno",
+    "accountActions": "Azioni account",
+    "accountActionsDesc": "Gestisci il tuo account e dati",
+    "email": "Email",
+    "signOut": "Esci",
+    "dangerZone": "Zona pericolosa",
+    "dangerDesc": "Per eliminare il tuo account, contatta il supporto a support@mytaptap.com",
+    "refreshStatus": "Stato aggiornato",
+    "refreshDesc": "Il tuo stato di abbonamento è stato aggiornato."
+  },
   "public": { "madeWith": "Creato con MyTaptap", "notFound": "Questa pagina non esiste.", "backHome": "Torna alla home" },
   "common": { "loading": "Caricamento...", "error": "Si è verificato un errore.", "success": "Successo!", "delete": "Elimina", "edit": "Modifica", "language": "Lingua" },
   "landing": {
@@ -54,5 +77,11 @@
     "mockupDesignSub": "CSS + font",
     "mockupBio": "Creator digitale · Parigi 🇫🇷",
     "mockupLinks": ["Il mio portfolio", "YouTube", "Newsletter", "Coaching 1:1"]
+  },
+  "urgency": {
+    "offerEnds": "L'offerta scade tra",
+    "spotsLeft": "Solo {{count}} posti gratuiti rimasti",
+    "liveNow": "{{count}} persone online",
+    "justSignedUp": "Si è registrato da {{city}} · {{ago}} fa"
   }
 }

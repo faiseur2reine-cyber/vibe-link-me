@@ -96,6 +96,29 @@
     "maxLinks": "Has alcanzado el límite de enlaces.",
     "plan": "Plan"
   },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Gestiona tu cuenta y suscripción",
+    "subscription": "Suscripción",
+    "manageSubscription": "Gestiona tu plan y facturación",
+    "premium": "Premium",
+    "free": "Gratis",
+    "unlimitedLinks": "Enlaces ilimitados",
+    "upToLinks": "Hasta {{count}} enlaces",
+    "nextRenewal": "Próxima renovación: {{date}}",
+    "manageBtn": "Gestionar suscripción",
+    "upgradePrompt": "Pasa a premium para desbloquear más funciones",
+    "perMonth": "/mes",
+    "perYear": "/año",
+    "accountActions": "Acciones de cuenta",
+    "accountActionsDesc": "Gestiona tu cuenta y datos",
+    "email": "Email",
+    "signOut": "Cerrar sesión",
+    "dangerZone": "Zona peligrosa",
+    "dangerDesc": "Para eliminar tu cuenta, contacta al soporte en support@mytaptap.com",
+    "refreshStatus": "Estado actualizado",
+    "refreshDesc": "Tu estado de suscripción ha sido actualizado."
+  },
   "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe.", "backHome": "Volver al inicio" },
   "common": {
     "loading": "Cargando...",
@@ -122,5 +145,11 @@
     "mockupDesignSub": "CSS + fuentes",
     "mockupBio": "Creador digital · París 🇫🇷",
     "mockupLinks": ["Mi portafolio", "YouTube", "Newsletter", "Coaching 1:1"]
+  },
+  "urgency": {
+    "offerEnds": "La oferta termina en",
+    "spotsLeft": "Solo quedan {{count}} plazas gratuitas",
+    "liveNow": "{{count}} personas en línea",
+    "justSignedUp": "Se registró desde {{city}} · hace {{ago}}"
   }
 }

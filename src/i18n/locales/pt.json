@@ -35,6 +35,29 @@
     "maxLinks": "Você atingiu o limite de links.",
     "plan": "Plano"
   },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Gerencie sua conta e assinatura",
+    "subscription": "Assinatura",
+    "manageSubscription": "Gerencie seu plano e faturamento",
+    "premium": "Premium",
+    "free": "Grátis",
+    "unlimitedLinks": "Links ilimitados",
+    "upToLinks": "Até {{count}} links",
+    "nextRenewal": "Próxima renovação: {{date}}",
+    "manageBtn": "Gerenciar assinatura",
+    "upgradePrompt": "Passe para premium para desbloquear mais recursos",
+    "perMonth": "/mês",
+    "perYear": "/ano",
+    "accountActions": "Ações da conta",
+    "accountActionsDesc": "Gerencie sua conta e dados",
+    "email": "Email",
+    "signOut": "Sair",
+    "dangerZone": "Zona perigosa",
+    "dangerDesc": "Para excluir sua conta, entre em contato com o suporte em support@mytaptap.com",
+    "refreshStatus": "Status atualizado",
+    "refreshDesc": "Seu status de assinatura foi atualizado."
+  },
   "public": { "madeWith": "Feito com MyTaptap", "notFound": "Esta página não existe.", "backHome": "Voltar ao início" },
   "common": { "loading": "Carregando...", "error": "Ocorreu um erro.", "success": "Sucesso!", "delete": "Excluir", "edit": "Editar", "language": "Idioma" },
   "landing": {
@@ -54,5 +77,11 @@
     "mockupDesignSub": "CSS + fontes",
     "mockupBio": "Criador digital · Paris 🇫🇷",
     "mockupLinks": ["Meu portfólio", "YouTube", "Newsletter", "Coaching 1:1"]
+  },
+  "urgency": {
+    "offerEnds": "Oferta termina em",
+    "spotsLeft": "Apenas {{count}} vagas gratuitas restantes",
+    "liveNow": "{{count}} pessoas online",
+    "justSignedUp": "Cadastrou-se de {{city}} · há {{ago}}"
   }
 }
