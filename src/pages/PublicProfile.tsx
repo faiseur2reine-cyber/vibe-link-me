@@ -382,7 +382,7 @@ const PublicProfile = () => {
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
                           whileTap={{ scale: 0.98 }}
-                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${theme.text} hover:bg-white/5`}
+                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-sm transition-all duration-400 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.06]' : 'hover:bg-black/[0.03]'}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -393,7 +393,7 @@ const PublicProfile = () => {
                             <span className="font-medium">{link.title}</span>
                             {link.description && <p className="text-xs opacity-40 truncate">{link.description}</p>}
                           </div>
-                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-30 transition-opacity shrink-0" />
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-30 transition-all duration-400 shrink-0 -translate-x-1 group-hover:translate-x-0" />
                         </motion.a>,
                         link,
                       );
