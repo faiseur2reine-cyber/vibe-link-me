@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 
 const mainItems = [
   { title: 'Aperçu', url: '/dashboard', icon: Home, end: true },
@@ -28,6 +29,57 @@ const settingsItems = [
   { title: 'Paramètres', url: '/dashboard/settings', icon: Settings },
 ];
 
+interface NavItemProps {
+  item: { title: string; url: string; icon: React.ElementType; end?: boolean };
+  collapsed: boolean;
+  isActive: boolean;
+}
+
+const NavItem = ({ item, collapsed, isActive }: NavItemProps) => {
+  const Icon = item.icon;
+  
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={isActive}>
+        <NavLink
+          to={item.url}
+          end={item.end}
+          className={cn(
+            "relative overflow-hidden transition-all duration-300 ease-out",
+            "hover:bg-accent/50",
+            // Active indicator bar with animation
+            "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2",
+            "before:w-1 before:rounded-r-full before:bg-primary",
+            "before:transition-all before:duration-300 before:ease-out",
+            isActive 
+              ? "before:h-6 before:opacity-100" 
+              : "before:h-0 before:opacity-0"
+          )}
+          activeClassName="bg-accent/80 font-medium"
+        >
+          <Icon 
+            className={cn(
+              "h-4 w-4 transition-all duration-200",
+              collapsed ? "" : "mr-2",
+              isActive ? "text-primary scale-110" : "text-muted-foreground"
+            )} 
+          />
+          {!collapsed && (
+            <span 
+              className={cn(
+                "transition-colors duration-200",
+                isActive ? "text-primary" : "text-foreground"
+              )}
+            >
+              {item.title}
+            </span>
+          )}
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
 export function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
@@ -39,76 +91,67 @@ export function DashboardSidebar() {
     return currentPath.startsWith(path);
   };
 
-  const allItems = [...mainItems, ...toolsItems, ...settingsItems];
-  const hasActiveMain = mainItems.some((i) => isActive(i.url, i.end));
-  const hasActiveTools = toolsItems.some((i) => isActive(i.url));
-  const hasActiveSettings = settingsItems.some((i) => isActive(i.url));
-
   return (
     <Sidebar collapsible="icon" className="border-r border-border/60">
       <SidebarContent className="pt-4">
         <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className={cn(
+            "transition-opacity duration-200",
+            collapsed ? 'sr-only' : ''
+          )}>
+            Navigation
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url, item.end)}>
-                    <NavLink
-                      to={item.url}
-                      end={item.end}
-                      className="hover:bg-accent/50 transition-colors relative"
-                      activeClassName="bg-accent text-primary font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full"
-                    >
-                      <item.icon className={collapsed ? '' : 'mr-2 h-4 w-4'} />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <NavItem 
+                  key={item.title} 
+                  item={item} 
+                  collapsed={collapsed}
+                  isActive={isActive(item.url, item.end)}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>Outils</SidebarGroupLabel>
+          <SidebarGroupLabel className={cn(
+            "transition-opacity duration-200",
+            collapsed ? 'sr-only' : ''
+          )}>
+            Outils
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {toolsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      className="hover:bg-accent/50 transition-colors relative"
-                      activeClassName="bg-accent text-primary font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full"
-                    >
-                      <item.icon className={collapsed ? '' : 'mr-2 h-4 w-4'} />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <NavItem 
+                  key={item.title} 
+                  item={item} 
+                  collapsed={collapsed}
+                  isActive={isActive(item.url)}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>Paramètres</SidebarGroupLabel>
+          <SidebarGroupLabel className={cn(
+            "transition-opacity duration-200",
+            collapsed ? 'sr-only' : ''
+          )}>
+            Paramètres
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      className="hover:bg-accent/50 transition-colors relative"
-                      activeClassName="bg-accent text-primary font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full"
-                    >
-                      <item.icon className={collapsed ? '' : 'mr-2 h-4 w-4'} />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <NavItem 
+                  key={item.title} 
+                  item={item} 
+                  collapsed={collapsed}
+                  isActive={isActive(item.url)}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
