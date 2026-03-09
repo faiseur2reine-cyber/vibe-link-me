@@ -160,6 +160,15 @@ const Dashboard = () => {
         onOpenChange={setCreateDialogOpen}
         onCreatePage={createPage}
       />
+
+      {showTour && (
+        <DashboardTour
+          onComplete={() => {
+            setShowTour(false);
+            localStorage.setItem('dashboard_tour_completed', 'true');
+          }}
+        />
+      )}
     </div>
   );
 };
