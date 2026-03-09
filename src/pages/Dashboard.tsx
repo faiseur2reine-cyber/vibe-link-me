@@ -16,11 +16,14 @@ import { DashboardTour } from '@/components/dashboard/DashboardTour';
 
 const Dashboard = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user, loading: authLoading, signOut, checkSubscription } = useAuth();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, refetch: refetchPages } = useCreatorPages();
+  const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
+  const [showTour, setShowTour] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem('theme');
     if (stored) return stored === 'dark';
