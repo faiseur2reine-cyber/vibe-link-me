@@ -37,7 +37,10 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialog
     e.preventDefault();
     if (usernameStatus !== 'available') return;
     setSaving(true);
-    const result = await onCreatePage(username, displayName || undefined);
+    const result = await onCreatePage({
+      username,
+      display_name: displayName || undefined,
+    });
     if (result.error) {
       toast({ title: result.error.message, variant: 'destructive' });
     } else {
