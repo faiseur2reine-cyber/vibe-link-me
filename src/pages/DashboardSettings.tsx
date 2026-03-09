@@ -15,8 +15,6 @@ import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
 const localeMap: Record<string, Locale> = {
   fr, en: enUS, es, de, it, pt: ptBR
 };
-  fr, en: enUS, es, de, it, pt: ptBR
-};
 
 const DashboardSettings = () => {
   const { t, i18n } = useTranslation();
