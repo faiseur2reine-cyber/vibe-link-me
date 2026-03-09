@@ -98,6 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       if (session?.user) {
         checkSubscription();
+        checkUsernameNeeded(session.user.id);
       }
     });
 
