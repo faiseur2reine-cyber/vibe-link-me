@@ -47,7 +47,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border/60">
       <SidebarContent className="pt-4">
-        <SidebarGroup open={hasActiveMain}>
+        <SidebarGroup>
           <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
