@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { Navigate, useSearchParams, useNavigate, Routes, Route } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
@@ -131,11 +132,36 @@ const DashboardHome = () => {
 
 const Dashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
+  const [profileChecked, setProfileChecked] = useState(false);
+  const navigate = useNavigate();
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem('theme');
     if (stored) return stored === 'dark';
     return document.documentElement.classList.contains('dark');
   });
+
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user) {
+        setProfileChecked(true);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!data?.username) {
+        navigate('/set-username', { replace: true });
+      } else {
+        setProfileChecked(true);
+      }
+    };
+
+    checkProfile();
+  }, [user, navigate]);
 
   const toggleTheme = () => {
     const next = !isDark;
@@ -144,7 +170,7 @@ const Dashboard = () => {
     localStorage.setItem('theme', next ? 'dark' : 'light');
   };
 
-  if (authLoading) {
+  if (authLoading || !profileChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
