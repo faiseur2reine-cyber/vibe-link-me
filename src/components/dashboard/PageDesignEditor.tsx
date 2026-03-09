@@ -9,6 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye } from 'lucide-react';
 import DesignLivePreview from './DesignLivePreview';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
