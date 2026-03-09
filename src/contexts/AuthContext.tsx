@@ -15,6 +15,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   subscription: SubscriptionState;
+  needsUsername: boolean;
   signOut: () => Promise<void>;
   checkSubscription: () => Promise<void>;
 }
