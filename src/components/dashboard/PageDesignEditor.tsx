@@ -286,14 +286,33 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
         </DrawerTrigger>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="border-b border-border/60">
-            <DrawerTitle className="text-left">Éditeur de design</DrawerTitle>
-            <DrawerDescription className="text-left">
-              Personnalise les couleurs, polices et mise en page de ta page.
-            </DrawerDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <DrawerTitle className="text-left">{previewMode ? 'Aperçu' : 'Éditeur de design'}</DrawerTitle>
+                <DrawerDescription className="text-left">
+                  {previewMode ? 'Visualise le rendu de ta page.' : 'Personnalise les couleurs, polices et mise en page.'}
+                </DrawerDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPreviewMode(!previewMode)}
+                className="gap-1.5 shrink-0"
+              >
+                {previewMode ? <Paintbrush className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                {previewMode ? 'Éditer' : 'Aperçu'}
+              </Button>
+            </div>
           </DrawerHeader>
           <ScrollArea className="flex-1 overflow-auto">
             <div className="px-4 pb-4">
-              {editorContent}
+              {previewMode ? (
+                <div className="py-4 max-w-xs mx-auto">
+                  <DesignLivePreview page={page} links={links} designState={designState} />
+                </div>
+              ) : (
+                editorContent
+              )}
             </div>
           </ScrollArea>
           <DrawerFooter className="border-t border-border/60 pt-3">
