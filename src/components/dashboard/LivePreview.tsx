@@ -43,7 +43,7 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
       link_layout: page.link_layout,
       custom_css: page.custom_css,
       social_links: page.social_links,
-      custom_css: page.custom_css,
+      is_nsfw: page.is_nsfw,
       links: links.map(l => ({ id: l.id, title: l.title, url: l.url })),
     });
 
