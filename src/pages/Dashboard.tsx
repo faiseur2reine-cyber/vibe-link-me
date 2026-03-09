@@ -44,6 +44,19 @@ const Dashboard = () => {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {
+      navigate('/onboarding');
+    }
+  }, [onboardingLoading, onboardingState.completed, pages.length, navigate]);
+
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem('dashboard_tour_completed');
+    if (!hasSeenTour && pages.length > 0 && !selectedPageId) {
+      setShowTour(true);
+    }
+  }, [pages.length, selectedPageId]);
+
   if (authLoading || pagesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
