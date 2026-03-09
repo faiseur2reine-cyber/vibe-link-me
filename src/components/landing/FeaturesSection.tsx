@@ -3,59 +3,67 @@ import { motion } from 'framer-motion';
 import { Link2, Palette, BarChart3, GripVertical, Globe, Smartphone } from 'lucide-react';
 
 const features = [
-  { key: 'links', icon: Link2 },
-  { key: 'themes', icon: Palette },
-  { key: 'analytics', icon: BarChart3 },
-  { key: 'dragDrop', icon: GripVertical },
-  { key: 'multilingual', icon: Globe },
-  { key: 'mobile', icon: Smartphone },
+  { key: 'links', icon: Link2, accent: 'from-violet-500/15 to-purple-500/5' },
+  { key: 'themes', icon: Palette, accent: 'from-pink-500/15 to-rose-500/5' },
+  { key: 'analytics', icon: BarChart3, accent: 'from-blue-500/15 to-cyan-500/5' },
+  { key: 'dragDrop', icon: GripVertical, accent: 'from-amber-500/15 to-orange-500/5' },
+  { key: 'multilingual', icon: Globe, accent: 'from-emerald-500/15 to-green-500/5' },
+  { key: 'mobile', icon: Smartphone, accent: 'from-primary/15 to-primary/5' },
 ] as const;
 
 const FeaturesSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="px-4 sm:px-6 py-24 sm:py-32">
-      <div className="max-w-5xl mx-auto">
-        {/* Section header — centered */}
+    <section className="px-4 sm:px-6 py-24 sm:py-32 relative">
+      {/* Subtle background accent */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.03),transparent_60%)]" />
+
+      <div className="relative max-w-5xl mx-auto">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="text-center max-w-lg mx-auto mb-16"
         >
-          <p className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+          <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">
             {t('landing.featuresLabel')}
           </p>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em] leading-tight">
             {t('features.title')}
           </h2>
-          <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+          <p className="mt-4 text-muted-foreground text-sm sm:text-base leading-relaxed">
             {t('features.subtitle')}
           </p>
         </motion.div>
 
-        {/* 3×2 grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border border-border">
-          {features.map(({ key, icon: Icon }, i) => (
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {features.map(({ key, icon: Icon, accent }, i) => (
             <motion.div
               key={key}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.06, duration: 0.4 }}
-              className="bg-card p-6 sm:p-8 group hover:bg-secondary/30 transition-colors duration-300"
+              transition={{ delay: i * 0.08, duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+              className="group relative rounded-2xl border border-border/60 bg-card p-7 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/[0.03] transition-all duration-500 overflow-hidden"
             >
-              <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center mb-4 group-hover:bg-primary/12 transition-colors duration-300">
-                <Icon className="w-4.5 h-4.5 text-primary" strokeWidth={1.5} />
+              {/* Gradient accent on hover */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${accent} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+              
+              <div className="relative">
+                <div className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center mb-5 group-hover:bg-primary/12 group-hover:scale-110 transition-all duration-300">
+                  <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
+                </div>
+                <h3 className="font-bold text-[15px] text-foreground mb-2 tracking-tight">
+                  {t(`features.${key}`)}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t(`features.${key}Desc`)}
+                </p>
               </div>
-              <h3 className="font-semibold text-sm text-foreground mb-1">
-                {t(`features.${key}`)}
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {t(`features.${key}Desc`)}
-              </p>
             </motion.div>
           ))}
         </div>
