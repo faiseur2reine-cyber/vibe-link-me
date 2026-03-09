@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles, Globe, Check, Copy, ExternalLink } from 'lucide-react';
+import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles, Globe, Check, Copy, ExternalLink, AtSign, X } from 'lucide-react';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
@@ -23,6 +24,13 @@ const DashboardSettings = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   
+  // Username change state
+  const [currentUsername, setCurrentUsername] = useState('');
+  const [newUsername, setNewUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
+  const [usernameSaving, setUsernameSaving] = useState(false);
+
   // Custom domain state
   const [customDomain, setCustomDomain] = useState('');
   const [domainVerified, setDomainVerified] = useState(false);
@@ -34,10 +42,51 @@ const DashboardSettings = () => {
   const isPro = subscription.plan === 'pro';
 
   useEffect(() => {
-    if (user && isPro) {
-      loadCustomDomain();
+    if (user) {
+      loadUsername();
+      if (isPro) loadCustomDomain();
     }
   }, [user, isPro]);
+
+  const loadUsername = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('user_id', user!.id)
+      .single();
+    if (data) setCurrentUsername(data.username);
+  };
+
+  const checkNewUsername = (value: string) => {
+    if (usernameTimer) clearTimeout(usernameTimer);
+    const cleaned = value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    setNewUsername(cleaned);
+    if (cleaned.length < 3 || cleaned === currentUsername) { setUsernameStatus('idle'); return; }
+    setUsernameStatus('checking');
+    const timer = setTimeout(async () => {
+      const { data } = await supabase.from('profiles').select('username').eq('username', cleaned).maybeSingle();
+      setUsernameStatus(data ? 'taken' : 'available');
+    }, 500);
+    setUsernameTimer(timer);
+  };
+
+  const handleSaveUsername = async () => {
+    if (usernameStatus !== 'available') return;
+    setUsernameSaving(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ username: newUsername })
+      .eq('user_id', user!.id);
+    if (error) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+    } else {
+      setCurrentUsername(newUsername);
+      setNewUsername('');
+      setUsernameStatus('idle');
+      toast({ title: t('settings.usernameSaved') || 'Nom d\'utilisateur mis à jour !' });
+    }
+    setUsernameSaving(false);
+  };
 
   const loadCustomDomain = async () => {
     setDomainLoading(true);
@@ -357,6 +406,45 @@ const DashboardSettings = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Username */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <AtSign className="w-4 h-4 text-primary" />
+              {t('auth.username') || 'Nom d\'utilisateur'}
+            </CardTitle>
+            <CardDescription>
+              Votre URL publique : mytaptap.com/<span className="font-medium">{currentUsername}</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Input
+                  value={newUsername}
+                  onChange={(e) => checkNewUsername(e.target.value)}
+                  placeholder={currentUsername}
+                  minLength={3}
+                  maxLength={30}
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+                  {usernameStatus === 'available' && <Check className="w-4 h-4 text-primary" />}
+                  {usernameStatus === 'taken' && <X className="w-4 h-4 text-destructive" />}
+                </div>
+              </div>
+              <Button
+                onClick={handleSaveUsername}
+                disabled={usernameSaving || usernameStatus !== 'available'}
+              >
+                {usernameSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('dashboard.save')}
+              </Button>
+            </div>
+            {usernameStatus === 'taken' && <p className="text-xs text-destructive">{t('auth.usernameTaken')}</p>}
+            {usernameStatus === 'available' && <p className="text-xs text-primary">{t('auth.usernameAvailable')}</p>}
+          </CardContent>
+        </Card>
 
         {/* Account Actions */}
         <Card>
