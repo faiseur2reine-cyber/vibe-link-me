@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from '@/hooks/use-toast';
-import { LogOut, Plus, Loader2, Sun, Moon } from 'lucide-react';
+import { LogOut, Plus, Loader2, Sun, Moon, Link2, Palette, Share2 } from 'lucide-react';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
+import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
+import { DashboardTour } from '@/components/dashboard/DashboardTour';
 
 const Dashboard = () => {
   const { t } = useTranslation();
