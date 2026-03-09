@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles, Globe, Check, Copy, ExternalLink } from 'lucide-react';
+import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles, Globe, Check, Copy, ExternalLink, AtSign, X } from 'lucide-react';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
