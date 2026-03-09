@@ -146,6 +146,18 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
 
   const designState = { bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout, customCss };
 
+  const handleSwipe = (_event: any, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (Math.abs(info.offset.x) > swipeThreshold) {
+      // Swipe right → Edit mode, Swipe left → Preview mode
+      if (info.offset.x > 0 && previewMode) {
+        setPreviewMode(false);
+      } else if (info.offset.x < 0 && !previewMode) {
+        setPreviewMode(true);
+      }
+    }
+  };
+
   const editorContent = (
     <div className="space-y-6">
       {/* Live Preview */}
