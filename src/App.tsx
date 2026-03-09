@@ -7,7 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/DashboardNew";
 import ResetPassword from "./pages/ResetPassword";
 import SetUsername from "./pages/SetUsername";
 import PublicProfile from "./pages/PublicProfile";
