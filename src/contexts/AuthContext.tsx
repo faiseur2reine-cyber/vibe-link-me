@@ -82,8 +82,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setLoading(false);
       if (session?.user) {
-        // Defer to avoid Supabase deadlock
-        setTimeout(() => checkSubscription(), 0);
+        setTimeout(() => {
+          checkSubscription();
+          checkUsernameNeeded(session.user.id);
+        }, 0);
       } else {
         // Reset subscription when logged out
         setSubscription(defaultSubscription);
