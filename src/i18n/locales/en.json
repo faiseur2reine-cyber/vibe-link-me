@@ -120,7 +120,18 @@
     "dangerZone": "Danger zone",
     "dangerDesc": "To delete your account, please contact support at support@mytaptap.com",
     "refreshStatus": "Status updated",
-    "refreshDesc": "Your subscription status has been refreshed."
+    "refreshDesc": "Your subscription status has been refreshed.",
+    "customDomain": "Custom domain",
+    "customDomainDesc": "Connect your own domain to your public page",
+    "domainVerified": "Verified",
+    "domainPending": "Pending verification",
+    "dnsInstructions": "Add this DNS record at your domain provider:",
+    "dnsPropagation": "DNS propagation can take up to 72 hours.",
+    "domainActive": "Your domain is active",
+    "domainSaved": "Domain saved",
+    "domainSavedDesc": "Configure your DNS, then wait for verification.",
+    "domainRemoved": "Domain removed",
+    "invalidDomain": "Invalid domain format"
   },
   "public": {
     "madeWith": "Made with MyTaptap",

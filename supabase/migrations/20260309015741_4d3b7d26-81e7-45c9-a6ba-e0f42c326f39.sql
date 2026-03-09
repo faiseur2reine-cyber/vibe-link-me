@@ -1,0 +1,3 @@
+ALTER TABLE public.profiles 
+ADD COLUMN custom_domain TEXT DEFAULT NULL,
+ADD COLUMN domain_verified BOOLEAN DEFAULT FALSE;
