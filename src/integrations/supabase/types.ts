@@ -213,6 +213,42 @@ export type Database = {
           },
         ]
       }
+      onboarding_state: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          completed_steps: Json | null
+          created_at: string
+          current_step: string | null
+          id: string
+          skipped: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_steps?: Json | null
+          created_at?: string
+          current_step?: string | null
+          id?: string
+          skipped?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_steps?: Json | null
+          created_at?: string
+          current_step?: string | null
+          id?: string
+          skipped?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -222,6 +258,7 @@ export type Database = {
           display_name: string | null
           id: string
           is_nsfw: boolean
+          onboarding_completed: boolean
           plan: string
           social_links: Json
           theme: string
@@ -237,6 +274,7 @@ export type Database = {
           display_name?: string | null
           id?: string
           is_nsfw?: boolean
+          onboarding_completed?: boolean
           plan?: string
           social_links?: Json
           theme?: string
@@ -252,6 +290,7 @@ export type Database = {
           display_name?: string | null
           id?: string
           is_nsfw?: boolean
+          onboarding_completed?: boolean
           plan?: string
           social_links?: Json
           theme?: string

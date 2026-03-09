@@ -2,22 +2,28 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from '@/hooks/use-toast';
-import { LogOut, Plus, Loader2, Sun, Moon } from 'lucide-react';
+import { LogOut, Plus, Loader2, Sun, Moon, Link2, Palette, Share2 } from 'lucide-react';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
+import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
+import { DashboardTour } from '@/components/dashboard/DashboardTour';
 
 const Dashboard = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user, loading: authLoading, signOut, checkSubscription } = useAuth();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, refetch: refetchPages } = useCreatorPages();
+  const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
+  const [showTour, setShowTour] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem('theme');
     if (stored) return stored === 'dark';
@@ -38,7 +44,20 @@ const Dashboard = () => {
     }
   }, [searchParams]);
 
-  if (authLoading || pagesLoading) {
+  useEffect(() => {
+    if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {
+      navigate('/onboarding');
+    }
+  }, [onboardingLoading, onboardingState.completed, pages.length, navigate]);
+
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem('dashboard_tour_completed');
+    if (!hasSeenTour && pages.length > 0 && !selectedPageId) {
+      setShowTour(true);
+    }
+  }, [pages.length, selectedPageId]);
+
+  if (authLoading || pagesLoading || onboardingLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -48,6 +67,27 @@ const Dashboard = () => {
   if (!user) return <Navigate to="/auth" replace />;
 
   const selectedPage = pages.find(p => p.id === selectedPageId) || null;
+
+  const checklistItems = [
+    {
+      id: 'create-page',
+      label: 'Créer votre première page',
+      completed: pages.length > 0,
+      icon: Link2,
+    },
+    {
+      id: 'customize-theme',
+      label: 'Personnaliser le thème',
+      completed: pages.some(p => p.theme !== 'default'),
+      icon: Palette,
+    },
+    {
+      id: 'share-page',
+      label: 'Partager votre page',
+      completed: false, // À implémenter avec tracking
+      icon: Share2,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,6 +103,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-1">
             {!selectedPageId && (
               <Button
+                data-tour="create-button"
                 onClick={() => setCreateDialogOpen(true)}
                 size="sm"
                 className="h-[30px] rounded-lg gap-1.5 text-[11px] font-medium px-2.5 shadow-none"
@@ -98,13 +139,20 @@ const Dashboard = () => {
             onRefetchPages={refetchPages}
           />
         ) : (
-          <PagesListView
-            pages={pages}
-            onSelectPage={(id) => setSelectedPageId(id)}
-            onCreatePage={() => setCreateDialogOpen(true)}
-            onDuplicatePage={duplicatePage}
-            onDeletePage={deletePage}
-          />
+          <div className="space-y-6">
+            {checklistItems.some(item => !item.completed) && (
+              <OnboardingChecklist items={checklistItems} />
+            )}
+            <div data-tour="pages-list">
+              <PagesListView
+                pages={pages}
+                onSelectPage={(id) => setSelectedPageId(id)}
+                onCreatePage={() => setCreateDialogOpen(true)}
+                onDuplicatePage={duplicatePage}
+                onDeletePage={deletePage}
+              />
+            </div>
+          </div>
         )}
       </main>
 
@@ -113,6 +161,15 @@ const Dashboard = () => {
         onOpenChange={setCreateDialogOpen}
         onCreatePage={createPage}
       />
+
+      {showTour && (
+        <DashboardTour
+          onComplete={() => {
+            setShowTour(false);
+            localStorage.setItem('dashboard_tour_completed', 'true');
+          }}
+        />
+      )}
     </div>
   );
 };

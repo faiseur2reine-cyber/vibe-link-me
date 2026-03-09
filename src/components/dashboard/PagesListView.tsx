@@ -52,7 +52,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
 
       {/* Stats */}
       {pages.length > 0 && (
-        <div className="flex items-center gap-5 text-sm">
+        <div data-tour="stats" className="flex items-center gap-5 text-sm">
           <StatPill icon={LayoutGrid} value={globalStats.totalPages} label="pages" />
           <StatPill icon={Link2} value={globalStats.totalLinks} label="liens" />
           <StatPill icon={MousePointerClick} value={globalStats.totalClicks} label="clics" />

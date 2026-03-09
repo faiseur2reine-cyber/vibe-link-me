@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface CreatePageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreatePage: (username: string, displayName?: string) => Promise<{ data?: any; error: any }>;
+  onCreatePage: (pageData: { username: string; display_name?: string }) => Promise<{ data?: any; error: any }>;
 }
 
 const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialogProps) => {
@@ -37,7 +37,10 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialog
     e.preventDefault();
     if (usernameStatus !== 'available') return;
     setSaving(true);
-    const result = await onCreatePage(username, displayName || undefined);
+    const result = await onCreatePage({
+      username,
+      display_name: displayName || undefined,
+    });
     if (result.error) {
       toast({ title: result.error.message, variant: 'destructive' });
     } else {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export interface SocialLink {
   platform: string;
@@ -69,19 +70,50 @@ export function useCreatorPages() {
 
   useEffect(() => { fetchPages(); }, [fetchPages]);
 
-  const createPage = async (username: string, displayName?: string) => {
+  const createPage = async (pageData: Partial<CreatorPage> & { username: string }) => {
     if (!user) return { error: { message: 'Not authenticated' } };
+    
+    const insertData: any = {
+      user_id: user.id,
+      username: pageData.username,
+      display_name: pageData.display_name || pageData.username,
+      bio: pageData.bio || null,
+      avatar_url: pageData.avatar_url || null,
+      cover_url: pageData.cover_url || null,
+      theme: pageData.theme || 'default',
+      is_nsfw: pageData.is_nsfw || false,
+    };
+
+    if (pageData.social_links) {
+      insertData.social_links = JSON.parse(JSON.stringify(pageData.social_links));
+    }
+
     const { data, error } = await supabase
       .from('creator_pages')
-      .insert({
-        user_id: user.id,
-        username,
-        display_name: displayName || username,
-      })
+      .insert(insertData)
       .select()
       .single();
     if (!error) await fetchPages();
     return { data, error };
+  };
+
+  const addMultipleLinks = async (pageId: string, links: Array<{ title: string; url: string; icon: string; position: number }>) => {
+    if (!user) return { error: { message: 'Not authenticated' } };
+    
+    const linksToInsert = links.map(link => ({
+      user_id: user.id,
+      page_id: pageId,
+      title: link.title,
+      url: link.url,
+      icon: link.icon,
+      position: link.position,
+    }));
+
+    const { error } = await supabase
+      .from('links')
+      .insert(linksToInsert);
+    
+    return { error };
   };
 
   const updatePage = async (id: string, updates: Partial<CreatorPage>) => {
@@ -178,7 +210,7 @@ export function useCreatorPages() {
     return { data: newPage, error: null };
   };
 
-  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, refetch: fetchPages };
+  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, addMultipleLinks, refetch: fetchPages };
 }
 
 export function usePageLinks(pageId: string | null) {
