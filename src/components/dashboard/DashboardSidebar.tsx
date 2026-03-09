@@ -20,7 +20,6 @@ const mainItems = [
 ];
 
 const toolsItems = [
-  { title: 'Thèmes', url: '/dashboard/themes', icon: Palette },
   { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3 },
 ];
 
