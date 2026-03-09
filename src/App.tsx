@@ -33,6 +33,7 @@ const App = () => (
               <Route path="/dashboard/*" element={<Dashboard />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/set-username" element={<SetUsername />} />
+              <Route path="/legal" element={<Legal />} />
               <Route path="/:username" element={<PublicProfile />} />
             </Routes>
           </BrowserRouter>
