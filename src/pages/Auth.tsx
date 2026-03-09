@@ -37,6 +37,7 @@ const getPasswordStrength = (password: string): PasswordStrength => {
     special:   /[^A-Za-z0-9]/.test(password),
   };
   const passed = Object.values(checks).filter(Boolean).length;
+  const idx = Math.min(passed, 4);
   const labels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
   const colors = [
     'bg-destructive',
@@ -45,7 +46,7 @@ const getPasswordStrength = (password: string): PasswordStrength => {
     'bg-primary/80',
     'bg-primary',
   ];
-  return { score: passed, label: labels[passed] ?? labels[0], color: colors[passed] ?? colors[0], checks };
+  return { score: passed, label: labels[idx], color: colors[idx], checks };
 };
 
 interface PasswordStrengthMeterProps {
