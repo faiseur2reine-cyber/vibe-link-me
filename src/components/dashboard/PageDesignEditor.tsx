@@ -317,7 +317,13 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
             </div>
           </DrawerHeader>
           <ScrollArea className="flex-1 overflow-auto">
-            <div className="px-4 pb-4">
+            <motion.div
+              className="px-4 pb-4"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={handleSwipe}
+            >
               {previewMode ? (
                 <div className="py-4 max-w-xs mx-auto">
                   <DesignLivePreview page={page} links={links} designState={designState} />
@@ -325,7 +331,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
               ) : (
                 editorContent
               )}
-            </div>
+            </motion.div>
           </ScrollArea>
           <DrawerFooter className="border-t border-border/60 pt-3">
             <div className="flex gap-2">
