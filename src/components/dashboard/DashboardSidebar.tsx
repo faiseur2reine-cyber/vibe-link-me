@@ -92,7 +92,7 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup open={hasActiveSettings}>
+        <SidebarGroup>
           <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>Paramètres</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
