@@ -308,10 +308,11 @@ const PublicProfile = () => {
             {/* Name + bio */}
             <motion.div variants={fadeUp} transition={{ duration: 0.5, ease }} className="mt-5 space-y-1.5">
               <h1
-                className={`text-[22px] sm:text-2xl font-bold tracking-[-0.02em] leading-tight ${hasCustomColors ? '' : theme.text}`}
+                className={`text-[22px] sm:text-2xl font-bold tracking-[-0.02em] leading-tight ${hasCustomColors ? '' : theme.text} flex items-center justify-center gap-1.5`}
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {displayName}
+                <BadgeCheck className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-blue-500 shrink-0" />
               </h1>
               <p
                 className={`text-xs font-medium tracking-wide ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
