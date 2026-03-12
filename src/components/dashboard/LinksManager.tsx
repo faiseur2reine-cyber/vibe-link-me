@@ -166,7 +166,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const { error } = await supabase.from('custom_templates').delete().eq('id', id);
     if (!error) {
       setCustomTemplates(prev => prev.filter(t => t.id !== id));
-      toast({ title: 'Template supprimé' });
+      toast({ title: t('linksManager.templateDeleted') });
     }
   };
 
