@@ -50,10 +50,10 @@ const DashboardThemes = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
     } else {
       setSelectedTheme(themeKey);
-      toast({ title: 'Thème appliqué', description: `Le thème ${theme.name} a été appliqué.` });
+      toast({ title: t('themes.applied'), description: t('themes.appliedDesc', { name: theme.name }) });
     }
     setLoading(false);
   };
