@@ -246,8 +246,18 @@ const PublicProfile = () => {
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className={`w-full max-w-[440px] mx-auto px-5 sm:px-6 ${page.cover_url ? '-mt-20 sm:-mt-24' : 'pt-12 sm:pt-16'} pb-8 safe-area-bottom relative z-10`}
+          className={`w-full max-w-[440px] mx-auto ${page.cover_url ? '-mt-20 sm:-mt-24' : 'pt-12 sm:pt-16'} pb-8 safe-area-bottom relative z-10`}
         >
+          {/* Glassmorphism wrapper for dark themes */}
+          <div className={`px-5 sm:px-6 py-6 rounded-[28px] ${
+            isDarkTheme
+              ? 'bg-white/[0.03] backdrop-blur-2xl border border-white/[0.06] shadow-[0_8px_60px_-12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)]'
+              : ''
+          }`}
+            style={isDarkTheme ? {
+              background: `linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)`,
+            } : {}}
+          >
           {/* ── Profile header ── */}
           <div className="profile-header text-center relative">
             {/* Share pill */}
