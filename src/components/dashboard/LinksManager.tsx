@@ -695,7 +695,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </DialogTitle>
           </DialogHeader>
           <p className="text-xs text-muted-foreground -mt-1">
-            {links.length} liens seront sauvegardés.
+            {t('linksManager.linksSaved', { count: links.length })}
           </p>
           <div className="space-y-3 pt-1">
             <div className="space-y-1.5">
