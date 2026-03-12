@@ -31,45 +31,75 @@ const useLinkTemplates = (t: (key: string) => string) => [
     id: 'onlyfans-creator',
     name: '🔥 OnlyFans Creator',
     desc: t('linksManager.tplOnlyfansDesc'),
+    gradient: 'from-sky-400 to-blue-500',
     links: [
-      { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: 'Subscribe to my exclusive content 💋', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplOnlyfansSub'), bg_color: '#00AFF0', text_color: '#FFFFFF' },
       { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#0F1419', text_color: '#FFFFFF' },
       { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Wishlist Amazon', url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionGifts'), description: 'Send me a gift 🎁', bg_color: '#FF9900', text_color: '#000000' },
+      { title: t('linksManager.tplWishlist'), url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionGifts'), description: t('linksManager.tplWishlistDesc'), bg_color: '#FF9900', text_color: '#000000' },
+    ],
+  },
+  {
+    id: 'content-creator',
+    name: '🎬 Content Creator',
+    desc: t('linksManager.tplCreatorDesc'),
+    gradient: 'from-red-500 to-pink-500',
+    links: [
+      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplYoutubeSub'), bg_color: '#FF0000', text_color: '#FFFFFF' },
+      { title: 'Twitch', url: 'https://twitch.tv/', icon: 'link', style: 'default', section_title: t('linksManager.sectionLive'), description: null, bg_color: '#9146FF', text_color: '#FFFFFF' },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Discord', url: 'https://discord.gg/', icon: 'link', style: 'default', section_title: t('linksManager.sectionCommunity'), description: t('linksManager.tplDiscordSub'), bg_color: '#5865F2', text_color: '#FFFFFF' },
+      { title: t('linksManager.tplMerch'), url: 'https://example.com/shop', icon: 'link', style: 'default', section_title: t('linksManager.sectionShop'), description: null, bg_color: '#1A1A2E', text_color: '#FFFFFF' },
     ],
   },
   {
     id: 'agency-multi',
     name: '🏢 ' + t('linksManager.tplAgencyName'),
     desc: t('linksManager.tplAgencyDesc'),
+    gradient: 'from-violet-500 to-purple-600',
     links: [
-      { title: 'OnlyFans - Creator 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 1', description: '@creator1 • Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'OnlyFans — Creator 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 1', description: '@creator1 · Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
       { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'OnlyFans - Creator 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 2', description: '@creator2 • Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'OnlyFans — Creator 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 2', description: '@creator2 · Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
       { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
     ],
   },
   {
-    id: 'instagram-influencer',
-    name: '📸 ' + t('linksManager.tplInfluencerName'),
-    desc: t('linksManager.tplInfluencerDesc'),
+    id: 'music-artist',
+    name: '🎵 ' + t('linksManager.tplMusicName'),
+    desc: t('linksManager.tplMusicDesc'),
+    gradient: 'from-emerald-400 to-teal-500',
     links: [
-      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: 'Watch my latest videos 🎬', bg_color: '#FF0000', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Snapchat', url: 'https://snapchat.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#FFFC00', text_color: '#000000' },
-      { title: t('linksManager.contactPro'), url: 'mailto:contact@example.com', icon: 'link', style: 'default', section_title: 'Business', description: t('linksManager.collabDesc'), bg_color: null, text_color: null },
+      { title: 'Spotify', url: 'https://open.spotify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplSpotifySub'), bg_color: '#1DB954', text_color: '#FFFFFF' },
+      { title: 'Apple Music', url: 'https://music.apple.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FA243C', text_color: '#FFFFFF' },
+      { title: 'SoundCloud', url: 'https://soundcloud.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FF5500', text_color: '#FFFFFF' },
+      { title: 'YouTube Music', url: 'https://music.youtube.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FF0000', text_color: '#FFFFFF' },
+      { title: t('linksManager.tplBooking'), url: 'mailto:booking@example.com', icon: 'link', style: 'default', section_title: 'Business', description: t('linksManager.tplBookingSub'), bg_color: '#1A1A2E', text_color: '#FFFFFF' },
     ],
   },
   {
     id: 'ecommerce',
     name: '🛍️ E-commerce',
     desc: t('linksManager.tplEcommerceDesc'),
+    gradient: 'from-amber-400 to-orange-500',
     links: [
       { title: t('linksManager.myShop'), url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.discoverCollection'), bg_color: '#96BF48', text_color: '#FFFFFF' },
-      { title: t('linksManager.newDrop'), url: 'https://example.com/drop', icon: 'link', style: 'card', section_title: t('linksManager.sectionProducts'), description: t('linksManager.limitedCollection'), bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: t('linksManager.newDrop'), url: 'https://example.com/drop', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: t('linksManager.limitedCollection'), bg_color: '#0F1419', text_color: '#FFFFFF' },
       { title: t('linksManager.promo20'), url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
       { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+    ],
+  },
+  {
+    id: 'fitness-coach',
+    name: '💪 ' + t('linksManager.tplFitnessName'),
+    desc: t('linksManager.tplFitnessDesc'),
+    gradient: 'from-lime-400 to-green-500',
+    links: [
+      { title: t('linksManager.tplCoaching'), url: 'https://cal.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplCoachingSub'), bg_color: '#10B981', text_color: '#FFFFFF' },
+      { title: t('linksManager.tplPrograms'), url: 'https://example.com/programs', icon: 'link', style: 'default', section_title: t('linksManager.sectionPrograms'), description: null, bg_color: '#0F1419', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: t('linksManager.tplWorkoutSub'), bg_color: '#FF0000', text_color: '#FFFFFF' },
     ],
   },
 ];
@@ -641,47 +671,59 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
       {/* ── Templates Dialog ── */}
       <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold flex items-center gap-2">
-              <LayoutTemplate className="w-4 h-4" /> Templates
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-xs text-muted-foreground -mt-1">
-            {t('linksManager.templatesSubtitle')}
-          </p>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg p-0">
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border px-5 pt-5 pb-4">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <LayoutTemplate className="w-4.5 h-4.5 text-primary" />
+                </div>
+                Templates
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              {t('linksManager.templatesSubtitle')}
+            </p>
+          </div>
 
-          <div className="space-y-2">
+          <div className="px-5 pb-5 space-y-4">
             {/* Custom templates */}
             {customTemplates.length > 0 && (
-              <>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.myTemplates')}</p>
-                {customTemplates.map(template => (
-                  <TemplateCard
-                    key={template.id}
-                    name={template.name}
-                    desc={template.description}
-                    links={template.links}
-                    loading={applyingTemplate}
-                    onApply={() => applyTemplateLinks(template.links)}
-                    onDelete={(e) => handleDeleteCustomTemplate(template.id, e)}
-                  />
-                ))}
-              </>
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">{t('linksManager.myTemplates')}</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {customTemplates.map(template => (
+                    <TemplateCard
+                      key={template.id}
+                      name={template.name}
+                      desc={template.description}
+                      links={template.links}
+                      loading={applyingTemplate}
+                      onApply={() => applyTemplateLinks(template.links)}
+                      onDelete={(e) => handleDeleteCustomTemplate(template.id, e)}
+                    />
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Built-in */}
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.preConfigured')}</p>
-            {LINK_TEMPLATES.map(template => (
-              <TemplateCard
-                key={template.id}
-                name={template.name}
-                desc={template.desc}
-                links={template.links}
-                loading={applyingTemplate}
-                onApply={() => applyTemplateLinks(template.links)}
-              />
-            ))}
+            <div className="space-y-2.5">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">{t('linksManager.preConfigured')}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {LINK_TEMPLATES.map(template => (
+                  <TemplateCard
+                    key={template.id}
+                    name={template.name}
+                    desc={template.desc}
+                    links={template.links}
+                    gradient={template.gradient}
+                    loading={applyingTemplate}
+                    onApply={() => applyTemplateLinks(template.links)}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -740,11 +782,12 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
 /* ── Template Card sub-component ── */
 function TemplateCard({
-  name, desc, links, loading, onApply, onDelete,
+  name, desc, links, gradient, loading, onApply, onDelete,
 }: {
   name: string;
   desc: string | null;
   links: Array<{ title: string; bg_color: string | null; text_color: string | null }>;
+  gradient?: string;
   loading: boolean;
   onApply: () => void;
   onDelete?: (e: React.MouseEvent) => void;
@@ -753,31 +796,38 @@ function TemplateCard({
   return (
     <button
       onClick={() => !loading && onApply()}
-      className="w-full text-left p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-muted/40 transition-all group"
+      className="w-full text-left rounded-2xl border border-border overflow-hidden hover:border-primary/30 transition-all group active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground">{name}</p>
+      {/* Visual preview strip */}
+      <div className={`relative h-16 flex items-end gap-1 px-3 pb-2 overflow-hidden ${gradient ? `bg-gradient-to-br ${gradient}` : 'bg-muted'}`}>
+        <div className="absolute inset-0 bg-black/10" />
+        {links.slice(0, 4).map((tl, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: idx * 0.05, duration: 0.3 }}
+            className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-semibold shadow-sm backdrop-blur-sm truncate max-w-[100px]"
+            style={{
+              backgroundColor: tl.bg_color || 'rgba(255,255,255,0.9)',
+              color: tl.text_color || '#000',
+            }}
+          >
+            <span className="truncate">{tl.title}</span>
+          </motion.div>
+        ))}
+        {links.length > 4 && (
+          <span className="relative text-[9px] font-bold text-white/70 px-1">
+            +{links.length - 4}
+          </span>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="px-3.5 py-3 flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold text-foreground truncate">{name}</p>
           {desc && <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{desc}</p>}
-          <div className="flex flex-wrap gap-1 mt-2">
-            {links.slice(0, 5).map((tl, idx) => (
-              <span
-                key={idx}
-                className="text-[9px] px-1.5 py-0.5 rounded font-medium"
-                style={{
-                  backgroundColor: tl.bg_color || 'hsl(var(--muted))',
-                  color: tl.text_color || 'hsl(var(--muted-foreground))',
-                }}
-              >
-                {tl.title}
-              </span>
-            ))}
-            {links.length > 5 && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded font-medium bg-muted text-muted-foreground">
-                +{links.length - 5}
-              </span>
-            )}
-          </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {onDelete && (
@@ -786,10 +836,10 @@ function TemplateCard({
               onClick={onDelete}
               className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-3.5 h-3.5" />
             </span>
           )}
-          <span className="text-[11px] font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-[11px] font-semibold text-primary opacity-60 group-hover:opacity-100 transition-opacity">
             {loading ? '...' : t('linksManager.apply')}
           </span>
         </div>
