@@ -198,7 +198,7 @@ const DashboardProfile = () => {
                   {t('profile.memberSince')}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(user.created_at).toLocaleDateString('fr-FR', {
+                  {new Date(user.created_at).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
