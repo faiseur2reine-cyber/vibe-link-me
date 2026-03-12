@@ -81,7 +81,7 @@ const DashboardAnalytics = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-muted-foreground" />
-              <CardTitle className="text-base">Clics des 30 derniers jours</CardTitle>
+              <CardTitle className="text-base">{t('analytics.last30Days')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
