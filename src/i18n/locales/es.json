@@ -130,7 +130,7 @@
     "domainRemoved": "Dominio eliminado",
     "invalidDomain": "Formato de dominio inválido"
   },
-  "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe.", "backHome": "Volver al inicio" },
+  "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe — todavía.", "backHome": "Inicio", "claimPage": "Reservar esta página" },
   "common": {
     "loading": "Cargando...",
     "error": "Ha ocurrido un error.",
