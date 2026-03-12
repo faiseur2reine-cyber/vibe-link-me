@@ -77,7 +77,7 @@ const DashboardProfile = () => {
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
-      toast({ title: 'Erreur', description: uploadError.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: uploadError.message, variant: 'destructive' });
       setSaving(false);
       return;
     }
