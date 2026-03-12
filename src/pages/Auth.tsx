@@ -175,7 +175,7 @@ const Auth = () => {
     e.preventDefault();
     if (usernameStatus !== 'available') return;
     if (!isPasswordValid) {
-      toast({ title: 'Mot de passe trop faible', description: 'Remplissez tous les critères de sécurité.', variant: 'destructive' });
+      toast({ title: t('auth.pwTooWeak'), description: t('auth.pwTooWeakDesc'), variant: 'destructive' });
       return;
     }
     setLoading(true);
