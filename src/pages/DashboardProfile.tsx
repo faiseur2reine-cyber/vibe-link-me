@@ -209,7 +209,7 @@ const DashboardProfile = () => {
 
             <Button onClick={handleSave} disabled={saving} className="w-full">
               {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Enregistrer les modifications
+              {t('profile.saveChanges')}
             </Button>
           </CardContent>
         </Card>
