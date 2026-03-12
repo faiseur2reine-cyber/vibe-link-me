@@ -152,7 +152,7 @@ const PublicProfile = () => {
               {t('public.backHome', 'Go Home')}
             </Link>
             <Link
-              to="/auth"
+              to={`/auth?tab=signup&username=${encodeURIComponent(username || '')}`}
               className="px-6 py-2.5 rounded-full border border-white/10 text-white/60 text-sm font-medium hover:border-white/25 hover:text-white/80 transition-all duration-200"
             >
               {t('public.claimPage', 'Claim this page')}
