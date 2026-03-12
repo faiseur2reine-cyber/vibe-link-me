@@ -188,6 +188,15 @@ const PublicProfile = () => {
       </NsfwLinkOverlay>
     ) : node;
 
+  // In demo mode, prevent link navigation
+  const demoLinkProps = isDemo ? {
+    href: undefined as unknown as string,
+    target: undefined as unknown as string,
+    rel: undefined as unknown as string,
+    onClick: (e: React.MouseEvent) => e.preventDefault(),
+    style: { cursor: 'default' as const },
+  } : {};
+
   return (
     <>
       {showUrgencyWidgets && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
