@@ -57,9 +57,9 @@ const DashboardProfile = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Profil mis à jour', description: 'Vos modifications ont été enregistrées.' });
+      toast({ title: t('profile.updated'), description: t('profile.updatedDesc') });
     }
     setSaving(false);
   };
@@ -77,7 +77,7 @@ const DashboardProfile = () => {
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
-      toast({ title: 'Erreur', description: uploadError.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: uploadError.message, variant: 'destructive' });
       setSaving(false);
       return;
     }
@@ -91,10 +91,10 @@ const DashboardProfile = () => {
       .eq('user_id', user!.id);
 
     if (updateError) {
-      toast({ title: 'Erreur', description: updateError.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: updateError.message, variant: 'destructive' });
     } else {
       setProfile({ ...profile, avatar_url: avatarUrl });
-      toast({ title: 'Avatar mis à jour' });
+      toast({ title: t('profile.avatarUpdated') });
     }
     setSaving(false);
   };
@@ -111,15 +111,15 @@ const DashboardProfile = () => {
     <div className="flex-1 max-w-3xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Profil</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('profile.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Gérez vos informations personnelles
+            {t('profile.subtitle')}
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Informations personnelles</CardTitle>
+            <CardTitle className="text-base">{t('profile.personalInfo')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Avatar */}
@@ -134,7 +134,7 @@ const DashboardProfile = () => {
                 <Label htmlFor="avatar" className="cursor-pointer">
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:bg-accent transition-colors">
                     <Upload className="w-4 h-4" />
-                    <span className="text-sm">Changer l'avatar</span>
+                    <span className="text-sm">{t('profile.changeAvatar')}</span>
                   </div>
                 </Label>
                 <Input
@@ -154,38 +154,38 @@ const DashboardProfile = () => {
                 Email
               </Label>
               <Input value={user?.email || ''} disabled className="bg-muted/50" />
-              <p className="text-xs text-muted-foreground">Votre adresse email ne peut pas être modifiée</p>
+              <p className="text-xs text-muted-foreground">{t('profile.emailReadonly')}</p>
             </div>
 
             {/* Username */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <User className="w-4 h-4 text-muted-foreground" />
-                Nom d'utilisateur
+                {t('auth.username')}
               </Label>
               <Input value={profile.username} disabled className="bg-muted/50" />
-              <p className="text-xs text-muted-foreground">Votre nom d'utilisateur ne peut pas être modifié</p>
+              <p className="text-xs text-muted-foreground">{t('profile.usernameReadonly')}</p>
             </div>
 
             {/* Display Name */}
             <div className="space-y-2">
-              <Label htmlFor="display_name">Nom d'affichage</Label>
+              <Label htmlFor="display_name">{t('auth.displayName')}</Label>
               <Input
                 id="display_name"
                 value={profile.display_name}
                 onChange={(e) => setProfile({ ...profile, display_name: e.target.value })}
-                placeholder="Votre nom public"
+                placeholder={t('profile.displayNamePlaceholder')}
               />
             </div>
 
             {/* Bio */}
             <div className="space-y-2">
-              <Label htmlFor="bio">Biographie</Label>
+              <Label htmlFor="bio">{t('dashboard.bio')}</Label>
               <textarea
                 id="bio"
                 value={profile.bio}
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                placeholder="Parlez-nous de vous..."
+                placeholder={t('profile.bioPlaceholder')}
                 className="w-full min-h-[100px] px-3 py-2 rounded-md border border-input bg-background text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
@@ -195,10 +195,10 @@ const DashboardProfile = () => {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
-                  Membre depuis
+                  {t('profile.memberSince')}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(user.created_at).toLocaleDateString('fr-FR', {
+                  {new Date(user.created_at).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
@@ -209,7 +209,7 @@ const DashboardProfile = () => {
 
             <Button onClick={handleSave} disabled={saving} className="w-full">
               {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Enregistrer les modifications
+              {t('profile.saveChanges')}
             </Button>
           </CardContent>
         </Card>

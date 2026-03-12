@@ -28,7 +28,7 @@ interface PasswordStrength {
   };
 }
 
-const getPasswordStrength = (password: string): PasswordStrength => {
+const getPasswordStrength = (password: string, t: (key: string) => string): PasswordStrength => {
   const checks = {
     length:    password.length >= 8,
     uppercase: /[A-Z]/.test(password),
@@ -38,7 +38,7 @@ const getPasswordStrength = (password: string): PasswordStrength => {
   };
   const passed = Object.values(checks).filter(Boolean).length;
   const idx = Math.min(passed, 4);
-  const labels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
+  const labels = [t('auth.pwVeryWeak'), t('auth.pwWeak'), t('auth.pwMedium'), t('auth.pwStrong'), t('auth.pwVeryStrong')];
   const colors = [
     'bg-destructive',
     'bg-orange-500',
@@ -54,15 +54,16 @@ interface PasswordStrengthMeterProps {
 }
 
 const PasswordStrengthMeter = ({ password }: PasswordStrengthMeterProps) => {
-  const { score, label, color, checks } = useMemo(() => getPasswordStrength(password), [password]);
+  const { t } = useTranslation();
+  const { score, label, color, checks } = useMemo(() => getPasswordStrength(password, t), [password, t]);
   if (!password) return null;
 
   const checkItems = [
-    { key: 'length',    label: '8 caractères minimum' },
-    { key: 'uppercase', label: 'Une majuscule' },
-    { key: 'lowercase', label: 'Une minuscule' },
-    { key: 'number',    label: 'Un chiffre' },
-    { key: 'special',   label: 'Un caractère spécial (!@#…)' },
+    { key: 'length',    label: t('auth.pwMinChars') },
+    { key: 'uppercase', label: t('auth.pwUppercase') },
+    { key: 'lowercase', label: t('auth.pwLowercase') },
+    { key: 'number',    label: t('auth.pwNumber') },
+    { key: 'special',   label: t('auth.pwSpecial') },
   ] as const;
 
   return (
@@ -118,7 +119,7 @@ const Auth = () => {
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const passwordStrength = useMemo(() => getPasswordStrength(password), [password]);
+  const passwordStrength = useMemo(() => getPasswordStrength(password, t), [password, t]);
   const isPasswordValid = passwordStrength.score === 5;
 
   useEffect(() => {
@@ -174,7 +175,7 @@ const Auth = () => {
     e.preventDefault();
     if (usernameStatus !== 'available') return;
     if (!isPasswordValid) {
-      toast({ title: 'Mot de passe trop faible', description: 'Remplissez tous les critères de sécurité.', variant: 'destructive' });
+      toast({ title: t('auth.pwTooWeak'), description: t('auth.pwTooWeakDesc'), variant: 'destructive' });
       return;
     }
     setLoading(true);
@@ -188,7 +189,7 @@ const Auth = () => {
     if (!result.success) { toast({ title: result.error.errors[0].message, variant: 'destructive' }); setLoading(false); return; }
     const { error } = await supabase.auth.signUp({ email, password, options: { data: { username, display_name: displayName || username }, emailRedirectTo: window.location.origin } });
     if (error) toast({ title: error.message, variant: 'destructive' });
-    else toast({ title: t('auth.resetSent').replace('réinitialisation', 'confirmation') });
+    else toast({ title: t('auth.confirmationSent') });
     setLoading(false);
   };
 
@@ -206,7 +207,7 @@ const Auth = () => {
       <div className="relative my-4">
         <Separator />
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
-          ou
+          {t('auth.or')}
         </span>
       </div>
       <Button
@@ -234,7 +235,7 @@ const Auth = () => {
       <div className="w-full max-w-sm">
         <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors text-sm">
           <ArrowLeft className="w-3.5 h-3.5" />
-          Retour
+          {t('auth.back')}
         </Link>
 
         <div className="mb-6">

@@ -25,9 +25,9 @@ const DashboardAnalytics = () => {
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Analytics</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('dashboard.analytics')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Vue d'ensemble de vos performances
+            {t('analytics.overview')}
           </p>
         </div>
 
@@ -40,7 +40,7 @@ const DashboardAnalytics = () => {
                   <MousePointerClick className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total des clics</p>
+                  <p className="text-sm text-muted-foreground">{t('dashboard.totalClicks')}</p>
                   <p className="text-3xl font-display font-bold text-foreground">{stats.totalClicks}</p>
                 </div>
               </div>
@@ -54,7 +54,7 @@ const DashboardAnalytics = () => {
                   <FileText className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pages créées</p>
+                  <p className="text-sm text-muted-foreground">{t('analytics.pagesCreated')}</p>
                   <p className="text-3xl font-display font-bold text-foreground">{stats.totalPages}</p>
                 </div>
               </div>
@@ -68,7 +68,7 @@ const DashboardAnalytics = () => {
                   <Link2 className="w-6 h-6 text-accent-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Liens actifs</p>
+                  <p className="text-sm text-muted-foreground">{t('analytics.activeLinks')}</p>
                   <p className="text-3xl font-display font-bold text-foreground">{stats.totalLinks}</p>
                 </div>
               </div>
@@ -81,7 +81,7 @@ const DashboardAnalytics = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-muted-foreground" />
-              <CardTitle className="text-base">Clics des 30 derniers jours</CardTitle>
+              <CardTitle className="text-base">{t('analytics.last30Days')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -115,7 +115,7 @@ const DashboardAnalytics = () => {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-center text-muted-foreground py-12">Aucune donnée disponible</p>
+              <p className="text-center text-muted-foreground py-12">{t('analytics.noData')}</p>
             )}
           </CardContent>
         </Card>
@@ -123,7 +123,7 @@ const DashboardAnalytics = () => {
         {/* Top Pages */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Pages les plus populaires</CardTitle>
+            <CardTitle className="text-base">{t('analytics.topPages')}</CardTitle>
           </CardHeader>
           <CardContent>
             {stats.topPages.length > 0 ? (
@@ -147,7 +147,7 @@ const DashboardAnalytics = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-muted-foreground py-8">Aucune page créée</p>
+              <p className="text-center text-muted-foreground py-8">{t('analytics.noPages')}</p>
             )}
           </CardContent>
         </Card>

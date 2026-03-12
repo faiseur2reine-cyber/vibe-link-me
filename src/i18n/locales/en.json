@@ -74,7 +74,22 @@
     "resetSent": "A reset link has been sent to your email address.",
     "usernameTaken": "This username is already taken.",
     "usernameAvailable": "Username available!",
-    "checkingUsername": "Checking..."
+    "checkingUsername": "Checking...",
+    "back": "Back",
+    "or": "or",
+    "confirmationSent": "A confirmation email has been sent to your address.",
+    "pwVeryWeak": "Very weak",
+    "pwWeak": "Weak",
+    "pwMedium": "Medium",
+    "pwStrong": "Strong",
+    "pwVeryStrong": "Very strong",
+    "pwMinChars": "8 characters minimum",
+    "pwUppercase": "One uppercase letter",
+    "pwLowercase": "One lowercase letter",
+    "pwNumber": "One number",
+    "pwSpecial": "One special character (!@#…)",
+    "pwTooWeak": "Password too weak",
+    "pwTooWeakDesc": "Please meet all security criteria."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -131,7 +146,50 @@
     "domainSaved": "Domain saved",
     "domainSavedDesc": "Configure your DNS, then wait for verification.",
     "domainRemoved": "Domain removed",
-    "invalidDomain": "Invalid domain format"
+    "invalidDomain": "Invalid domain format",
+    "usernameSaved": "Username updated!",
+    "publicUrl": "Your public URL"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your personal information",
+    "personalInfo": "Personal information",
+    "changeAvatar": "Change avatar",
+    "emailReadonly": "Your email address cannot be changed",
+    "usernameReadonly": "Your username cannot be changed",
+    "displayNamePlaceholder": "Your public name",
+    "bioPlaceholder": "Tell us about yourself...",
+    "memberSince": "Member since",
+    "saveChanges": "Save changes",
+    "updated": "Profile updated",
+    "updatedDesc": "Your changes have been saved.",
+    "avatarUpdated": "Avatar updated"
+  },
+  "analytics": {
+    "overview": "Overview of your performance",
+    "pagesCreated": "Pages created",
+    "activeLinks": "Active links",
+    "last30Days": "Clicks over the last 30 days",
+    "noData": "No data available",
+    "topPages": "Most popular pages",
+    "noPages": "No pages created"
+  },
+  "themes": {
+    "title": "Themes",
+    "subtitle": "Customize the look of your pages",
+    "currentPlan": "Your current plan",
+    "premiumTheme": "Premium theme",
+    "requiresPlan": "Requires {{plan}} plan",
+    "applied": "Theme applied",
+    "appliedDesc": "The {{name}} theme has been applied.",
+    "clickToApply": "Click to apply",
+    "unlock": "Unlock"
+  },
+  "checklist": {
+    "createPage": "Create your first page",
+    "customizeTheme": "Customize the theme",
+    "sharePage": "Share your page",
+    "new": "New"
   },
   "public": {
     "madeWith": "Made with MyTaptap",

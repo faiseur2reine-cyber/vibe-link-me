@@ -71,20 +71,20 @@ const Dashboard = () => {
   const checklistItems = [
     {
       id: 'create-page',
-      label: 'Créer votre première page',
+      label: t('checklist.createPage'),
       completed: pages.length > 0,
       icon: Link2,
     },
     {
       id: 'customize-theme',
-      label: 'Personnaliser le thème',
+      label: t('checklist.customizeTheme'),
       completed: pages.some(p => p.theme !== 'default'),
       icon: Palette,
     },
     {
       id: 'share-page',
-      label: 'Partager votre page',
-      completed: false, // À implémenter avec tracking
+      label: t('checklist.sharePage'),
+      completed: false,
       icon: Share2,
     },
   ];

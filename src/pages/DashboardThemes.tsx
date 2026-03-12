@@ -36,8 +36,8 @@ const DashboardThemes = () => {
   const handleSelectTheme = async (themeKey: string, theme: ThemeConfig) => {
     if (!canAccessTheme(theme.tier, userPlan)) {
       toast({
-        title: 'Thème premium',
-        description: `Ce thème nécessite un plan ${theme.tier === 'pro' ? 'Pro' : 'Starter'}.`,
+        title: t('themes.premiumTheme'),
+        description: t('themes.requiresPlan', { plan: theme.tier === 'pro' ? 'Pro' : 'Starter' }),
         variant: 'destructive',
       });
       return;
@@ -50,10 +50,10 @@ const DashboardThemes = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
     } else {
       setSelectedTheme(themeKey);
-      toast({ title: 'Thème appliqué', description: `Le thème ${theme.name} a été appliqué.` });
+      toast({ title: t('themes.applied'), description: t('themes.appliedDesc', { name: theme.name }) });
     }
     setLoading(false);
   };
@@ -68,16 +68,16 @@ const DashboardThemes = () => {
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Thèmes</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('themes.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Personnalisez l'apparence de vos pages
+            {t('themes.subtitle')}
           </p>
         </div>
 
         <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border">
           <Sparkles className="w-4 h-4 text-primary" />
           <p className="text-sm text-foreground">
-            Votre plan actuel : <span className="font-semibold capitalize">{userPlan}</span>
+            {t('themes.currentPlan')}: <span className="font-semibold capitalize">{userPlan}</span>
           </p>
         </div>
 
@@ -115,13 +115,13 @@ const DashboardThemes = () => {
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
                     {isLocked 
-                      ? `Nécessite le plan ${theme.tier === 'pro' ? 'Pro' : 'Starter'}`
-                      : 'Cliquer pour appliquer'
+                      ? t('themes.requiresPlan', { plan: theme.tier === 'pro' ? 'Pro' : 'Starter' })
+                      : t('themes.clickToApply')
                     }
                   </p>
                   {isLocked && (
                     <Button size="sm" variant="outline" className="w-full" disabled={loading}>
-                      Débloquer
+                      {t('themes.unlock')}
                     </Button>
                   )}
                 </CardContent>

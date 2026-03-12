@@ -74,7 +74,22 @@
     "resetSent": "Un lien de réinitialisation a été envoyé à votre adresse email.",
     "usernameTaken": "Ce nom d'utilisateur est déjà pris.",
     "usernameAvailable": "Nom d'utilisateur disponible !",
-    "checkingUsername": "Vérification..."
+    "checkingUsername": "Vérification...",
+    "back": "Retour",
+    "or": "ou",
+    "confirmationSent": "Un email de confirmation a été envoyé à votre adresse.",
+    "pwVeryWeak": "Très faible",
+    "pwWeak": "Faible",
+    "pwMedium": "Moyen",
+    "pwStrong": "Fort",
+    "pwVeryStrong": "Très fort",
+    "pwMinChars": "8 caractères minimum",
+    "pwUppercase": "Une majuscule",
+    "pwLowercase": "Une minuscule",
+    "pwNumber": "Un chiffre",
+    "pwSpecial": "Un caractère spécial (!@#…)",
+    "pwTooWeak": "Mot de passe trop faible",
+    "pwTooWeakDesc": "Remplissez tous les critères de sécurité."
   },
   "dashboard": {
     "title": "Tableau de bord",
@@ -131,7 +146,50 @@
     "domainSaved": "Domaine enregistré",
     "domainSavedDesc": "Configurez vos DNS, puis attendez la vérification.",
     "domainRemoved": "Domaine supprimé",
-    "invalidDomain": "Format de domaine invalide"
+    "invalidDomain": "Format de domaine invalide",
+    "usernameSaved": "Nom d'utilisateur mis à jour !",
+    "publicUrl": "Votre URL publique"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Gérez vos informations personnelles",
+    "personalInfo": "Informations personnelles",
+    "changeAvatar": "Changer l'avatar",
+    "emailReadonly": "Votre adresse email ne peut pas être modifiée",
+    "usernameReadonly": "Votre nom d'utilisateur ne peut pas être modifié",
+    "displayNamePlaceholder": "Votre nom public",
+    "bioPlaceholder": "Parlez-nous de vous...",
+    "memberSince": "Membre depuis",
+    "saveChanges": "Enregistrer les modifications",
+    "updated": "Profil mis à jour",
+    "updatedDesc": "Vos modifications ont été enregistrées.",
+    "avatarUpdated": "Avatar mis à jour"
+  },
+  "analytics": {
+    "overview": "Vue d'ensemble de vos performances",
+    "pagesCreated": "Pages créées",
+    "activeLinks": "Liens actifs",
+    "last30Days": "Clics des 30 derniers jours",
+    "noData": "Aucune donnée disponible",
+    "topPages": "Pages les plus populaires",
+    "noPages": "Aucune page créée"
+  },
+  "themes": {
+    "title": "Thèmes",
+    "subtitle": "Personnalisez l'apparence de vos pages",
+    "currentPlan": "Votre plan actuel",
+    "premiumTheme": "Thème premium",
+    "requiresPlan": "Nécessite le plan {{plan}}",
+    "applied": "Thème appliqué",
+    "appliedDesc": "Le thème {{name}} a été appliqué.",
+    "clickToApply": "Cliquer pour appliquer",
+    "unlock": "Débloquer"
+  },
+  "checklist": {
+    "createPage": "Créer votre première page",
+    "customizeTheme": "Personnaliser le thème",
+    "sharePage": "Partager votre page",
+    "new": "Nouveau"
   },
   "public": {
     "madeWith": "Créé avec MyTaptap",
