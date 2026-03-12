@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
         username: "demo",
         display_name: "Alex Martin",
         bio: "Créateur de contenu & designer ✨ Retrouvez tous mes liens ici.",
-        avatar_url: null,
+        avatar_url: "/demo-avatar.jpg",
         cover_url: null,
         theme: "default",
         user_id: "00000000-0000-0000-0000-000000000000",
