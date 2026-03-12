@@ -123,7 +123,7 @@ const DashboardAnalytics = () => {
         {/* Top Pages */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Pages les plus populaires</CardTitle>
+            <CardTitle className="text-base">{t('analytics.topPages')}</CardTitle>
           </CardHeader>
           <CardContent>
             {stats.topPages.length > 0 ? (
