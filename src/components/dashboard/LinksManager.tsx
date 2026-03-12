@@ -26,50 +26,50 @@ interface CustomTemplate {
   created_at: string;
 }
 
-const LINK_TEMPLATES = [
+const useLinkTemplates = (t: (key: string) => string) => [
   {
     id: 'onlyfans-creator',
     name: '🔥 OnlyFans Creator',
-    desc: 'Template pour créatrice OnlyFans',
+    desc: t('linksManager.tplOnlyfansDesc'),
     links: [
       { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: 'Subscribe to my exclusive content 💋', bg_color: '#00AFF0', text_color: '#FFFFFF' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Wishlist Amazon', url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: 'Cadeaux', description: 'Send me a gift 🎁', bg_color: '#FF9900', text_color: '#000000' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Wishlist Amazon', url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionGifts'), description: 'Send me a gift 🎁', bg_color: '#FF9900', text_color: '#000000' },
     ],
   },
   {
     id: 'agency-multi',
-    name: '🏢 Agence Multi-Créatrices',
-    desc: 'Template agence avec sections par créatrice',
+    name: '🏢 ' + t('linksManager.tplAgencyName'),
+    desc: t('linksManager.tplAgencyDesc'),
     links: [
-      { title: 'OnlyFans - Créatrice 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 1', description: '@creatrice1 • Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'OnlyFans - Créatrice 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 2', description: '@creatrice2 • Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans - Creator 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 1', description: '@creator1 • Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans - Creator 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 2', description: '@creator2 • Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
     ],
   },
   {
     id: 'instagram-influencer',
-    name: '📸 Influenceur Instagram',
-    desc: 'Liens standards pour influenceur',
+    name: '📸 ' + t('linksManager.tplInfluencerName'),
+    desc: t('linksManager.tplInfluencerDesc'),
     links: [
       { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: 'Watch my latest videos 🎬', bg_color: '#FF0000', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Snapchat', url: 'https://snapchat.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#FFFC00', text_color: '#000000' },
-      { title: 'Contact Pro', url: 'mailto:contact@example.com', icon: 'link', style: 'default', section_title: 'Business', description: 'Collaborations & partenariats', bg_color: null, text_color: null },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Snapchat', url: 'https://snapchat.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#FFFC00', text_color: '#000000' },
+      { title: t('linksManager.contactPro'), url: 'mailto:contact@example.com', icon: 'link', style: 'default', section_title: 'Business', description: t('linksManager.collabDesc'), bg_color: null, text_color: null },
     ],
   },
   {
     id: 'ecommerce',
-    name: '🛍️ E-commerce / Boutique',
-    desc: 'Liens vers vos boutiques et produits',
+    name: '🛍️ E-commerce',
+    desc: t('linksManager.tplEcommerceDesc'),
     links: [
-      { title: 'Ma Boutique', url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: 'Découvrez ma collection 🛒', bg_color: '#96BF48', text_color: '#FFFFFF' },
-      { title: 'Nouveau Drop', url: 'https://example.com/drop', icon: 'link', style: 'card', section_title: 'Produits', description: 'Collection limitée 🔥', bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Promo -20%', url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: 'Produits', description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
-      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: t('linksManager.myShop'), url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.discoverCollection'), bg_color: '#96BF48', text_color: '#FFFFFF' },
+      { title: t('linksManager.newDrop'), url: 'https://example.com/drop', icon: 'link', style: 'card', section_title: t('linksManager.sectionProducts'), description: t('linksManager.limitedCollection'), bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: t('linksManager.promo20'), url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
+      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
     ],
   },
 ];
