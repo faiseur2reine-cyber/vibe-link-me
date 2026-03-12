@@ -648,7 +648,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </DialogTitle>
           </DialogHeader>
           <p className="text-xs text-muted-foreground -mt-1">
-            Ajouter rapidement un ensemble de liens pré-configurés.
+            {t('linksManager.templatesSubtitle')}
           </p>
 
           <div className="space-y-2">
