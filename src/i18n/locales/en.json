@@ -74,7 +74,22 @@
     "resetSent": "A reset link has been sent to your email address.",
     "usernameTaken": "This username is already taken.",
     "usernameAvailable": "Username available!",
-    "checkingUsername": "Checking..."
+    "checkingUsername": "Checking...",
+    "back": "Back",
+    "or": "or",
+    "confirmationSent": "A confirmation email has been sent to your address.",
+    "pwVeryWeak": "Very weak",
+    "pwWeak": "Weak",
+    "pwMedium": "Medium",
+    "pwStrong": "Strong",
+    "pwVeryStrong": "Very strong",
+    "pwMinChars": "8 characters minimum",
+    "pwUppercase": "One uppercase letter",
+    "pwLowercase": "One lowercase letter",
+    "pwNumber": "One number",
+    "pwSpecial": "One special character (!@#…)",
+    "pwTooWeak": "Password too weak",
+    "pwTooWeakDesc": "Please meet all security criteria."
   },
   "dashboard": {
     "title": "Dashboard",
