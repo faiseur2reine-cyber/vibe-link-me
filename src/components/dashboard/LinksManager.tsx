@@ -591,7 +591,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Texte</Label>
+                        <Label className="text-xs text-muted-foreground">{t('linksManager.textColor')}</Label>
                         <div className="flex items-center gap-1 flex-wrap">
                           {['#FFFFFF', '#000000'].map(color => (
                             <button
