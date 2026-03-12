@@ -161,10 +161,10 @@ const DashboardProfile = () => {
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <User className="w-4 h-4 text-muted-foreground" />
-                Nom d'utilisateur
+                {t('auth.username')}
               </Label>
               <Input value={profile.username} disabled className="bg-muted/50" />
-              <p className="text-xs text-muted-foreground">Votre nom d'utilisateur ne peut pas être modifié</p>
+              <p className="text-xs text-muted-foreground">{t('profile.usernameReadonly')}</p>
             </div>
 
             {/* Display Name */}
