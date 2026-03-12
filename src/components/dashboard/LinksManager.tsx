@@ -789,7 +789,7 @@ function TemplateCard({
             </span>
           )}
           <span className="text-[11px] font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-            {loading ? '...' : 'Appliquer →'}
+            {loading ? '...' : t('linksManager.apply')}
           </span>
         </div>
       </div>
