@@ -703,7 +703,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               <Input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Ex: Setup Marie" className="h-9" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Description</Label>
+              <Label className="text-xs text-muted-foreground">{t('linksManager.description')}</Label>
               <Input value={templateDesc} onChange={e => setTemplateDesc(e.target.value)} placeholder="Optionnel" className="h-9" />
             </div>
             <div className="flex flex-wrap gap-1">
