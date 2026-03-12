@@ -111,9 +111,9 @@ const DashboardProfile = () => {
     <div className="flex-1 max-w-3xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Profil</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('profile.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Gérez vos informations personnelles
+            {t('profile.subtitle')}
           </p>
         </div>
 
