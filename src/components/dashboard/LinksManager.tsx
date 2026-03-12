@@ -671,47 +671,59 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
       {/* ── Templates Dialog ── */}
       <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold flex items-center gap-2">
-              <LayoutTemplate className="w-4 h-4" /> Templates
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-xs text-muted-foreground -mt-1">
-            {t('linksManager.templatesSubtitle')}
-          </p>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg p-0">
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border px-5 pt-5 pb-4">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <LayoutTemplate className="w-4.5 h-4.5 text-primary" />
+                </div>
+                Templates
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              {t('linksManager.templatesSubtitle')}
+            </p>
+          </div>
 
-          <div className="space-y-2">
+          <div className="px-5 pb-5 space-y-4">
             {/* Custom templates */}
             {customTemplates.length > 0 && (
-              <>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.myTemplates')}</p>
-                {customTemplates.map(template => (
-                  <TemplateCard
-                    key={template.id}
-                    name={template.name}
-                    desc={template.description}
-                    links={template.links}
-                    loading={applyingTemplate}
-                    onApply={() => applyTemplateLinks(template.links)}
-                    onDelete={(e) => handleDeleteCustomTemplate(template.id, e)}
-                  />
-                ))}
-              </>
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">{t('linksManager.myTemplates')}</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {customTemplates.map(template => (
+                    <TemplateCard
+                      key={template.id}
+                      name={template.name}
+                      desc={template.description}
+                      links={template.links}
+                      loading={applyingTemplate}
+                      onApply={() => applyTemplateLinks(template.links)}
+                      onDelete={(e) => handleDeleteCustomTemplate(template.id, e)}
+                    />
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Built-in */}
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.preConfigured')}</p>
-            {LINK_TEMPLATES.map(template => (
-              <TemplateCard
-                key={template.id}
-                name={template.name}
-                desc={template.desc}
-                links={template.links}
-                loading={applyingTemplate}
-                onApply={() => applyTemplateLinks(template.links)}
-              />
-            ))}
+            <div className="space-y-2.5">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">{t('linksManager.preConfigured')}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {LINK_TEMPLATES.map(template => (
+                  <TemplateCard
+                    key={template.id}
+                    name={template.name}
+                    desc={template.desc}
+                    links={template.links}
+                    gradient={template.gradient}
+                    loading={applyingTemplate}
+                    onApply={() => applyTemplateLinks(template.links)}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
