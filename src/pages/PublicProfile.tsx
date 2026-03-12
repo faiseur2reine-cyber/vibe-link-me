@@ -147,6 +147,7 @@ const PublicProfile = () => {
     );
   }
 
+  const isDemo = username === 'demo';
   const isNsfwPage = page.is_nsfw;
   const theme = getTheme(page.theme);
   const displayName = page.display_name || page.username;
