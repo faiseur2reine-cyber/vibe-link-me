@@ -699,7 +699,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           </p>
           <div className="space-y-3 pt-1">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Nom</Label>
+              <Label className="text-xs text-muted-foreground">{t('linksManager.name')}</Label>
               <Input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Ex: Setup Marie" className="h-9" />
             </div>
             <div className="space-y-1.5">
