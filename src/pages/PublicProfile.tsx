@@ -497,6 +497,7 @@ const PublicProfile = () => {
               {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> MyTaptap
             </Link>
           </motion.div>
+          </div>{/* end glassmorphism wrapper */}
         </motion.div>
       </div>
     </>
