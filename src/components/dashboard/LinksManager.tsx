@@ -520,7 +520,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               ) : (
                 <label className="flex items-center justify-center gap-2 w-full h-20 rounded-lg border border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/40 transition-colors text-muted-foreground text-xs">
                   <ImagePlus className="w-4 h-4" />
-                  <span>Ajouter une image</span>
+                  <span>{t('linksManager.addImage')}</span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
                 </label>
               )}
