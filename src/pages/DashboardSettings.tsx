@@ -87,7 +87,7 @@ const DashboardSettings = () => {
       setCurrentUsername(newUsername);
       setNewUsername('');
       setUsernameStatus('idle');
-      toast({ title: t('settings.usernameSaved') || 'Nom d\'utilisateur mis à jour !' });
+      toast({ title: t('settings.usernameSaved') });
     }
     setUsernameSaving(false);
   };
