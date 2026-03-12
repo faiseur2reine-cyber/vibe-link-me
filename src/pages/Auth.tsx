@@ -189,7 +189,7 @@ const Auth = () => {
     if (!result.success) { toast({ title: result.error.errors[0].message, variant: 'destructive' }); setLoading(false); return; }
     const { error } = await supabase.auth.signUp({ email, password, options: { data: { username, display_name: displayName || username }, emailRedirectTo: window.location.origin } });
     if (error) toast({ title: error.message, variant: 'destructive' });
-    else toast({ title: t('auth.resetSent').replace('réinitialisation', 'confirmation') });
+    else toast({ title: t('auth.confirmationSent') });
     setLoading(false);
   };
 
