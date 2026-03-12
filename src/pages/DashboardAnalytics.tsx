@@ -68,7 +68,7 @@ const DashboardAnalytics = () => {
                   <Link2 className="w-6 h-6 text-accent-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Liens actifs</p>
+                  <p className="text-sm text-muted-foreground">{t('analytics.activeLinks')}</p>
                   <p className="text-3xl font-display font-bold text-foreground">{stats.totalLinks}</p>
                 </div>
               </div>
