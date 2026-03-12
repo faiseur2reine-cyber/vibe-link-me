@@ -536,30 +536,38 @@ const PublicProfile = () => {
         {/* ── Demo floating CTA ── */}
         {isDemo && (
           <motion.div
-            initial={{ y: 80, opacity: 0 }}
+            initial={{ y: 60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-50"
+            transition={{ delay: 0.8, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
           >
-            <div className="bg-gradient-to-t from-black via-black/95 to-transparent pt-10 pb-6 px-4">
-              <div className="max-w-[400px] mx-auto space-y-3">
-                <p className="text-center text-white/50 text-xs font-medium">
-                  ✨ Voici à quoi ressemble une page MyTaptap
-                </p>
+            <div className={`pt-16 pb-5 px-4 pointer-events-auto ${
+              isDarkTheme
+                ? 'bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/95 to-transparent'
+                : 'bg-gradient-to-t from-white via-white/95 to-transparent'
+            }`}>
+              <div className="max-w-[380px] mx-auto flex flex-col items-center gap-3">
                 <Link
                   to="/auth?tab=signup"
-                  className="group flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-semibold text-sm shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98]"
+                  className="group flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#0a0a0a] text-white font-semibold text-[13px] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
                 >
-                  <Sparkles className="w-4 h-4" />
                   Créer ma page gratuitement
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
-                <Link
-                  to="/"
-                  className="flex items-center justify-center w-full py-2.5 rounded-xl text-white/40 text-xs font-medium hover:text-white/60 transition-colors"
-                >
-                  En savoir plus
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link
+                    to="/"
+                    className={`text-[11px] font-medium transition-colors ${
+                      isDarkTheme ? 'text-white/30 hover:text-white/50' : 'text-black/25 hover:text-black/45'
+                    }`}
+                  >
+                    En savoir plus
+                  </Link>
+                  <span className={`text-[10px] ${isDarkTheme ? 'text-white/10' : 'text-black/10'}`}>•</span>
+                  <span className={`text-[10px] ${isDarkTheme ? 'text-white/20' : 'text-black/15'}`}>
+                    Gratuit • Prêt en 30 sec
+                  </span>
+                </div>
               </div>
             </div>
           </motion.div>
