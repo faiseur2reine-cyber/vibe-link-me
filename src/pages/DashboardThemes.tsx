@@ -68,16 +68,16 @@ const DashboardThemes = () => {
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Thèmes</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('themes.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Personnalisez l'apparence de vos pages
+            {t('themes.subtitle')}
           </p>
         </div>
 
         <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border">
           <Sparkles className="w-4 h-4 text-primary" />
           <p className="text-sm text-foreground">
-            Votre plan actuel : <span className="font-semibold capitalize">{userPlan}</span>
+            {t('themes.currentPlan')}: <span className="font-semibold capitalize">{userPlan}</span>
           </p>
         </div>
 
