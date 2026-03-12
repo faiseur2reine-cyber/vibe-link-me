@@ -21,8 +21,8 @@ export interface UrgencyBannerConfig {
 
 export const defaultBannerConfig: UrgencyBannerConfig = {
   enabled: true,
-  text: '🔥 Dernières heures — Accès gratuit limité',
-  ctaText: "J'en profite",
+  text: '🔥 Limited time — Free access ending soon',
+  ctaText: 'Get started',
   ctaLink: '/auth?tab=signup',
   bgColor: '#dc2626',
   textColor: '#ffffff',
