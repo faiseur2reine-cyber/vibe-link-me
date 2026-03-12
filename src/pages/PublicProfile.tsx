@@ -255,44 +255,28 @@ const PublicProfile = () => {
           </>
         )}
 
-        {/* ── Cover image ── */}
-        {page.cover_url && (
-          <motion.div
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease }}
-            className="w-full h-52 sm:h-64 md:h-72 relative"
-          >
-            <img src={page.cover_url} alt="" className="w-full h-full object-cover" loading="eager" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
-          </motion.div>
-        )}
-
-        {/* ── Main content card ── */}
+        {/* ── Main content ── */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className={`w-full max-w-[440px] mx-auto ${page.cover_url ? '-mt-20 sm:-mt-24' : 'pt-12 sm:pt-16'} pb-8 safe-area-bottom relative z-10`}
+          className="w-full max-w-[440px] mx-auto pt-12 sm:pt-16 pb-8 safe-area-bottom relative z-10"
         >
-          {/* Glassmorphism wrapper for dark themes */}
-          <div className={`px-5 sm:px-6 py-6 rounded-[28px] ${
-            isDarkTheme
-              ? 'bg-white/[0.03] backdrop-blur-2xl border border-white/[0.06] shadow-[0_8px_60px_-12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)]'
-              : ''
-          }`}
-            style={isDarkTheme ? {
-              background: `linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)`,
-            } : {}}
-          >
+          <div className="px-5 sm:px-6 py-6">
           {/* ── Profile header ── */}
           <div className="profile-header text-center relative">
+            {page.cover_url && (
+              <motion.div variants={fadeUp} className="w-full h-24 rounded-2xl overflow-hidden mb-4">
+                <img src={page.cover_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+              </motion.div>
+            )}
+
             {/* Share pill */}
             <motion.button
               variants={fadeUp}
               onClick={handleShare}
               className={`absolute -top-1 right-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium backdrop-blur-xl transition-all duration-300 active:scale-90 ${
-                isDarkTheme || page.cover_url
+                isDarkTheme
                   ? 'bg-white/[0.08] text-white/50 hover:bg-white/[0.14] hover:text-white/80 border border-white/[0.06]'
                   : 'bg-black/[0.04] text-black/35 hover:bg-black/[0.08] hover:text-black/60 border border-black/[0.04]'
               }`}
@@ -304,11 +288,7 @@ const PublicProfile = () => {
             {/* Avatar with online indicator */}
             <motion.div variants={scaleIn} className="flex justify-center">
               <div className="relative">
-                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
-                  page.cover_url
-                    ? 'ring-4 ring-white/20 shadow-2xl shadow-black/40'
-                    : theme.avatarRing
-                }`}>
+                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${theme.avatarRing}`}>
                   {page.avatar_url ? (
                     <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
                   ) : (
@@ -590,7 +570,7 @@ const PublicProfile = () => {
               {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> MyTaptap
             </Link>
           </motion.div>
-          </div>{/* end glassmorphism wrapper */}
+          </div>
         </motion.div>
 
         {/* ── Demo floating CTA ── */}
