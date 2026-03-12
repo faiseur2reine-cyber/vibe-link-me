@@ -409,6 +409,7 @@ const PublicProfile = () => {
                     const isMinimal = link.style === 'minimal' || linkLayout === 'minimal';
                     const customBtnBg = link.bg_color || page.custom_btn_color;
                     const customBtnText = link.text_color || page.custom_btn_text_color;
+                    const customBgIsDark = customBtnBg ? isColorDark(customBtnBg) : null;
                     const isFirstLink = sIdx === 0 && linkIdx === 0;
 
                     /* Social proof badge for first link */
@@ -495,7 +496,7 @@ const PublicProfile = () => {
                           <PulseRing />
                           <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             customBtnBg
-                              ? 'bg-white/15'
+                              ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
                               : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
                           }`}>
                             <LinkFavicon url={link.url} size="md" />
@@ -557,7 +558,7 @@ const PublicProfile = () => {
                         <PulseRing />
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                           customBtnBg
-                            ? 'bg-white/15'
+                            ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
                             : isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.05]'
                         }`}>
                           <LinkFavicon url={link.url} size="sm" />

@@ -81,11 +81,11 @@ Deno.serve(async (req) => {
         link_layout: "list", custom_css: null, urgency_config: null,
       };
       const demoLinks = [
-        { id: "00000000-0000-0000-0000-d00000000001", title: "Mon Portfolio", url: "https://alexmartin.design", icon: "link", position: 0, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
-        { id: "00000000-0000-0000-0000-d00000000002", title: "YouTube", url: "https://youtube.com/@alexmartin", icon: "link", position: 1, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
-        { id: "00000000-0000-0000-0000-d00000000003", title: "Newsletter", url: "https://newsletter.alexmartin.com", icon: "link", position: 2, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
-        { id: "00000000-0000-0000-0000-d00000000004", title: "Coaching 1:1", url: "https://cal.com/alexmartin", icon: "link", position: 3, thumbnail_url: null, description: "Réservez une session de coaching personnalisée", bg_color: null, text_color: null, style: "featured", section_title: null },
-        { id: "00000000-0000-0000-0000-d00000000005", title: "Ma boutique", url: "https://shop.alexmartin.com", icon: "link", position: 4, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
+        { id: "00000000-0000-0000-0000-d00000000001", title: "OnlyFans", url: "https://onlyfans.com/alexmartin", icon: "link", position: 0, thumbnail_url: null, description: "Subscribe to my exclusive content 💋", bg_color: "#1BAFE8", text_color: "#FFFFFF", style: "featured", section_title: null },
+        { id: "00000000-0000-0000-0000-d00000000002", title: "OnlyFans VIP", url: "https://onlyfans.com/alexmartin", icon: "link", position: 1, thumbnail_url: null, description: "Subscribe to my exclusive content 💋", bg_color: "#FFFFFF", text_color: "#B05A90", style: "default", section_title: null },
+        { id: "00000000-0000-0000-0000-d00000000003", title: "Instagram", url: "https://instagram.com/alexmartin", icon: "link", position: 2, thumbnail_url: null, description: null, bg_color: "#E4405F", text_color: "#FFFFFF", style: "default", section_title: "Réseaux sociaux" },
+        { id: "00000000-0000-0000-0000-d00000000004", title: "Twitter / X", url: "https://x.com/alexmartin", icon: "link", position: 3, thumbnail_url: null, description: null, bg_color: "#0F1419", text_color: "#FFFFFF", style: "default", section_title: "Réseaux sociaux" },
+        { id: "00000000-0000-0000-0000-d00000000005", title: "YouTube", url: "https://youtube.com/@alexmartin", icon: "link", position: 4, thumbnail_url: null, description: "Watch my latest videos 🎬", bg_color: "#FF1E1E", text_color: "#FFFFFF", style: "default", section_title: "Réseaux sociaux" },
       ];
       return new Response(
         JSON.stringify({ page: demoPage, links: demoLinks, source: "demo" }),
