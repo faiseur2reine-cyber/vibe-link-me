@@ -619,7 +619,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                         className="flex items-center justify-center px-4 py-2.5 rounded-lg text-xs font-medium"
                         style={{ backgroundColor: bgColor || undefined, color: textColor || undefined }}
                       >
-                        {title || 'Aperçu du lien'}
+                        {title || t('linksManager.linkPreview')}
                       </div>
                     )}
                   </div>
