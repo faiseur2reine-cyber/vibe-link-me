@@ -40,7 +40,7 @@ const DashboardAnalytics = () => {
                   <MousePointerClick className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total des clics</p>
+                  <p className="text-sm text-muted-foreground">{t('dashboard.totalClicks')}</p>
                   <p className="text-3xl font-display font-bold text-foreground">{stats.totalClicks}</p>
                 </div>
               </div>
