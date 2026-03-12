@@ -231,10 +231,14 @@ const PublicProfile = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 text-white/60 text-[10px] font-bold uppercase tracking-[0.15em]"
+            className={`absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-xl text-[10px] font-bold uppercase tracking-[0.15em] ${
+              isDarkTheme
+                ? 'bg-white/10 border border-white/10 text-white/60'
+                : 'bg-black/[0.04] border border-black/[0.06] text-black/40'
+            }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Demo
+            Aperçu
           </motion.div>
         )}
         {/* ── Ambient background effects ── */}
