@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '@/integrations/supabase/client';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ExternalLink, Heart, Share2, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
@@ -36,11 +35,14 @@ interface LinkItem {
 
 /* ── Animation presets ── */
 const ease = [0.16, 1, 0.3, 1] as const;
-const fadeUp = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
-const stagger = { visible: { transition: { staggerChildren: 0.045 } } };
+const fadeUp = {
+  hidden: { opacity: 0, y: 16, filter: 'blur(6px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
+};
+const stagger = { visible: { transition: { staggerChildren: 0.06 } } };
 const scaleIn = {
-  hidden: { scale: 0.9, opacity: 0 },
-  visible: { scale: 1, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
+  hidden: { scale: 0.85, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { type: 'spring' as const, stiffness: 260, damping: 22 } },
 };
 
 const PublicProfile = () => {
@@ -102,7 +104,7 @@ const PublicProfile = () => {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
-          className="w-7 h-7 rounded-full border-2 border-white/20 border-t-white"
+          className="w-6 h-6 rounded-full border-2 border-white/15 border-t-white/80"
         />
       </div>
     );
@@ -112,9 +114,7 @@ const PublicProfile = () => {
   if (notFound || !page) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] px-4 relative overflow-hidden">
-        {/* Subtle ambient glow */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full bg-white/[0.015] blur-[120px] pointer-events-none" />
-        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -129,32 +129,14 @@ const PublicProfile = () => {
           >
             404
           </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-            className="text-white/40 text-base sm:text-lg font-medium max-w-xs"
-          >
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="text-white/40 text-base sm:text-lg font-medium max-w-xs">
             {t('public.notFound', 'This page doesn\'t exist — yet.')}
           </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-3 mt-2"
-          >
-            <Link
-              to="/"
-              className="px-6 py-2.5 rounded-full bg-white text-[#0a0a0a] text-sm font-semibold hover:bg-white/90 transition-all duration-200 hover:-translate-y-0.5"
-            >
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-col sm:flex-row gap-3 mt-2">
+            <Link to="/" className="px-6 py-2.5 rounded-full bg-white text-[#0a0a0a] text-sm font-semibold hover:bg-white/90 transition-all duration-200 hover:-translate-y-0.5">
               {t('public.backHome', 'Go Home')}
             </Link>
-            <Link
-              to={`/auth?tab=signup&username=${encodeURIComponent(username || '')}`}
-              className="px-6 py-2.5 rounded-full border border-white/10 text-white/60 text-sm font-medium hover:border-white/25 hover:text-white/80 transition-all duration-200"
-            >
+            <Link to={`/auth?tab=signup&username=${encodeURIComponent(username || '')}`} className="px-6 py-2.5 rounded-full border border-white/10 text-white/60 text-sm font-medium hover:border-white/25 hover:text-white/80 transition-all duration-200">
               {t('public.claimPage', 'Claim this page')}
             </Link>
           </motion.div>
@@ -175,6 +157,7 @@ const PublicProfile = () => {
   const fontUrl = page.custom_font && page.custom_font !== 'default'
     ? `https://fonts.googleapis.com/css2?family=${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('+')}&display=swap` : null;
   const isDarkTheme = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'glass_dark' ||
+    page.theme === 'aurora' || page.theme === 'cyber' ||
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
   const urgency = page.urgency_config;
   const showUrgencyWidgets = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
@@ -182,7 +165,7 @@ const PublicProfile = () => {
 
   const ScarcityBlock = () => (
     showUrgencyWidgets && urgency?.scarcity?.enabled ? (
-      <div className="mt-4"><ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} /></div>
+      <div className="mt-5"><ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} /></div>
     ) : null
   );
 
@@ -230,73 +213,85 @@ const PublicProfile = () => {
           ...(fontFamily ? { fontFamily } : {}),
         }}
       >
-        {/* ── Cover ── */}
+        {/* ── Ambient background effects ── */}
+        {isDarkTheme && (
+          <>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-30 blur-[150px] pointer-events-none"
+              style={{ background: page.custom_accent_color || (page.theme === 'neon' ? 'rgba(217,70,239,0.08)' : page.theme === 'aurora' ? 'rgba(52,211,153,0.06)' : page.theme === 'cyber' ? 'rgba(34,211,238,0.06)' : 'rgba(255,255,255,0.02)') }}
+            />
+          </>
+        )}
+
+        {/* ── Cover image ── */}
         {page.cover_url && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="w-full h-48 sm:h-64 md:h-72 relative"
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease }}
+            className="w-full h-52 sm:h-64 md:h-72 relative"
           >
-            <img
-              src={page.cover_url} alt=""
-              className="w-full h-full object-cover"
-              loading="eager"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/50" />
+            <img src={page.cover_url} alt="" className="w-full h-full object-cover" loading="eager" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
           </motion.div>
         )}
 
-        {/* ── Main content ── */}
+        {/* ── Main content card ── */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className={`w-full max-w-lg mx-auto px-5 sm:px-6 ${page.cover_url ? '-mt-16 sm:-mt-20' : 'pt-10 sm:pt-14'} pb-8 safe-area-bottom relative z-10`}
+          className={`w-full max-w-[440px] mx-auto px-5 sm:px-6 ${page.cover_url ? '-mt-20 sm:-mt-24' : 'pt-12 sm:pt-16'} pb-8 safe-area-bottom relative z-10`}
         >
-          {/* Profile header */}
+          {/* ── Profile header ── */}
           <div className="profile-header text-center relative">
-            {/* Share button */}
+            {/* Share pill */}
             <motion.button
               variants={fadeUp}
               onClick={handleShare}
-              className={`absolute -top-1 right-0 p-2 rounded-full backdrop-blur-md transition-all active:scale-90 ${
+              className={`absolute -top-1 right-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium backdrop-blur-xl transition-all duration-300 active:scale-90 ${
                 isDarkTheme || page.cover_url
-                  ? 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
-                  : `bg-black/5 text-black/40 hover:bg-black/10 hover:text-black/70`
+                  ? 'bg-white/[0.08] text-white/50 hover:bg-white/[0.14] hover:text-white/80 border border-white/[0.06]'
+                  : 'bg-black/[0.04] text-black/35 hover:bg-black/[0.08] hover:text-black/60 border border-black/[0.04]'
               }`}
             >
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-3 h-3" />
+              Share
             </motion.button>
 
             {/* Avatar */}
             <motion.div variants={scaleIn} className="flex justify-center">
-              <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ${
+              <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
                 page.cover_url
-                  ? 'ring-[3px] ring-white/20 shadow-2xl shadow-black/30'
+                  ? 'ring-4 ring-white/20 shadow-2xl shadow-black/40'
                   : theme.avatarRing
               }`}>
                 {page.avatar_url ? (
                   <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
                 ) : (
-                  <div className={`w-full h-full flex items-center justify-center ${isDarkTheme ? 'bg-white/10' : 'bg-primary'}`}>
-                    <span className="text-2xl sm:text-3xl font-bold text-white">{displayName[0]?.toUpperCase()}</span>
+                  <div className={`w-full h-full flex items-center justify-center ${
+                    isDarkTheme
+                      ? 'bg-gradient-to-br from-white/15 to-white/5'
+                      : 'bg-gradient-to-br from-gray-100 to-gray-200'
+                  }`}>
+                    <span className={`text-3xl sm:text-4xl font-bold ${isDarkTheme ? 'text-white/80' : 'text-gray-500'}`}>
+                      {displayName[0]?.toUpperCase()}
+                    </span>
                   </div>
                 )}
               </div>
             </motion.div>
 
             {/* Name + bio */}
-            <motion.div variants={fadeUp} transition={{ duration: 0.5, ease }} className="mt-4 space-y-1">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5, ease }} className="mt-5 space-y-1.5">
               <h1
-                className={`text-xl sm:text-2xl font-extrabold tracking-tight leading-tight ${hasCustomColors ? '' : theme.text}`}
+                className={`text-[22px] sm:text-2xl font-bold tracking-[-0.02em] leading-tight ${hasCustomColors ? '' : theme.text}`}
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {displayName}
               </h1>
               <p
-                className={`text-xs font-medium ${hasCustomColors ? 'opacity-40' : theme.subtleText}`}
-                style={page.custom_text_color ? { color: page.custom_text_color, opacity: 0.4 } : {}}
+                className={`text-xs font-medium tracking-wide ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
+                style={page.custom_text_color ? { color: page.custom_text_color, opacity: 0.3 } : {}}
               >
                 @{page.username}
               </p>
@@ -306,13 +301,13 @@ const PublicProfile = () => {
               <motion.p
                 variants={fadeUp}
                 transition={{ duration: 0.5, ease }}
-                className={`text-sm mt-3 leading-relaxed max-w-xs mx-auto ${theme.text} opacity-60`}
+                className={`text-[13px] sm:text-sm mt-3 leading-relaxed max-w-[320px] mx-auto ${theme.text} opacity-50`}
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {page.bio.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
                   /^https?:\/\//.test(part) ? (
                     <a key={i} href={part} target="_blank" rel="noopener noreferrer"
-                      className={`${theme.accent} underline underline-offset-2 hover:opacity-80 transition-opacity`}
+                      className={`${theme.accent} underline underline-offset-2 decoration-current/30 hover:decoration-current/60 transition-all`}
                       onClick={e => e.stopPropagation()}
                     >
                       {part.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
@@ -324,7 +319,7 @@ const PublicProfile = () => {
 
             {/* Social icons */}
             {page.social_links.length > 0 && (
-              <motion.div variants={fadeUp} className="mt-4">
+              <motion.div variants={fadeUp} className="mt-5">
                 <SocialIcons links={page.social_links} theme={theme} />
               </motion.div>
             )}
@@ -335,22 +330,22 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-6 space-y-4">
+          <motion.div variants={stagger} className="mt-8 space-y-5">
             {sections.map((section, sIdx) => (
-              <motion.div key={sIdx} variants={fadeUp} className="space-y-2">
+              <motion.div key={sIdx} variants={fadeUp} className="space-y-2.5">
                 {section.title && (
-                  <div className="flex items-center gap-3 px-1 pb-1">
+                  <div className="flex items-center gap-3 px-1 mb-1">
                     <span
-                      className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${hasCustomColors ? 'opacity-35' : theme.subtleText}`}
+                      className={`text-[10px] font-bold uppercase tracking-[0.15em] ${hasCustomColors ? 'opacity-25' : theme.subtleText}`}
                       style={page.custom_text_color ? { color: page.custom_text_color } : {}}
                     >
                       {section.title}
                     </span>
-                    <div className={`h-px flex-1 ${isDarkTheme ? 'bg-white/[0.06]' : 'bg-black/[0.06]'}`} />
+                    <div className={`h-px flex-1 ${isDarkTheme ? 'bg-white/[0.05]' : 'bg-black/[0.05]'}`} />
                   </div>
                 )}
 
-                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2' : 'space-y-2'}>
+                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
                   {section.links.map((link) => {
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
@@ -365,42 +360,48 @@ const PublicProfile = () => {
                           key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
-                          whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.985 }}
-                          className="group relative rounded-2xl overflow-hidden aspect-[2.4/1] transition-shadow duration-300 hover:shadow-lg"
+                          whileHover={{ scale: 1.015, y: -2 }} whileTap={{ scale: 0.98 }}
+                          className="group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 hover:shadow-2xl"
                         >
-                          <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-3.5">
-                            <p className="text-white text-sm font-semibold truncate" style={customBtnText ? { color: customBtnText } : {}}>{link.title}</p>
-                            {link.description && <p className="text-white/45 text-xs mt-0.5 truncate">{link.description}</p>}
+                          <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <p className="text-white text-sm font-semibold tracking-tight" style={customBtnText ? { color: customBtnText } : {}}>{link.title}</p>
+                            {link.description && <p className="text-white/40 text-xs mt-0.5 truncate">{link.description}</p>}
                           </div>
                         </motion.a>,
                         link,
                       );
                     }
 
-                    /* Featured */
+                    /* Featured — larger, more prominent */
                     if (isFeatured) {
                       return wrapNsfw(
                         <motion.a
                           key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
-                          whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
-                          className={`link-item group flex items-center gap-3.5 px-4 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${customBtnBg ? '' : theme.btn}`}
+                          whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: 0.98 }}
+                          className={`link-item group relative flex items-center gap-4 px-4 sm:px-5 py-4 sm:py-[18px] rounded-[20px] text-sm font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'}`}>
+                          {/* Subtle shimmer on hover */}
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                            style={{ background: `linear-gradient(105deg, transparent 40%, ${isDarkTheme ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)'} 50%, transparent 60%)` }}
+                          />
+                          <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                            isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'
+                          }`}>
                             <LinkFavicon url={link.url} size="md" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="block truncate">{link.title}</span>
-                            {link.description && <span className="block text-xs font-normal opacity-45 truncate mt-0.5">{link.description}</span>}
+                          <div className="flex-1 min-w-0 relative">
+                            <span className="block truncate tracking-tight">{link.title}</span>
+                            {link.description && <span className="block text-xs font-normal opacity-40 truncate mt-0.5">{link.description}</span>}
                           </div>
-                          <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-opacity duration-300 shrink-0" />
+                          <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-30 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />
                         </motion.a>,
                         link,
                       );
@@ -414,7 +415,7 @@ const PublicProfile = () => {
                           onClick={() => recordClick(link.id, clickVariant)}
                           variants={fadeUp}
                           whileTap={{ scale: 0.98 }}
-                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-300 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
+                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -425,30 +426,32 @@ const PublicProfile = () => {
                             <span className="font-medium">{link.title}</span>
                             {link.description && <p className="text-xs opacity-35 truncate">{link.description}</p>}
                           </div>
-                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-300 shrink-0" />
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-200 shrink-0" />
                         </motion.a>,
                         link,
                       );
                     }
 
-                    /* Default — clean & modern */
+                    /* Default — clean premium style */
                     return wrapNsfw(
                       <motion.a
                         key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                         onClick={() => recordClick(link.id, clickVariant)}
                         variants={fadeUp}
-                        whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}
-                        className={`link-item group flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 ${customBtnBg ? '' : theme.btn}`}
+                        whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
+                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-[13px] sm:text-sm font-medium transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
                         }}
                       >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isDarkTheme ? 'bg-white/[0.06]' : 'bg-black/[0.03]'}`}>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                          isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.035]'
+                        }`}>
                           <LinkFavicon url={link.url} size="sm" />
                         </div>
-                        <span className="flex-1 truncate">{link.title}</span>
-                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-20 transition-opacity duration-300 shrink-0" />
+                        <span className="flex-1 truncate tracking-[-0.01em]">{link.title}</span>
+                        <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />
                       </motion.a>,
                       link,
                     );
@@ -461,12 +464,12 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'bottom' && <ScarcityBlock />}
 
           {/* Footer */}
-          <motion.div variants={fadeUp} className="pt-12 pb-4 safe-area-bottom">
+          <motion.div variants={fadeUp} className="pt-14 pb-4 safe-area-bottom">
             <Link
               to="/"
-              className={`flex items-center justify-center gap-1.5 text-[11px] font-medium opacity-15 hover:opacity-35 transition-opacity ${theme.text}`}
+              className={`group flex items-center justify-center gap-1.5 text-[10px] font-medium tracking-wide uppercase opacity-15 hover:opacity-40 transition-all duration-300 ${theme.text}`}
             >
-              {t('footer.madeWith')} <Heart className="w-3 h-3" /> MyTaptap
+              {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> MyTaptap
             </Link>
           </motion.div>
         </motion.div>
