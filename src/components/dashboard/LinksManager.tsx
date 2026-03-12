@@ -331,7 +331,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground"
             >
               <BookmarkPlus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sauvegarder</span>
+              <span className="hidden sm:inline">{t('linksManager.saveAsTemplate')}</span>
             </Button>
           )}
           <Button onClick={openNew} size="sm" className="h-8 rounded-lg gap-1.5 text-xs font-medium">
