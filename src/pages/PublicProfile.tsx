@@ -8,6 +8,7 @@ import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
+import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
 import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
