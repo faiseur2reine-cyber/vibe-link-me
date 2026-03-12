@@ -403,12 +403,53 @@ const PublicProfile = () => {
                 )}
 
                 <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
-                  {section.links.map((link) => {
+                  {section.links.map((link, linkIdx) => {
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
                     const isMinimal = link.style === 'minimal' || linkLayout === 'minimal';
                     const customBtnBg = link.bg_color || page.custom_btn_color;
                     const customBtnText = link.text_color || page.custom_btn_text_color;
+                    const isFirstLink = sIdx === 0 && linkIdx === 0;
+
+                    /* Social proof badge for first link */
+                    const PopularBadge = () => isFirstLink ? (
+                      <motion.span
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
+                        className={`absolute -top-2.5 right-3 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm ${
+                          isDarkTheme
+                            ? 'bg-amber-500/20 text-amber-300 border border-amber-400/20 backdrop-blur-md'
+                            : 'bg-amber-50 text-amber-600 border border-amber-200/60'
+                        }`}
+                      >
+                        🔥 Populaire
+                      </motion.span>
+                    ) : null;
+
+                    /* Pulse ring for first link */
+                    const PulseRing = () => isFirstLink && !isDemo ? (
+                      <motion.div
+                        className={`absolute inset-0 rounded-[20px] pointer-events-none ${
+                          isDarkTheme ? 'border border-white/10' : 'border border-black/[0.06]'
+                        }`}
+                        animate={{ opacity: [0.6, 0, 0.6] }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    ) : null;
+
+                    /* Animated gradient border for featured */
+                    const SpotlightBorder = () => isFeatured ? (
+                      <motion.div
+                        className="absolute inset-0 rounded-[20px] pointer-events-none"
+                        style={{
+                          background: `linear-gradient(90deg, transparent, ${isDarkTheme ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)'}, transparent)`,
+                          backgroundSize: '200% 100%',
+                        }}
+                        animate={{ backgroundPosition: ['200% 0%', '-200% 0%'] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                      />
+                    ) : null;
 
                     /* Card with thumbnail */
                     if (isCard && link.thumbnail_url) {
@@ -420,11 +461,15 @@ const PublicProfile = () => {
                           whileHover={isDemo ? {} : { scale: 1.015, y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
                           className={`group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
                         >
+                          <PopularBadge />
                           <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <p className="text-white text-sm font-semibold tracking-tight" style={customBtnText ? { color: customBtnText } : {}}>{link.title}</p>
-                            {link.description && <p className="text-white/40 text-xs mt-0.5 truncate">{link.description}</p>}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
+                            <div className="min-w-0">
+                              <p className="text-white text-sm font-semibold tracking-tight" style={customBtnText ? { color: customBtnText } : {}}>{link.title}</p>
+                              {link.description && <p className="text-white/50 text-xs mt-0.5 truncate">{link.description}</p>}
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-white/40 shrink-0" />
                           </div>
                         </motion.a>,
                         link,
@@ -445,11 +490,9 @@ const PublicProfile = () => {
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
-                          {!isDemo && (
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                              style={{ background: `linear-gradient(105deg, transparent 40%, ${isDarkTheme ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)'} 50%, transparent 60%)` }}
-                            />
-                          )}
+                          <PopularBadge />
+                          <SpotlightBorder />
+                          <PulseRing />
                           <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'
                           }`}>
@@ -457,9 +500,11 @@ const PublicProfile = () => {
                           </div>
                           <div className="flex-1 min-w-0 relative">
                             <span className="block truncate tracking-tight">{link.title}</span>
-                            {link.description && <span className="block text-xs font-normal opacity-40 truncate mt-0.5">{link.description}</span>}
+                            {link.description && <span className="block text-xs font-normal opacity-55 mt-0.5 line-clamp-2">{link.description}</span>}
                           </div>
-                          {!isDemo && <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-30 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />}
+                          <ChevronRight className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                            isDemo ? 'opacity-20' : 'opacity-25 group-hover:opacity-50 group-hover:translate-x-0.5'
+                          }`} />
                         </motion.a>,
                         link,
                       );
@@ -473,18 +518,21 @@ const PublicProfile = () => {
                           onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
                           whileTap={isDemo ? {} : { scale: 0.98 }}
-                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDemo ? 'cursor-default' : isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
+                          className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDemo ? 'cursor-default' : isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
+                          {isFirstLink && <PopularBadge />}
                           <LinkFavicon url={link.url} size="sm" />
                           <div className="flex-1 min-w-0">
                             <span className="font-medium">{link.title}</span>
-                            {link.description && <p className="text-xs opacity-35 truncate">{link.description}</p>}
+                            {link.description && <p className="text-xs opacity-45 truncate">{link.description}</p>}
                           </div>
-                          {!isDemo && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-200 shrink-0" />}
+                          <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-all duration-200 ${
+                            isDemo ? 'opacity-15' : 'opacity-20 group-hover:opacity-40 group-hover:translate-x-0.5'
+                          }`} />
                         </motion.a>,
                         link,
                       );
@@ -503,13 +551,20 @@ const PublicProfile = () => {
                           ...(customBtnText ? { color: customBtnText } : {}),
                         }}
                       >
+                        <PopularBadge />
+                        <PulseRing />
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                           isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.035]'
                         }`}>
                           <LinkFavicon url={link.url} size="sm" />
                         </div>
-                        <span className="flex-1 truncate tracking-[-0.01em]">{link.title}</span>
-                        {!isDemo && <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />}
+                        <div className="flex-1 min-w-0">
+                          <span className="truncate tracking-[-0.01em] block">{link.title}</span>
+                          {link.description && <span className="block text-xs opacity-50 mt-0.5 truncate">{link.description}</span>}
+                        </div>
+                        <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-all duration-300 ${
+                          isDemo ? 'opacity-15' : 'opacity-20 group-hover:opacity-40 group-hover:translate-x-0.5'
+                        }`} />
                       </motion.a>,
                       link,
                     );
