@@ -175,7 +175,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
     const toInsert = templateLinks.slice(0, remaining === Infinity ? undefined : remaining);
     if (toInsert.length === 0) {
-      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
+      toast({ title: t('linksManager.linkLimitReached'), variant: 'destructive' });
       return;
     }
     setApplyingTemplate(true);
