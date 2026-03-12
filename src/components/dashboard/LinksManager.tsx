@@ -691,7 +691,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold flex items-center gap-2">
-              <BookmarkPlus className="w-4 h-4" /> Sauvegarder comme template
+              <BookmarkPlus className="w-4 h-4" /> {t('linksManager.saveAsTemplateTitle')}
             </DialogTitle>
           </DialogHeader>
           <p className="text-xs text-muted-foreground -mt-1">
