@@ -134,7 +134,7 @@ const DashboardProfile = () => {
                 <Label htmlFor="avatar" className="cursor-pointer">
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:bg-accent transition-colors">
                     <Upload className="w-4 h-4" />
-                    <span className="text-sm">Changer l'avatar</span>
+                    <span className="text-sm">{t('profile.changeAvatar')}</span>
                   </div>
                 </Label>
                 <Input
