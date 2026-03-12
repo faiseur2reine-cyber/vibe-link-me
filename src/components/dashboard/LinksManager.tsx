@@ -506,7 +506,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
             {/* Thumbnail */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Photo</Label>
+              <Label className="text-xs font-medium text-muted-foreground">{t('linksManager.photo')}</Label>
               {thumbnailPreview ? (
                 <div className="relative w-full h-28 rounded-lg overflow-hidden bg-muted">
                   <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
