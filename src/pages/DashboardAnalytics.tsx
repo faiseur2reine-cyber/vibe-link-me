@@ -115,7 +115,7 @@ const DashboardAnalytics = () => {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-center text-muted-foreground py-12">Aucune donnée disponible</p>
+              <p className="text-center text-muted-foreground py-12">{t('analytics.noData')}</p>
             )}
           </CardContent>
         </Card>
