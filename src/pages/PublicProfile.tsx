@@ -8,6 +8,7 @@ import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
+import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
 import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
@@ -218,6 +219,11 @@ const PublicProfile = () => {
           <>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-30 blur-[150px] pointer-events-none"
               style={{ background: page.custom_accent_color || (page.theme === 'neon' ? 'rgba(217,70,239,0.08)' : page.theme === 'aurora' ? 'rgba(52,211,153,0.06)' : page.theme === 'cyber' ? 'rgba(34,211,238,0.06)' : 'rgba(255,255,255,0.02)') }}
+            />
+            <ParticleField
+              color={page.theme === 'neon' ? '217,70,239' : page.theme === 'aurora' ? '52,211,153' : page.theme === 'cyber' ? '34,211,238' : '255,255,255'}
+              count={35}
+              className="z-0 opacity-60"
             />
           </>
         )}
