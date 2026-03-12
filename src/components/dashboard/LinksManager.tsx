@@ -100,6 +100,7 @@ const PRESET_COLORS = [
 const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId }: LinksManagerProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const LINK_TEMPLATES = useLinkTemplates(t);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [title, setTitle] = useState('');
