@@ -154,7 +154,7 @@ const DashboardProfile = () => {
                 Email
               </Label>
               <Input value={user?.email || ''} disabled className="bg-muted/50" />
-              <p className="text-xs text-muted-foreground">Votre adresse email ne peut pas être modifiée</p>
+              <p className="text-xs text-muted-foreground">{t('profile.emailReadonly')}</p>
             </div>
 
             {/* Username */}
