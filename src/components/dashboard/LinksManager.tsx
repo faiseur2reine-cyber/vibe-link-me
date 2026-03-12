@@ -26,50 +26,50 @@ interface CustomTemplate {
   created_at: string;
 }
 
-const LINK_TEMPLATES = [
+const useLinkTemplates = (t: (key: string) => string) => [
   {
     id: 'onlyfans-creator',
     name: '🔥 OnlyFans Creator',
-    desc: 'Template pour créatrice OnlyFans',
+    desc: t('linksManager.tplOnlyfansDesc'),
     links: [
       { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: 'Subscribe to my exclusive content 💋', bg_color: '#00AFF0', text_color: '#FFFFFF' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux sociaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Wishlist Amazon', url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: 'Cadeaux', description: 'Send me a gift 🎁', bg_color: '#FF9900', text_color: '#000000' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Wishlist Amazon', url: 'https://amazon.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionGifts'), description: 'Send me a gift 🎁', bg_color: '#FF9900', text_color: '#000000' },
     ],
   },
   {
     id: 'agency-multi',
-    name: '🏢 Agence Multi-Créatrices',
-    desc: 'Template agence avec sections par créatrice',
+    name: '🏢 ' + t('linksManager.tplAgencyName'),
+    desc: t('linksManager.tplAgencyDesc'),
     links: [
-      { title: 'OnlyFans - Créatrice 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 1', description: '@creatrice1 • Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'OnlyFans - Créatrice 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 2', description: '@creatrice2 • Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans - Creator 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 1', description: '@creator1 • Top Creator 🌟', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans - Creator 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 2', description: '@creator2 • Exclusive Content 💎', bg_color: '#00AFF0', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
     ],
   },
   {
     id: 'instagram-influencer',
-    name: '📸 Influenceur Instagram',
-    desc: 'Liens standards pour influenceur',
+    name: '📸 ' + t('linksManager.tplInfluencerName'),
+    desc: t('linksManager.tplInfluencerDesc'),
     links: [
       { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: 'Watch my latest videos 🎬', bg_color: '#FF0000', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Snapchat', url: 'https://snapchat.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#FFFC00', text_color: '#000000' },
-      { title: 'Contact Pro', url: 'mailto:contact@example.com', icon: 'link', style: 'default', section_title: 'Business', description: 'Collaborations & partenariats', bg_color: null, text_color: null },
+      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: 'Snapchat', url: 'https://snapchat.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#FFFC00', text_color: '#000000' },
+      { title: t('linksManager.contactPro'), url: 'mailto:contact@example.com', icon: 'link', style: 'default', section_title: 'Business', description: t('linksManager.collabDesc'), bg_color: null, text_color: null },
     ],
   },
   {
     id: 'ecommerce',
-    name: '🛍️ E-commerce / Boutique',
-    desc: 'Liens vers vos boutiques et produits',
+    name: '🛍️ E-commerce',
+    desc: t('linksManager.tplEcommerceDesc'),
     links: [
-      { title: 'Ma Boutique', url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: 'Découvrez ma collection 🛒', bg_color: '#96BF48', text_color: '#FFFFFF' },
-      { title: 'Nouveau Drop', url: 'https://example.com/drop', icon: 'link', style: 'card', section_title: 'Produits', description: 'Collection limitée 🔥', bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Promo -20%', url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: 'Produits', description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
-      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Réseaux', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: t('linksManager.myShop'), url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.discoverCollection'), bg_color: '#96BF48', text_color: '#FFFFFF' },
+      { title: t('linksManager.newDrop'), url: 'https://example.com/drop', icon: 'link', style: 'card', section_title: t('linksManager.sectionProducts'), description: t('linksManager.limitedCollection'), bg_color: '#000000', text_color: '#FFFFFF' },
+      { title: t('linksManager.promo20'), url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
+      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
     ],
   },
 ];
@@ -100,6 +100,7 @@ const PRESET_COLORS = [
 const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId }: LinksManagerProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const LINK_TEMPLATES = useLinkTemplates(t);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [title, setTitle] = useState('');
@@ -152,7 +153,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     if (error) {
       toast({ title: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Template sauvegardé ✓' });
+      toast({ title: t('linksManager.templateSaved') });
       setSaveTemplateOpen(false);
       setTemplateName('');
       setTemplateDesc('');
@@ -166,7 +167,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const { error } = await supabase.from('custom_templates').delete().eq('id', id);
     if (!error) {
       setCustomTemplates(prev => prev.filter(t => t.id !== id));
-      toast({ title: 'Template supprimé' });
+      toast({ title: t('linksManager.templateDeleted') });
     }
   };
 
@@ -175,7 +176,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
     const toInsert = templateLinks.slice(0, remaining === Infinity ? undefined : remaining);
     if (toInsert.length === 0) {
-      toast({ title: 'Limite de liens atteinte', variant: 'destructive' });
+      toast({ title: t('linksManager.linkLimitReached'), variant: 'destructive' });
       return;
     }
     setApplyingTemplate(true);
@@ -191,7 +192,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     if (error) {
       toast({ title: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Template appliqué ✓' });
+      toast({ title: t('linksManager.templateApplied') });
       if (onRefetch) await onRefetch();
     }
     setApplyingTemplate(false);
@@ -225,7 +226,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      toast({ title: 'Image trop lourde (max 5 Mo)', variant: 'destructive' });
+      toast({ title: t('linksManager.imageTooLarge'), variant: 'destructive' });
       return;
     }
     setThumbnailFile(file);
@@ -310,7 +311,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               {t('dashboard.links')}
             </h3>
             <p className="text-xs text-muted-foreground">
-              {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} liens
+              {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} {t('linksManager.linksCount')}
             </p>
           </div>
         </div>
@@ -330,11 +331,11 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground"
             >
               <BookmarkPlus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sauvegarder</span>
+              <span className="hidden sm:inline">{t('linksManager.saveAsTemplate')}</span>
             </Button>
           )}
           <Button onClick={openNew} size="sm" className="h-8 rounded-lg gap-1.5 text-xs font-medium">
-            <Plus className="w-3.5 h-3.5" /> Ajouter
+            <Plus className="w-3.5 h-3.5" /> {t('linksManager.add')}
           </Button>
         </div>
       </div>
@@ -346,7 +347,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           className="w-full py-10 rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground"
         >
           <Plus className="w-5 h-5" />
-          <span className="text-sm font-medium">Ajouter votre premier lien</span>
+          <span className="text-sm font-medium">{t('linksManager.addFirstLink')}</span>
         </button>
       )}
 
@@ -495,7 +496,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
             {/* Description */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Description</Label>
+              <Label className="text-xs font-medium text-muted-foreground">{t('linksManager.description')}</Label>
               <Textarea
                 value={description} onChange={(e) => setDescription(e.target.value)}
                 maxLength={200} placeholder="Ex: @marie_official • Top 1% 🔥"
@@ -505,7 +506,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
             {/* Thumbnail */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Photo</Label>
+              <Label className="text-xs font-medium text-muted-foreground">{t('linksManager.photo')}</Label>
               {thumbnailPreview ? (
                 <div className="relative w-full h-28 rounded-lg overflow-hidden bg-muted">
                   <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
@@ -519,7 +520,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               ) : (
                 <label className="flex items-center justify-center gap-2 w-full h-20 rounded-lg border border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/40 transition-colors text-muted-foreground text-xs">
                   <ImagePlus className="w-4 h-4" />
-                  <span>Ajouter une image</span>
+                  <span>{t('linksManager.addImage')}</span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
                 </label>
               )}
@@ -532,7 +533,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               <Palette className="w-3.5 h-3.5" />
-              Personnalisation avancée
+              {t('linksManager.advancedCustomization')}
               <ChevronDown className={`w-3 h-3 transition-transform ${showCustomization ? 'rotate-180' : ''}`} />
             </button>
 
@@ -548,17 +549,17 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                   <div className="space-y-4 p-3 rounded-lg bg-muted/40 border border-border">
                     {/* Section */}
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">Section</Label>
+                      <Label className="text-xs text-muted-foreground">{t('linksManager.section')}</Label>
                       <Input
                         value={sectionTitle} onChange={(e) => setSectionTitle(e.target.value)}
-                        maxLength={50} placeholder="Ex: Réseaux sociaux"
+                        maxLength={50} placeholder={t('linksManager.sectionPlaceholder')}
                         className="h-8 text-sm"
                       />
                     </div>
 
                     {/* Style */}
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">Style</Label>
+                      <Label className="text-xs text-muted-foreground">{t('linksManager.style')}</Label>
                       <Select value={linkStyle} onValueChange={setLinkStyle}>
                         <SelectTrigger className="h-8 text-sm">
                           <SelectValue />
@@ -574,7 +575,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                     {/* Colors */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Fond</Label>
+                        <Label className="text-xs text-muted-foreground">{t('linksManager.background')}</Label>
                         <div className="flex items-center gap-1 flex-wrap">
                           {PRESET_COLORS.map(color => (
                             <button
@@ -590,7 +591,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Texte</Label>
+                        <Label className="text-xs text-muted-foreground">{t('linksManager.textColor')}</Label>
                         <div className="flex items-center gap-1 flex-wrap">
                           {['#FFFFFF', '#000000'].map(color => (
                             <button
@@ -618,7 +619,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                         className="flex items-center justify-center px-4 py-2.5 rounded-lg text-xs font-medium"
                         style={{ backgroundColor: bgColor || undefined, color: textColor || undefined }}
                       >
-                        {title || 'Aperçu du lien'}
+                        {title || t('linksManager.linkPreview')}
                       </div>
                     )}
                   </div>
@@ -647,14 +648,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </DialogTitle>
           </DialogHeader>
           <p className="text-xs text-muted-foreground -mt-1">
-            Ajouter rapidement un ensemble de liens pré-configurés.
+            {t('linksManager.templatesSubtitle')}
           </p>
 
           <div className="space-y-2">
             {/* Custom templates */}
             {customTemplates.length > 0 && (
               <>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">Mes templates</p>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.myTemplates')}</p>
                 {customTemplates.map(template => (
                   <TemplateCard
                     key={template.id}
@@ -670,7 +671,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             )}
 
             {/* Built-in */}
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">Pré-configurés</p>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.preConfigured')}</p>
             {LINK_TEMPLATES.map(template => (
               <TemplateCard
                 key={template.id}
@@ -690,19 +691,19 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold flex items-center gap-2">
-              <BookmarkPlus className="w-4 h-4" /> Sauvegarder comme template
+              <BookmarkPlus className="w-4 h-4" /> {t('linksManager.saveAsTemplateTitle')}
             </DialogTitle>
           </DialogHeader>
           <p className="text-xs text-muted-foreground -mt-1">
-            {links.length} liens seront sauvegardés.
+            {t('linksManager.linksSaved', { count: links.length })}
           </p>
           <div className="space-y-3 pt-1">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Nom</Label>
+              <Label className="text-xs text-muted-foreground">{t('linksManager.name')}</Label>
               <Input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Ex: Setup Marie" className="h-9" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Description</Label>
+              <Label className="text-xs text-muted-foreground">{t('linksManager.description')}</Label>
               <Input value={templateDesc} onChange={e => setTemplateDesc(e.target.value)} placeholder="Optionnel" className="h-9" />
             </div>
             <div className="flex flex-wrap gap-1">
@@ -726,9 +727,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </div>
           </div>
           <DialogFooter className="gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setSaveTemplateOpen(false)} size="sm">Annuler</Button>
+            <Button variant="ghost" onClick={() => setSaveTemplateOpen(false)} size="sm">{t('dashboard.cancel')}</Button>
             <Button onClick={handleSaveAsTemplate} disabled={savingTemplate || !templateName.trim()} size="sm">
-              {savingTemplate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Sauvegarder'}
+              {savingTemplate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('dashboard.save')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -748,6 +749,7 @@ function TemplateCard({
   onApply: () => void;
   onDelete?: (e: React.MouseEvent) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <button
       onClick={() => !loading && onApply()}
@@ -788,7 +790,7 @@ function TemplateCard({
             </span>
           )}
           <span className="text-[11px] font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-            {loading ? '...' : 'Appliquer →'}
+            {loading ? '...' : t('linksManager.apply')}
           </span>
         </div>
       </div>

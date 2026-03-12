@@ -21,8 +21,8 @@ export interface UrgencyBannerConfig {
 
 export const defaultBannerConfig: UrgencyBannerConfig = {
   enabled: true,
-  text: '🔥 Dernières heures — Accès gratuit limité',
-  ctaText: "J'en profite",
+  text: '🔥 Limited time — Free access ending soon',
+  ctaText: 'Get started',
   ctaLink: '/auth?tab=signup',
   bgColor: '#dc2626',
   textColor: '#ffffff',
@@ -125,7 +125,7 @@ const UrgencyBanner = ({ config: configOverride }: Props) => {
               onClick={() => setDismissed(true)}
               className="absolute right-2 sm:right-4 p-1 rounded-full transition-opacity opacity-70 hover:opacity-100"
               style={{ color: config.textColor }}
-              aria-label="Fermer"
+              aria-label="Close"
             >
               <X className="w-3.5 h-3.5" />
             </button>
