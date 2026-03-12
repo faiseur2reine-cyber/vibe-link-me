@@ -36,8 +36,8 @@ const DashboardThemes = () => {
   const handleSelectTheme = async (themeKey: string, theme: ThemeConfig) => {
     if (!canAccessTheme(theme.tier, userPlan)) {
       toast({
-        title: 'Thème premium',
-        description: `Ce thème nécessite un plan ${theme.tier === 'pro' ? 'Pro' : 'Starter'}.`,
+        title: t('themes.premiumTheme'),
+        description: t('themes.requiresPlan', { plan: theme.tier === 'pro' ? 'Pro' : 'Starter' }),
         variant: 'destructive',
       });
       return;
