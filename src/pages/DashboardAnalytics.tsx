@@ -25,9 +25,9 @@ const DashboardAnalytics = () => {
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Analytics</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t('dashboard.analytics')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Vue d'ensemble de vos performances
+            {t('analytics.overview')}
           </p>
         </div>
 
