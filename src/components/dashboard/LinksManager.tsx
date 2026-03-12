@@ -347,7 +347,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           className="w-full py-10 rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground"
         >
           <Plus className="w-5 h-5" />
-          <span className="text-sm font-medium">Ajouter votre premier lien</span>
+          <span className="text-sm font-medium">{t('linksManager.addFirstLink')}</span>
         </button>
       )}
 
