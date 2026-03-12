@@ -409,6 +409,7 @@ const PublicProfile = () => {
                     const isMinimal = link.style === 'minimal' || linkLayout === 'minimal';
                     const customBtnBg = link.bg_color || page.custom_btn_color;
                     const customBtnText = link.text_color || page.custom_btn_text_color;
+                    const customBgIsDark = customBtnBg ? isColorDark(customBtnBg) : null;
                     const isFirstLink = sIdx === 0 && linkIdx === 0;
 
                     /* Social proof badge for first link */
