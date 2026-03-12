@@ -484,7 +484,7 @@ const PublicProfile = () => {
                           onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { y: -3, scale: 1.01 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                          className={`link-item group relative flex items-center gap-4 px-4 sm:px-5 py-4 sm:py-[18px] rounded-[20px] text-sm font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                          className={`link-item group relative flex items-center gap-4 px-5 py-[18px] sm:py-5 rounded-2xl text-[15px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -494,16 +494,18 @@ const PublicProfile = () => {
                           <SpotlightBorder />
                           <PulseRing />
                           <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
-                            isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'
+                            customBtnBg
+                              ? 'bg-white/15'
+                              : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
                           }`}>
                             <LinkFavicon url={link.url} size="md" />
                           </div>
                           <div className="flex-1 min-w-0 relative">
                             <span className="block truncate tracking-tight">{link.title}</span>
-                            {link.description && <span className="block text-xs font-normal opacity-55 mt-0.5 line-clamp-2">{link.description}</span>}
+                            {link.description && <span className="block text-[12px] font-normal opacity-65 mt-0.5 line-clamp-2">{link.description}</span>}
                           </div>
                           <ChevronRight className={`w-4 h-4 shrink-0 transition-all duration-300 ${
-                            isDemo ? 'opacity-20' : 'opacity-25 group-hover:opacity-50 group-hover:translate-x-0.5'
+                            isDemo ? 'opacity-20' : 'opacity-30 group-hover:opacity-60 group-hover:translate-x-0.5'
                           }`} />
                         </motion.a>,
                         link,
