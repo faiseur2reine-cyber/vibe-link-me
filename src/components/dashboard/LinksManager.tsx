@@ -671,7 +671,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             )}
 
             {/* Built-in */}
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">Pré-configurés</p>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.preConfigured')}</p>
             {LINK_TEMPLATES.map(template => (
               <TemplateCard
                 key={template.id}
