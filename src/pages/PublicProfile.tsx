@@ -387,9 +387,9 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-8 space-y-6">
+          <motion.div variants={stagger} className="mt-7 space-y-4">
             {sections.map((section, sIdx) => (
-              <motion.div key={sIdx} variants={fadeUp} className="space-y-3">
+              <motion.div key={sIdx} variants={fadeUp} className="space-y-2.5">
                 {section.title && (
                   <div className="flex items-center gap-3 px-1 mb-1">
                     <span
@@ -402,7 +402,7 @@ const PublicProfile = () => {
                   </div>
                 )}
 
-                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-3' : 'space-y-3'}>
+                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
                   {section.links.map((link, linkIdx) => {
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
@@ -431,7 +431,7 @@ const PublicProfile = () => {
                     /* Pulse ring for first link */
                     const PulseRing = () => isFirstLink && !isDemo ? (
                       <motion.div
-                        className={`absolute inset-0 rounded-[20px] pointer-events-none ${
+                        className={`absolute inset-0 rounded-xl pointer-events-none ${
                           isDarkTheme ? 'border border-white/10' : 'border border-black/[0.06]'
                         }`}
                         animate={{ opacity: [0.6, 0, 0.6] }}
@@ -442,7 +442,7 @@ const PublicProfile = () => {
                     /* Animated gradient border for featured */
                     const SpotlightBorder = () => isFeatured ? (
                       <motion.div
-                        className="absolute inset-0 rounded-[20px] pointer-events-none"
+                        className="absolute inset-0 rounded-xl pointer-events-none"
                         style={{
                           background: `linear-gradient(90deg, transparent, ${isDarkTheme ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)'}, transparent)`,
                           backgroundSize: '200% 100%',
@@ -484,8 +484,8 @@ const PublicProfile = () => {
                           key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
                           onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileHover={isDemo ? {} : { y: -3, scale: 1.01 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                          className={`link-item group relative flex items-center gap-4 px-5 py-[18px] sm:py-5 rounded-2xl text-[15px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                          whileHover={isDemo ? {} : { y: -2, scale: 1.008 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -494,18 +494,18 @@ const PublicProfile = () => {
                           <PopularBadge />
                           <SpotlightBorder />
                           <PulseRing />
-                          <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
+                          <div className={`relative w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             customBtnBg
                               ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
                               : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
                           }`}>
-                            <LinkFavicon url={link.url} size="md" />
+                            <LinkFavicon url={link.url} size="sm" />
                           </div>
                           <div className="flex-1 min-w-0 relative">
                             <span className="block truncate tracking-tight">{link.title}</span>
-                            {link.description && <span className="block text-[12px] font-normal opacity-65 mt-0.5 line-clamp-2">{link.description}</span>}
+                            {link.description && <span className="block text-[11px] font-normal opacity-65 mt-0.5 line-clamp-2">{link.description}</span>}
                           </div>
-                          <ChevronRight className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                          <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-all duration-300 ${
                             isDemo ? 'opacity-20' : 'opacity-30 group-hover:opacity-60 group-hover:translate-x-0.5'
                           }`} />
                         </motion.a>,
@@ -548,7 +548,7 @@ const PublicProfile = () => {
                         onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                         variants={fadeUp}
                         whileHover={isDemo ? {} : { y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                        className={`link-item group relative flex items-center gap-4 px-5 py-4 sm:py-[18px] rounded-2xl text-[14px] sm:text-[15px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3 sm:py-3.5 rounded-xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
@@ -556,7 +556,7 @@ const PublicProfile = () => {
                       >
                         <PopularBadge />
                         <PulseRing />
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                           customBtnBg
                             ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
                             : isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.05]'
@@ -565,9 +565,9 @@ const PublicProfile = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="truncate tracking-[-0.01em] block">{link.title}</span>
-                          {link.description && <span className="block text-[12px] font-normal opacity-55 mt-0.5 truncate">{link.description}</span>}
+                          {link.description && <span className="block text-[11px] font-normal opacity-55 mt-0.5 truncate">{link.description}</span>}
                         </div>
-                        <ChevronRight className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                        <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-all duration-300 ${
                           isDemo ? 'opacity-15' : 'opacity-25 group-hover:opacity-50 group-hover:translate-x-0.5'
                         }`} />
                       </motion.a>,
