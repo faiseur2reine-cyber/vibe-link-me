@@ -57,9 +57,9 @@ const DashboardProfile = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Profil mis à jour', description: 'Vos modifications ont été enregistrées.' });
+      toast({ title: t('profile.updated'), description: t('profile.updatedDesc') });
     }
     setSaving(false);
   };
