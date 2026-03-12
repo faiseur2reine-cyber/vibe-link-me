@@ -575,7 +575,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                     {/* Colors */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Fond</Label>
+                        <Label className="text-xs text-muted-foreground">{t('linksManager.background')}</Label>
                         <div className="flex items-center gap-1 flex-wrap">
                           {PRESET_COLORS.map(color => (
                             <button
