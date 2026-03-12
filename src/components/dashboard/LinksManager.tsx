@@ -225,7 +225,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      toast({ title: 'Image trop lourde (max 5 Mo)', variant: 'destructive' });
+      toast({ title: t('linksManager.imageTooLarge'), variant: 'destructive' });
       return;
     }
     setThumbnailFile(file);
