@@ -28,7 +28,7 @@ interface PasswordStrength {
   };
 }
 
-const getPasswordStrength = (password: string): PasswordStrength => {
+const getPasswordStrength = (password: string, t: (key: string) => string): PasswordStrength => {
   const checks = {
     length:    password.length >= 8,
     uppercase: /[A-Z]/.test(password),
@@ -38,7 +38,7 @@ const getPasswordStrength = (password: string): PasswordStrength => {
   };
   const passed = Object.values(checks).filter(Boolean).length;
   const idx = Math.min(passed, 4);
-  const labels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
+  const labels = [t('auth.pwVeryWeak'), t('auth.pwWeak'), t('auth.pwMedium'), t('auth.pwStrong'), t('auth.pwVeryStrong')];
   const colors = [
     'bg-destructive',
     'bg-orange-500',
