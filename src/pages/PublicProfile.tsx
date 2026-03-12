@@ -219,12 +219,24 @@ const PublicProfile = () => {
       </Helmet>
 
       <div
-        className={`page-container min-h-screen min-h-[100dvh] ${hasCustomColors ? '' : theme.bg} flex flex-col items-center relative overflow-hidden`}
+        className={`page-container min-h-screen min-h-[100dvh] ${hasCustomColors ? '' : theme.bg} flex flex-col items-center relative overflow-hidden ${isDemo ? 'pb-36' : ''}`}
         style={{
           ...(page.custom_bg_color ? { backgroundColor: page.custom_bg_color } : {}),
           ...(fontFamily ? { fontFamily } : {}),
         }}
       >
+        {/* Demo mode label */}
+        {isDemo && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 text-white/60 text-[10px] font-bold uppercase tracking-[0.15em]"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Demo
+          </motion.div>
+        )}
         {/* ── Ambient background effects ── */}
         {isDarkTheme && (
           <>
