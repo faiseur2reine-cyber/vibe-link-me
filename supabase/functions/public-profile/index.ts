@@ -135,15 +135,22 @@ Deno.serve(async (req) => {
       .single();
 
     if (pageData) {
-      // Fetch links
-      const { data: linksData } = await supabase
-        .from("links")
-        .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title")
-        .eq("page_id", pageData.id)
-        .order("position", { ascending: true });
+      // Fetch links + user plan in parallel
+      const [linksRes, profileRes] = await Promise.all([
+        supabase
+          .from("links")
+          .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title")
+          .eq("page_id", pageData.id)
+          .order("position", { ascending: true }),
+        supabase
+          .from("profiles")
+          .select("plan")
+          .eq("user_id", pageData.user_id)
+          .single(),
+      ]);
 
       return new Response(
-        JSON.stringify({ page: pageData, links: linksData || [], source: "creator_pages" }),
+        JSON.stringify({ page: { ...pageData, plan: profileRes.data?.plan || 'free' }, links: linksRes.data || [], source: "creator_pages" }),
         { status: 200, headers: rateLimitHeaders }
       );
     }
