@@ -749,6 +749,7 @@ function TemplateCard({
   onApply: () => void;
   onDelete?: (e: React.MouseEvent) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <button
       onClick={() => !loading && onApply()}
