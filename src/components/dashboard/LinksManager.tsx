@@ -311,7 +311,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               {t('dashboard.links')}
             </h3>
             <p className="text-xs text-muted-foreground">
-              {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} liens
+              {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} {t('linksManager.linksCount')}
             </p>
           </div>
         </div>
