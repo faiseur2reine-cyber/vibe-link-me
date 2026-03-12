@@ -496,7 +496,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
             {/* Description */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Description</Label>
+              <Label className="text-xs font-medium text-muted-foreground">{t('linksManager.description')}</Label>
               <Textarea
                 value={description} onChange={(e) => setDescription(e.target.value)}
                 maxLength={200} placeholder="Ex: @marie_official • Top 1% 🔥"
