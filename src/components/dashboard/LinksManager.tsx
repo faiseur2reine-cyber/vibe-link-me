@@ -152,7 +152,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     if (error) {
       toast({ title: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Template sauvegardé ✓' });
+      toast({ title: t('linksManager.templateSaved') });
       setSaveTemplateOpen(false);
       setTemplateName('');
       setTemplateDesc('');
