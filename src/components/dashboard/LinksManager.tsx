@@ -552,7 +552,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                       <Label className="text-xs text-muted-foreground">{t('linksManager.section')}</Label>
                       <Input
                         value={sectionTitle} onChange={(e) => setSectionTitle(e.target.value)}
-                        maxLength={50} placeholder="Ex: Réseaux sociaux"
+                        maxLength={50} placeholder={t('linksManager.sectionPlaceholder')}
                         className="h-8 text-sm"
                       />
                     </div>
