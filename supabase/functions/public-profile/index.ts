@@ -58,6 +58,40 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Built-in demo page — no DB row needed
+    if (username === "demo") {
+      const demoPage = {
+        id: "00000000-0000-0000-0000-000000000001",
+        username: "demo",
+        display_name: "Alex Martin",
+        bio: "Créateur de contenu & designer ✨ Retrouvez tous mes liens ici.",
+        avatar_url: null,
+        cover_url: null,
+        theme: "default",
+        user_id: "00000000-0000-0000-0000-000000000000",
+        is_nsfw: false,
+        social_links: [
+          { platform: "twitter", url: "https://twitter.com/alexmartin" },
+          { platform: "instagram", url: "https://instagram.com/alexmartin" },
+          { platform: "youtube", url: "https://youtube.com/@alexmartin" },
+        ],
+        custom_bg_color: null, custom_text_color: null, custom_accent_color: null,
+        custom_btn_color: null, custom_btn_text_color: null, custom_font: "default",
+        link_layout: "list", custom_css: null, urgency_config: null,
+      };
+      const demoLinks = [
+        { id: "d0000001", title: "Mon Portfolio", url: "https://alexmartin.design", icon: "palette", position: 0, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
+        { id: "d0000002", title: "YouTube", url: "https://youtube.com/@alexmartin", icon: "play", position: 1, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
+        { id: "d0000003", title: "Newsletter", url: "https://newsletter.alexmartin.com", icon: "mail", position: 2, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
+        { id: "d0000004", title: "Coaching 1:1", url: "https://cal.com/alexmartin", icon: "rocket", position: 3, thumbnail_url: null, description: "Réservez une session de coaching personnalisée", bg_color: null, text_color: null, style: "featured", section_title: null },
+        { id: "d0000005", title: "Ma boutique", url: "https://shop.alexmartin.com", icon: "shopping-bag", position: 4, thumbnail_url: null, description: null, bg_color: null, text_color: null, style: "default", section_title: null },
+      ];
+      return new Response(
+        JSON.stringify({ page: demoPage, links: demoLinks, source: "demo" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Rate limit by IP
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||

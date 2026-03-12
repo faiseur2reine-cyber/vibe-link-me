@@ -104,13 +104,13 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
-  const [tab, setTab] = useState<'login' | 'signup' | 'forgot'>(
-    (searchParams.get('tab') as 'login' | 'signup') || 'login'
-  );
+  const initialTab = (searchParams.get('tab') as 'login' | 'signup') || 'login';
+  const [tab, setTab] = useState<'login' | 'signup' | 'forgot'>(initialTab);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('');
+  const prefillUsername = searchParams.get('username') || '';
+  const [username, setUsername] = useState(prefillUsername);
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -124,6 +124,14 @@ const Auth = () => {
   useEffect(() => {
     if (user) navigate('/dashboard');
   }, [user, navigate]);
+
+  // Auto-check prefilled username
+  useEffect(() => {
+    if (prefillUsername && prefillUsername.length >= 3) {
+      checkUsername(prefillUsername);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
