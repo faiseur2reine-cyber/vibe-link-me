@@ -119,7 +119,7 @@ const Auth = () => {
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const passwordStrength = useMemo(() => getPasswordStrength(password), [password]);
+  const passwordStrength = useMemo(() => getPasswordStrength(password, t), [password, t]);
   const isPasswordValid = passwordStrength.score === 5;
 
   useEffect(() => {
