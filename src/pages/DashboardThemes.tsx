@@ -115,8 +115,8 @@ const DashboardThemes = () => {
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
                     {isLocked 
-                      ? `Nécessite le plan ${theme.tier === 'pro' ? 'Pro' : 'Starter'}`
-                      : 'Cliquer pour appliquer'
+                      ? t('themes.requiresPlan', { plan: theme.tier === 'pro' ? 'Pro' : 'Starter' })
+                      : t('themes.clickToApply')
                     }
                   </p>
                   {isLocked && (
