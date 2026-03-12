@@ -559,7 +559,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
                     {/* Style */}
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">Style</Label>
+                      <Label className="text-xs text-muted-foreground">{t('linksManager.style')}</Label>
                       <Select value={linkStyle} onValueChange={setLinkStyle}>
                         <SelectTrigger className="h-8 text-sm">
                           <SelectValue />
