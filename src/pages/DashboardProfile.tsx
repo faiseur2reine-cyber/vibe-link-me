@@ -169,12 +169,12 @@ const DashboardProfile = () => {
 
             {/* Display Name */}
             <div className="space-y-2">
-              <Label htmlFor="display_name">Nom d'affichage</Label>
+              <Label htmlFor="display_name">{t('auth.displayName')}</Label>
               <Input
                 id="display_name"
                 value={profile.display_name}
                 onChange={(e) => setProfile({ ...profile, display_name: e.target.value })}
-                placeholder="Votre nom public"
+                placeholder={t('profile.displayNamePlaceholder')}
               />
             </div>
 
