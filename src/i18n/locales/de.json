@@ -69,7 +69,7 @@
     "domainRemoved": "Domain entfernt",
     "invalidDomain": "Ungültiges Domain-Format"
   },
-  "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht.", "backHome": "Zurück zur Startseite" },
+  "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht — noch nicht.", "backHome": "Startseite", "claimPage": "Diese Seite reservieren" },
   "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" },
   "landing": {
     "socialProof": "Genutzt von Creatorn auf",

@@ -135,8 +135,9 @@
   },
   "public": {
     "madeWith": "Créé avec MyTaptap",
-    "notFound": "Cette page n'existe pas.",
-    "backHome": "Retour à l'accueil"
+    "notFound": "Cette page n'existe pas — pas encore.",
+    "backHome": "Accueil",
+    "claimPage": "Réserver cette page"
   },
   "common": {
     "loading": "Chargement...",
