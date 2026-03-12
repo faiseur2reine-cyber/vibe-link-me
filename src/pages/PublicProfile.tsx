@@ -20,6 +20,7 @@ interface CreatorPageData {
   id: string; username: string; display_name: string | null;
   bio: string | null; avatar_url: string | null; cover_url: string | null;
   theme: string; user_id: string; is_nsfw: boolean; social_links: SocialLink[];
+  plan?: string;
   custom_bg_color?: string | null; custom_text_color?: string | null;
   custom_accent_color?: string | null; custom_btn_color?: string | null;
   custom_btn_text_color?: string | null; custom_font?: string;
