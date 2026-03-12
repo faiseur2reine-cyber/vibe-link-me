@@ -655,7 +655,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             {/* Custom templates */}
             {customTemplates.length > 0 && (
               <>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">Mes templates</p>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest pt-1">{t('linksManager.myTemplates')}</p>
                 {customTemplates.map(template => (
                   <TemplateCard
                     key={template.id}
