@@ -727,9 +727,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </div>
           </div>
           <DialogFooter className="gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setSaveTemplateOpen(false)} size="sm">Annuler</Button>
+            <Button variant="ghost" onClick={() => setSaveTemplateOpen(false)} size="sm">{t('dashboard.cancel')}</Button>
             <Button onClick={handleSaveAsTemplate} disabled={savingTemplate || !templateName.trim()} size="sm">
-              {savingTemplate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Sauvegarder'}
+              {savingTemplate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('dashboard.save')}
             </Button>
           </DialogFooter>
         </DialogContent>
