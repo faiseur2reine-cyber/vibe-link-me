@@ -91,10 +91,10 @@ const DashboardProfile = () => {
       .eq('user_id', user!.id);
 
     if (updateError) {
-      toast({ title: 'Erreur', description: updateError.message, variant: 'destructive' });
+      toast({ title: t('common.error'), description: updateError.message, variant: 'destructive' });
     } else {
       setProfile({ ...profile, avatar_url: avatarUrl });
-      toast({ title: 'Avatar mis à jour' });
+      toast({ title: t('profile.avatarUpdated') });
     }
     setSaving(false);
   };
