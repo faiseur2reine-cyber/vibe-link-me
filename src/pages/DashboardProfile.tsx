@@ -180,12 +180,12 @@ const DashboardProfile = () => {
 
             {/* Bio */}
             <div className="space-y-2">
-              <Label htmlFor="bio">Biographie</Label>
+              <Label htmlFor="bio">{t('dashboard.bio')}</Label>
               <textarea
                 id="bio"
                 value={profile.bio}
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                placeholder="Parlez-nous de vous..."
+                placeholder={t('profile.bioPlaceholder')}
                 className="w-full min-h-[100px] px-3 py-2 rounded-md border border-input bg-background text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
