@@ -96,7 +96,7 @@ const PublicProfile = () => {
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) { await navigator.share({ title: page?.display_name || username, url }); }
-    else { await navigator.clipboard.writeText(url); toast({ title: t('common.success'), description: 'Link copied!' }); }
+    else { await navigator.clipboard.writeText(url); toast({ title: t('common.success') }); }
   };
 
   /* ── Loading ── */
