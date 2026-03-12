@@ -235,7 +235,7 @@ const Auth = () => {
       <div className="w-full max-w-sm">
         <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors text-sm">
           <ArrowLeft className="w-3.5 h-3.5" />
-          Retour
+          {t('auth.back')}
         </Link>
 
         <div className="mb-6">
