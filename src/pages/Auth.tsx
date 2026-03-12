@@ -59,11 +59,11 @@ const PasswordStrengthMeter = ({ password }: PasswordStrengthMeterProps) => {
   if (!password) return null;
 
   const checkItems = [
-    { key: 'length',    label: '8 caractères minimum' },
-    { key: 'uppercase', label: 'Une majuscule' },
-    { key: 'lowercase', label: 'Une minuscule' },
-    { key: 'number',    label: 'Un chiffre' },
-    { key: 'special',   label: 'Un caractère spécial (!@#…)' },
+    { key: 'length',    label: t('auth.pwMinChars') },
+    { key: 'uppercase', label: t('auth.pwUppercase') },
+    { key: 'lowercase', label: t('auth.pwLowercase') },
+    { key: 'number',    label: t('auth.pwNumber') },
+    { key: 'special',   label: t('auth.pwSpecial') },
   ] as const;
 
   return (
