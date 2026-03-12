@@ -606,7 +606,7 @@ const PublicProfile = () => {
                   to="/auth?tab=signup"
                   className="group flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#0a0a0a] text-white font-semibold text-[13px] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
                 >
-                  Créer ma page gratuitement
+                  {t('public.ctaCreate')}
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <div className="flex items-center gap-4">
@@ -616,11 +616,11 @@ const PublicProfile = () => {
                       isDarkTheme ? 'text-white/30 hover:text-white/50' : 'text-black/25 hover:text-black/45'
                     }`}
                   >
-                    En savoir plus
+                    {t('public.ctaLearnMore')}
                   </Link>
                   <span className={`text-[10px] ${isDarkTheme ? 'text-white/10' : 'text-black/10'}`}>•</span>
                   <span className={`text-[10px] ${isDarkTheme ? 'text-white/20' : 'text-black/15'}`}>
-                    Gratuit • Prêt en 30 sec
+                    {t('public.ctaTagline')}
                   </span>
                 </div>
               </div>

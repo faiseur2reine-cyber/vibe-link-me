@@ -137,7 +137,10 @@
     "madeWith": "Made with MyTaptap",
     "notFound": "This page doesn't exist — yet.",
     "backHome": "Go Home",
-    "claimPage": "Claim this page"
+    "claimPage": "Claim this page",
+    "ctaCreate": "Create my page for free",
+    "ctaLearnMore": "Learn more",
+    "ctaTagline": "Free • Ready in 30 sec"
   },
   "common": {
     "loading": "Loading...",
