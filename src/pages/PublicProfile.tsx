@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2, ChevronRight, BadgeCheck } from 'lucide-react';
+import { ExternalLink, Heart, Share2, ChevronRight, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
@@ -20,6 +20,7 @@ interface CreatorPageData {
   id: string; username: string; display_name: string | null;
   bio: string | null; avatar_url: string | null; cover_url: string | null;
   theme: string; user_id: string; is_nsfw: boolean; social_links: SocialLink[];
+  plan?: string;
   custom_bg_color?: string | null; custom_text_color?: string | null;
   custom_accent_color?: string | null; custom_btn_color?: string | null;
   custom_btn_text_color?: string | null; custom_font?: string;
@@ -312,7 +313,12 @@ const PublicProfile = () => {
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {displayName}
-                <BadgeCheck className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-blue-500 shrink-0" />
+                {(page.plan === 'starter' || page.plan === 'pro') && (
+                  <span className="relative inline-flex items-center justify-center w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0" title="Verified creator">
+                    <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 shadow-md shadow-blue-500/25" />
+                    <Check className="relative w-3 h-3 sm:w-3.5 sm:h-3.5 text-white stroke-[3]" />
+                  </span>
+                )}
               </h1>
               <p
                 className={`text-xs font-medium tracking-wide ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
