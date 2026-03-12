@@ -298,7 +298,7 @@ const PublicProfile = () => {
               }`}
             >
               <Share2 className="w-3 h-3" />
-              Share
+              {t('public.share', 'Share')}
             </motion.button>
 
             {/* Avatar with online indicator */}
