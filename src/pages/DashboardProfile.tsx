@@ -119,7 +119,7 @@ const DashboardProfile = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Informations personnelles</CardTitle>
+            <CardTitle className="text-base">{t('profile.personalInfo')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Avatar */}
