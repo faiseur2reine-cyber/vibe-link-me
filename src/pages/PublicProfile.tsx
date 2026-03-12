@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2, ChevronRight } from 'lucide-react';
+import { ExternalLink, Heart, Share2, ChevronRight, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
@@ -246,8 +246,18 @@ const PublicProfile = () => {
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className={`w-full max-w-[440px] mx-auto px-5 sm:px-6 ${page.cover_url ? '-mt-20 sm:-mt-24' : 'pt-12 sm:pt-16'} pb-8 safe-area-bottom relative z-10`}
+          className={`w-full max-w-[440px] mx-auto ${page.cover_url ? '-mt-20 sm:-mt-24' : 'pt-12 sm:pt-16'} pb-8 safe-area-bottom relative z-10`}
         >
+          {/* Glassmorphism wrapper for dark themes */}
+          <div className={`px-5 sm:px-6 py-6 rounded-[28px] ${
+            isDarkTheme
+              ? 'bg-white/[0.03] backdrop-blur-2xl border border-white/[0.06] shadow-[0_8px_60px_-12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)]'
+              : ''
+          }`}
+            style={isDarkTheme ? {
+              background: `linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)`,
+            } : {}}
+          >
           {/* ── Profile header ── */}
           <div className="profile-header text-center relative">
             {/* Share pill */}
@@ -264,36 +274,45 @@ const PublicProfile = () => {
               Share
             </motion.button>
 
-            {/* Avatar */}
+            {/* Avatar with online indicator */}
             <motion.div variants={scaleIn} className="flex justify-center">
-              <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
-                page.cover_url
-                  ? 'ring-4 ring-white/20 shadow-2xl shadow-black/40'
-                  : theme.avatarRing
-              }`}>
-                {page.avatar_url ? (
-                  <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
-                ) : (
-                  <div className={`w-full h-full flex items-center justify-center ${
-                    isDarkTheme
-                      ? 'bg-gradient-to-br from-white/15 to-white/5'
-                      : 'bg-gradient-to-br from-gray-100 to-gray-200'
-                  }`}>
-                    <span className={`text-3xl sm:text-4xl font-bold ${isDarkTheme ? 'text-white/80' : 'text-gray-500'}`}>
-                      {displayName[0]?.toUpperCase()}
-                    </span>
-                  </div>
-                )}
+              <div className="relative">
+                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
+                  page.cover_url
+                    ? 'ring-4 ring-white/20 shadow-2xl shadow-black/40'
+                    : theme.avatarRing
+                }`}>
+                  {page.avatar_url ? (
+                    <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
+                  ) : (
+                    <div className={`w-full h-full flex items-center justify-center ${
+                      isDarkTheme
+                        ? 'bg-gradient-to-br from-white/15 to-white/5'
+                        : 'bg-gradient-to-br from-gray-100 to-gray-200'
+                    }`}>
+                      <span className={`text-3xl sm:text-4xl font-bold ${isDarkTheme ? 'text-white/80' : 'text-gray-500'}`}>
+                        {displayName[0]?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Online indicator */}
+                <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-400 border-[3px] border-current shadow-lg shadow-emerald-500/30"
+                  style={{ borderColor: isDarkTheme ? '#0a0a0f' : page.custom_bg_color || '#fafafa' }}
+                >
+                  <div className="w-full h-full rounded-full animate-ping bg-emerald-400 opacity-40" />
+                </div>
               </div>
             </motion.div>
 
             {/* Name + bio */}
             <motion.div variants={fadeUp} transition={{ duration: 0.5, ease }} className="mt-5 space-y-1.5">
               <h1
-                className={`text-[22px] sm:text-2xl font-bold tracking-[-0.02em] leading-tight ${hasCustomColors ? '' : theme.text}`}
+                className={`text-[22px] sm:text-2xl font-bold tracking-[-0.02em] leading-tight ${hasCustomColors ? '' : theme.text} flex items-center justify-center gap-1.5`}
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {displayName}
+                <BadgeCheck className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-blue-500 shrink-0" />
               </h1>
               <p
                 className={`text-xs font-medium tracking-wide ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
@@ -478,6 +497,7 @@ const PublicProfile = () => {
               {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> MyTaptap
             </Link>
           </motion.div>
+          </div>{/* end glassmorphism wrapper */}
         </motion.div>
       </div>
     </>
