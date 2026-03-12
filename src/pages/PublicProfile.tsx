@@ -398,11 +398,11 @@ const PublicProfile = () => {
                     if (isCard && link.thumbnail_url) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id, clickVariant)}
+                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileHover={{ scale: 1.015, y: -2 }} whileTap={{ scale: 0.98 }}
-                          className="group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 hover:shadow-2xl"
+                          whileHover={isDemo ? {} : { scale: 1.015, y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
                         >
                           <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -419,21 +419,22 @@ const PublicProfile = () => {
                     if (isFeatured) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id, clickVariant)}
+                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                          className={`link-item group relative flex items-center gap-4 px-4 sm:px-5 py-4 sm:py-[18px] rounded-[20px] text-sm font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn}`}
+                          whileHover={isDemo ? {} : { y: -3, scale: 1.01 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`link-item group relative flex items-center gap-4 px-4 sm:px-5 py-4 sm:py-[18px] rounded-[20px] text-sm font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
-                          {/* Subtle shimmer on hover */}
-                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                            style={{ background: `linear-gradient(105deg, transparent 40%, ${isDarkTheme ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)'} 50%, transparent 60%)` }}
-                          />
-                          <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                          {!isDemo && (
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                              style={{ background: `linear-gradient(105deg, transparent 40%, ${isDarkTheme ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)'} 50%, transparent 60%)` }}
+                            />
+                          )}
+                          <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'
                           }`}>
                             <LinkFavicon url={link.url} size="md" />
@@ -442,7 +443,7 @@ const PublicProfile = () => {
                             <span className="block truncate tracking-tight">{link.title}</span>
                             {link.description && <span className="block text-xs font-normal opacity-40 truncate mt-0.5">{link.description}</span>}
                           </div>
-                          <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-30 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />
+                          {!isDemo && <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-30 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />}
                         </motion.a>,
                         link,
                       );
@@ -452,11 +453,11 @@ const PublicProfile = () => {
                     if (isMinimal) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id, clickVariant)}
+                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileTap={{ scale: 0.98 }}
-                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
+                          whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDemo ? 'cursor-default' : isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -467,7 +468,7 @@ const PublicProfile = () => {
                             <span className="font-medium">{link.title}</span>
                             {link.description && <p className="text-xs opacity-35 truncate">{link.description}</p>}
                           </div>
-                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-200 shrink-0" />
+                          {!isDemo && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-200 shrink-0" />}
                         </motion.a>,
                         link,
                       );
@@ -476,23 +477,23 @@ const PublicProfile = () => {
                     /* Default — clean premium style */
                     return wrapNsfw(
                       <motion.a
-                        key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                        onClick={() => recordClick(link.id, clickVariant)}
+                        key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                        onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                         variants={fadeUp}
-                        whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
-                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-[13px] sm:text-sm font-medium transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn}`}
+                        whileHover={isDemo ? {} : { y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-[13px] sm:text-sm font-medium transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
                         }}
                       >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                           isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.035]'
                         }`}>
                           <LinkFavicon url={link.url} size="sm" />
                         </div>
                         <span className="flex-1 truncate tracking-[-0.01em]">{link.title}</span>
-                        <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />
+                        {!isDemo && <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />}
                       </motion.a>,
                       link,
                     );
