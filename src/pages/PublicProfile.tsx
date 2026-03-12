@@ -516,6 +516,38 @@ const PublicProfile = () => {
           </motion.div>
           </div>{/* end glassmorphism wrapper */}
         </motion.div>
+
+        {/* ── Demo floating CTA ── */}
+        {isDemo && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-0 left-0 right-0 z-50"
+          >
+            <div className="bg-gradient-to-t from-black via-black/95 to-transparent pt-10 pb-6 px-4">
+              <div className="max-w-[400px] mx-auto space-y-3">
+                <p className="text-center text-white/50 text-xs font-medium">
+                  ✨ Voici à quoi ressemble une page MyTaptap
+                </p>
+                <Link
+                  to="/auth?tab=signup"
+                  className="group flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-semibold text-sm shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98]"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Créer ma page gratuitement
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  to="/"
+                  className="flex items-center justify-center w-full py-2.5 rounded-xl text-white/40 text-xs font-medium hover:text-white/60 transition-colors"
+                >
+                  En savoir plus
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </>
   );
