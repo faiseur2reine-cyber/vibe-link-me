@@ -124,8 +124,7 @@ const UrgencyBanner = ({ config: configOverride }: Props) => {
             <button
               onClick={() => setDismissed(true)}
               className="absolute right-2 sm:right-4 p-1 rounded-full transition-opacity opacity-70 hover:opacity-100"
-              style={{ color: config.textColor }}
-              aria-label="Fermer"
+              aria-label="Close"
             >
               <X className="w-3.5 h-3.5" />
             </button>
