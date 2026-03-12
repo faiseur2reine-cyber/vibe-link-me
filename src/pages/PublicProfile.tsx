@@ -496,7 +496,7 @@ const PublicProfile = () => {
                           <PulseRing />
                           <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             customBtnBg
-                              ? 'bg-white/15'
+                              ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
                               : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
                           }`}>
                             <LinkFavicon url={link.url} size="md" />
