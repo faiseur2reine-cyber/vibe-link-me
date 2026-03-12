@@ -70,6 +70,7 @@ Deno.serve(async (req) => {
         theme: "default",
         user_id: "00000000-0000-0000-0000-000000000000",
         is_nsfw: false,
+        plan: "pro",
         social_links: [
           { platform: "twitter", url: "https://twitter.com/alexmartin" },
           { platform: "instagram", url: "https://instagram.com/alexmartin" },
