@@ -137,7 +137,10 @@
     "madeWith": "Créé avec MyTaptap",
     "notFound": "Cette page n'existe pas — pas encore.",
     "backHome": "Accueil",
-    "claimPage": "Réserver cette page"
+    "claimPage": "Réserver cette page",
+    "ctaCreate": "Créer ma page gratuitement",
+    "ctaLearnMore": "En savoir plus",
+    "ctaTagline": "Gratuit • Prêt en 30 sec"
   },
   "common": {
     "loading": "Chargement...",
