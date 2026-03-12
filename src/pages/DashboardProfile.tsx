@@ -195,7 +195,7 @@ const DashboardProfile = () => {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
-                  Membre depuis
+                  {t('profile.memberSince')}
                 </Label>
                 <p className="text-sm text-muted-foreground">
                   {new Date(user.created_at).toLocaleDateString('fr-FR', {
