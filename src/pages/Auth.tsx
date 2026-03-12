@@ -54,7 +54,8 @@ interface PasswordStrengthMeterProps {
 }
 
 const PasswordStrengthMeter = ({ password }: PasswordStrengthMeterProps) => {
-  const { score, label, color, checks } = useMemo(() => getPasswordStrength(password), [password]);
+  const { t } = useTranslation();
+  const { score, label, color, checks } = useMemo(() => getPasswordStrength(password, t), [password, t]);
   if (!password) return null;
 
   const checkItems = [
