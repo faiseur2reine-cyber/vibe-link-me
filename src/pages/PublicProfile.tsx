@@ -423,7 +423,7 @@ const PublicProfile = () => {
                             : 'bg-amber-50 text-amber-600 border border-amber-200/60'
                         }`}
                       >
-                        🔥 Populaire
+                        🔥 {t('public.popular', 'Popular')}
                       </motion.span>
                     ) : null;
 

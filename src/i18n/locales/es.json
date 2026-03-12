@@ -130,7 +130,7 @@
     "domainRemoved": "Dominio eliminado",
     "invalidDomain": "Formato de dominio inválido"
   },
-  "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe — todavía.", "backHome": "Inicio", "claimPage": "Reservar esta página", "ctaCreate": "Crear mi página gratis", "ctaLearnMore": "Más información", "ctaTagline": "Gratis • Listo en 30 seg" },
+  "public": { "madeWith": "Hecho con MyTaptap", "notFound": "Esta página no existe — todavía.", "backHome": "Inicio", "claimPage": "Reservar esta página", "ctaCreate": "Crear mi página gratis", "ctaLearnMore": "Más información", "ctaTagline": "Gratis • Listo en 30 seg", "demoPreview": "Vista previa", "share": "Compartir", "popular": "Popular" },
   "common": {
     "loading": "Cargando...",
     "error": "Ha ocurrido un error.",
