@@ -387,9 +387,9 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-8 space-y-6">
+          <motion.div variants={stagger} className="mt-7 space-y-4">
             {sections.map((section, sIdx) => (
-              <motion.div key={sIdx} variants={fadeUp} className="space-y-3">
+              <motion.div key={sIdx} variants={fadeUp} className="space-y-2.5">
                 {section.title && (
                   <div className="flex items-center gap-3 px-1 mb-1">
                     <span
@@ -402,7 +402,7 @@ const PublicProfile = () => {
                   </div>
                 )}
 
-                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-3' : 'space-y-3'}>
+                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
                   {section.links.map((link, linkIdx) => {
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
