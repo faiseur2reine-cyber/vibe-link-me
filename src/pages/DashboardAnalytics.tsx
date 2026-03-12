@@ -147,7 +147,7 @@ const DashboardAnalytics = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-muted-foreground py-8">Aucune page créée</p>
+              <p className="text-center text-muted-foreground py-8">{t('analytics.noPages')}</p>
             )}
           </CardContent>
         </Card>

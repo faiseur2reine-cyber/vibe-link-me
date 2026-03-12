@@ -121,7 +121,7 @@ const DashboardThemes = () => {
                   </p>
                   {isLocked && (
                     <Button size="sm" variant="outline" className="w-full" disabled={loading}>
-                      Débloquer
+                      {t('themes.unlock')}
                     </Button>
                   )}
                 </CardContent>

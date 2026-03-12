@@ -419,7 +419,7 @@ const DashboardSettings = () => {
               {t('auth.username') || 'Nom d\'utilisateur'}
             </CardTitle>
             <CardDescription>
-              Votre URL publique : mytaptap.com/<span className="font-medium">{currentUsername}</span>
+              {t('settings.publicUrl')}: mytaptap.com/<span className="font-medium">{currentUsername}</span>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
