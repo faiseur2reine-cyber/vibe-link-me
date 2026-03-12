@@ -313,7 +313,12 @@ const PublicProfile = () => {
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {displayName}
-                <BadgeCheck className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-blue-500 shrink-0" />
+                {(page.plan === 'starter' || page.plan === 'pro') && (
+                  <span className="relative inline-flex items-center justify-center w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0" title="Verified creator">
+                    <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 shadow-md shadow-blue-500/25" />
+                    <Check className="relative w-3 h-3 sm:w-3.5 sm:h-3.5 text-white stroke-[3]" />
+                  </span>
+                )}
               </h1>
               <p
                 className={`text-xs font-medium tracking-wide ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
