@@ -274,26 +274,34 @@ const PublicProfile = () => {
               Share
             </motion.button>
 
-            {/* Avatar */}
+            {/* Avatar with online indicator */}
             <motion.div variants={scaleIn} className="flex justify-center">
-              <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
-                page.cover_url
-                  ? 'ring-4 ring-white/20 shadow-2xl shadow-black/40'
-                  : theme.avatarRing
-              }`}>
-                {page.avatar_url ? (
-                  <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
-                ) : (
-                  <div className={`w-full h-full flex items-center justify-center ${
-                    isDarkTheme
-                      ? 'bg-gradient-to-br from-white/15 to-white/5'
-                      : 'bg-gradient-to-br from-gray-100 to-gray-200'
-                  }`}>
-                    <span className={`text-3xl sm:text-4xl font-bold ${isDarkTheme ? 'text-white/80' : 'text-gray-500'}`}>
-                      {displayName[0]?.toUpperCase()}
-                    </span>
-                  </div>
-                )}
+              <div className="relative">
+                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${
+                  page.cover_url
+                    ? 'ring-4 ring-white/20 shadow-2xl shadow-black/40'
+                    : theme.avatarRing
+                }`}>
+                  {page.avatar_url ? (
+                    <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
+                  ) : (
+                    <div className={`w-full h-full flex items-center justify-center ${
+                      isDarkTheme
+                        ? 'bg-gradient-to-br from-white/15 to-white/5'
+                        : 'bg-gradient-to-br from-gray-100 to-gray-200'
+                    }`}>
+                      <span className={`text-3xl sm:text-4xl font-bold ${isDarkTheme ? 'text-white/80' : 'text-gray-500'}`}>
+                        {displayName[0]?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Online indicator */}
+                <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-400 border-[3px] border-current shadow-lg shadow-emerald-500/30"
+                  style={{ borderColor: isDarkTheme ? '#0a0a0f' : page.custom_bg_color || '#fafafa' }}
+                >
+                  <div className="w-full h-full rounded-full animate-ping bg-emerald-400 opacity-40" />
+                </div>
               </div>
             </motion.div>
 
