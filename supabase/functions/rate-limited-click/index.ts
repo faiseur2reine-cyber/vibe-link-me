@@ -58,6 +58,14 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Skip demo links (not in DB)
+    if (link_id.startsWith("00000000-0000-0000-0000-d")) {
+      return new Response(JSON.stringify({ ok: true, recorded: false }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Rate limit by IP + link combo
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
