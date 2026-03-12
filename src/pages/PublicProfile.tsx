@@ -96,7 +96,7 @@ const PublicProfile = () => {
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) { await navigator.share({ title: page?.display_name || username, url }); }
-    else { await navigator.clipboard.writeText(url); toast({ title: t('common.success'), description: 'Link copied!' }); }
+    else { await navigator.clipboard.writeText(url); toast({ title: t('common.success') }); }
   };
 
   /* ── Loading ── */
@@ -238,7 +238,7 @@ const PublicProfile = () => {
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Aperçu
+            {t('public.demoPreview', 'Preview')}
           </motion.div>
         )}
         {/* ── Ambient background effects ── */}
@@ -298,7 +298,7 @@ const PublicProfile = () => {
               }`}
             >
               <Share2 className="w-3 h-3" />
-              Share
+              {t('public.share', 'Share')}
             </motion.button>
 
             {/* Avatar with online indicator */}
@@ -423,7 +423,7 @@ const PublicProfile = () => {
                             : 'bg-amber-50 text-amber-600 border border-amber-200/60'
                         }`}
                       >
-                        🔥 Populaire
+                        🔥 {t('public.popular', 'Popular')}
                       </motion.span>
                     ) : null;
 

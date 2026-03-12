@@ -69,7 +69,7 @@
     "domainRemoved": "Domain entfernt",
     "invalidDomain": "Ungültiges Domain-Format"
   },
-  "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht — noch nicht.", "backHome": "Startseite", "claimPage": "Diese Seite reservieren", "ctaCreate": "Meine Seite kostenlos erstellen", "ctaLearnMore": "Mehr erfahren", "ctaTagline": "Kostenlos • In 30 Sek. fertig" },
+  "public": { "madeWith": "Erstellt mit MyTaptap", "notFound": "Diese Seite existiert nicht — noch nicht.", "backHome": "Startseite", "claimPage": "Diese Seite reservieren", "ctaCreate": "Meine Seite kostenlos erstellen", "ctaLearnMore": "Mehr erfahren", "ctaTagline": "Kostenlos • In 30 Sek. fertig", "demoPreview": "Vorschau", "share": "Teilen", "popular": "Beliebt" },
   "common": { "loading": "Laden...", "error": "Ein Fehler ist aufgetreten.", "success": "Erfolg!", "delete": "Löschen", "edit": "Bearbeiten", "language": "Sprache" },
   "landing": {
     "socialProof": "Genutzt von Creatorn auf",

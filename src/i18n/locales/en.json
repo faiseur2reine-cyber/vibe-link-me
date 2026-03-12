@@ -140,7 +140,10 @@
     "claimPage": "Claim this page",
     "ctaCreate": "Create my page for free",
     "ctaLearnMore": "Learn more",
-    "ctaTagline": "Free • Ready in 30 sec"
+    "ctaTagline": "Free • Ready in 30 sec",
+    "demoPreview": "Preview",
+    "share": "Share",
+    "popular": "Popular"
   },
   "common": {
     "loading": "Loading...",

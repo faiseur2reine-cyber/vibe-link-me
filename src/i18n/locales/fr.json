@@ -140,7 +140,10 @@
     "claimPage": "Réserver cette page",
     "ctaCreate": "Créer ma page gratuitement",
     "ctaLearnMore": "En savoir plus",
-    "ctaTagline": "Gratuit • Prêt en 30 sec"
+    "ctaTagline": "Gratuit • Prêt en 30 sec",
+    "demoPreview": "Aperçu",
+    "share": "Partager",
+    "popular": "Populaire"
   },
   "common": {
     "loading": "Chargement...",
