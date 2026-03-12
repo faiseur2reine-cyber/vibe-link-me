@@ -158,7 +158,7 @@ Deno.serve(async (req) => {
     // Fallback: profiles (legacy)
     const { data: profileData } = await supabase
       .from("profiles")
-      .select("id, username, display_name, bio, avatar_url, cover_url, theme, user_id, is_nsfw, social_links")
+      .select("id, username, display_name, bio, avatar_url, cover_url, theme, user_id, is_nsfw, social_links, plan")
       .eq("username", username)
       .single();
 
