@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2, ChevronRight, Check } from 'lucide-react';
+import { ExternalLink, Heart, Share2, ChevronRight, Check, Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
@@ -147,6 +147,7 @@ const PublicProfile = () => {
     );
   }
 
+  const isDemo = username === 'demo';
   const isNsfwPage = page.is_nsfw;
   const theme = getTheme(page.theme);
   const displayName = page.display_name || page.username;
@@ -187,6 +188,15 @@ const PublicProfile = () => {
       </NsfwLinkOverlay>
     ) : node;
 
+  // In demo mode, prevent link navigation
+  const demoLinkProps = isDemo ? {
+    href: undefined as unknown as string,
+    target: undefined as unknown as string,
+    rel: undefined as unknown as string,
+    onClick: (e: React.MouseEvent) => e.preventDefault(),
+    style: { cursor: 'default' as const },
+  } : {};
+
   return (
     <>
       {showUrgencyWidgets && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
@@ -209,12 +219,24 @@ const PublicProfile = () => {
       </Helmet>
 
       <div
-        className={`page-container min-h-screen min-h-[100dvh] ${hasCustomColors ? '' : theme.bg} flex flex-col items-center relative overflow-hidden`}
+        className={`page-container min-h-screen min-h-[100dvh] ${hasCustomColors ? '' : theme.bg} flex flex-col items-center relative overflow-hidden ${isDemo ? 'pb-36' : ''}`}
         style={{
           ...(page.custom_bg_color ? { backgroundColor: page.custom_bg_color } : {}),
           ...(fontFamily ? { fontFamily } : {}),
         }}
       >
+        {/* Demo mode label */}
+        {isDemo && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 text-white/60 text-[10px] font-bold uppercase tracking-[0.15em]"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Demo
+          </motion.div>
+        )}
         {/* ── Ambient background effects ── */}
         {isDarkTheme && (
           <>
@@ -388,11 +410,11 @@ const PublicProfile = () => {
                     if (isCard && link.thumbnail_url) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id, clickVariant)}
+                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileHover={{ scale: 1.015, y: -2 }} whileTap={{ scale: 0.98 }}
-                          className="group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 hover:shadow-2xl"
+                          whileHover={isDemo ? {} : { scale: 1.015, y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
                         >
                           <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -409,21 +431,22 @@ const PublicProfile = () => {
                     if (isFeatured) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id, clickVariant)}
+                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                          className={`link-item group relative flex items-center gap-4 px-4 sm:px-5 py-4 sm:py-[18px] rounded-[20px] text-sm font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn}`}
+                          whileHover={isDemo ? {} : { y: -3, scale: 1.01 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`link-item group relative flex items-center gap-4 px-4 sm:px-5 py-4 sm:py-[18px] rounded-[20px] text-sm font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
                         >
-                          {/* Subtle shimmer on hover */}
-                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                            style={{ background: `linear-gradient(105deg, transparent 40%, ${isDarkTheme ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)'} 50%, transparent 60%)` }}
-                          />
-                          <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                          {!isDemo && (
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                              style={{ background: `linear-gradient(105deg, transparent 40%, ${isDarkTheme ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)'} 50%, transparent 60%)` }}
+                            />
+                          )}
+                          <div className={`relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.04]'
                           }`}>
                             <LinkFavicon url={link.url} size="md" />
@@ -432,7 +455,7 @@ const PublicProfile = () => {
                             <span className="block truncate tracking-tight">{link.title}</span>
                             {link.description && <span className="block text-xs font-normal opacity-40 truncate mt-0.5">{link.description}</span>}
                           </div>
-                          <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-30 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />
+                          {!isDemo && <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-30 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />}
                         </motion.a>,
                         link,
                       );
@@ -442,11 +465,11 @@ const PublicProfile = () => {
                     if (isMinimal) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => recordClick(link.id, clickVariant)}
+                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                           variants={fadeUp}
-                          whileTap={{ scale: 0.98 }}
-                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
+                          whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDemo ? 'cursor-default' : isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -457,7 +480,7 @@ const PublicProfile = () => {
                             <span className="font-medium">{link.title}</span>
                             {link.description && <p className="text-xs opacity-35 truncate">{link.description}</p>}
                           </div>
-                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-200 shrink-0" />
+                          {!isDemo && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-25 transition-opacity duration-200 shrink-0" />}
                         </motion.a>,
                         link,
                       );
@@ -466,23 +489,23 @@ const PublicProfile = () => {
                     /* Default — clean premium style */
                     return wrapNsfw(
                       <motion.a
-                        key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                        onClick={() => recordClick(link.id, clickVariant)}
+                        key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                        onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
                         variants={fadeUp}
-                        whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
-                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-[13px] sm:text-sm font-medium transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn}`}
+                        whileHover={isDemo ? {} : { y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-[18px] text-[13px] sm:text-sm font-medium transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
                         }}
                       >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                           isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.035]'
                         }`}>
                           <LinkFavicon url={link.url} size="sm" />
                         </div>
                         <span className="flex-1 truncate tracking-[-0.01em]">{link.title}</span>
-                        <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />
+                        {!isDemo && <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-25 transition-all duration-300 group-hover:translate-x-0.5 shrink-0" />}
                       </motion.a>,
                       link,
                     );
@@ -505,6 +528,38 @@ const PublicProfile = () => {
           </motion.div>
           </div>{/* end glassmorphism wrapper */}
         </motion.div>
+
+        {/* ── Demo floating CTA ── */}
+        {isDemo && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-0 left-0 right-0 z-50"
+          >
+            <div className="bg-gradient-to-t from-black via-black/95 to-transparent pt-10 pb-6 px-4">
+              <div className="max-w-[400px] mx-auto space-y-3">
+                <p className="text-center text-white/50 text-xs font-medium">
+                  ✨ Voici à quoi ressemble une page MyTaptap
+                </p>
+                <Link
+                  to="/auth?tab=signup"
+                  className="group flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-semibold text-sm shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98]"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Créer ma page gratuitement
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  to="/"
+                  className="flex items-center justify-center w-full py-2.5 rounded-xl text-white/40 text-xs font-medium hover:text-white/60 transition-colors"
+                >
+                  En savoir plus
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </>
   );
