@@ -125,6 +125,14 @@ const Auth = () => {
     if (user) navigate('/dashboard');
   }, [user, navigate]);
 
+  // Auto-check prefilled username
+  useEffect(() => {
+    if (prefillUsername && prefillUsername.length >= 3) {
+      checkUsername(prefillUsername);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     const { error } = await lovable.auth.signInWithOAuth("google", {
