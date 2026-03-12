@@ -387,22 +387,22 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-8 space-y-5">
+          <motion.div variants={stagger} className="mt-8 space-y-6">
             {sections.map((section, sIdx) => (
-              <motion.div key={sIdx} variants={fadeUp} className="space-y-2.5">
+              <motion.div key={sIdx} variants={fadeUp} className="space-y-3">
                 {section.title && (
                   <div className="flex items-center gap-3 px-1 mb-1">
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-[0.15em] ${hasCustomColors ? 'opacity-25' : theme.subtleText}`}
+                      className={`text-[10px] font-bold uppercase tracking-[0.18em] ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
                       style={page.custom_text_color ? { color: page.custom_text_color } : {}}
                     >
                       {section.title}
                     </span>
-                    <div className={`h-px flex-1 ${isDarkTheme ? 'bg-white/[0.05]' : 'bg-black/[0.05]'}`} />
+                    <div className={`h-px flex-1 ${isDarkTheme ? 'bg-white/[0.06]' : 'bg-black/[0.06]'}`} />
                   </div>
                 )}
 
-                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5'}>
+                <div className={linkLayout === 'grid-2' ? 'grid grid-cols-2 gap-3' : 'space-y-3'}>
                   {section.links.map((link, linkIdx) => {
                     const isFeatured = link.style === 'featured';
                     const isCard = link.style === 'card' || !!link.thumbnail_url;
