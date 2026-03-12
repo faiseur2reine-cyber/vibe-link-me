@@ -54,7 +54,7 @@ const DashboardAnalytics = () => {
                   <FileText className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pages créées</p>
+                  <p className="text-sm text-muted-foreground">{t('analytics.pagesCreated')}</p>
                   <p className="text-3xl font-display font-bold text-foreground">{stats.totalPages}</p>
                 </div>
               </div>
