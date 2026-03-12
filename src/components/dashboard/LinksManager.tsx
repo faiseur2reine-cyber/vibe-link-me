@@ -533,7 +533,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               <Palette className="w-3.5 h-3.5" />
-              Personnalisation avancée
+              {t('linksManager.advancedCustomization')}
               <ChevronDown className={`w-3 h-3 transition-transform ${showCustomization ? 'rotate-180' : ''}`} />
             </button>
 
