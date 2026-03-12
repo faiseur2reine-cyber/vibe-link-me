@@ -191,7 +191,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     if (error) {
       toast({ title: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Template appliqué ✓' });
+      toast({ title: t('linksManager.templateApplied') });
       if (onRefetch) await onRefetch();
     }
     setApplyingTemplate(false);
