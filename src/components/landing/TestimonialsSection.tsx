@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { TapStar as Star } from '@/components/icons/TapIcons';
+import { TestimonialBlobs } from './PopBlobs';
 
 const testimonials = [
   {
