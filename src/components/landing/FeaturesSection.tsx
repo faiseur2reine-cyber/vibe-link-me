@@ -3,21 +3,24 @@ import { motion } from 'framer-motion';
 import { TapLink as Link2, TapPalette as Palette, TapChart as BarChart3, TapGrip as GripVertical, TapGlobe as Globe, TapSmartphone as Smartphone } from '@/components/icons/TapIcons';
 
 const features = [
-  { key: 'links', icon: Link2, accent: 'from-violet-500/15 to-purple-500/5' },
-  { key: 'themes', icon: Palette, accent: 'from-pink-500/15 to-rose-500/5' },
-  { key: 'analytics', icon: BarChart3, accent: 'from-blue-500/15 to-cyan-500/5' },
-  { key: 'dragDrop', icon: GripVertical, accent: 'from-amber-500/15 to-orange-500/5' },
-  { key: 'multilingual', icon: Globe, accent: 'from-emerald-500/15 to-green-500/5' },
-  { key: 'mobile', icon: Smartphone, accent: 'from-primary/15 to-primary/5' },
+  { key: 'links', icon: Link2, accent: 'pop-violet', shadow: 'shadow-pop-violet' },
+  { key: 'themes', icon: Palette, accent: 'pop-coral', shadow: 'shadow-pop-coral' },
+  { key: 'analytics', icon: BarChart3, accent: 'pop-cyan', shadow: 'shadow-pop-cyan' },
+  { key: 'dragDrop', icon: GripVertical, accent: 'pop-yellow', shadow: 'shadow-pop-yellow' },
+  { key: 'multilingual', icon: Globe, accent: 'pop-lime', shadow: 'shadow-pop-lime' },
+  { key: 'mobile', icon: Smartphone, accent: 'pop-pink', shadow: 'shadow-pop-pink' },
 ] as const;
+
+const rotations = ['-rotate-1', 'rotate-1', '-rotate-[0.5deg]', 'rotate-[0.5deg]', '-rotate-1', 'rotate-[0.5deg]'];
 
 const FeaturesSection = () => {
   const { t } = useTranslation();
 
   return (
     <section className="px-4 sm:px-6 py-24 sm:py-32 relative">
-      {/* Subtle background accent */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.03),transparent_60%)]" />
+      {/* Background blobs */}
+      <div className="absolute top-20 left-10 w-64 h-64 bg-pop-yellow/5 rounded-full blur-3xl animate-blob" />
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-pop-violet/5 rounded-full blur-3xl animate-blob" style={{ animationDelay: '3s' }} />
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header */}
@@ -28,10 +31,10 @@ const FeaturesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-lg mx-auto mb-16"
         >
-          <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-4 text-pop-gradient">
             {t('landing.featuresLabel')}
           </p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em] leading-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.04em] leading-tight">
             {t('features.title')}
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -39,23 +42,23 @@ const FeaturesSection = () => {
           </p>
         </motion.div>
 
-        {/* Bento grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map(({ key, icon: Icon, accent }, i) => (
+        {/* Bento grid — pop style */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {features.map(({ key, icon: Icon, accent, shadow }, i) => (
             <motion.div
               key={key}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20, rotate: 0 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
-              className="group relative rounded-2xl border border-border/60 bg-card p-7 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/[0.03] transition-all duration-500 overflow-hidden"
+              className={`group relative rounded-3xl border-2 border-border/50 bg-card p-7 hover:border-${accent}/30 hover:${shadow} transition-all duration-500 overflow-hidden cursor-default ${rotations[i]} hover:rotate-0`}
             >
-              {/* Gradient accent on hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${accent} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+              {/* Color splash on hover */}
+              <div className={`absolute -top-10 -right-10 w-32 h-32 bg-${accent}/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
               
               <div className="relative">
-                <div className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center mb-5 group-hover:bg-primary/12 group-hover:scale-110 transition-all duration-300">
-                  <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
+                <div className={`w-12 h-12 rounded-2xl bg-${accent}/12 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                  <Icon className={`w-5 h-5 text-${accent}`} />
                 </div>
                 <h3 className="font-bold text-[15px] text-foreground mb-2 tracking-tight">
                   {t(`features.${key}`)}

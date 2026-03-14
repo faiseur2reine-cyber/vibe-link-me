@@ -244,10 +244,10 @@ const Dashboard = () => {
               <div className="flex items-center gap-3">
                 <SidebarTrigger className="-ml-2" />
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary via-primary to-emerald-400 flex items-center justify-center shadow-md shadow-primary/25">
-                    <span className="text-[11px] font-bold text-primary-foreground tracking-tight">M</span>
+                  <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-pop-violet via-pop-coral to-pop-yellow flex items-center justify-center shadow-md shadow-pop-violet/20 rotate-3">
+                    <span className="text-[11px] font-bold text-primary-foreground tracking-tight -rotate-3">M</span>
                   </div>
-                  <h1 className="text-[15px] font-semibold text-foreground tracking-tight font-display">
+                  <h1 className="text-[15px] font-bold text-foreground tracking-tight font-display">
                     MyTaptap
                   </h1>
                 </div>

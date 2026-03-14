@@ -56,9 +56,9 @@ const DashboardOverview = () => {
   const activePages = pages.filter(p => p.status === 'active').length;
 
   const kpis = [
-    { label: 'Total clics', value: stats.totalClicks, icon: MousePointerClick, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Pages actives', value: activePages, icon: LayoutGrid, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: 'Liens actifs', value: stats.totalLinks, icon: Link2, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { label: 'Total clics', value: stats.totalClicks, icon: MousePointerClick, color: 'text-pop-cyan', bg: 'bg-pop-cyan/12' },
+    { label: 'Pages actives', value: activePages, icon: LayoutGrid, color: 'text-pop-lime', bg: 'bg-pop-lime/12' },
+    { label: 'Liens actifs', value: stats.totalLinks, icon: Link2, color: 'text-pop-yellow', bg: 'bg-pop-yellow/12' },
   ];
 
   return (
@@ -92,9 +92,9 @@ const DashboardOverview = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease }}
-              className="flex items-center gap-4 p-4 rounded-xl glass transition-all duration-200 hover:shadow-lg hover:shadow-black/5"
+              className="flex items-center gap-4 p-4 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5 hover:-translate-y-1"
             >
-              <div className={`w-10 h-10 rounded-xl ${kpi.bg} flex items-center justify-center shrink-0`}>
+              <div className={`w-10 h-10 rounded-2xl ${kpi.bg} flex items-center justify-center shrink-0`}>
                 <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
               </div>
               <div>
@@ -142,10 +142,10 @@ const DashboardOverview = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4, ease }}
-            className="p-5 rounded-xl glass transition-all duration-200 hover:shadow-lg hover:shadow-black/5"
+            className="p-5 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5"
           >
             <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-500" />
+              <Zap className="w-4 h-4 text-pop-yellow" />
               Actions rapides
             </h3>
             <div className="space-y-2">
@@ -154,8 +154,8 @@ const DashboardOverview = () => {
                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                    <Plus className="w-4 h-4 text-emerald-500" />
+                  <div className="w-8 h-8 rounded-xl bg-pop-lime/12 flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-pop-lime" />
                   </div>
                   <div>
                     <p className="text-[13px] font-medium text-foreground">Créer une nouvelle page</p>
@@ -170,8 +170,8 @@ const DashboardOverview = () => {
                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-blue-500" />
+                  <div className="w-8 h-8 rounded-xl bg-pop-cyan/12 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-pop-cyan" />
                   </div>
                   <div>
                     <p className="text-[13px] font-medium text-foreground">Voir les analytics</p>
@@ -186,8 +186,8 @@ const DashboardOverview = () => {
                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <Eye className="w-4 h-4 text-purple-500" />
+                  <div className="w-8 h-8 rounded-xl bg-pop-violet/12 flex items-center justify-center">
+                    <Eye className="w-4 h-4 text-pop-violet" />
                   </div>
                   <div>
                     <p className="text-[13px] font-medium text-foreground">Personnaliser les thèmes</p>
@@ -204,10 +204,10 @@ const DashboardOverview = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.4, ease }}
-            className="p-5 rounded-xl glass transition-all duration-200 hover:shadow-lg hover:shadow-black/5"
+            className="p-5 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5"
           >
             <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4 text-emerald-500" />
+              <LayoutGrid className="w-4 h-4 text-pop-lime" />
               Vos pages
             </h3>
             {pages.length === 0 ? (
