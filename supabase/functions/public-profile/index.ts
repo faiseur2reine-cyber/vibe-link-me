@@ -22,6 +22,48 @@ const rateLimits = new Map<string, { count: number; resetAt: number }>();
 const MAX_REQUESTS = 30; // 30 profile loads per minute per IP
 const WINDOW_MS = 60_000;
 
+// In-memory page cache: avoids DB hit for repeated requests to same username
+const pageCache = new Map<string, { data: string; expiresAt: number }>();
+const CACHE_TTL_MS = 30_000; // 30 seconds
+
+// Global circuit breaker: if total requests exceed threshold, reject without DB
+let globalRequestCount = 0;
+let globalResetAt = Date.now() + 60_000;
+const GLOBAL_MAX_REQUESTS_PER_MINUTE = 600; // across ALL IPs on this instance
+
+function checkGlobalLimit(): boolean {
+  const now = Date.now();
+  if (now > globalResetAt) {
+    globalRequestCount = 0;
+    globalResetAt = now + 60_000;
+  }
+  globalRequestCount++;
+  return globalRequestCount > GLOBAL_MAX_REQUESTS_PER_MINUTE;
+}
+
+function getCachedPage(username: string): string | null {
+  const entry = pageCache.get(username);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) { pageCache.delete(username); return null; }
+  return entry.data;
+}
+
+function setCachedPage(username: string, data: string) {
+  // Cap cache size to prevent memory leak under attack
+  if (pageCache.size > 500) {
+    const now = Date.now();
+    for (const [key, entry] of pageCache) {
+      if (now > entry.expiresAt) pageCache.delete(key);
+    }
+    // If still too big, clear oldest half
+    if (pageCache.size > 400) {
+      const keys = Array.from(pageCache.keys());
+      for (let i = 0; i < keys.length / 2; i++) pageCache.delete(keys[i]);
+    }
+  }
+  pageCache.set(username, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+}
+
 function checkRateLimit(ip: string): { limited: boolean; remaining: number } {
   const now = Date.now();
   const entry = rateLimits.get(ip);
@@ -61,6 +103,17 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Global circuit breaker — reject all if instance is being flooded
+    if (checkGlobalLimit()) {
+      return new Response(
+        JSON.stringify({ error: "Service temporarily unavailable" }),
+        {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "30" },
+        }
+      );
+    }
+
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
 
@@ -136,6 +189,19 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ── Check in-memory cache first (avoids DB hit entirely)
+    const cached = getCachedPage(username);
+    if (cached) {
+      return new Response(cached, {
+        status: 200,
+        headers: {
+          ...rateLimitHeaders,
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+          "X-Cache": "HIT",
+        },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -163,8 +229,13 @@ Deno.serve(async (req) => {
           .single(),
       ]);
 
+      // Strip agency-internal fields from public response
+      const { operator: _op, notes: _notes, revenue_monthly: _rm, revenue_commission: _rc, ...publicPageData } = pageData as any;
+      const responseBody = JSON.stringify({ page: { ...publicPageData, plan: profileRes.data?.plan || 'free' }, links: linksRes.data || [], source: "creator_pages" });
+      setCachedPage(username, responseBody);
+
       return new Response(
-        JSON.stringify({ page: { ...pageData, plan: profileRes.data?.plan || 'free' }, links: linksRes.data || [], source: "creator_pages" }),
+        responseBody,
         {
           status: 200,
           headers: {
@@ -196,8 +267,11 @@ Deno.serve(async (req) => {
       .is("page_id", null)
       .order("position", { ascending: true });
 
+    const legacyBody = JSON.stringify({ page: profileData, links: linksData || [], source: "profiles" });
+    setCachedPage(username, legacyBody);
+
     return new Response(
-      JSON.stringify({ page: profileData, links: linksData || [], source: "profiles" }),
+      legacyBody,
       {
         status: 200,
         headers: {
