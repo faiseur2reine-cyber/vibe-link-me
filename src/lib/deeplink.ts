@@ -50,9 +50,16 @@ export function detectBrowser(): BrowserInfo {
 export function deeplinkNavigate(url: string): boolean {
   const b = detectBrowser();
 
-  // Native browser → new tab (keeps visitor on your page)
+  // Native browser → open in new tab via <a> click (bypasses COOP/CORP headers)
   if (!b.isInApp) {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     return true;
   }
 
