@@ -25,7 +25,7 @@
 - [x] DashboardOverview: add "last edited" timestamp per page
 - [x] DashboardOverview: click on a page → navigates to detail via ?page=id
 - [x] Share dialog: add "Copy for Instagram bio" button (short URL without https://)
-- [ ] Share dialog: QR code should include small logo in center
+- [x] Share dialog: QR code with T logo center (level=H, excavate)
 - [x] Mobile dashboard: bottom nav grouped — 4 primary + "Plus" drawer with 5 secondary tabs
 - [x] Onboarding: already a proper 322-line wizard (welcome → template → customize → preview → success)
 
@@ -34,7 +34,7 @@
 - [x] Bulk actions: select pages → change status (active/paused) + export CSV
 - [x] Analytics: page view tracking via usePageView hook (once per session per page)
 - [x] Analytics: export to CSV (per-page, all sections: links, daily, country, city, referrer, A/B)
-- [ ] Link scheduling: set a link to appear/disappear at a specific date/time
+- [x] Link scheduling: scheduled_at/expires_at with datetime pickers + public page filtering
 - [ ] A/B test editor: visual editor for creating A/B variants (currently just a field)
 - [ ] Custom domain per page: let creators use their own domain (CNAME setup guide)
 - [ ] Webhook on click: notify external URL when a link is clicked
