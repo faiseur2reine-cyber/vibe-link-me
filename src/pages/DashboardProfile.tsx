@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, User, Mail, Calendar, Upload } from 'lucide-react';
 
 const DashboardProfile = () => {
@@ -57,9 +57,9 @@ const DashboardProfile = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+      toast.error(t('common.error'));
     } else {
-      toast({ title: t('profile.updated'), description: t('profile.updatedDesc') });
+      toast.success(t('profile.updated'));
     }
     setSaving(false);
   };
@@ -77,7 +77,7 @@ const DashboardProfile = () => {
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
-      toast({ title: t('common.error'), description: uploadError.message, variant: 'destructive' });
+      toast.error(t('common.error'));
       setSaving(false);
       return;
     }
@@ -91,10 +91,10 @@ const DashboardProfile = () => {
       .eq('user_id', user!.id);
 
     if (updateError) {
-      toast({ title: t('common.error'), description: updateError.message, variant: 'destructive' });
+      toast.error(t('common.error'));
     } else {
       setProfile({ ...profile, avatar_url: avatarUrl });
-      toast({ title: t('profile.avatarUpdated') });
+      toast.success(t('profile.avatarUpdated') );
     }
     setSaving(false);
   };

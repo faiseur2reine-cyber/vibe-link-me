@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, ArrowLeft } from 'lucide-react';
 
 const ResetPassword = () => {
@@ -33,7 +33,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast({ title: 'Passwords do not match', variant: 'destructive' });
+      toast.error('Passwords do not match');
       return;
     }
     if (password.length < 6) return;
@@ -41,9 +41,9 @@ const ResetPassword = () => {
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
-      toast({ title: error.message, variant: 'destructive' });
+      toast.error(error.message);
     } else {
-      toast({ title: t('common.success') });
+      toast.success(t('common.success') );
       navigate('/dashboard');
     }
     setLoading(false);

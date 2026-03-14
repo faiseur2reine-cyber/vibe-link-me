@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, Check, X, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { z } from 'zod';
@@ -140,7 +140,7 @@ const Auth = () => {
       redirect_uri: window.location.origin,
     });
     if (error) {
-      toast({ title: (error as Error).message, variant: 'destructive' });
+      toast.error((error as Error).message);
       setGoogleLoading(false);
     }
   };
@@ -164,9 +164,9 @@ const Auth = () => {
     setLoading(true);
     const schema = z.object({ email: z.string().email().max(255), password: z.string().min(6).max(128) });
     const result = schema.safeParse({ email, password });
-    if (!result.success) { toast({ title: result.error.errors[0].message, variant: 'destructive' }); setLoading(false); return; }
+    if (!result.success) { toast.error(result.error.errors[0].message); setLoading(false); return; }
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) toast({ title: error.message, variant: 'destructive' });
+    if (error) toast.error(error.message);
     else navigate('/dashboard');
     setLoading(false);
   };
@@ -175,7 +175,7 @@ const Auth = () => {
     e.preventDefault();
     if (usernameStatus !== 'available') return;
     if (!isPasswordValid) {
-      toast({ title: t('auth.pwTooWeak'), description: t('auth.pwTooWeakDesc'), variant: 'destructive' });
+      toast.error(t('auth.pwTooWeak'));
       return;
     }
     setLoading(true);
@@ -186,10 +186,10 @@ const Auth = () => {
       displayName: z.string().max(100).optional(),
     });
     const result = schema.safeParse({ email, password, username, displayName: displayName || undefined });
-    if (!result.success) { toast({ title: result.error.errors[0].message, variant: 'destructive' }); setLoading(false); return; }
+    if (!result.success) { toast.error(result.error.errors[0].message); setLoading(false); return; }
     const { error } = await supabase.auth.signUp({ email, password, options: { data: { username, display_name: displayName || username }, emailRedirectTo: window.location.origin } });
-    if (error) toast({ title: error.message, variant: 'destructive' });
-    else toast({ title: t('auth.confirmationSent') });
+    if (error) toast.error(error.message);
+    else toast.success(t('auth.confirmationSent') );
     setLoading(false);
   };
 
@@ -197,8 +197,8 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
-    if (error) toast({ title: error.message, variant: 'destructive' });
-    else toast({ title: t('auth.resetSent') });
+    if (error) toast.error(error.message);
+    else toast.success(t('auth.resetSent') );
     setLoading(false);
   };
 

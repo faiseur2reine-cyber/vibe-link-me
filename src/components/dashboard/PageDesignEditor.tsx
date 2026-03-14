@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye } from 'lucide-react';
 import DesignLivePreview from './DesignLivePreview';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -115,9 +115,9 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       custom_css: customCss || null,
     } as any);
     if (result?.error) {
-      toast({ title: result.error.message, variant: 'destructive' });
+      toast.error(result.error.message);
     } else {
-      toast({ title: 'Design sauvegardé !' });
+      toast.success('Design sauvegardé !' );
       if (isMobile) setDrawerOpen(false);
     }
     setSaving(false);

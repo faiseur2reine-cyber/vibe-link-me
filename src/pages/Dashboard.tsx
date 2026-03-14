@@ -6,7 +6,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { LogOut, Plus, Loader2, Sun, Moon, Link2, Palette, Share2 } from 'lucide-react';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
@@ -40,7 +40,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
       checkSubscription().then(() => refetchPages());
-      toast({ title: t('common.success'), description: '🎉' });
+      toast.success(t('common.success'));
     }
   }, [searchParams]);
 

@@ -7,7 +7,7 @@ import { THEMES, canAccessTheme, ThemeConfig } from '@/lib/themes';
 import { Lock, Check, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const DashboardThemes = () => {
   const { t } = useTranslation();
@@ -35,11 +35,7 @@ const DashboardThemes = () => {
 
   const handleSelectTheme = async (themeKey: string, theme: ThemeConfig) => {
     if (!canAccessTheme(theme.tier, userPlan)) {
-      toast({
-        title: t('themes.premiumTheme'),
-        description: t('themes.requiresPlan', { plan: theme.tier === 'pro' ? 'Pro' : 'Starter' }),
-        variant: 'destructive',
-      });
+      toast.error(t('themes.premiumTheme'));
       return;
     }
 
@@ -50,10 +46,10 @@ const DashboardThemes = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+      toast.error(t('common.error'));
     } else {
       setSelectedTheme(themeKey);
-      toast({ title: t('themes.applied'), description: t('themes.appliedDesc', { name: theme.name }) });
+      toast.success(t('themes.applied'));
     }
     setLoading(false);
   };

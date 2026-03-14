@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Clock, Flame, Users, MapPin, Zap, Eye, Save, Trash2, BookmarkPlus } from 'lucide-react';
@@ -152,12 +152,12 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
       .single();
     setSavingTemplate(false);
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast.error('Erreur');
     } else if (data) {
       setCustomTemplates(prev => [{ id: data.id, name: data.name, config: data.config as unknown as UrgencyConfig }, ...prev]);
       setShowSaveDialog(false);
       setTemplateName('');
-      toast({ title: `Template "${data.name}" sauvegardé !` });
+      toast.success(`Template "${data.name}" sauvegardé`);
     }
   };
 
@@ -165,7 +165,7 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
     const { error } = await supabase.from('urgency_templates').delete().eq('id', id);
     if (!error) {
       setCustomTemplates(prev => prev.filter(t => t.id !== id));
-      toast({ title: `Template "${name}" supprimé` });
+      toast.success(`Template "${name}" supprimé`);
     }
   };
 
@@ -174,7 +174,7 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
       ...preset.config,
       abTest: c.abTest,
     }));
-    toast({ title: `Template "${preset.label || preset.name}" appliqué !`, description: 'Personnalisez puis sauvegardez.' });
+    toast.success(`Template "${preset.label || preset.name}" appliqué`);
   };
 
   const updateBanner = (updates: Partial<UrgencyConfig['banner']>) => {
@@ -192,9 +192,9 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
     const result = await onUpdate({ urgency_config: config } as any);
     setSaving(false);
     if (!result.error) {
-      toast({ title: 'Widgets d\'urgence sauvegardés !' });
+      toast.success('Widgets d\'urgence sauvegardés !' );
     } else {
-      toast({ title: 'Erreur', description: result.error.message, variant: 'destructive' });
+      toast.error('Erreur');
     }
   };
 

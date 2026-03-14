@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import LanguageSelector from '@/components/LanguageSelector';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { LogOut, Plus, Loader2, Sun, Moon, Link2, Palette, Share2 } from 'lucide-react';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
@@ -36,7 +36,7 @@ const DashboardHome = () => {
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
       checkSubscription().then(() => refetchPages());
-      toast({ title: t('common.success'), description: '🎉' });
+      toast.success(t('common.success'));
     }
     // Auto-select page from URL param (from overview click)
     const pageParam = searchParams.get('page');

@@ -10,7 +10,7 @@ import { appendUtm } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { recordClick } from '@/hooks/useAnalytics';
 import { usePageView } from '@/hooks/usePageView';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import LinkFavicon from '@/components/LinkFavicon';
 import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
@@ -135,7 +135,7 @@ const PublicProfile = () => {
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) { await navigator.share({ title: page?.display_name || username, url }); }
-    else { await navigator.clipboard.writeText(url); toast({ title: t('common.success') }); }
+    else { await navigator.clipboard.writeText(url); toast.success(t('common.success') ); }
   };
 
   /* ── Loading ── */

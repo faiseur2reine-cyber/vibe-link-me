@@ -18,7 +18,7 @@
 ## ═══ PRIORITY 2 — UX IMPROVEMENTS ═══
 
 - [x] Dashboard: auto-save on all editors (TrackingEditor, SafePageEditor, AgencyEditor, ImmersiveSettings)
-- [ ] Dashboard: toast notifications should be consistent — some use sonner, some use shadcn toast
+- [x] Dashboard: toast notifications all use sonner (verified — no shadcn toast imports remain)
 - [x] LinksManager: show platform icon (OF, MYM, IG, etc.) via LinkFavicon
 - [x] LinksManager: drag handle bigger touch target, visible on mobile
 - [ ] PageProfileEditor: cover photo upload should show crop guide for immersive hero ratio

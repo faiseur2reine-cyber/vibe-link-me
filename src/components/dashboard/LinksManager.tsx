@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2,
   ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock,
@@ -185,9 +185,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       description: templateDesc.trim() || null, links: templateLinks as any,
     });
     if (error) {
-      toast({ title: error.message, variant: 'destructive' });
+      toast.error(error.message);
     } else {
-      toast({ title: t('linksManager.templateSaved') });
+      toast.success(t('linksManager.templateSaved') );
       setSaveTemplateOpen(false);
       setTemplateName('');
       setTemplateDesc('');
@@ -201,7 +201,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const { error } = await supabase.from('custom_templates').delete().eq('id', id);
     if (!error) {
       setCustomTemplates(prev => prev.filter(t => t.id !== id));
-      toast({ title: t('linksManager.templateDeleted') });
+      toast.success(t('linksManager.templateDeleted') );
     }
   };
 
@@ -210,7 +210,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
     const toInsert = templateLinks.slice(0, remaining === Infinity ? undefined : remaining);
     if (toInsert.length === 0) {
-      toast({ title: t('linksManager.linkLimitReached'), variant: 'destructive' });
+      toast.error(t('linksManager.linkLimitReached'));
       return;
     }
     setApplyingTemplate(true);
@@ -224,9 +224,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     }));
     const { error } = await supabase.from('links').insert(inserts);
     if (error) {
-      toast({ title: error.message, variant: 'destructive' });
+      toast.error(error.message);
     } else {
-      toast({ title: t('linksManager.templateApplied') });
+      toast.success(t('linksManager.templateApplied') );
       if (onRefetch) await onRefetch();
     }
     setApplyingTemplate(false);
@@ -236,7 +236,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   // --- Link CRUD ---
   const openNew = () => {
     if (!canAddMore) {
-      toast({ title: t(plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5'), variant: 'destructive' });
+      toast.error(t(plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5'));
       return;
     }
     setEditingLink(null); setTitle(''); setUrl(''); setIcon('link');
@@ -263,7 +263,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      toast({ title: t('linksManager.imageTooLarge'), variant: 'destructive' });
+      toast.error(t('linksManager.imageTooLarge'));
       return;
     }
     setThumbnailFile(file);
@@ -308,10 +308,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         ...customFields,
         ...(thumbnailFile ? { thumbnail_url: thumbUrl } : {}),
       });
-      if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
+      if (result?.error) toast.error(result.error.message);
     } else {
       const result = await onAdd({ title: title.trim(), url: normalizedUrl, icon });
-      if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
+      if (result?.error) toast.error(result.error.message);
     }
     setSaving(false);
     setDialogOpen(false);
@@ -319,7 +319,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
   const handleDelete = async (id: string) => {
     const result = await onDelete(id);
-    if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
+    if (result?.error) toast.error(result.error.message);
   };
 
   const handleRemoveThumbnail = async () => {

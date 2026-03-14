@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { THEMES, canAccessTheme } from '@/lib/themes';
 import { Profile } from '@/hooks/useDashboard';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Lock, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,12 +19,12 @@ const ThemeSelector = ({ profile, onUpdate }: ThemeSelectorProps) => {
     const theme = THEMES[key];
     if (!canAccessTheme(theme.tier, profile.plan)) {
       const label = theme.tier === 'starter' ? 'Starter' : 'Pro';
-      toast({ title: t('pricing.upgrade'), description: `Ce thème est réservé au plan ${label}.` });
+      toast.error(`${t('pricing.upgrade')} — Ce thème est réservé au plan ${label}.`);
       return;
     }
     const result = await onUpdate({ theme: key });
-    if (result?.error) toast({ title: result.error.message, variant: 'destructive' });
-    else toast({ title: t('common.success') });
+    if (result?.error) toast.error(result.error.message);
+    else toast.success(t('common.success') );
   };
 
   return (

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles, Globe, Check, Copy, ExternalLink, AtSign, X } from 'lucide-react';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { format, type Locale } from 'date-fns';
@@ -82,12 +82,12 @@ const DashboardSettings = () => {
 
     const error = profileResult.error || pagesResult.error;
     if (error) {
-      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+      toast.error(t('common.error'));
     } else {
       setCurrentUsername(newUsername);
       setNewUsername('');
       setUsernameStatus('idle');
-      toast({ title: t('settings.usernameSaved') });
+      toast.success(t('settings.usernameSaved') );
     }
     setUsernameSaving(false);
   };
@@ -117,14 +117,14 @@ const DashboardSettings = () => {
         .eq('user_id', user!.id);
       setDomainVerified(false);
       setDomainSaving(false);
-      toast({ title: t('settings.domainRemoved') });
+      toast.success(t('settings.domainRemoved') );
       return;
     }
 
     // Validate domain format
     const domainRegex = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i;
     if (!domainRegex.test(customDomain)) {
-      toast({ title: t('common.error'), description: t('settings.invalidDomain'), variant: 'destructive' });
+      toast.error(t('common.error'));
       return;
     }
 
@@ -135,10 +135,10 @@ const DashboardSettings = () => {
       .eq('user_id', user!.id);
 
     if (error) {
-      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+      toast.error(t('common.error'));
     } else {
       setDomainVerified(false);
-      toast({ title: t('settings.domainSaved'), description: t('settings.domainSavedDesc') });
+      toast.success(t('settings.domainSaved'));
     }
     setDomainSaving(false);
   };
@@ -155,12 +155,12 @@ const DashboardSettings = () => {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       
       if (error) {
-        toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+        toast.error(t('common.error'));
       } else if (data?.url) {
         window.open(data.url, '_blank');
       }
     } catch (e) {
-      toast({ title: t('common.error'), description: t('common.error'), variant: 'destructive' });
+      toast.error(t('common.error'));
     }
     setPortalLoading(false);
   };
@@ -176,12 +176,12 @@ const DashboardSettings = () => {
       });
 
       if (error) {
-        toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+        toast.error(t('common.error'));
       } else if (data?.url) {
         window.open(data.url, '_blank');
       }
     } catch (e) {
-      toast({ title: t('common.error'), description: t('common.error'), variant: 'destructive' });
+      toast.error(t('common.error'));
     }
     setCheckoutLoading(null);
   };
@@ -190,7 +190,7 @@ const DashboardSettings = () => {
     setRefreshing(true);
     await checkSubscription();
     setRefreshing(false);
-    toast({ title: t('settings.refreshStatus'), description: t('settings.refreshDesc') });
+    toast.success(t('settings.refreshStatus'));
   };
 
   const currentPlan = PLANS[subscription.plan as PlanKey] || PLANS.free;

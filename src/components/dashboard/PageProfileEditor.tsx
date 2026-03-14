@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Camera, Loader2, ImagePlus, Plus, Trash2, ShieldAlert } from 'lucide-react';
 
 const SOCIAL_PLATFORMS = ['instagram', 'tiktok', 'twitter', 'youtube', 'spotify', 'linkedin', 'github', 'facebook', 'twitch', 'discord', 'snapchat', 'whatsapp', 'telegram', 'website'];
@@ -39,7 +39,7 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
     const ext = file.name.split('.').pop();
     const path = `${user.id}/pages/${page.id}/avatar.${ext}`;
     const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
-    if (uploadError) { toast({ title: uploadError.message, variant: 'destructive' }); setUploading(false); return; }
+    if (uploadError) { toast.error(uploadError.message); setUploading(false); return; }
     const { data } = supabase.storage.from('avatars').getPublicUrl(path);
     await onUpdate({ avatar_url: `${data.publicUrl}?t=${Date.now()}` });
     onRefetch();
@@ -53,7 +53,7 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
     const ext = file.name.split('.').pop();
     const path = `${user.id}/pages/${page.id}/cover.${ext}`;
     const { error: uploadError } = await supabase.storage.from('media').upload(path, file, { upsert: true });
-    if (uploadError) { toast({ title: uploadError.message, variant: 'destructive' }); setUploadingCover(false); return; }
+    if (uploadError) { toast.error(uploadError.message); setUploadingCover(false); return; }
     const { data } = supabase.storage.from('media').getPublicUrl(path);
     await onUpdate({ cover_url: `${data.publicUrl}?t=${Date.now()}` });
     onRefetch();
@@ -78,9 +78,9 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
       social_links: validSocials,
     });
     if (result?.error) {
-      toast({ title: result.error.message, variant: 'destructive' });
+      toast.error(result.error.message);
     } else {
-      toast({ title: t('common.success') });
+      toast.success(t('common.success') );
     }
     setSaving(false);
   };
@@ -106,6 +106,11 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
           </div>
           <input ref={coverRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
         </div>
+        {page.theme === 'immersive' && (
+          <p className="text-[10px] text-muted-foreground">
+            🎯 En thème immersif, la photo occupe 65% de l'écran. Utilisez un format portrait (9:16) centré sur le visage pour un meilleur rendu.
+          </p>
+        )}
       </div>
 
       {/* Avatar */}

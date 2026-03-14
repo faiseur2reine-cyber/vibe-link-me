@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -72,9 +72,9 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const handleDelete = async () => {
     const result = await onDeletePage(page.id);
     if (result.error) {
-      toast({ title: result.error.message, variant: 'destructive' });
+      toast.error(result.error.message);
     } else {
-      toast({ title: 'Page supprimée' });
+      toast.success('Page supprimée' );
       onBack();
     }
   };

@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, Check, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -42,9 +42,9 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialog
       display_name: displayName || undefined,
     });
     if (result.error) {
-      toast({ title: result.error.message, variant: 'destructive' });
+      toast.error(result.error.message);
     } else {
-      toast({ title: 'Page créée ! 🎉' });
+      toast.success('Page créée ! 🎉' );
       onOpenChange(false);
       setUsername(''); setDisplayName(''); setUsernameStatus('idle');
     }
