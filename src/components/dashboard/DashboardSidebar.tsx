@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { title: 'Aperçu', url: '/dashboard', icon: Home, end: true },
   { title: 'Pages', url: '/dashboard/pages', icon: LayoutGrid },
+  { title: 'Thèmes', url: '/dashboard/themes', icon: Palette },
   { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3 },
   { title: 'Profil', url: '/dashboard/profile', icon: User },
   { title: 'Paramètres', url: '/dashboard/settings', icon: Settings },
