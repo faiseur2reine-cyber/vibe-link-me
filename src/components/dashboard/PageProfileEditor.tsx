@@ -77,133 +77,129 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
       is_nsfw: isNsfw,
       social_links: validSocials,
     });
-    if (result?.error) {
-      toast.error(result.error.message);
-    } else {
-      toast.success(t('common.success') );
-    }
+    if (result?.error) toast.error(result.error.message);
+    else toast.success(t('common.success'));
     setSaving(false);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Cover Photo */}
       <div className="space-y-2">
-        <Label>Cover Photo</Label>
+        <Label className="text-[12px] sm:text-sm">Cover Photo</Label>
         <div
-          className="relative w-full h-32 rounded-2xl overflow-hidden bg-muted cursor-pointer group"
+          className="relative w-full h-28 sm:h-36 md:h-40 rounded-xl sm:rounded-2xl overflow-hidden bg-muted cursor-pointer group"
           onClick={() => coverRef.current?.click()}
         >
           {page.cover_url ? (
             <img src={page.cover_url} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-              <ImagePlus className="w-6 h-6" />
+            <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 text-muted-foreground/40">
+              <ImagePlus className="w-5 h-5 sm:w-6 sm:h-6" />
+              <span className="text-[10px] sm:text-[11px]">Ajouter une bannière</span>
             </div>
           )}
-          {/* Crop guide overlay — shows safe zone for immersive hero */}
           {page.theme === 'immersive' && page.cover_url && (
             <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 h-[35%] flex items-end justify-center pb-1">
-                <span className="text-[9px] text-white/70 font-medium">← zone gradient + texte →</span>
+                <span className="text-[8px] sm:text-[9px] text-white/70 font-medium">← zone gradient + texte →</span>
               </div>
-              <div className="absolute left-2 top-2 text-[9px] text-white/60 bg-black/40 px-1.5 py-0.5 rounded">9:16</div>
             </div>
           )}
           <div className="absolute inset-0 bg-foreground/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-            {uploadingCover ? <Loader2 className="w-6 h-6 text-primary-foreground animate-spin" /> : <Camera className="w-6 h-6 text-primary-foreground" />}
+            {uploadingCover ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground animate-spin" /> : <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />}
           </div>
           <input ref={coverRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
         </div>
         {page.theme === 'immersive' && (
-          <p className="text-[10px] text-muted-foreground">
-            🎯 Format portrait 9:16 recommandé. Le visage doit être dans le tiers supérieur — le tiers inférieur sera couvert par le gradient + nom.
+          <p className="text-[9px] sm:text-[10px] text-muted-foreground/60">
+            Format portrait 9:16 recommandé. Le visage dans le tiers supérieur.
           </p>
         )}
       </div>
 
-      {/* Avatar */}
-      <div className="flex items-center gap-4">
-        <div className="relative group cursor-pointer" onClick={() => fileRef.current?.click()}>
-          <div className="w-20 h-20 rounded-full bg-primary overflow-hidden flex items-center justify-center">
+      {/* Avatar + Name */}
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className="relative group cursor-pointer shrink-0" onClick={() => fileRef.current?.click()}>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary overflow-hidden flex items-center justify-center">
             {page.avatar_url ? (
               <img src={page.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-2xl font-bold text-primary-foreground">
+              <span className="text-lg sm:text-2xl font-bold text-primary-foreground">
                 {(page.display_name || page.username)?.[0]?.toUpperCase()}
               </span>
             )}
           </div>
           <div className="absolute inset-0 rounded-full bg-foreground/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-            {uploading ? <Loader2 className="w-5 h-5 text-primary-foreground animate-spin" /> : <Camera className="w-5 h-5 text-primary-foreground" />}
+            {uploading ? <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground animate-spin" /> : <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />}
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
         </div>
-        <div>
-          <p className="font-semibold text-foreground">{page.display_name || page.username}</p>
-          <p className="text-sm text-muted-foreground">@{page.username}</p>
+        <div className="min-w-0">
+          <p className="text-sm sm:text-base font-semibold text-foreground truncate">{page.display_name || page.username}</p>
+          <p className="text-[11px] sm:text-sm text-muted-foreground/60">@{page.username}</p>
         </div>
       </div>
 
       {/* Fields */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Nom affiché</Label>
+      <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-1.5">
+          <Label className="text-[12px] sm:text-sm">Nom affiché</Label>
           <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} maxLength={100} />
         </div>
-        <div className="space-y-2">
-          <Label>Bio / Description</Label>
-          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} placeholder="Description de cette page..." />
+        <div className="space-y-1.5">
+          <Label className="text-[12px] sm:text-sm">Bio</Label>
+          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} placeholder="Description de cette page..." className="resize-none" />
         </div>
       </div>
 
       {/* Social Links */}
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3">
         <div className="flex items-center justify-between">
-          <Label>Réseaux sociaux</Label>
-          <Button variant="ghost" size="sm" onClick={addSocialLink} className="gap-1 text-xs">
-            <Plus className="w-3.5 h-3.5" /> Ajouter
+          <Label className="text-[12px] sm:text-sm">Réseaux sociaux</Label>
+          <Button variant="ghost" size="sm" onClick={addSocialLink} className="gap-1 text-[11px] sm:text-xs h-7 sm:h-8">
+            <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Ajouter
           </Button>
         </div>
         {socialLinks.map((link, i) => (
-          <div key={i} className="flex items-center gap-2">
+          <div key={i} className="flex flex-col sm:flex-row gap-2">
             <select
               value={link.platform}
               onChange={(e) => updateSocialLink(i, 'platform', e.target.value)}
-              className="h-9 rounded-lg border border-border bg-background px-2 text-sm text-foreground min-w-[110px]"
+              className="h-8 sm:h-9 rounded-lg border border-border/50 bg-background/50 px-2 text-[12px] sm:text-sm text-foreground w-full sm:w-[120px] shrink-0"
             >
               {SOCIAL_PLATFORMS.map(p => (
                 <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
               ))}
             </select>
-            <Input
-              value={link.url}
-              onChange={(e) => updateSocialLink(i, 'url', e.target.value)}
-              placeholder="https://..."
-              className="flex-1"
-            />
-            <Button variant="ghost" size="icon" onClick={() => removeSocialLink(i)} className="shrink-0 text-destructive hover:text-destructive">
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            <div className="flex gap-2 flex-1">
+              <Input
+                value={link.url}
+                onChange={(e) => updateSocialLink(i, 'url', e.target.value)}
+                placeholder="https://..."
+                className="flex-1 text-[12px] sm:text-sm h-8 sm:h-9"
+              />
+              <Button variant="ghost" size="icon" onClick={() => removeSocialLink(i)} className="shrink-0 text-muted-foreground hover:text-destructive h-8 w-8 sm:h-9 sm:w-9">
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
 
       {/* NSFW */}
-      <div className="flex items-center justify-between rounded-2xl border border-border p-4 bg-muted/30">
-        <div className="flex items-center gap-3">
-          <ShieldAlert className="w-5 h-5 text-orange-500" />
-          <div>
-            <p className="text-sm font-medium text-foreground">Vérification d'âge (+18)</p>
-            <p className="text-xs text-muted-foreground">Les visiteurs doivent confirmer leur âge avant de voir cette page</p>
-          </div>
+      <div className="flex items-start sm:items-center gap-3 rounded-xl sm:rounded-2xl border border-border/40 p-3 sm:p-4 bg-muted/20">
+        <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 shrink-0 mt-0.5 sm:mt-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] sm:text-sm font-medium text-foreground">Vérification d'âge (+18)</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground/60 mt-0.5">Les visiteurs confirment leur âge avant de voir la page</p>
         </div>
         <Switch checked={isNsfw} onCheckedChange={setIsNsfw} />
       </div>
 
-      <Button onClick={handleSave} disabled={saving} className="w-full">
-        {saving ? <Loader2 className="animate-spin" /> : 'Sauvegarder'}
+      <Button onClick={handleSave} disabled={saving} className="w-full h-9 sm:h-10 text-[13px] sm:text-sm">
+        {saving ? <Loader2 className="animate-spin w-4 h-4" /> : 'Sauvegarder'}
       </Button>
     </div>
   );

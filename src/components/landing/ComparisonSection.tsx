@@ -52,13 +52,13 @@ const ComparisonSection = () => (
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-border/60">
-              <th className="py-3 pr-4 text-[12px] font-semibold text-muted-foreground w-[40%]">Feature</th>
-              <th className="py-3 px-2 text-center text-[12px] font-bold text-foreground">
-                <span className="inline-block px-2 py-0.5 rounded-full bg-primary/10 text-primary">MyTaptap</span>
+              <th className="py-3 pr-2 sm:pr-4 text-[10px] sm:text-[12px] font-semibold text-muted-foreground w-[35%] sm:w-[40%]">Feature</th>
+              <th className="py-3 px-1 sm:px-2 text-center text-[10px] sm:text-[12px] font-bold text-foreground">
+                <span className="inline-block px-1.5 sm:px-2 py-0.5 rounded-full bg-primary/10 text-primary">MyTaptap</span>
               </th>
-              <th className="py-3 px-2 text-center text-[12px] font-medium text-muted-foreground">Linktree</th>
-              <th className="py-3 px-2 text-center text-[12px] font-medium text-muted-foreground">GAML</th>
-              <th className="py-3 px-2 text-center text-[12px] font-medium text-muted-foreground">Beacons</th>
+              <th className="py-3 px-1 sm:px-2 text-center text-[10px] sm:text-[12px] font-medium text-muted-foreground">Linktree</th>
+              <th className="py-3 px-1 sm:px-2 text-center text-[10px] sm:text-[12px] font-medium text-muted-foreground hidden sm:table-cell">GAML</th>
+              <th className="py-3 px-1 sm:px-2 text-center text-[10px] sm:text-[12px] font-medium text-muted-foreground hidden sm:table-cell">Beacons</th>
             </tr>
           </thead>
           <tbody>
@@ -71,11 +71,11 @@ const ComparisonSection = () => (
                 transition={{ delay: i * 0.03 }}
                 className="border-b border-border/30 hover:bg-muted/30 transition-colors"
               >
-                <td className="py-2.5 pr-4 text-[12px] text-foreground">{f.name}</td>
-                <td className="py-2.5 px-2 text-center"><Cell value={f.us} /></td>
-                <td className="py-2.5 px-2 text-center"><Cell value={f.linktree} /></td>
-                <td className="py-2.5 px-2 text-center"><Cell value={f.gaml} /></td>
-                <td className="py-2.5 px-2 text-center"><Cell value={f.beacons} /></td>
+                <td className="py-2 sm:py-2.5 pr-2 sm:pr-4 text-[10px] sm:text-[12px] text-foreground">{f.name}</td>
+                <td className="py-2 sm:py-2.5 px-1 sm:px-2 text-center"><Cell value={f.us} /></td>
+                <td className="py-2 sm:py-2.5 px-1 sm:px-2 text-center"><Cell value={f.linktree} /></td>
+                <td className="py-2 sm:py-2.5 px-1 sm:px-2 text-center hidden sm:table-cell"><Cell value={f.gaml} /></td>
+                <td className="py-2 sm:py-2.5 px-1 sm:px-2 text-center hidden sm:table-cell"><Cell value={f.beacons} /></td>
               </motion.tr>
             ))}
           </tbody>

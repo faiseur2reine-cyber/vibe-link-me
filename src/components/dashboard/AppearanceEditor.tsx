@@ -282,19 +282,19 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
 
       <Section title="Typographie & Layout" icon={Type}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <Label className="text-[12px] text-muted-foreground">Police</Label>
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <Label className="text-[12px] text-muted-foreground shrink-0">Police</Label>
             <Select value={font} onValueChange={v => { setFont(v); save(); }}>
-              <SelectTrigger className="w-44 h-8 text-[12px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-36 sm:w-44 h-8 text-[11px] sm:text-[12px]"><SelectValue /></SelectTrigger>
               <SelectContent>{FONTS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div className="flex items-center justify-between gap-3">
-            <Label className="text-[12px] text-muted-foreground">Disposition</Label>
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <Label className="text-[12px] text-muted-foreground shrink-0">Disposition</Label>
             <div className="flex gap-1">
               {[{ value: 'list', label: 'Liste' }, { value: 'grid', label: 'Grille' }].map(l => (
                 <button key={l.value} onClick={() => { setLayout(l.value); save(); }}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-medium transition-all ${
                     layout === l.value ? 'bg-foreground text-background' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
                   {l.label}
                 </button>
@@ -307,13 +307,13 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
       {isImmersive && (
         <Section title="Mode Immersif" icon={Sparkles} defaultOpen>
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5"><Wifi className="w-3 h-3 text-muted-foreground" /><Label className="text-[12px]">Statut</Label></div>
-              <Input value={connectedLabel} onChange={e => { setConnectedLabel(e.target.value); save(); }} className="w-36 h-7 text-[11px]" placeholder="Active now" />
+            <div className="flex items-center justify-between gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5 shrink-0"><Wifi className="w-3 h-3 text-muted-foreground" /><Label className="text-[12px]">Statut</Label></div>
+              <Input value={connectedLabel} onChange={e => { setConnectedLabel(e.target.value); save(); }} className="w-28 sm:w-36 h-7 text-[11px]" placeholder="Active now" />
             </div>
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5"><MapPin className="w-3 h-3 text-muted-foreground" /><Label className="text-[12px]">Ville</Label></div>
-              <Input value={location} onChange={e => { setLocation(e.target.value); save(); }} className="w-36 h-7 text-[11px]" placeholder="Paris, FR" />
+            <div className="flex items-center justify-between gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5 shrink-0"><MapPin className="w-3 h-3 text-muted-foreground" /><Label className="text-[12px]">Ville</Label></div>
+              <Input value={location} onChange={e => { setLocation(e.target.value); save(); }} className="w-28 sm:w-36 h-7 text-[11px]" placeholder="Paris, FR" />
             </div>
             <div className="flex items-center justify-between">
               <Label className="text-[12px]">Salutation géo</Label>

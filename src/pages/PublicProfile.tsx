@@ -148,15 +148,13 @@ const PublicProfile = () => {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center bg-black px-4 pt-20">
-        {/* Skeleton avatar */}
-        <div className="w-24 h-24 rounded-full bg-white/[0.06] animate-pulse" />
-        <div className="mt-4 h-4 w-32 rounded-full bg-white/[0.06] animate-pulse" />
-        <div className="mt-2 h-3 w-20 rounded-full bg-white/[0.04] animate-pulse" />
-        {/* Skeleton links */}
-        <div className="mt-8 w-full max-w-[380px] space-y-3">
+      <div className="min-h-screen flex flex-col items-center bg-black px-5 sm:px-6 pt-16 sm:pt-20">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/[0.06] animate-pulse" />
+        <div className="mt-3 sm:mt-4 h-4 w-28 sm:w-32 rounded-full bg-white/[0.06] animate-pulse" />
+        <div className="mt-2 h-3 w-16 sm:w-20 rounded-full bg-white/[0.04] animate-pulse" />
+        <div className="mt-6 sm:mt-8 w-full max-w-[340px] sm:max-w-[400px] space-y-2.5 sm:space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-14 rounded-2xl bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+            <div key={i} className="h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
           ))}
         </div>
       </div>
@@ -369,13 +367,13 @@ const PublicProfile = () => {
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className="w-full max-w-[440px] mx-auto pt-12 sm:pt-16 pb-8 safe-area-bottom relative z-10"
+          className="w-full max-w-[440px] sm:max-w-[480px] md:max-w-[520px] mx-auto pt-12 sm:pt-16 pb-8 safe-area-bottom relative z-10"
         >
           <div className="px-5 sm:px-6 py-6">
           {/* ── Profile header ── */}
           <div className="profile-header text-center relative">
             {page.cover_url && (
-              <motion.div variants={fadeUp} className="w-full h-24 rounded-2xl overflow-hidden mb-4">
+              <motion.div variants={fadeUp} className="w-full h-28 sm:h-36 md:h-44 rounded-2xl overflow-hidden mb-4">
                 <img src={page.cover_url} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
               </motion.div>
             )}

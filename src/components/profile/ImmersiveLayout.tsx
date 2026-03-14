@@ -283,7 +283,7 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
         )}
 
         {/* ═══ BUTTONS ═══ */}
-        <div className="px-4 pt-5 pb-4 max-w-[480px] mx-auto flex flex-col gap-4">
+        <div className="px-4 sm:px-6 pt-5 pb-4 max-w-[440px] sm:max-w-[480px] mx-auto flex flex-col gap-3 sm:gap-4">
           {links.map((link, idx) => {
             const isFirst = idx === 0;
             const isFeatured = link.style === 'featured';
