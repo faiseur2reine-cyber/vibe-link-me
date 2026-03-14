@@ -69,6 +69,8 @@ interface LinkData {
   style: string;
   section_title: string | null;
   thumbnail_url: string | null;
+  scheduled_at: string | null;
+  expires_at: string | null;
 }
 
 interface Props {

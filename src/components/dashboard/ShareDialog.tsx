@@ -78,9 +78,17 @@ const ShareDialog = ({ open, onOpenChange, username, displayName }: ShareDialogP
             <QRCodeSVG
               value={pageUrl}
               size={180}
-              level="M"
+              level="H"
               bgColor="#ffffff"
               fgColor="#000000"
+              imageSettings={{
+                src: '/icon-32.png',
+                x: undefined,
+                y: undefined,
+                height: 32,
+                width: 32,
+                excavate: true,
+              }}
             />
           </div>
 

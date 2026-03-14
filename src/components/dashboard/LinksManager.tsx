@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast';
 import {
   Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2,
-  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon,
+  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -148,6 +148,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [uploadingThumb, setUploadingThumb] = useState(false);
   const [showCustomization, setShowCustomization] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState('');
+  const [expiresAt, setExpiresAt] = useState('');
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
   const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
@@ -241,7 +243,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     setDescription(''); setBgColor(''); setTextColor('');
     setLinkStyle('default'); setSectionTitle('');
     setThumbnailFile(null); setThumbnailPreview(null);
-    setShowCustomization(false); setDialogOpen(true);
+    setShowCustomization(false); setScheduledAt(''); setExpiresAt('');
+    setDialogOpen(true);
   };
 
   const openEdit = (link: LinkItem) => {
@@ -250,7 +253,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     setTextColor(link.text_color || ''); setLinkStyle(link.style || 'default');
     setSectionTitle(link.section_title || '');
     setThumbnailFile(null); setThumbnailPreview(link.thumbnail_url || null);
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
+    setScheduledAt(link.scheduled_at ? link.scheduled_at.slice(0, 16) : '');
+    setExpiresAt(link.expires_at ? link.expires_at.slice(0, 16) : '');
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title || link.scheduled_at || link.expires_at));
     setDialogOpen(true);
   };
 
@@ -287,6 +292,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       text_color: textColor.trim() || null,
       style: linkStyle,
       section_title: sectionTitle.trim() || null,
+      scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : null,
+      expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
     };
 
     if (editingLink) {
@@ -454,6 +461,12 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             {link.style !== 'default' && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
                                 {link.style}
+                              </span>
+                            )}
+                            {(link.scheduled_at || link.expires_at) && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 flex items-center gap-0.5">
+                                <Clock className="w-2.5 h-2.5" />
+                                {link.scheduled_at && new Date(link.scheduled_at) > new Date() ? 'Programmé' : link.expires_at ? 'Expire' : ''}
                               </span>
                             )}
                           </div>
@@ -665,6 +678,42 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                         {title || t('linksManager.linkPreview')}
                       </div>
                     )}
+
+                    {/* Scheduling */}
+                    <div className="space-y-2 pt-2 border-t border-border/40">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="w-3 h-3" /> Programmation
+                      </Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <span className="text-[10px] text-muted-foreground">Apparition</span>
+                          <Input
+                            type="datetime-local"
+                            value={scheduledAt}
+                            onChange={(e) => setScheduledAt(e.target.value)}
+                            className="h-7 text-[11px]"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[10px] text-muted-foreground">Expiration</span>
+                          <Input
+                            type="datetime-local"
+                            value={expiresAt}
+                            onChange={(e) => setExpiresAt(e.target.value)}
+                            className="h-7 text-[11px]"
+                          />
+                        </div>
+                      </div>
+                      {(scheduledAt || expiresAt) && (
+                        <button
+                          type="button"
+                          onClick={() => { setScheduledAt(''); setExpiresAt(''); }}
+                          className="text-[10px] text-muted-foreground hover:text-foreground"
+                        >
+                          ✕ Retirer la programmation
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               )}
