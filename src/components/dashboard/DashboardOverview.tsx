@@ -94,7 +94,7 @@ const DashboardOverview = () => {
               transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease }}
               className="flex items-center gap-4 p-4 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5 hover:-translate-y-1"
             >
-              <div className={`w-10 h-10 rounded-xl ${kpi.bg} flex items-center justify-center shrink-0`}>
+              <div className={`w-10 h-10 rounded-2xl ${kpi.bg} flex items-center justify-center shrink-0`}>
                 <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
               </div>
               <div>
