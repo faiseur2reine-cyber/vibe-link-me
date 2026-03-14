@@ -14,8 +14,9 @@ import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
 import TrackingEditor from '@/components/dashboard/TrackingEditor';
 import SafePageEditor from '@/components/dashboard/SafePageEditor';
 import AgencyEditor from '@/components/dashboard/AgencyEditor';
+import ShareDialog from '@/components/dashboard/ShareDialog';
 import { LivePreview } from '@/components/dashboard/LivePreview';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -48,6 +49,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks, refetch: refetchLinks } = usePageLinks(page.id);
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('links');
+  const [showShare, setShowShare] = useState(false);
 
   const handleUpdate = async (updates: Partial<CreatorPage>) => {
     const result = await onUpdatePage(page.id, updates);
@@ -103,6 +105,14 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3 h-3" /> Voir
             </a>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none"
+            onClick={() => setShowShare(true)}
+          >
+            <QrCode className="w-3 h-3" /> Partager
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -249,6 +259,13 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           </div>
         </nav>
       )}
+
+      <ShareDialog
+        open={showShare}
+        onOpenChange={setShowShare}
+        username={page.username}
+        displayName={page.display_name || page.username}
+      />
     </div>
   );
 };
