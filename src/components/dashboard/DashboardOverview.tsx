@@ -56,9 +56,9 @@ const DashboardOverview = () => {
   const activePages = pages.filter(p => p.status === 'active').length;
 
   const kpis = [
-    { label: 'Total clics', value: stats.totalClicks, icon: MousePointerClick, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Pages actives', value: activePages, icon: LayoutGrid, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: 'Liens actifs', value: stats.totalLinks, icon: Link2, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { label: 'Total clics', value: stats.totalClicks, icon: MousePointerClick, color: 'text-pop-cyan', bg: 'bg-pop-cyan/12' },
+    { label: 'Pages actives', value: activePages, icon: LayoutGrid, color: 'text-pop-lime', bg: 'bg-pop-lime/12' },
+    { label: 'Liens actifs', value: stats.totalLinks, icon: Link2, color: 'text-pop-yellow', bg: 'bg-pop-yellow/12' },
   ];
 
   return (
