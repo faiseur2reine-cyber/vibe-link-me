@@ -171,6 +171,18 @@ export const THEMES: Record<string, ThemeConfig> = {
     avatarRing: 'ring-[2px] ring-[#e5e5e5]',
     tier: 'pro',
   },
+  immersive: {
+    name: 'Immersive',
+    bg: 'bg-black',
+    btn: 'bg-white text-black hover:-translate-y-[1px]',
+    text: 'text-white',
+    subtleText: 'text-white/35',
+    accent: 'text-white',
+    preview: 'bg-gradient-to-b from-gray-700 to-black',
+    cardBg: 'bg-white/[0.04] border border-white/[0.06]',
+    avatarRing: 'ring-[3px] ring-white/10',
+    tier: 'starter',
+  },
 };
 
 const PLAN_RANK: Record<string, number> = { free: 0, starter: 1, pro: 2 };

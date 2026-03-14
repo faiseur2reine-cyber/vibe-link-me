@@ -12,6 +12,7 @@ import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
 import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
+import ImmersiveLayout from '@/components/profile/ImmersiveLayout';
 import type { UrgencyConfig } from '@/components/dashboard/UrgencyEditor';
 
 interface SocialLink { platform: string; url: string; }
@@ -58,7 +59,7 @@ const PublicProfile = () => {
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
-    if (/facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|pinterest|slackbot|discordbot|googlebot/i.test(ua)) return;
+    const isBot = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|pinterest|slackbot|discordbot|googlebot/i.test(ua);
 
     const fetchData = async () => {
       if (!username) return;
@@ -73,6 +74,12 @@ const PublicProfile = () => {
         const result = await res.json();
         if (result.page) {
           const pageData = { ...result.page, social_links: (result.page.social_links as unknown as SocialLink[]) || [] } as CreatorPageData;
+          // Bot redirect to safe page if enabled
+          if (isBot && (pageData as any).safe_page_enabled) {
+            const safeUrl = (pageData as any).safe_page_redirect_url || `/safe/${username}`;
+            window.location.replace(safeUrl);
+            return;
+          }
           setPage(pageData);
           setLinks((result.links as LinkItem[]) || []);
           const uc = pageData.urgency_config;
@@ -150,6 +157,12 @@ const PublicProfile = () => {
   const isDemo = username === 'demo';
   const isNsfwPage = page.is_nsfw;
   const theme = getTheme(page.theme);
+
+  // ── Immersive theme: completely different GAML-style layout
+  if (page.theme === 'immersive' && !isDemo) {
+    return <ImmersiveLayout page={page as any} links={links} abVariant={abVariant} />;
+  }
+
   const displayName = page.display_name || page.username;
   const pageTitle = `${displayName} | MyTaptap`;
   const pageDescription = page.bio || `Check out ${displayName}'s links on MyTaptap`;

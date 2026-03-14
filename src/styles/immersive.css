@@ -1,0 +1,19 @@
+/* src/styles/immersive.css */
+/* ═══ IMMERSIVE LAYOUT ADDITIONS ═══ */
+/* Import this in main.tsx or index.css */
+
+/* Subtle bounce on first button */
+@keyframes bounce-subtle {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+  60% { transform: translateY(-3px); }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Safe area padding for iOS */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}

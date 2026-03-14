@@ -11,6 +11,7 @@ import Dashboard from "./pages/DashboardNew";
 import ResetPassword from "./pages/ResetPassword";
 import SetUsername from "./pages/SetUsername";
 import PublicProfile from "./pages/PublicProfile";
+import SafePage from "./pages/SafePage";
 import Onboarding from "./pages/Onboarding";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/set-username" element={<SetUsername />} />
               <Route path="/legal" element={<Legal />} />
+              <Route path="/safe/:username" element={<SafePage />} />
               <Route path="/:username" element={<PublicProfile />} />
             </Routes>
           </BrowserRouter>
