@@ -31,7 +31,7 @@
 
 ## ═══ PRIORITY 3 — FEATURES ═══
 
-- [ ] Bulk actions: select multiple pages → change status / assign operator / export CSV
+- [x] Bulk actions: select pages → change status (active/paused) + export CSV
 - [x] Analytics: page view tracking via usePageView hook (once per session per page)
 - [x] Analytics: export to CSV (per-page, all sections: links, daily, country, city, referrer, A/B)
 - [ ] Link scheduling: set a link to appear/disappear at a specific date/time

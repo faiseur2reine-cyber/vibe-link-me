@@ -1,10 +1,10 @@
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Copy, Trash2, Search, ArrowUpRight, Link2, MousePointerClick, LayoutGrid } from 'lucide-react';
+import { Plus, ExternalLink, Copy, Trash2, Search, ArrowUpRight, Link2, MousePointerClick, LayoutGrid, CheckSquare, Square, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
@@ -14,6 +14,7 @@ interface PagesListViewProps {
   onCreatePage: () => void;
   onDuplicatePage?: (id: string) => Promise<{ error: any; data?: any }>;
   onDeletePage?: (id: string) => Promise<{ error: any }>;
+  onBulkUpdate?: (ids: string[], updates: Partial<CreatorPage>) => Promise<{ error: any }>;
 }
 
 const StatPill = ({ icon: Icon, value, label }: { icon: any; value: number; label: string }) => (
@@ -24,10 +25,12 @@ const StatPill = ({ icon: Icon, value, label }: { icon: any; value: number; labe
   </div>
 );
 
-const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
+const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage, onBulkUpdate }: PagesListViewProps) => {
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState(false);
 
   const filteredPages = useMemo(() => {
     let result = pages;
@@ -76,16 +79,29 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
         </div>
       )}
 
-      {/* Search */}
-      {pages.length > 2 && (
-        <div className="relative w-full sm:w-56">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <Input
-            placeholder="Rechercher..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 h-8 text-[13px] bg-transparent border-border/60 rounded-lg"
-          />
+      {/* Search + Bulk toggle */}
+      {pages.length > 1 && (
+        <div className="flex items-center gap-2">
+          {pages.length > 2 && (
+            <div className="relative flex-1 sm:flex-none sm:w-56">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8 h-8 text-[13px] bg-transparent border-border/60 rounded-lg"
+              />
+            </div>
+          )}
+          <Button
+            variant={bulkAction ? 'default' : 'outline'}
+            size="sm"
+            className="h-8 px-3 text-[11px] gap-1.5 shrink-0"
+            onClick={() => { setBulkAction(!bulkAction); setSelected(new Set()); }}
+          >
+            <CheckSquare className="w-3 h-3" />
+            {bulkAction ? 'Annuler' : 'Sélection'}
+          </Button>
         </div>
       )}
 
@@ -141,10 +157,33 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
               transition={{ delay: i * 0.02 }}
             >
               <div
-                onClick={() => onSelectPage(page.id)}
-                className="group relative rounded-xl bg-card border border-border/60 p-3.5 cursor-pointer hover:border-border hover:bg-accent/30 transition-all duration-150"
+                onClick={() => {
+                  if (bulkAction) {
+                    setSelected(prev => {
+                      const next = new Set(prev);
+                      next.has(page.id) ? next.delete(page.id) : next.add(page.id);
+                      return next;
+                    });
+                  } else {
+                    onSelectPage(page.id);
+                  }
+                }}
+                className={`group relative rounded-xl bg-card border p-3.5 cursor-pointer transition-all duration-150 ${
+                  selected.has(page.id)
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border/60 hover:border-border hover:bg-accent/30'
+                }`}
               >
                 <div className="flex items-center gap-2.5">
+                  {/* Bulk checkbox */}
+                  {bulkAction && (
+                    <div className="shrink-0">
+                      {selected.has(page.id)
+                        ? <CheckSquare className="w-4 h-4 text-primary" />
+                        : <Square className="w-4 h-4 text-muted-foreground/40" />
+                      }
+                    </div>
+                  )}
                   <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-muted">
                     {page.avatar_url ? (
                       <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -251,6 +290,70 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           </motion.div>
         </div>
       )}
+
+      {/* Bulk action bar */}
+      <AnimatePresence>
+        {bulkAction && selected.size > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-foreground text-background rounded-xl px-4 py-2.5 shadow-2xl flex items-center gap-3"
+          >
+            <span className="text-[12px] font-semibold">{selected.size} sélectionné{selected.size > 1 ? 's' : ''}</span>
+            <div className="w-px h-5 bg-background/20" />
+            {onBulkUpdate && (
+              <>
+                <button
+                  onClick={async () => {
+                    await onBulkUpdate(Array.from(selected), { status: 'active' });
+                    toast.success(`${selected.size} page(s) activée(s)`);
+                    setSelected(new Set()); setBulkAction(false);
+                  }}
+                  className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
+                >
+                  Activer
+                </button>
+                <button
+                  onClick={async () => {
+                    await onBulkUpdate(Array.from(selected), { status: 'paused' });
+                    toast.success(`${selected.size} page(s) mise(s) en pause`);
+                    setSelected(new Set()); setBulkAction(false);
+                  }}
+                  className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-colors"
+                >
+                  Pause
+                </button>
+              </>
+            )}
+            <button
+              onClick={() => {
+                // Export selected pages to CSV
+                const rows = [['Username', 'Display Name', 'Status', 'Operator', 'Revenue', 'Commission']];
+                pages.filter(p => selected.has(p.id)).forEach(p => {
+                  rows.push([p.username, p.display_name || '', p.status || 'draft', p.operator || '', String(p.revenue_monthly ?? 0), String(p.revenue_commission ?? 20)]);
+                });
+                const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'pages-export.csv'; a.click();
+                URL.revokeObjectURL(url);
+                toast.success('CSV exporté');
+              }}
+              className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-background/10 hover:bg-background/20 transition-colors"
+            >
+              CSV
+            </button>
+            <button
+              onClick={() => { setSelected(new Set()); setBulkAction(false); }}
+              className="p-1 rounded-lg hover:bg-background/20 transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Delete dialog */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>

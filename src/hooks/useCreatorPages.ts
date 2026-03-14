@@ -164,6 +164,17 @@ export function useCreatorPages() {
     return { error };
   };
 
+  const bulkUpdatePages = async (ids: string[], updates: Partial<CreatorPage>) => {
+    if (!user) return { error: { message: 'Not authenticated' } };
+    const { error } = await supabase
+      .from('creator_pages')
+      .update(updates as any)
+      .in('id', ids)
+      .eq('user_id', user.id);
+    if (!error) await fetchPages();
+    return { error };
+  };
+
   const duplicatePage = async (id: string) => {
     if (!user) return { error: { message: 'Not authenticated' } };
     const source = pages.find(p => p.id === id);
@@ -232,7 +243,7 @@ export function useCreatorPages() {
     return { data: newPage, error: null };
   };
 
-  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, addMultipleLinks, refetch: fetchPages };
+  return { pages, loading, createPage, updatePage, deletePage, duplicatePage, bulkUpdatePages, addMultipleLinks, refetch: fetchPages };
 }
 
 export function usePageLinks(pageId: string | null) {

@@ -26,7 +26,7 @@ const DashboardHome = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, signOut, checkSubscription } = useAuth();
-  const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, refetch: refetchPages } = useCreatorPages();
+  const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, bulkUpdatePages, refetch: refetchPages } = useCreatorPages();
   const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -139,6 +139,7 @@ const DashboardHome = () => {
                 onCreatePage={() => setCreateDialogOpen(true)}
                 onDuplicatePage={duplicatePage}
                 onDeletePage={deletePage}
+                onBulkUpdate={bulkUpdatePages}
               />
             </div>
           </div>
