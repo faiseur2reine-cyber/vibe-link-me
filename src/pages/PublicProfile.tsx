@@ -395,7 +395,7 @@ const PublicProfile = () => {
             {/* Avatar with online indicator */}
             <motion.div variants={scaleIn} className="flex justify-center">
               <div className="relative">
-                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${theme.avatarRing}`}>
+                <div className={`w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden ${theme.avatarRing}`}>
                   {page.avatar_url ? (
                     <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" decoding="async" />
                   ) : (
@@ -404,15 +404,15 @@ const PublicProfile = () => {
                         ? 'bg-gradient-to-br from-white/15 to-white/5'
                         : 'bg-gradient-to-br from-gray-100 to-gray-200'
                     }`}>
-                      <span className={`text-3xl sm:text-4xl font-bold ${isDarkTheme ? 'text-white/80' : 'text-gray-500'}`}>
+                      <span className={`text-4xl sm:text-5xl font-bold ${isDarkTheme ? 'text-white/70' : 'text-gray-400'}`}>
                         {displayName[0]?.toUpperCase()}
                       </span>
                     </div>
                   )}
                 </div>
                 {/* Online indicator */}
-                <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-400 border-[3px] border-current shadow-lg shadow-emerald-500/30"
-                  style={{ borderColor: isDarkTheme ? '#0a0a0f' : page.custom_bg_color || '#fafafa' }}
+                <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-400 border-[3px] shadow-lg shadow-emerald-500/30"
+                  style={{ borderColor: isDarkTheme ? '#07070c' : page.custom_bg_color || '#fafafa' }}
                 >
                   <div className="w-full h-full rounded-full animate-pulse-soft bg-emerald-400 opacity-40" />
                 </div>
@@ -420,22 +420,22 @@ const PublicProfile = () => {
             </motion.div>
 
             {/* Name + bio */}
-            <motion.div variants={fadeUp} transition={{ duration: 0.5, ease }} className="mt-5 space-y-1.5">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5, ease }} className="mt-6 space-y-2">
               <h1
-                className={`text-[22px] sm:text-2xl font-bold tracking-[-0.02em] leading-tight ${hasCustomColors ? '' : theme.text} flex items-center justify-center gap-1.5`}
+                className={`text-[24px] sm:text-[28px] font-bold tracking-[-0.03em] leading-tight ${hasCustomColors ? '' : theme.text} flex items-center justify-center gap-2`}
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {displayName}
                 {(page.plan === 'starter' || page.plan === 'pro') && (
-                  <span className="relative inline-flex items-center justify-center w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0" title="Verified creator">
+                  <span className="relative inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 shrink-0" title="Verified creator">
                     <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 shadow-md shadow-blue-500/25" />
-                    <Check className="relative w-3 h-3 sm:w-3.5 sm:h-3.5 text-white stroke-[3]" />
+                    <Check className="relative w-3.5 h-3.5 sm:w-4 sm:h-4 text-white stroke-[3]" />
                   </span>
                 )}
               </h1>
               <p
-                className={`text-xs font-medium tracking-wide ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
-                style={page.custom_text_color ? { color: page.custom_text_color, opacity: 0.3 } : {}}
+                className={`text-[11px] sm:text-xs font-medium tracking-widest uppercase ${hasCustomColors ? 'opacity-25' : theme.subtleText}`}
+                style={page.custom_text_color ? { color: page.custom_text_color, opacity: 0.25 } : {}}
               >
                 @{page.username}
               </p>
@@ -445,7 +445,7 @@ const PublicProfile = () => {
               <motion.p
                 variants={fadeUp}
                 transition={{ duration: 0.5, ease }}
-                className={`text-[13px] sm:text-sm mt-3 leading-relaxed max-w-[320px] mx-auto ${theme.text} opacity-50`}
+                className={`text-[13px] sm:text-sm mt-4 leading-relaxed max-w-[340px] mx-auto ${theme.text} opacity-40`}
                 style={page.custom_text_color ? { color: page.custom_text_color } : {}}
               >
                 {page.bio.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
@@ -474,7 +474,7 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-7 space-y-4">
+          <motion.div variants={stagger} className="mt-8 space-y-3">
             {links.length === 0 && (
               <motion.div variants={fadeUp} className="text-center py-8">
                 <p className={`text-sm ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
@@ -583,8 +583,8 @@ const PublicProfile = () => {
                           key={link.id} role="button" tabIndex={0}
                           onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
-                          whileHover={isDemo ? {} : { y: -2, scale: 1.008 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                          className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                          whileHover={isDemo ? {} : { y: -3, scale: 1.01 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                          className={`link-item group relative flex items-center gap-4 px-4 py-4 sm:py-[18px] rounded-2xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                           style={{
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
@@ -594,7 +594,7 @@ const PublicProfile = () => {
                           <SpotlightBorder />
                           <PulseRing />
                           <div
-                            className={`relative w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
+                            className={`relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${!isDemo ? 'group-hover:scale-110' : ''} ${
                             customBtnBg
                               ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
                               : platformColor ? '' : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
@@ -605,10 +605,10 @@ const PublicProfile = () => {
                           </div>
                           <div className="flex-1 min-w-0 relative">
                             <span className="block truncate tracking-tight">{link.title}</span>
-                            {link.description && <span className="block text-[11px] font-normal opacity-65 mt-0.5 line-clamp-2">{link.description}</span>}
+                            {link.description && <span className="block text-[11px] font-normal opacity-55 mt-0.5 line-clamp-2">{link.description}</span>}
                           </div>
-                          <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-all duration-300 ${
-                            isDemo ? 'opacity-20' : 'opacity-30 group-hover:opacity-60 group-hover:translate-x-0.5'
+                          <ChevronRight className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                            isDemo ? 'opacity-10' : 'opacity-20 group-hover:opacity-50 group-hover:translate-x-1'
                           }`} />
                         </motion.a>,
                         link,
@@ -643,27 +643,27 @@ const PublicProfile = () => {
                       );
                     }
 
-                    /* Default — clean premium style */
+                    /* Default — premium button */
                     return wrapNsfw(
                       <motion.a
                         key={link.id} role="button" tabIndex={0}
                         onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                         variants={fadeUp}
-                        whileHover={isDemo ? {} : { y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                        className={`link-item group relative flex items-center gap-3.5 px-4 py-3 sm:py-3.5 rounded-xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                        whileHover={isDemo ? {} : { y: -3 }} whileTap={isDemo ? {} : { scale: 0.98 }}
+                        className={`link-item group relative flex items-center gap-4 px-4 py-3.5 sm:py-4 rounded-2xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
-                          ...(platformColor && !customBtnBg && !isDarkTheme ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
+                          ...(platformColor && !customBtnBg && !isDarkTheme ? { borderLeft: `3px solid ${platformColor}` } : {}),
                         }}
                       >
                         <PopularBadge />
                         <PulseRing />
                         <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${!isDemo ? 'group-hover:scale-110' : ''} ${
                           customBtnBg
                             ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
-                            : platformColor ? '' : isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.05]'
+                            : platformColor ? '' : isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.04]'
                         }`}
                           style={platformColor && !customBtnBg ? { backgroundColor: platformColor } : {}}
                         >
@@ -671,10 +671,10 @@ const PublicProfile = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="truncate tracking-[-0.01em] block">{link.title}</span>
-                          {link.description && <span className="block text-[11px] font-normal opacity-55 mt-0.5 truncate">{link.description}</span>}
+                          {link.description && <span className="block text-[11px] font-normal opacity-45 mt-0.5 truncate">{link.description}</span>}
                         </div>
-                        <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-all duration-300 ${
-                          isDemo ? 'opacity-15' : 'opacity-25 group-hover:opacity-50 group-hover:translate-x-0.5'
+                        <ChevronRight className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                          isDemo ? 'opacity-10' : 'opacity-15 group-hover:opacity-40 group-hover:translate-x-1'
                         }`} />
                       </motion.a>,
                       link,
