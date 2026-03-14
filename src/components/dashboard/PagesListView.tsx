@@ -66,9 +66,9 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold tracking-tight font-display">{	('pages.title')}</h1>
+        <h1 className="text-xl font-semibold tracking-tight font-display">{t('pages.title')}</h1>
         <p className="text-[13px] text-muted-foreground mt-0.5">
-          {	('pages.subtitle')}
+          {t('pages.subtitle')}
         </p>
       </div>
 
@@ -141,9 +141,9 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
             <Link2 className="w-4 h-4 text-muted-foreground" />
           </div>
-          <h2 className="text-sm font-medium">{	('pages.noPages')}</h2>
+          <h2 className="text-sm font-medium">{t('pages.noPages')}</h2>
           <p className="text-[13px] text-muted-foreground mt-0.5 max-w-[240px]">
-            {	('pages.noPagesDesc')}
+            {t('pages.noPagesDesc')}
           </p>
           <Button onClick={onCreatePage} size="sm" className="mt-4 h-8 px-4 text-[12px] gap-1.5 rounded-lg shadow-none">
             <Plus className="w-3 h-3" /> Créer une page
@@ -228,7 +228,13 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                       <span className="text-[9px] text-emerald-600 font-medium">{Math.round((page.revenue_monthly ?? 0) * (page.revenue_commission ?? 20) / 100)}€</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-2">
+                    {/* Click count — always visible */}
+                    <span className="text-[10px] text-muted-foreground tabular-nums flex items-center gap-1">
+                      <MousePointerClick className="w-2.5 h-2.5" />
+                      {globalStats.topPages.find(p => p.pageId === page.id)?.clicks ?? 0}
+                    </span>
+                    <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -270,6 +276,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     >
                       <ExternalLink className="w-3 h-3" />
                     </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -287,7 +294,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
               className="rounded-xl border border-dashed border-border/60 bg-transparent p-3.5 cursor-pointer hover:border-border hover:bg-accent/20 transition-all duration-150 flex flex-col items-center justify-center min-h-[100px] text-center"
             >
               <Plus className="w-4 h-4 text-muted-foreground/60 mb-1" />
-              <span className="text-[12px] text-muted-foreground">{	('pages.newPage')}</span>
+              <span className="text-[12px] text-muted-foreground">{t('pages.newPage')}</span>
             </div>
           </motion.div>
         </div>

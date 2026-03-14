@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2, ChevronRight, Check, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ExternalLink, Heart, Share2, ChevronRight, Check, ArrowRight, ArrowUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
@@ -75,6 +75,14 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Track scroll for back-to-top button
+  useEffect(() => {
+    const handler = () => setShowScrollTop(window.scrollY > 600);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
 
   // Track page view (once per session per page)
   usePageView(page?.id);
@@ -725,6 +733,25 @@ const PublicProfile = () => {
             </div>
           </motion.div>
         )}
+
+        {/* Scroll to top */}
+        <AnimatePresence>
+          {showScrollTop && !isDemo && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className={`fixed bottom-6 right-4 z-40 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors ${
+                isDarkTheme
+                  ? 'bg-white/10 hover:bg-white/20 text-white/60 backdrop-blur-xl'
+                  : 'bg-black/5 hover:bg-black/10 text-black/40 backdrop-blur-xl'
+              }`}
+            >
+              <ArrowUp className="w-4 h-4" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
     </>
   );
