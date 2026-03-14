@@ -526,7 +526,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             snapshot.isDragging
                               ? 'bg-card shadow-xl shadow-black/[0.08] ring-1 ring-border/50 scale-[1.02]'
                               : 'hover:bg-accent/30'
-                          } ${link.is_visible === false ? 'opacity-35' : ''}`}
+                          }`}
                         >
                           {/* Drag handle */}
                           <div
