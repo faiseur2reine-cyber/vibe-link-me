@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { CreatorPage, PageLink } from '@/hooks/useCreatorPages';
-import { getTheme } from '@/lib/themes';
 import { detectPlatform } from '@/lib/platforms';
 import { Smartphone, ExternalLink } from 'lucide-react';
 import LinkFavicon from '@/components/LinkFavicon';
@@ -25,7 +24,6 @@ function isColorDark(hex: string): boolean {
 }
 
 export const InlinePreview = ({ page, links }: InlinePreviewProps) => {
-  const theme = getTheme(page.theme);
   const displayName = page.display_name || page.username;
 
   return (
@@ -72,7 +70,7 @@ export const InlinePreview = ({ page, links }: InlinePreviewProps) => {
                 {page.theme === 'immersive' ? (
                   <ImmersivePreview page={page} links={links} displayName={displayName} />
                 ) : (
-                  <StandardPreview page={page} links={links} theme={theme} displayName={displayName} />
+                  <StandardPreview page={page} links={links} displayName={displayName} />
                 )}
               </motion.div>
             </div>
@@ -89,18 +87,39 @@ export const InlinePreview = ({ page, links }: InlinePreviewProps) => {
 };
 
 // ═══ STANDARD THEMES ═══
-const StandardPreview = ({ page, links, theme, displayName }: {
-  page: CreatorPage; links: PageLink[]; theme: ReturnType<typeof getTheme>; displayName: string;
+
+// Explicit colors per theme for the miniature preview (Tailwind gradients are too subtle at 260px)
+const THEME_COLORS: Record<string, { bg: string; text: string; sub: string; btn: string; btnText: string; ring: string }> = {
+  default:    { bg: '#f9fafb', text: '#111827', sub: '#9ca3af', btn: '#ffffff', btnText: '#111827', ring: '#ffffff' },
+  sunset:     { bg: '#fff5ed', text: '#431407', sub: '#c2410c', btn: '#fff7ed', btnText: '#9a3412', ring: '#fed7aa' },
+  ocean:      { bg: '#eff6ff', text: '#1e3a5f', sub: '#3b82f6', btn: '#eff6ff', btnText: '#1e40af', ring: '#bfdbfe' },
+  midnight:   { bg: '#0a0a0f', text: '#e5e7eb', sub: '#6b7280', btn: 'rgba(255,255,255,0.06)', btnText: '#d1d5db', ring: '#374151' },
+  forest:     { bg: '#ecfdf5', text: '#064e3b', sub: '#059669', btn: '#f0fdf4', btnText: '#065f46', ring: '#a7f3d0' },
+  neon:       { bg: '#08080c', text: '#f0abfc', sub: '#a855f7', btn: 'rgba(217,70,239,0.08)', btnText: '#e879f9', ring: '#581c87' },
+  glass_dark: { bg: '#111118', text: '#e5e7eb', sub: '#6b7280', btn: 'rgba(255,255,255,0.05)', btnText: '#d1d5db', ring: '#1f2937' },
+  pastel:     { bg: '#fdf2f8', text: '#4c1d95', sub: '#8b5cf6', btn: '#faf5ff', btnText: '#5b21b6', ring: '#e9d5ff' },
+  brutalist:  { bg: '#f5f0e8', text: '#000000', sub: '#000000', btn: '#ffffff', btnText: '#000000', ring: '#000000' },
+  aurora:     { bg: '#0c0a1a', text: '#e5e7eb', sub: '#34d399', btn: 'rgba(255,255,255,0.05)', btnText: '#a7f3d0', ring: '#064e3b' },
+  cyber:      { bg: '#050510', text: '#ecfeff', sub: '#22d3ee', btn: 'rgba(34,211,238,0.06)', btnText: '#a5f3fc', ring: '#164e63' },
+  marble:     { bg: '#f5f5f0', text: '#44403c', sub: '#a8a29e', btn: '#ffffff', btnText: '#44403c', ring: '#e7e5e4' },
+  minimal:    { bg: '#ffffff', text: '#171717', sub: '#a3a3a3', btn: '#ffffff', btnText: '#171717', ring: '#e5e5e5' },
+};
+
+const StandardPreview = ({ page, links, displayName }: {
+  page: CreatorPage; links: PageLink[]; displayName: string;
 }) => {
   const hasBg = !!page.custom_bg_color;
   const hasText = !!page.custom_text_color;
+  const colors = THEME_COLORS[page.theme] || THEME_COLORS.default;
   const isDark = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'glass_dark' ||
-    page.theme === 'cyber' || (page.custom_bg_color && isColorDark(page.custom_bg_color));
+    page.theme === 'aurora' || page.theme === 'cyber' ||
+    (page.custom_bg_color && isColorDark(page.custom_bg_color));
 
-  const bgStyle = hasBg ? { backgroundColor: page.custom_bg_color! } : {};
-  const textStyle = hasText ? { color: page.custom_text_color! } : {};
-  const btnBg = page.custom_btn_color;
-  const btnText = page.custom_btn_text_color;
+  const bg = hasBg ? page.custom_bg_color! : colors.bg;
+  const text = hasText ? page.custom_text_color! : colors.text;
+  const sub = hasText ? page.custom_text_color! : colors.sub;
+  const btnBg = page.custom_btn_color || colors.btn;
+  const btnText = page.custom_btn_text_color || colors.btnText;
 
   // Font mapping
   const fontMap: Record<string, string> = {
@@ -116,18 +135,24 @@ const StandardPreview = ({ page, links, theme, displayName }: {
 
   const visibleLinks = links.filter(l => l.is_visible !== false);
 
+  // Brutalist special: thick borders + offset shadow
+  const isBrutalist = page.theme === 'brutalist';
+
   return (
     <div
-      className={`min-h-full flex flex-col items-center pt-12 px-5 pb-6 ${hasBg ? '' : theme.bg}`}
-      style={{ ...bgStyle, ...(fontFamily ? { fontFamily } : {}) }}
+      className="min-h-full flex flex-col items-center pt-12 px-5 pb-6"
+      style={{ backgroundColor: bg, color: text, ...(fontFamily ? { fontFamily } : {}) }}
     >
       {/* Avatar */}
-      <div className={`w-16 h-16 rounded-full overflow-hidden shrink-0 ${theme.avatarRing}`}>
+      <div
+        className="w-16 h-16 rounded-full overflow-hidden shrink-0"
+        style={{ boxShadow: `0 0 0 3px ${colors.ring}` }}
+      >
         {page.avatar_url ? (
           <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
         ) : (
-          <div className={`w-full h-full flex items-center justify-center ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
-            <span className={`text-xl font-bold ${isDark ? 'text-white/50' : 'text-gray-400'}`}>
+          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#f3f4f6' }}>
+            <span className="text-xl font-bold" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#9ca3af' }}>
               {displayName[0]?.toUpperCase()}
             </span>
           </div>
@@ -135,24 +160,14 @@ const StandardPreview = ({ page, links, theme, displayName }: {
       </div>
 
       {/* Name */}
-      <p
-        className={`text-[14px] mt-3 font-bold tracking-tight ${hasText ? '' : theme.text}`}
-        style={textStyle}
-      >
-        {displayName}
-      </p>
+      <p className="text-[14px] mt-3 font-bold tracking-tight">{displayName}</p>
 
       {/* Username */}
-      <p className={`text-[9px] mt-0.5 ${hasText ? 'opacity-35' : theme.subtleText}`} style={textStyle}>
-        @{page.username}
-      </p>
+      <p className="text-[9px] mt-0.5" style={{ color: sub, opacity: 0.6 }}>@{page.username}</p>
 
       {/* Bio */}
       {page.bio && (
-        <p
-          className={`text-[9px] mt-2 text-center leading-relaxed max-w-[180px] ${hasText ? 'opacity-40' : theme.subtleText}`}
-          style={textStyle}
-        >
+        <p className="text-[9px] mt-2 text-center leading-relaxed max-w-[180px]" style={{ color: sub, opacity: 0.5 }}>
           {page.bio.length > 80 ? page.bio.slice(0, 80) + '…' : page.bio}
         </p>
       )}
@@ -160,10 +175,17 @@ const StandardPreview = ({ page, links, theme, displayName }: {
       {/* Links */}
       <div className={`w-full mt-5 max-w-[220px] ${isGrid ? 'grid grid-cols-2 gap-1.5' : 'space-y-2'}`}>
         {visibleLinks.slice(0, isGrid ? 6 : 5).map((link, idx) => {
-          const platform = !link.bg_color && !btnBg ? detectPlatform(link.url) : null;
-          const bg = link.bg_color || btnBg;
-          const text = link.text_color || btnText;
+          const platform = !link.bg_color && !page.custom_btn_color ? detectPlatform(link.url) : null;
+          const linkBg = link.bg_color || btnBg;
+          const linkText = link.text_color || btnText;
           const platformColor = platform?.bgColor;
+
+          const buttonStyle: React.CSSProperties = {
+            backgroundColor: linkBg,
+            color: linkText,
+            ...(isBrutalist ? { border: '2px solid #000', boxShadow: '2px 2px 0 #000' } : {}),
+            ...(platformColor && !link.bg_color && !page.custom_btn_color ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
+          };
 
           if (isGrid) {
             return (
@@ -172,16 +194,14 @@ const StandardPreview = ({ page, links, theme, displayName }: {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.03, duration: 0.15 }}
-                className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl text-center ${bg ? '' : theme.btn.split(' hover:')[0]}`}
-                style={bg ? { backgroundColor: bg, color: text || '#fff' } : {}}
+                className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl text-center"
+                style={buttonStyle}
               >
                 <div
                   className="w-6 h-6 rounded-lg flex items-center justify-center"
-                  style={platformColor && !bg ? { backgroundColor: platformColor } :
-                    bg ? { backgroundColor: isColorDark(bg) ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)' } :
-                    { backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)' }}
+                  style={{ backgroundColor: platformColor || (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') }}
                 >
-                  <LinkFavicon url={link.url} size="xs" className={platformColor || (bg && isColorDark(bg)) ? 'text-white' : ''} />
+                  <LinkFavicon url={link.url} size="xs" className={platformColor ? 'text-white' : ''} />
                 </div>
                 <span className="text-[8px] font-semibold truncate w-full">{link.title}</span>
               </motion.div>
@@ -194,38 +214,33 @@ const StandardPreview = ({ page, links, theme, displayName }: {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, duration: 0.2 }}
-              className={`flex items-center gap-2.5 px-3 py-[9px] rounded-xl text-[10px] font-semibold ${bg ? '' : theme.btn.split(' hover:')[0]}`}
-              style={{
-                ...(bg ? { backgroundColor: bg, color: text || '#fff' } : {}),
-                ...(platformColor && !bg ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
-              }}
+              className="flex items-center gap-2.5 px-3 py-[9px] rounded-xl text-[10px] font-semibold"
+              style={buttonStyle}
             >
               <div
                 className="w-[22px] h-[22px] rounded-lg flex items-center justify-center shrink-0"
-                style={platformColor && !bg ? { backgroundColor: platformColor } :
-                  bg ? { backgroundColor: isColorDark(bg) ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)' } :
-                  { backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)' }}
+                style={{ backgroundColor: platformColor || (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') }}
               >
-                <LinkFavicon url={link.url} size="xs" className={platformColor || (bg && isColorDark(bg)) ? 'text-white' : ''} />
+                <LinkFavicon url={link.url} size="xs" className={platformColor ? 'text-white' : ''} />
               </div>
               <span className="truncate flex-1">{link.title}</span>
             </motion.div>
           );
         })}
         {visibleLinks.length > (isGrid ? 6 : 5) && (
-          <p className={`text-center text-[8px] pt-1 ${isGrid ? 'col-span-2' : ''} ${isDark ? 'text-white/20' : 'text-black/15'}`}>
+          <p className={`text-center text-[8px] pt-1 ${isGrid ? 'col-span-2' : ''}`} style={{ color: sub, opacity: 0.3 }}>
             +{visibleLinks.length - (isGrid ? 6 : 5)} autres liens
           </p>
         )}
         {visibleLinks.length === 0 && (
-          <div className={`text-center py-6 text-[9px] ${isGrid ? 'col-span-2' : ''} ${isDark ? 'text-white/20' : 'text-black/15'}`}>
+          <div className={`text-center py-6 text-[9px] ${isGrid ? 'col-span-2' : ''}`} style={{ color: sub, opacity: 0.3 }}>
             Aucun lien
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <p className={`text-[7px] mt-auto pt-4 ${isDark ? 'text-white/10' : 'text-black/8'}`}>
+      <p className="text-[7px] mt-auto pt-4" style={{ color: text, opacity: 0.08 }}>
         Made with ♥ MyTaptap
       </p>
     </div>
