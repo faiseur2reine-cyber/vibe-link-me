@@ -17,10 +17,9 @@ const FeaturesSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="px-4 sm:px-6 py-24 sm:py-32 relative">
-      {/* Background blobs */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-pop-yellow/5 rounded-full blur-3xl animate-blob" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-pop-violet/5 rounded-full blur-3xl animate-blob" style={{ animationDelay: '3s' }} />
+    <section className="px-4 sm:px-6 py-24 sm:py-32 relative overflow-hidden">
+      {/* SVG blob backgrounds */}
+      <FeatureBlobs />
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header */}
