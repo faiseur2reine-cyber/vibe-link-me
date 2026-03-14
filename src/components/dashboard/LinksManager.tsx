@@ -283,9 +283,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     setTextColor(link.text_color || ''); setLinkStyle(link.style || 'default');
     setSectionTitle(link.section_title || '');
     setThumbnailFile(null); setThumbnailPreview(link.thumbnail_url || null);
-    setScheduledAt(link.scheduled_at ? link.scheduled_at.slice(0, 16) : '');
-    setExpiresAt(link.expires_at ? link.expires_at.slice(0, 16) : '');
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title || link.scheduled_at || link.expires_at));
+    setScheduledAt('');
+    setExpiresAt('');
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
     setDialogOpen(true);
   };
 
