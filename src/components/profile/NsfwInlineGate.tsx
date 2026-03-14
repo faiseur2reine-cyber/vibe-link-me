@@ -61,15 +61,16 @@ const NsfwInlineGate = ({ children, url, onConfirm, className }: NsfwInlineGateP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.2 }}
             onClick={handleSecondClick}
-            className="w-full flex items-center justify-center gap-3 px-5 py-4 rounded-xl bg-black border border-white/10 cursor-pointer hover:border-white/20 transition-colors"
+            className="w-full flex items-center justify-center gap-3 px-5 py-4 rounded-full bg-black border border-white/10 cursor-pointer hover:border-white/20 transition-colors"
+            style={{ minHeight: 68 }}
           >
-            <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <ShieldAlert className="w-4 h-4 text-white/70" />
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+              <ShieldAlert className="w-4.5 h-4.5 text-white/70" />
             </div>
             <div className="text-left">
-              <p className="text-white font-semibold text-[13px]">18+ Contenu sensible</p>
+              <p className="text-white font-semibold text-[14px]">18+ Contenu sensible</p>
               <p className="text-white/40 text-[11px] mt-0.5">Appuie pour continuer</p>
             </div>
           </motion.button>

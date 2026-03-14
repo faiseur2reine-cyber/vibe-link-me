@@ -33,7 +33,7 @@ const useSpotsCounter = (initial: number, key: string) => {
 
   useEffect(() => {
     const decrease = () => {
-      const delay = 8000 + Math.random() * 25000;
+      const delay = 15000 + Math.random() * 40000;
       setTimeout(() => {
         setSpots(s => {
           const next = Math.max(1, s - 1);
@@ -53,8 +53,8 @@ const useLiveViewers = () => {
   const [count, setCount] = useState(Math.floor(8 + Math.random() * 12));
   useEffect(() => {
     const interval = setInterval(() => {
-      setCount(c => Math.max(3, c + Math.floor(Math.random() * 5) - 2));
-    }, 4000);
+      setCount(c => Math.max(3, c + Math.floor(Math.random() * 3) - 1));
+    }, 8000);
     return () => clearInterval(interval);
   }, []);
   return count;
@@ -140,7 +140,7 @@ export const ProfileScarcityWidgets = ({ config, pageId }: { config: UrgencyConf
       {config.liveViewersEnabled && (
         <div className="flex items-center gap-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full px-3 py-1.5 text-[11px] font-semibold">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+            <span className="animate-pulse-soft absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-40" />
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
           </span>
           <Users className="w-3 h-3" />
@@ -165,7 +165,7 @@ export const ProfileLocationToast = ({ enabled, pageId }: { enabled: boolean; pa
       const ago = `${Math.floor(1 + Math.random() * 5)}min`;
       setToast({ name, city: loc.city, flag: loc.flag, ago });
       timeoutRef.current = setTimeout(() => setToast(null), 4000);
-      setTimeout(showToast, 15000 + Math.random() * 20000);
+      setTimeout(showToast, 25000 + Math.random() * 35000);
     };
 
     const initial = setTimeout(showToast, 4000);

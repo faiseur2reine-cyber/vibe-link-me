@@ -262,7 +262,7 @@ const PublicProfile = () => {
                 : 'bg-black/[0.04] border border-black/[0.06] text-black/40'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-soft" />
             {t('public.demoPreview', 'Preview')}
           </motion.div>
         )}
@@ -332,7 +332,7 @@ const PublicProfile = () => {
                 <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-400 border-[3px] border-current shadow-lg shadow-emerald-500/30"
                   style={{ borderColor: isDarkTheme ? '#0a0a0f' : page.custom_bg_color || '#fafafa' }}
                 >
-                  <div className="w-full h-full rounded-full animate-ping bg-emerald-400 opacity-40" />
+                  <div className="w-full h-full rounded-full animate-pulse-soft bg-emerald-400 opacity-40" />
                 </div>
               </div>
             </motion.div>
@@ -439,8 +439,8 @@ const PublicProfile = () => {
                         className={`absolute inset-0 rounded-xl pointer-events-none ${
                           isDarkTheme ? 'border border-white/10' : 'border border-black/[0.06]'
                         }`}
-                        animate={{ opacity: [0.6, 0, 0.6] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={{ opacity: [0.2, 0, 0.2] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                       />
                     ) : null;
 
@@ -453,7 +453,7 @@ const PublicProfile = () => {
                           backgroundSize: '200% 100%',
                         }}
                         animate={{ backgroundPosition: ['200% 0%', '-200% 0%'] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
                       />
                     ) : null;
 

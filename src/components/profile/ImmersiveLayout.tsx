@@ -169,7 +169,10 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
               transition={{ delay: 0.15, duration: 0.4 }}
               className="flex items-center justify-center gap-1.5 text-sm text-white/50 mb-3"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+              <span className="relative w-2 h-2 shrink-0">
+                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-pulse-soft" />
+                <span className="relative block w-2 h-2 rounded-full bg-emerald-400" />
+              </span>
               <span>{connectedLabel}</span>
               {location && (
                 <>
@@ -223,12 +226,14 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
         )}
 
         {/* ═══ BUTTONS ═══ */}
-        <div className="px-4 pt-5 pb-4 max-w-[480px] mx-auto flex flex-col gap-3.5">
+        <div className="px-4 pt-5 pb-4 max-w-[480px] mx-auto flex flex-col gap-4">
           {links.map((link, idx) => {
             const isFirst = idx === 0;
-            const btnBg = link.bg_color || '#FFFFFF';
-            const btnText = link.text_color || '#000000';
-            const isDarkBtn = isColorDark(btnBg);
+            // In immersive: buttons are ALWAYS white, icon circle gets the platform color
+            const iconBg = link.bg_color && link.bg_color !== '#FFFFFF' && link.bg_color !== '#ffffff'
+              ? link.bg_color
+              : '#e8503a'; // fallback red if no color set
+            const isDarkIcon = isColorDark(iconBg);
 
             const linkButton = (
               <motion.button
@@ -240,42 +245,49 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
                   e.preventDefault();
                   handleLinkClick(link);
                 }}
-                className={`group relative w-full flex items-center gap-4 px-3 py-3 rounded-full text-left transition-all duration-150 active:scale-[0.98] ${isFirst ? 'animate-bounce-subtle' : ''}`}
-                style={{ backgroundColor: btnBg, color: btnText, minHeight: 68 }}
+                className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-200 active:scale-[0.98] hover:-translate-y-[1px] ${isFirst ? 'animate-bounce-subtle' : ''}`}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#000000',
+                  minHeight: 68,
+                  padding: '12px 20px 12px 12px',
+                }}
               >
-                {/* Round icon */}
+                {/* Round colored icon */}
                 <div
                   className="w-[46px] h-[46px] rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: link.bg_color || '#e8503a' }}
+                  style={{ backgroundColor: iconBg }}
                 >
                   <LinkFavicon url={link.url} size="sm" />
                 </div>
 
                 {/* Text */}
                 <div className="flex-1 min-w-0">
-                  <span className="block text-[15px] font-semibold leading-tight truncate">
+                  <span className="block text-[15px] font-semibold leading-tight truncate text-black">
                     {link.title}
                   </span>
                   {link.description && (
-                    <span
-                      className="block text-[12px] mt-0.5 truncate"
-                      style={{ color: isDarkBtn ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)' }}
-                    >
+                    <span className="block text-[12px] mt-0.5 truncate text-black/40">
                       {link.description}
                     </span>
                   )}
                 </div>
 
                 <ChevronRight
-                  className="w-4 h-4 shrink-0 opacity-20 group-hover:opacity-40 group-hover:translate-x-0.5 transition-all"
+                  className="w-4 h-4 shrink-0 text-black/15 group-hover:text-black/30 group-hover:translate-x-0.5 transition-all"
                 />
+
+                {/* Subtle glow ring on first link */}
+                {isFirst && (
+                  <div className="absolute inset-0 rounded-full border border-black/[0.04] animate-ring-glow pointer-events-none" />
+                )}
 
                 {/* Popular badge on first link */}
                 {isFirst && (
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
+                    transition={{ delay: 0.8, type: 'spring', stiffness: 180, damping: 15 }}
                     className="absolute -top-2.5 right-4 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/20 backdrop-blur-md"
                   >
                     🔥 Popular
