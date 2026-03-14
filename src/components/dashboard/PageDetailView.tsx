@@ -11,8 +11,10 @@ import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
 import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
 import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
 import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
+import TrackingEditor from '@/components/dashboard/TrackingEditor';
+import SafePageEditor from '@/components/dashboard/SafePageEditor';
 import { LivePreview } from '@/components/dashboard/LivePreview';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
