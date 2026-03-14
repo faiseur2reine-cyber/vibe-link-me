@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { TapCheck as Check, TapX as X } from '@/components/icons/TapIcons';
+import { ComparisonBlobs } from './PopBlobs';
 import { Minus } from 'lucide-react';
 
 const features = [
@@ -26,8 +27,9 @@ const Cell = ({ value }: { value: boolean | string }) => {
 };
 
 const ComparisonSection = () => (
-  <section className="px-4 sm:px-6 py-20 sm:py-28">
-    <div className="max-w-4xl mx-auto">
+  <section className="px-4 sm:px-6 py-20 sm:py-28 relative overflow-hidden">
+    <ComparisonBlobs />
+    <div className="relative max-w-4xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}

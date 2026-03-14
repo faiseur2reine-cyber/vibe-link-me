@@ -15,6 +15,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import ComparisonSection from '@/components/landing/ComparisonSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
+import { CtaBlobs } from '@/components/landing/PopBlobs';
 
 const Index = () => {
   const { t } = useTranslation();
@@ -114,6 +115,7 @@ const Index = () => {
 
       {/* CTA section */}
       <section className="px-4 sm:px-6 pt-20 pb-28 sm:pt-24 sm:pb-36 text-center relative overflow-hidden">
+        <CtaBlobs />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06),transparent_60%)]" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}

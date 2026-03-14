@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { TapLink as Link2, TapPalette as Palette, TapChart as BarChart3, TapGrip as GripVertical, TapGlobe as Globe, TapSmartphone as Smartphone } from '@/components/icons/TapIcons';
+import { FeatureBlobs } from './PopBlobs';
 
 const features = [
   { key: 'links', icon: Link2, accent: 'pop-violet', shadow: 'shadow-pop-violet' },
@@ -17,10 +18,9 @@ const FeaturesSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="px-4 sm:px-6 py-24 sm:py-32 relative">
-      {/* Background blobs */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-pop-yellow/5 rounded-full blur-3xl animate-blob" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-pop-violet/5 rounded-full blur-3xl animate-blob" style={{ animationDelay: '3s' }} />
+    <section className="px-4 sm:px-6 py-24 sm:py-32 relative overflow-hidden">
+      {/* SVG blob backgrounds */}
+      <FeatureBlobs />
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header */}
