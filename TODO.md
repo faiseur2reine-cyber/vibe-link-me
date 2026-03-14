@@ -22,11 +22,11 @@
 - [x] LinksManager: show platform icon (OF, MYM, IG, etc.) via LinkFavicon
 - [ ] LinksManager: drag handle should be more visible on mobile
 - [ ] PageProfileEditor: cover photo upload should show crop guide for immersive hero ratio
-- [ ] DashboardOverview: add "last edited" timestamp per page
+- [x] DashboardOverview: add "last edited" timestamp per page
 - [x] DashboardOverview: click on a page → navigates to detail via ?page=id
-- [ ] Share dialog: add "Copy for Instagram bio" button (just the short URL)
+- [x] Share dialog: add "Copy for Instagram bio" button (short URL without https://)
 - [ ] Share dialog: QR code should include small logo in center
-- [ ] Mobile dashboard: bottom nav has 9 tabs — too many, group into fewer with submenu
+- [x] Mobile dashboard: bottom nav grouped — 4 primary + "Plus" drawer with 5 secondary tabs
 - [ ] Onboarding: currently 24 lines — needs a proper wizard (username → template → first links → theme)
 
 ## ═══ PRIORITY 3 — FEATURES ═══

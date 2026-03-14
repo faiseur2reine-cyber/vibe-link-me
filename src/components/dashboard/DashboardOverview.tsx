@@ -14,6 +14,20 @@ import { Button } from '@/components/ui/button';
 
 const ease = [0.16, 1, 0.3, 1];
 
+function getTimeAgo(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'à l\'instant';
+  if (diffMin < 60) return `il y a ${diffMin}min`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `il y a ${diffH}h`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD < 7) return `il y a ${diffD}j`;
+  if (diffD < 30) return `il y a ${Math.floor(diffD / 7)}sem`;
+  return `il y a ${Math.floor(diffD / 30)}m`;
+}
+
 const DashboardOverview = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -205,27 +219,37 @@ const DashboardOverview = () => {
               </div>
             ) : (
               <div className="space-y-2">
-                {stats.topPages.slice(0, 5).map((p, i) => (
-                  <button
-                    key={p.pageId}
-                    onClick={() => navigate(`/dashboard/pages?page=${p.pageId}`)}
-                    className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-accent/50 transition-colors text-left group"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[12px] font-bold text-muted-foreground shrink-0">
-                      {(p.displayName || p.username).charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-foreground truncate">
-                        {p.displayName || p.username}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">@{p.username}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-[13px] font-semibold text-foreground tabular-nums">{p.clicks}</p>
-                      <p className="text-[10px] text-muted-foreground">clics</p>
-                    </div>
-                  </button>
-                ))}
+                {stats.topPages.slice(0, 5).map((p, i) => {
+                  const pageData = pages.find(pg => pg.id === p.pageId);
+                  const lastEdited = pageData?.updated_at
+                    ? new Date(pageData.updated_at)
+                    : null;
+                  const timeAgo = lastEdited ? getTimeAgo(lastEdited) : '';
+
+                  return (
+                    <button
+                      key={p.pageId}
+                      onClick={() => navigate(`/dashboard/pages?page=${p.pageId}`)}
+                      className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-accent/50 transition-colors text-left group"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[12px] font-bold text-muted-foreground shrink-0">
+                        {(p.displayName || p.username).charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-medium text-foreground truncate">
+                          {p.displayName || p.username}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground">
+                          @{p.username}{timeAgo ? ` · ${timeAgo}` : ''}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-[13px] font-semibold text-foreground tabular-nums">{p.clicks}</p>
+                        <p className="text-[10px] text-muted-foreground">clics</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </motion.div>

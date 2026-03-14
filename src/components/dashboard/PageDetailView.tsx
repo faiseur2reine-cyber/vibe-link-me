@@ -4,7 +4,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -61,6 +61,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('links');
   const [showShare, setShowShare] = useState(false);
+  const [showMoreNav, setShowMoreNav] = useState(false);
 
   const handleUpdate = async (updates: Partial<CreatorPage>) => {
     const result = await onUpdatePage(page.id, updates);
@@ -268,23 +269,63 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         </div>
       </div>
 
-      {/* Mobile Bottom Nav */}
+      {/* Mobile Bottom Nav — 5 primary tabs + More */}
       {isMobile && (
         <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/90 backdrop-blur-xl border-t border-border/60 safe-area-bottom">
           <div className="flex items-center justify-around h-12">
-            {TABS.map(({ value, icon: Icon, label }) => (
+            {[
+              { value: 'links', icon: Link2, label: 'Liens' },
+              { value: 'profile', icon: User, label: 'Profil' },
+              { value: 'design', icon: Paintbrush, label: 'Design' },
+              { value: 'analytics', icon: BarChart3, label: 'Stats' },
+            ].map(({ value, icon: Icon, label }) => (
               <button
                 key={value}
-                onClick={() => setActiveTab(value)}
+                onClick={() => { setActiveTab(value); setShowMoreNav(false); }}
                 className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                  activeTab === value ? 'text-foreground' : 'text-muted-foreground/60'
+                  activeTab === value && !showMoreNav ? 'text-foreground' : 'text-muted-foreground/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${activeTab === value ? '' : 'opacity-60'}`} />
+                <Icon className={`w-4 h-4 ${activeTab === value && !showMoreNav ? '' : 'opacity-60'}`} />
                 <span className="text-[9px] font-medium leading-tight">{label}</span>
               </button>
             ))}
+            {/* More button */}
+            <button
+              onClick={() => setShowMoreNav(!showMoreNav)}
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
+                showMoreNav || ['urgency','tracking','safepage','agency','theme'].includes(activeTab)
+                  ? 'text-foreground' : 'text-muted-foreground/60'
+              }`}
+            >
+              <MoreHorizontal className={`w-4 h-4 ${showMoreNav ? '' : 'opacity-60'}`} />
+              <span className="text-[9px] font-medium leading-tight">Plus</span>
+            </button>
           </div>
+
+          {/* More drawer */}
+          {showMoreNav && (
+            <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 grid grid-cols-5 gap-1">
+              {[
+                { value: 'urgency', icon: Flame, label: 'Urgence' },
+                { value: 'tracking', icon: Activity, label: 'Tracking' },
+                { value: 'safepage', icon: ShieldCheck, label: 'Shield' },
+                { value: 'agency', icon: Briefcase, label: 'Agence' },
+                { value: 'theme', icon: Palette, label: 'Thème' },
+              ].map(({ value, icon: Icon, label }) => (
+                <button
+                  key={value}
+                  onClick={() => { setActiveTab(value); setShowMoreNav(false); }}
+                  className={`flex flex-col items-center justify-center gap-1 py-2 rounded-lg transition-colors ${
+                    activeTab === value ? 'text-foreground bg-accent' : 'text-muted-foreground/60'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="text-[9px] font-medium">{label}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </nav>
       )}
 

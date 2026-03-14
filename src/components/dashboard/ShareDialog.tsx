@@ -103,27 +103,43 @@ const ShareDialog = ({ open, onOpenChange, username, displayName }: ShareDialogP
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Button
               onClick={handleDownloadQR}
               variant="outline"
               size="sm"
-              className="flex-1 h-9 text-[12px] gap-1.5"
+              className="h-9 text-[12px] gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
-              Télécharger QR
+              QR PNG
             </Button>
-            {typeof navigator.share === 'function' && (
-              <Button
-                onClick={handleNativeShare}
-                size="sm"
-                className="flex-1 h-9 text-[12px] gap-1.5"
-              >
-                <Share2 className="w-3.5 h-3.5" />
-                Partager
-              </Button>
-            )}
+            <Button
+              onClick={() => {
+                // Short URL for Instagram bio (no https://)
+                const short = pageUrl.replace(/^https?:\/\//, '');
+                navigator.clipboard.writeText(short);
+                toast.success('Copié pour la bio Instagram');
+              }}
+              variant="outline"
+              size="sm"
+              className="h-9 text-[12px] gap-1.5"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              Bio IG
+            </Button>
           </div>
+
+          {/* Native share */}
+          {typeof navigator.share === 'function' && (
+            <Button
+              onClick={handleNativeShare}
+              size="sm"
+              className="w-full h-9 text-[12px] gap-1.5"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              Partager
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
