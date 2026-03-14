@@ -74,6 +74,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   }, [onBack, showShare]);
 
   const handleUpdate = async (updates: Partial<CreatorPage>) => {
+    // Instant preview for ALL changes (name, bio, colors, theme, etc.)
+    setPreviewOverrides(prev => ({ ...prev, ...updates }));
     const result = await onUpdatePage(page.id, updates);
     if (!result.error) await onRefetchPages();
     return result;
