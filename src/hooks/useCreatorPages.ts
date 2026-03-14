@@ -72,9 +72,6 @@ export interface PageLink {
   text_color: string | null;
   style: string;
   section_title: string | null;
-  scheduled_at: string | null;
-  expires_at: string | null;
-  is_visible: boolean;
 }
 
 export function useCreatorPages() {

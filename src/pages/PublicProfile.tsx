@@ -45,6 +45,10 @@ interface CreatorPageData {
   utm_source?: string | null;
   utm_medium?: string | null;
   utm_campaign?: string | null;
+  button_radius?: number | null;
+  button_style?: string | null;
+  avatar_shape?: string | null;
+  content_spacing?: string | null;
 }
 
 interface LinkItem {

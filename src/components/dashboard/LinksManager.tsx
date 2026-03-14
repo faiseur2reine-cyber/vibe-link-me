@@ -283,9 +283,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     setTextColor(link.text_color || ''); setLinkStyle(link.style || 'default');
     setSectionTitle(link.section_title || '');
     setThumbnailFile(null); setThumbnailPreview(link.thumbnail_url || null);
-    setScheduledAt(link.scheduled_at ? link.scheduled_at.slice(0, 16) : '');
-    setExpiresAt(link.expires_at ? link.expires_at.slice(0, 16) : '');
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title || link.scheduled_at || link.expires_at));
+    setScheduledAt('');
+    setExpiresAt('');
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
     setDialogOpen(true);
   };
 
@@ -526,7 +526,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             snapshot.isDragging
                               ? 'bg-card shadow-xl shadow-black/[0.08] ring-1 ring-border/50 scale-[1.02]'
                               : 'hover:bg-accent/30'
-                          } ${link.is_visible === false ? 'opacity-35' : ''}`}
+                          }`}
                         >
                           {/* Drag handle */}
                           <div
@@ -580,27 +580,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                                 {link.style}
                               </span>
                             )}
-                            {(link.scheduled_at || link.expires_at) && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 flex items-center gap-0.5">
-                                <Clock className="w-2.5 h-2.5" />
-                                {link.scheduled_at && new Date(link.scheduled_at) > new Date() ? 'Programmé' : link.expires_at ? 'Expire' : ''}
-                              </span>
-                            )}
                           </div>
 
                           {/* Actions — visible on hover */}
                           <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                              title={link.is_visible === false ? 'Rendre visible' : 'Masquer'}
-                              onClick={async () => {
-                                await onUpdate(link.id, { is_visible: link.is_visible === false ? true : false } as any);
-                                if (onRefetch) await onRefetch();
-                              }}
-                            >
-                              {link.is_visible === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                            </Button>
                             <Button
                               variant="ghost" size="icon"
                               className="h-7 w-7 text-muted-foreground hover:text-foreground"
