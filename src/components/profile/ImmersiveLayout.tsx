@@ -111,9 +111,33 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
       <Helmet>
         <title>{`${displayName} | MyTaptap`}</title>
         <meta name="description" content={page.bio || `${displayName}'s links`} />
+        <link rel="canonical" href={`${window.location.origin}/${page.username}`} />
+        {page.is_nsfw && <meta name="robots" content="noindex, nofollow" />}
+        {/* Open Graph */}
+        <meta property="og:title" content={`${displayName} | MyTaptap`} />
+        <meta property="og:description" content={page.bio || `${displayName}'s links`} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={`${window.location.origin}/${page.username}`} />
+        <meta property="og:site_name" content="MyTaptap" />
+        {(page.cover_url || page.avatar_url) && <meta property="og:image" content={page.cover_url || page.avatar_url || ''} />}
+        {/* Twitter */}
+        <meta name="twitter:card" content={page.cover_url ? "summary_large_image" : "summary"} />
+        <meta name="twitter:title" content={`${displayName} | MyTaptap`} />
+        <meta name="twitter:description" content={page.bio || `${displayName}'s links`} />
+        {(page.cover_url || page.avatar_url) && <meta name="twitter:image" content={page.cover_url || page.avatar_url || ''} />}
+        {/* Font */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
         {page.is_nsfw && <meta name="rating" content="adult" />}
+        {/* JSON-LD */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          "name": `${displayName} | MyTaptap`,
+          "description": page.bio || `${displayName}'s links`,
+          "url": `${window.location.origin}/${page.username}`,
+          ...(page.cover_url ? { "image": page.cover_url } : page.avatar_url ? { "image": page.avatar_url } : {}),
+        })}</script>
       </Helmet>
 
       {showUrgency && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
@@ -134,6 +158,12 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
             <div
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${page.avatar_url})`, backgroundPosition: 'center 12%' }}
+            />
+          )}
+          {!page.cover_url && !page.avatar_url && (
+            <div
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}
             />
           )}
           {/* Gradient overlay */}

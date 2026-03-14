@@ -27,15 +27,32 @@ const StatPill = ({ icon: Icon, value, label }: { icon: any; value: number; labe
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage }: PagesListViewProps) => {
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const filteredPages = useMemo(() => {
-    if (!search.trim()) return pages;
-    const q = search.toLowerCase();
-    return pages.filter(p =>
-      (p.display_name || '').toLowerCase().includes(q) ||
-      p.username.toLowerCase().includes(q)
-    );
-  }, [pages, search]);
+    let result = pages;
+    // Status filter
+    if (statusFilter !== 'all') {
+      result = result.filter(p => (p.status || 'draft') === statusFilter);
+    }
+    // Search filter
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(p =>
+        (p.display_name || '').toLowerCase().includes(q) ||
+        p.username.toLowerCase().includes(q) ||
+        (p.operator || '').toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [pages, search, statusFilter]);
+
+  // Count pages per status
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: pages.length, draft: 0, active: 0, paused: 0 };
+    pages.forEach(p => { const s = p.status || 'draft'; counts[s] = (counts[s] || 0) + 1; });
+    return counts;
+  }, [pages]);
 
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
@@ -69,6 +86,30 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
             onChange={(e) => setSearch(e.target.value)}
             className="pl-8 h-8 text-[13px] bg-transparent border-border/60 rounded-lg"
           />
+        </div>
+      )}
+
+      {/* Status filter chips */}
+      {pages.length > 1 && (
+        <div className="flex items-center gap-1.5">
+          {[
+            { key: 'all', label: 'Toutes', color: '' },
+            { key: 'active', label: 'Active', color: 'text-emerald-600' },
+            { key: 'draft', label: 'Draft', color: 'text-amber-600' },
+            { key: 'paused', label: 'Paused', color: 'text-red-600' },
+          ].map(({ key, label, color }) => (
+            <button
+              key={key}
+              onClick={() => setStatusFilter(key)}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                statusFilter === key
+                  ? 'bg-foreground text-background'
+                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              {label} {statusCounts[key] > 0 && <span className="ml-0.5 opacity-60">{statusCounts[key]}</span>}
+            </button>
+          ))}
         </div>
       )}
 

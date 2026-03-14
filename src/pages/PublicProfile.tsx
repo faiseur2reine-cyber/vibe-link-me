@@ -282,15 +282,40 @@ const PublicProfile = () => {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={`${window.location.origin}/${username}`} />
+        {isNsfwPage && <meta name="robots" content="noindex, nofollow" />}
+        {/* Open Graph */}
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="profile" />
         <meta property="og:url" content={`${window.location.origin}/${username}`} />
+        <meta property="og:site_name" content="MyTaptap" />
         {page.avatar_url && <meta property="og:image" content={page.avatar_url} />}
+        {page.avatar_url && <meta property="og:image:width" content="400" />}
+        {page.avatar_url && <meta property="og:image:height" content="400" />}
         {page.is_nsfw && <meta name="rating" content="adult" />}
-        <meta name="twitter:card" content="summary" />
+        {/* Twitter */}
+        <meta name="twitter:card" content={page.avatar_url ? "summary_large_image" : "summary"} />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
+        {page.avatar_url && <meta name="twitter:image" content={page.avatar_url} />}
+        {/* Preconnect for performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* JSON-LD structured data */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          "name": pageTitle,
+          "description": pageDescription,
+          "url": `${window.location.origin}/${username}`,
+          ...(page.avatar_url ? { "image": page.avatar_url } : {}),
+          "mainEntity": {
+            "@type": "Person",
+            "name": page.display_name || username,
+            "url": `${window.location.origin}/${username}`,
+          }
+        })}</script>
         {fontUrl && <link rel="stylesheet" href={fontUrl} />}
         {page.custom_css && <style>{page.custom_css}</style>}
       </Helmet>

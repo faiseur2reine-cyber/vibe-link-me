@@ -15,6 +15,7 @@ import TrackingEditor from '@/components/dashboard/TrackingEditor';
 import SafePageEditor from '@/components/dashboard/SafePageEditor';
 import AgencyEditor from '@/components/dashboard/AgencyEditor';
 import ShareDialog from '@/components/dashboard/ShareDialog';
+import ImmersiveSettings from '@/components/dashboard/ImmersiveSettings';
 import { LivePreview } from '@/components/dashboard/LivePreview';
 import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -188,6 +189,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                 <p className="text-[11px] text-muted-foreground mb-4">Couleurs, polices et mise en page.</p>
               </div>
               <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
+              <ImmersiveSettings page={page} onUpdate={handleUpdate} />
             </TabsContent>
 
             <TabsContent value="urgency" className="mt-0">
