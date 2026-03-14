@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { TapArrowRight as ArrowRight, TapSparkles as Sparkles } from '@/components/icons/TapIcons';
 import { useRef } from 'react';
 
 const container = {

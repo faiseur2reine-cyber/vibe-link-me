@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Link2, Palette, BarChart3, GripVertical, Globe, Smartphone } from 'lucide-react';
+import { TapLink as Link2, TapPalette as Palette, TapChart as BarChart3, TapGrip as GripVertical, TapGlobe as Globe, TapSmartphone as Smartphone } from '@/components/icons/TapIcons';
 
 const features = [
   { key: 'links', icon: Link2, accent: 'from-violet-500/15 to-purple-500/5' },

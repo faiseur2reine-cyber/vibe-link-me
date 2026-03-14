@@ -1,4 +1,4 @@
-import { Home, LayoutGrid, Settings, Palette, BarChart3, User } from 'lucide-react';
+import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapPalette as Palette, TapChart as BarChart3, TapUser as User } from '@/components/icons/TapIcons';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
 import {
