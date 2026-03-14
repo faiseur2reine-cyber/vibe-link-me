@@ -170,10 +170,10 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     onSelectPage(page.id);
                   }
                 }}
-                className={`group relative rounded-xl bg-card border p-3.5 cursor-pointer transition-all duration-150 ${
+                className={`group relative rounded-xl bg-card border p-3.5 cursor-pointer transition-all duration-200 ${
                   selected.has(page.id)
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border/60 hover:border-border hover:bg-accent/30'
+                    ? 'border-primary bg-primary/5 shadow-sm shadow-primary/10'
+                    : 'border-border/40 hover:border-border/80 hover:shadow-md hover:shadow-black/[0.03] hover:-translate-y-0.5'
                 }`}
               >
                 <div className="flex items-center gap-2.5">

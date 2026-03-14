@@ -1,5 +1,6 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
@@ -101,50 +102,39 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
     <div className="pb-20 md:pb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-2.5">
-          <button onClick={onBack} className="h-7 w-7 rounded-lg inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
-            <ArrowLeft className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-3">
+          <button onClick={onBack} className="h-8 w-8 rounded-xl inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200">
+            <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full overflow-hidden bg-muted">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-muted ring-2 ring-border/30">
               {page.avatar_url ? (
                 <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-[10px] font-semibold text-muted-foreground">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                  <span className="text-[11px] font-bold text-primary/70">
                     {(page.display_name || page.username)?.[0]?.toUpperCase()}
                   </span>
                 </div>
               )}
             </div>
             <div>
-              <h2 className="text-[13px] font-semibold text-foreground leading-none">{page.display_name || page.username}</h2>
+              <h2 className="text-sm font-semibold text-foreground leading-none">{page.display_name || page.username}</h2>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
                   toast.success(t('pages.linkCopied'));
                 }}
-                className="text-[11px] text-primary/60 hover:text-primary mt-0.5 transition-colors cursor-pointer"
-                title={`${window.location.origin}/${page.username}`}
+                className="text-[11px] text-muted-foreground/60 hover:text-primary mt-0.5 transition-colors cursor-pointer"
+                title="Copier le lien"
               >
-                {window.location.host}/{page.username}
+                {window.location.host}/{page.username} ↗
               </button>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none"
-            onClick={() => {
-              navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
-              toast.success(t('pages.linkCopied'));
-            }}
-          >
-            <Link2 className="w-3 h-3" />
-          </Button>
-          <Button variant="outline" size="sm" className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none" asChild>
+        <div className="flex items-center gap-1.5">
+          <Button variant="outline" size="sm" className="h-8 rounded-xl gap-1.5 text-[11px]" asChild>
             <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3 h-3" /> Voir
             </a>
@@ -152,15 +142,15 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           <Button
             variant="outline"
             size="sm"
-            className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none"
+            className="h-8 rounded-xl gap-1.5 text-[11px]"
             onClick={() => setShowShare(true)}
           >
             <QrCode className="w-3 h-3" /> Partager
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10 transition-colors">
-                <Trash2 className="w-3 h-3" />
+              <button className="h-8 w-8 inline-flex items-center justify-center text-muted-foreground/50 hover:text-destructive rounded-xl hover:bg-destructive/10 transition-all duration-200">
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -188,21 +178,25 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             {/* Desktop tabs */}
             {!isMobile && (
               <div className="mb-6">
-                <div className="inline-flex items-center gap-0.5 border-b border-border/60">
+                <div className="inline-flex items-center gap-0.5 border-b border-border/30">
                   {TABS.map(({ value, icon: Icon, labelKey }) => (
                     <button
                       key={value}
                       onClick={() => setActiveTab(value)}
-                      className={`relative flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-colors ${
+                      className={`relative flex items-center gap-1.5 px-3.5 py-2.5 text-[12px] font-medium transition-all duration-200 ${
                         activeTab === value
                           ? 'text-foreground'
-                          : 'text-muted-foreground hover:text-foreground'
+                          : 'text-muted-foreground/60 hover:text-muted-foreground'
                       }`}
                     >
-                      <Icon className="w-3 h-3" />
+                      <Icon className={`w-3 h-3 transition-colors duration-200 ${activeTab === value ? 'text-primary' : ''}`} />
                       {t(labelKey)}
                       {activeTab === value && (
-                        <span className="absolute bottom-0 left-3 right-3 h-[1.5px] bg-foreground rounded-full" />
+                        <motion.span
+                          layoutId="active-tab"
+                          className="absolute bottom-0 left-3 right-3 h-[2px] bg-primary rounded-full"
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
                       )}
                     </button>
                   ))}

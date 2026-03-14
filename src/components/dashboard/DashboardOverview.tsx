@@ -92,7 +92,7 @@ const DashboardOverview = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease }}
-              className="flex items-center gap-4 p-4 rounded-xl border border-border/60 bg-card"
+              className="flex items-center gap-4 p-4 rounded-xl border border-border/40 bg-card hover:border-border/70 transition-colors"
             >
               <div className={`w-10 h-10 rounded-xl ${kpi.bg} flex items-center justify-center shrink-0`}>
                 <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
@@ -142,7 +142,7 @@ const DashboardOverview = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4, ease }}
-            className="p-5 rounded-xl border border-border/60 bg-card"
+            className="p-5 rounded-xl border border-border/40 bg-card hover:border-border/70 transition-colors"
           >
             <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" />
@@ -204,7 +204,7 @@ const DashboardOverview = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.4, ease }}
-            className="p-5 rounded-xl border border-border/60 bg-card"
+            className="p-5 rounded-xl border border-border/40 bg-card hover:border-border/70 transition-colors"
           >
             <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
               <LayoutGrid className="w-4 h-4 text-emerald-500" />
