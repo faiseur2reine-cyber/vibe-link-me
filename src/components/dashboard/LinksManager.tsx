@@ -283,9 +283,9 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     setTextColor(link.text_color || ''); setLinkStyle(link.style || 'default');
     setSectionTitle(link.section_title || '');
     setThumbnailFile(null); setThumbnailPreview(link.thumbnail_url || null);
-    setScheduledAt('');
-    setExpiresAt('');
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title));
+    setScheduledAt(link.scheduled_at ? link.scheduled_at.slice(0, 16) : '');
+    setExpiresAt(link.expires_at ? link.expires_at.slice(0, 16) : '');
+    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title || link.scheduled_at || link.expires_at));
     setDialogOpen(true);
   };
 
@@ -526,7 +526,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             snapshot.isDragging
                               ? 'bg-card shadow-xl shadow-black/[0.08] ring-1 ring-border/50 scale-[1.02]'
                               : 'hover:bg-accent/30'
-                          }`}
+                          } ${link.is_visible === false ? 'opacity-35' : ''}`}
                         >
                           {/* Drag handle */}
                           <div
@@ -578,6 +578,12 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             {link.style !== 'default' && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
                                 {link.style}
+                              </span>
+                            )}
+                            {(link.scheduled_at || link.expires_at) && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 flex items-center gap-0.5">
+                                <Clock className="w-2.5 h-2.5" />
+                                {link.scheduled_at && new Date(link.scheduled_at) > new Date() ? 'Programmé' : link.expires_at ? 'Expire' : ''}
                               </span>
                             )}
                           </div>

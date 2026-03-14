@@ -216,10 +216,13 @@ export type Database = {
           bg_color: string | null
           created_at: string
           description: string | null
+          expires_at: string | null
           icon: string | null
           id: string
+          is_visible: boolean
           page_id: string | null
           position: number
+          scheduled_at: string | null
           section_title: string | null
           style: string
           text_color: string | null
@@ -233,10 +236,13 @@ export type Database = {
           bg_color?: string | null
           created_at?: string
           description?: string | null
+          expires_at?: string | null
           icon?: string | null
           id?: string
+          is_visible?: boolean
           page_id?: string | null
           position?: number
+          scheduled_at?: string | null
           section_title?: string | null
           style?: string
           text_color?: string | null
@@ -250,10 +256,13 @@ export type Database = {
           bg_color?: string | null
           created_at?: string
           description?: string | null
+          expires_at?: string | null
           icon?: string | null
           id?: string
+          is_visible?: boolean
           page_id?: string | null
           position?: number
+          scheduled_at?: string | null
           section_title?: string | null
           style?: string
           text_color?: string | null

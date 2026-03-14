@@ -128,7 +128,7 @@ const StandardPreview = ({ page, links, displayName }: {
   const fontFamily = page.custom_font && page.custom_font !== 'default' ? fontMap[page.custom_font] : undefined;
   const isGrid = page.link_layout === 'grid';
 
-  const visibleLinks = links;
+  const visibleLinks = links.filter(l => l.is_visible !== false);
 
   // Design controls
   const isBrutalist = page.theme === 'brutalist';
@@ -286,7 +286,7 @@ const ImmersivePreview = ({ page, links, displayName }: {
 
       {/* Links */}
       <div className="flex-1 px-4 pt-4 pb-3 space-y-2 overflow-y-auto scrollbar-hide">
-        {links.slice(0, 4).map((link, idx) => {
+        {links.filter(l => l.is_visible !== false).slice(0, 4).map((link, idx) => {
           const platform = detectPlatform(link.url);
           const iconBg = link.bg_color || platform?.bgColor || '#e8503a';
 
