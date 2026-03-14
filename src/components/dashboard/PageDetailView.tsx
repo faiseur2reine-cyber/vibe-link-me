@@ -44,15 +44,15 @@ interface PageDetailViewProps {
 }
 
 const TABS = [
-  { value: 'links', icon: Link2, label: 'Liens' },
-  { value: 'profile', icon: User, label: 'Profil' },
-  { value: 'design', icon: Paintbrush, label: 'Design' },
-  { value: 'urgency', icon: Flame, label: 'Urgence' },
-  { value: 'tracking', icon: Activity, label: 'Tracking' },
-  { value: 'safepage', icon: ShieldCheck, label: 'Safe Page' },
-  { value: 'agency', icon: Briefcase, label: 'Agence' },
-  { value: 'theme', icon: Palette, label: 'Thème' },
-  { value: 'analytics', icon: BarChart3, label: 'Stats' },
+  { value: 'links', icon: Link2, labelKey: 'tabs.links' },
+  { value: 'profile', icon: User, labelKey: 'tabs.profile' },
+  { value: 'design', icon: Paintbrush, labelKey: 'tabs.design' },
+  { value: 'urgency', icon: Flame, labelKey: 'tabs.urgency' },
+  { value: 'tracking', icon: Activity, labelKey: 'tabs.tracking' },
+  { value: 'safepage', icon: ShieldCheck, labelKey: 'tabs.safePage' },
+  { value: 'agency', icon: Briefcase, labelKey: 'tabs.agency' },
+  { value: 'theme', icon: Palette, labelKey: 'tabs.theme' },
+  { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
 ];
 
 const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPages }: PageDetailViewProps) => {
@@ -134,7 +134,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Supprimer cette page ?</AlertDialogTitle>
+                <AlertDialogTitle>{t('editors.deleteTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
                   Cette action est irréversible. Tous les liens et statistiques de @{page.username} seront supprimés.
                 </AlertDialogDescription>
@@ -158,7 +158,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             {!isMobile && (
               <div className="mb-6">
                 <div className="inline-flex items-center gap-0.5 border-b border-border/60">
-                  {TABS.map(({ value, icon: Icon, label }) => (
+                  {TABS.map(({ value, icon: Icon, labelKey }) => (
                     <button
                       key={value}
                       onClick={() => setActiveTab(value)}
@@ -169,7 +169,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                       }`}
                     >
                       <Icon className="w-3 h-3" />
-                      {label}
+                      {t(labelKey)}
                       {activeTab === value && (
                         <span className="absolute bottom-0 left-3 right-3 h-[1.5px] bg-foreground rounded-full" />
                       )}
@@ -189,8 +189,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="profile" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">Profil de la page</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">Informations visibles sur votre page publique.</p>
+                  <h3 className="text-[13px] font-medium">{t('editors.profileTitle')}</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.profileDesc')}</p>
                 </div>
                 <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
               </Suspense>
@@ -199,8 +199,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="design" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">Design personnalisé</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">Couleurs, polices et mise en page.</p>
+                  <h3 className="text-[13px] font-medium">{t('editors.designTitle')}</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.designDesc')}</p>
                 </div>
                 <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
                 <ImmersiveSettings page={page} onUpdate={handleUpdate} />
@@ -210,8 +210,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="urgency" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">Widgets d'urgence</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">Stimulez l'engagement avec des indicateurs de rareté.</p>
+                  <h3 className="text-[13px] font-medium">{t('editors.urgencyTitle')}</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.urgencyDesc')}</p>
                 </div>
                 <UrgencyEditor page={page} onUpdate={handleUpdate} />
               </Suspense>
@@ -226,8 +226,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="tracking" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">Tracking & UTM</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">Pixels de conversion et paramètres UTM automatiques.</p>
+                  <h3 className="text-[13px] font-medium">{t('editors.trackingTitle')}</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.trackingDesc')}</p>
                 </div>
                 <TrackingEditor page={page} onUpdate={handleUpdate} />
               </Suspense>
@@ -236,8 +236,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="safepage" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">Safe Page</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">Page de couverture pour protéger votre contenu.</p>
+                  <h3 className="text-[13px] font-medium">{t('editors.safePageTitle')}</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.safePageDesc')}</p>
                 </div>
                 <SafePageEditor page={page} onUpdate={handleUpdate} />
               </Suspense>
@@ -246,8 +246,8 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="agency" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">Gestion Agence</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">Opérateur, revenus et notes internes.</p>
+                  <h3 className="text-[13px] font-medium">{t('editors.agencyTitle')}</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.agencyDesc')}</p>
                 </div>
                 <AgencyEditor page={page} onUpdate={handleUpdate} />
               </Suspense>
@@ -274,11 +274,11 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/90 backdrop-blur-xl border-t border-border/60 safe-area-bottom">
           <div className="flex items-center justify-around h-12">
             {[
-              { value: 'links', icon: Link2, label: 'Liens' },
-              { value: 'profile', icon: User, label: 'Profil' },
-              { value: 'design', icon: Paintbrush, label: 'Design' },
-              { value: 'analytics', icon: BarChart3, label: 'Stats' },
-            ].map(({ value, icon: Icon, label }) => (
+              { value: 'links', icon: Link2, labelKey: 'tabs.links' },
+              { value: 'profile', icon: User, labelKey: 'tabs.profile' },
+              { value: 'design', icon: Paintbrush, labelKey: 'tabs.design' },
+              { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
+            ].map(({ value, icon: Icon, labelKey }) => (
               <button
                 key={value}
                 onClick={() => { setActiveTab(value); setShowMoreNav(false); }}
@@ -287,7 +287,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                 }`}
               >
                 <Icon className={`w-4 h-4 ${activeTab === value && !showMoreNav ? '' : 'opacity-60'}`} />
-                <span className="text-[9px] font-medium leading-tight">{label}</span>
+                <span className="text-[9px] font-medium leading-tight">{t(labelKey)}</span>
               </button>
             ))}
             {/* More button */}
@@ -299,7 +299,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               }`}
             >
               <MoreHorizontal className={`w-4 h-4 ${showMoreNav ? '' : 'opacity-60'}`} />
-              <span className="text-[9px] font-medium leading-tight">Plus</span>
+              <span className="text-[9px] font-medium leading-tight">{t('tabs.more')}</span>
             </button>
           </div>
 
@@ -307,12 +307,12 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           {showMoreNav && (
             <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 grid grid-cols-5 gap-1">
               {[
-                { value: 'urgency', icon: Flame, label: 'Urgence' },
-                { value: 'tracking', icon: Activity, label: 'Tracking' },
-                { value: 'safepage', icon: ShieldCheck, label: 'Shield' },
-                { value: 'agency', icon: Briefcase, label: 'Agence' },
-                { value: 'theme', icon: Palette, label: 'Thème' },
-              ].map(({ value, icon: Icon, label }) => (
+                { value: 'urgency', icon: Flame, labelKey: 'tabs.urgency' },
+                { value: 'tracking', icon: Activity, labelKey: 'tabs.tracking' },
+                { value: 'safepage', icon: ShieldCheck, labelKey: 'tabs.safePage' },
+                { value: 'agency', icon: Briefcase, labelKey: 'tabs.agency' },
+                { value: 'theme', icon: Palette, labelKey: 'tabs.theme' },
+              ].map(({ value, icon: Icon, labelKey }) => (
                 <button
                   key={value}
                   onClick={() => { setActiveTab(value); setShowMoreNav(false); }}
@@ -321,7 +321,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="text-[9px] font-medium">{label}</span>
+                  <span className="text-[9px] font-medium">{t(labelKey)}</span>
                 </button>
               ))}
             </div>

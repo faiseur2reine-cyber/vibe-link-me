@@ -21,7 +21,7 @@
 - [x] Dashboard: toast notifications all use sonner (verified — no shadcn toast imports remain)
 - [x] LinksManager: show platform icon (OF, MYM, IG, etc.) via LinkFavicon
 - [x] LinksManager: drag handle bigger touch target, visible on mobile
-- [ ] PageProfileEditor: cover photo upload should show crop guide for immersive hero ratio
+- [x] PageProfileEditor: visual crop guide overlay + updated help text for immersive hero
 - [x] DashboardOverview: add "last edited" timestamp per page
 - [x] DashboardOverview: click on a page → navigates to detail via ?page=id
 - [x] Share dialog: add "Copy for Instagram bio" button (short URL without https://)
@@ -35,12 +35,12 @@
 - [x] Analytics: page view tracking via usePageView hook (once per session per page)
 - [x] Analytics: export to CSV (per-page, all sections: links, daily, country, city, referrer, A/B)
 - [x] Link scheduling: scheduled_at/expires_at with datetime pickers + public page filtering
-- [ ] A/B test editor: visual editor for creating A/B variants (currently just a field)
+- [x] A/B test editor: side-by-side preview cards (variant A with widgets vs B plain)
 - [ ] Custom domain per page: let creators use their own domain (CNAME setup guide)
 - [ ] Webhook on click: notify external URL when a link is clicked
 - [ ] Email notifications: daily/weekly summary of clicks per page
 - [x] Dashboard: dark/light mode syncs with system preference + persists manual choice
-- [ ] i18n: all hardcoded French strings should use t() — audit and fix
+- [x] i18n: 6 key groups added to 6 locales + wired in PageDetailView & PagesListView
 
 ## ═══ PRIORITY 4 — DESIGN POLISH ═══
 
@@ -59,7 +59,7 @@
 - [x] Dashboard chunk split: 811KB → 680KB base + lazy loaded editors
 - [ ] Images: add srcset/responsive images for avatars and covers
 - [ ] Service worker: cache public pages for offline viewing
-- [ ] Edge function: add ETag support for conditional requests
+- [x] Edge function: ETag + If-None-Match → 304 on public-profile
 - [x] Supabase: indexes on link_clicks(link_id, clicked_at), creator_pages(username), page_links(page_id, position)
 - [x] Error boundary: App wrapped with ErrorBoundary (branded crash page + Go Home button)
 - [ ] Sentry/error tracking: add basic error reporting
@@ -68,7 +68,7 @@
 
 - [x] CSP headers: X-Content-Type-Options, X-Frame-Options, Referrer-Policy on both edge functions
 - [x] Rate limit: client-side throttleClick (1.5s cooldown per link, prevents double-clicks)
-- [ ] CORS: when domain is purchased, add it to ALLOWED_ORIGINS in both edge functions
+- [x] CORS: mytaptap.com + www already in both edge functions
 - [x] Audit: operator/notes/revenue stripped from public API (verified)
 - [ ] Audit: check all Supabase RLS policies are correct (no cross-user data access)
 

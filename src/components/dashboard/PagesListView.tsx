@@ -1,4 +1,5 @@
 import { CreatorPage } from '@/hooks/useCreatorPages';
+import { useTranslation } from 'react-i18next';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Button } from '@/components/ui/button';
 import { Plus, ExternalLink, Copy, Trash2, Search, ArrowUpRight, Link2, MousePointerClick, LayoutGrid, CheckSquare, Square, X } from 'lucide-react';
@@ -26,6 +27,7 @@ const StatPill = ({ icon: Icon, value, label }: { icon: any; value: number; labe
 );
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage, onBulkUpdate }: PagesListViewProps) => {
+  const { t } = useTranslation();
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -64,9 +66,9 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold tracking-tight font-display">Mes pages</h1>
+        <h1 className="text-xl font-semibold tracking-tight font-display">{	('pages.title')}</h1>
         <p className="text-[13px] text-muted-foreground mt-0.5">
-          Gérez vos pages et suivez vos performances.
+          {	('pages.subtitle')}
         </p>
       </div>
 
@@ -86,7 +88,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
             <div className="relative flex-1 sm:flex-none sm:w-56">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <Input
-                placeholder="Rechercher..."
+                placeholder={t('pages.search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-8 h-8 text-[13px] bg-transparent border-border/60 rounded-lg"
@@ -100,7 +102,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
             onClick={() => { setBulkAction(!bulkAction); setSelected(new Set()); }}
           >
             <CheckSquare className="w-3 h-3" />
-            {bulkAction ? 'Annuler' : 'Sélection'}
+            {bulkAction ? t('pages.cancel') : t('pages.selection')}
           </Button>
         </div>
       )}
@@ -139,9 +141,9 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
             <Link2 className="w-4 h-4 text-muted-foreground" />
           </div>
-          <h2 className="text-sm font-medium">Aucune page</h2>
+          <h2 className="text-sm font-medium">{	('pages.noPages')}</h2>
           <p className="text-[13px] text-muted-foreground mt-0.5 max-w-[240px]">
-            Créez votre première page pour centraliser vos liens.
+            {	('pages.noPagesDesc')}
           </p>
           <Button onClick={onCreatePage} size="sm" className="mt-4 h-8 px-4 text-[12px] gap-1.5 rounded-lg shadow-none">
             <Plus className="w-3 h-3" /> Créer une page
@@ -232,7 +234,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                         e.stopPropagation();
                         const url = `${window.location.origin}/${page.username}`;
                         navigator.clipboard.writeText(url);
-                        toast.success('Lien copié');
+                        toast.success(t('pages.linkCopied'));
                       }}
                       className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
                       title="Copier le lien"
@@ -244,7 +246,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                         onClick={async (e) => {
                           e.stopPropagation();
                           const r = await onDuplicatePage(page.id);
-                          r?.error ? toast.error('Erreur') : toast.success('Dupliquée');
+                          r?.error ? toast.error('Erreur') : toast.success(t('pages.duplicated'));
                         }}
                         className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
                       >
@@ -285,7 +287,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
               className="rounded-xl border border-dashed border-border/60 bg-transparent p-3.5 cursor-pointer hover:border-border hover:bg-accent/20 transition-all duration-150 flex flex-col items-center justify-center min-h-[100px] text-center"
             >
               <Plus className="w-4 h-4 text-muted-foreground/60 mb-1" />
-              <span className="text-[12px] text-muted-foreground">Nouvelle page</span>
+              <span className="text-[12px] text-muted-foreground">{	('pages.newPage')}</span>
             </div>
           </motion.div>
         </div>
@@ -339,7 +341,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                 const a = document.createElement('a');
                 a.href = url; a.download = 'pages-export.csv'; a.click();
                 URL.revokeObjectURL(url);
-                toast.success('CSV exporté');
+                toast.success(t('pages.csvExported'));
               }}
               className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-background/10 hover:bg-background/20 transition-colors"
             >
@@ -371,7 +373,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
               onClick={async () => {
                 if (!deleteTarget || !onDeletePage) return;
                 const result = await onDeletePage(deleteTarget.id);
-                result?.error ? toast.error('Erreur') : toast.success('Page supprimée');
+                result?.error ? toast.error('Erreur') : toast.success(t('pages.deleted'));
                 setDeleteTarget(null);
               }}
             >
