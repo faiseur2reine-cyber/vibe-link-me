@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Sparkles, Palette, Briefcase, ShoppingCart, ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { TapSparkles as Sparkles, TapPalette as Palette, TapBriefcase as Briefcase, TapShoppingCart as ShoppingCart, TapArrowRight as ArrowRight, TapArrowLeft as ArrowLeft, TapCheck as Check, TapLoader as Loader2 } from '@/components/icons/TapIcons';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 

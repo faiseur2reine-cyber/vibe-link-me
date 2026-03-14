@@ -3,7 +3,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { BarChart3, Facebook, Hash, Music, Check } from 'lucide-react';
+import { TapChart as BarChart3, TapFacebook as Facebook, TapHash as Hash, TapMusic as Music, TapCheck as Check } from '@/components/icons/TapIcons';
 import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface TrackingEditorProps {

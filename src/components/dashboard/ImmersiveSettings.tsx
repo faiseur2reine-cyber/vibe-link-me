@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Sparkles, MapPin, Wifi, Globe, Check } from 'lucide-react';
+import { TapSparkles as Sparkles, TapMapPin as MapPin, TapWifi as Wifi, TapGlobe as Globe, TapCheck as Check } from '@/components/icons/TapIcons';
 import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface ImmersiveSettingsProps {

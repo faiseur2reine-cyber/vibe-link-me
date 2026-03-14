@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Crown, CreditCard, AlertTriangle, LogOut, RefreshCw, Calendar, Sparkles, Globe, Check, Copy, ExternalLink, AtSign, X } from 'lucide-react';
+import { TapLoader as Loader2, TapCrown as Crown, TapCreditCard as CreditCard, TapAlert as AlertTriangle, TapLogOut as LogOut, TapRefresh as RefreshCw, TapCalendar as Calendar, TapSparkles as Sparkles, TapGlobe as Globe, TapCheck as Check, TapCopy as Copy, TapExternalLink as ExternalLink, TapAtSign as AtSign, TapX as X } from '@/components/icons/TapIcons';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';

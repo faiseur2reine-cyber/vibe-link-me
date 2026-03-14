@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Heart, Share2, ChevronRight, Check, ArrowRight, ArrowUp } from 'lucide-react';
+import { TapExternalLink as ExternalLink, TapHeart as Heart, TapShare as Share2, TapChevronRight as ChevronRight, TapCheck as Check, TapArrowRight as ArrowRight, TapArrowUp as ArrowUp } from '@/components/icons/TapIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
