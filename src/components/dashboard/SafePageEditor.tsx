@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { ShieldCheck, Check } from 'lucide-react';
+import { TapCheck as Check } from '@/components/icons/TapIcons';
+import { ShieldCheck } from 'lucide-react';
 import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface SafePageEditorProps {

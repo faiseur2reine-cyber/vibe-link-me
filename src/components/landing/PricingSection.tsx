@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Check, Loader2, ArrowRight, Star } from 'lucide-react';
+import { TapCheck as Check, TapLoader as Loader2, TapArrowRight as ArrowRight, TapStar as Star } from '@/components/icons/TapIcons';
 
 interface PricingSectionProps {
   checkoutLoading: string | null;

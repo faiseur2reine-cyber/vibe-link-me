@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Users, FileText, DollarSign, Activity, Check } from 'lucide-react';
+import { TapDollar as DollarSign, TapCheck as Check } from '@/components/icons/TapIcons';
+import { Users, FileText, Activity } from 'lucide-react';
 import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface AgencyEditorProps {

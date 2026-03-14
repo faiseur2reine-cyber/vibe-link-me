@@ -3,7 +3,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Check, Copy, Download, Share2, QrCode } from 'lucide-react';
+import { TapCheck as Check, TapCopy as Copy, TapShare as Share2 } from '@/components/icons/TapIcons';
+import { Download, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ShareDialogProps {

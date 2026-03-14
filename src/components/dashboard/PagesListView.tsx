@@ -2,7 +2,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useTranslation } from 'react-i18next';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Button } from '@/components/ui/button';
-import { Plus, ExternalLink, Copy, Trash2, Search, ArrowUpRight, Link2, MousePointerClick, LayoutGrid, CheckSquare, Square, X } from 'lucide-react';
+import { TapPlus as Plus, TapExternalLink as ExternalLink, TapCopy as Copy, TapTrash as Trash2, TapSearch as Search, TapArrowUpRight as ArrowUpRight, TapLink as Link2, TapClick as MousePointerClick, TapGrid as LayoutGrid, TapCheckSquare as CheckSquare, TapSquare as Square, TapX as X } from '@/components/icons/TapIcons';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Globe, Mail, ShoppingBag } from 'lucide-react';
+import { TapGlobe as Globe } from '@/components/icons/TapIcons';
+import { Mail, ShoppingBag } from 'lucide-react';
 
 // Official brand SVG logos
 const BrandLogos: Record<string, (props: { className?: string }) => JSX.Element> = {

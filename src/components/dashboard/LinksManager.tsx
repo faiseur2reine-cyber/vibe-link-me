@@ -10,9 +10,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import {
-  Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2,
-  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock, MousePointerClick, Eye, EyeOff, Copy, ArrowUpDown, ArrowDownAZ, TrendingDown,
-} from 'lucide-react';
+  TapPlus as Plus, TapGrip as GripVertical, TapPencil as Pencil, TapTrash as Trash2, TapExternalLink as ExternalLink, TapLoader as Loader2,
+  TapImagePlus as ImagePlus, TapX as X, TapPalette as Palette, TapLayout as LayoutTemplate, TapBookmark as BookmarkPlus, TapChevronDown as ChevronDown, TapLink as LinkIcon, TapClock as Clock, TapClick as MousePointerClick, TapEye as Eye, TapEyeOff as EyeOff, TapCopy as Copy, TapSortUpDown as ArrowUpDown, TapSortAZ as ArrowDownAZ, TapTrendingDown as TrendingDown,
+} from '@/components/icons/TapIcons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';

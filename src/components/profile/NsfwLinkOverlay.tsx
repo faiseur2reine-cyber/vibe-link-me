@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { EyeOff } from 'lucide-react';
+import { TapEyeOff as EyeOff } from '@/components/icons/TapIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NsfwLinkOverlayProps {

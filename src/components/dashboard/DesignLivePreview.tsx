@@ -3,7 +3,7 @@ import { LinkItem } from '@/hooks/useDashboard';
 import { getTheme } from '@/lib/themes';
 import LinkFavicon from '@/components/LinkFavicon';
 import SocialIcons from '@/components/profile/SocialIcons';
-import { Heart, ExternalLink } from 'lucide-react';
+import { TapHeart as Heart, TapExternalLink as ExternalLink } from '@/components/icons/TapIcons';
 import { motion } from 'framer-motion';
 
 interface DesignLivePreviewProps {

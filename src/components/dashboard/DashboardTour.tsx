@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, ArrowRight } from 'lucide-react';
+import { TapX as X, TapArrowRight as ArrowRight } from '@/components/icons/TapIcons';
 
 interface TourStep {
   id: string;

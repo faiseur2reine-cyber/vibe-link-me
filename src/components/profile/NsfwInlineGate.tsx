@@ -6,7 +6,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert } from 'lucide-react';
+import { TapShield as ShieldAlert } from '@/components/icons/TapIcons';
 
 interface NsfwInlineGateProps {
   children: React.ReactNode;

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { TapStar as Star } from '@/components/icons/TapIcons';
 
 const testimonials = [
   {

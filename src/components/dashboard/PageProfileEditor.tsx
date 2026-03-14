@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Camera, Loader2, ImagePlus, Plus, Trash2, ShieldAlert } from 'lucide-react';
+import { TapCamera as Camera, TapLoader as Loader2, TapImagePlus as ImagePlus, TapPlus as Plus, TapTrash as Trash2, TapShield as ShieldAlert } from '@/components/icons/TapIcons';
 
 const SOCIAL_PLATFORMS = ['instagram', 'tiktok', 'twitter', 'youtube', 'spotify', 'linkedin', 'github', 'facebook', 'twitch', 'discord', 'snapchat', 'whatsapp', 'telegram', 'website'];
 

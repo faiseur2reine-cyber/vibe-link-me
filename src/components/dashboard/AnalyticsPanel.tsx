@@ -3,7 +3,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { LinkItem } from '@/hooks/useDashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { MousePointerClick, TrendingUp, Lock } from 'lucide-react';
+import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapLock as Lock } from '@/components/icons/TapIcons';
 
 interface AnalyticsPanelProps {
   links: LinkItem[];

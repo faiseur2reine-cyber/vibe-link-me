@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Clock, Zap, ArrowRight } from 'lucide-react';
+import { TapX as X, TapClock as Clock, TapZap as Zap, TapArrowRight as ArrowRight } from '@/components/icons/TapIcons';
 
 export interface UrgencyBannerConfig {
   enabled: boolean;

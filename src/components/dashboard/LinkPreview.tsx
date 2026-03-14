@@ -1,6 +1,6 @@
 import { Profile, LinkItem } from '@/hooks/useDashboard';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, Heart } from 'lucide-react';
+import { TapExternalLink as ExternalLink, TapHeart as Heart } from '@/components/icons/TapIcons';
 import LinkFavicon from '@/components/LinkFavicon';
 import SocialIcons from '@/components/profile/SocialIcons';
 import { getTheme } from '@/lib/themes';

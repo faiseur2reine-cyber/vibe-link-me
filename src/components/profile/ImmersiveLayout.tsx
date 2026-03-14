@@ -5,7 +5,7 @@
 // Used when theme === 'immersive' in PublicProfile.
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { MapPin, ChevronRight, Heart, ExternalLink } from 'lucide-react';
+import { TapMapPin as MapPin, TapChevronRight as ChevronRight, TapHeart as Heart, TapExternalLink as ExternalLink } from '@/components/icons/TapIcons';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';

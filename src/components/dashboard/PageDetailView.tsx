@@ -5,7 +5,8 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, X, Settings } from 'lucide-react';
+import { TapArrowLeft as ArrowLeft, TapExternalLink as ExternalLink, TapEye as Eye, TapLink as Link2, TapUser as User, TapPalette as Palette, TapChart as BarChart3, TapTrash as Trash2, TapBriefcase as Briefcase, TapCheck as Check, TapLoader as Loader2, TapX as X, TapSettings as Settings } from '@/components/icons/TapIcons';
+import { Flame, Activity, ShieldCheck, QrCode } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import {

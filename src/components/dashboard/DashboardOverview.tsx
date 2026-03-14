@@ -7,9 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  MousePointerClick, Link2, LayoutGrid, TrendingUp,
-  ArrowRight, Plus, Zap, Eye, DollarSign,
-} from 'lucide-react';
+  TapClick as MousePointerClick, TapLink as Link2, TapGrid as LayoutGrid, TapTrending as TrendingUp,
+  TapArrowRight as ArrowRight, TapPlus as Plus, TapZap as Zap, TapEye as Eye, TapDollar as DollarSign,
+} from '@/components/icons/TapIcons';
 import { Button } from '@/components/ui/button';
 
 const ease = [0.16, 1, 0.3, 1] as const;
