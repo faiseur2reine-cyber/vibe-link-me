@@ -186,8 +186,8 @@ const DashboardOverview = () => {
                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <Eye className="w-4 h-4 text-purple-500" />
+                  <div className="w-8 h-8 rounded-xl bg-pop-violet/12 flex items-center justify-center">
+                    <Eye className="w-4 h-4 text-pop-violet" />
                   </div>
                   <div>
                     <p className="text-[13px] font-medium text-foreground">Personnaliser les thèmes</p>
