@@ -108,16 +108,24 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
       page.custom_css, page.connected_label, page.location, page.geo_greeting_enabled,
       page.button_radius, page.button_style, page.avatar_shape, page.content_spacing]);
 
+  // Check if design control columns exist (migration applied)
+  const hasDesignControls = page.button_radius !== undefined;
+
   const triggerSave = useAutoSave(async () => {
-    const result = await onUpdate({
+    const updates: Record<string, any> = {
       custom_bg_color: bgColor || null, custom_text_color: textColor || null,
       custom_accent_color: accentColor || null, custom_btn_color: btnColor || null,
       custom_btn_text_color: btnTextColor || null, custom_font: font,
       link_layout: layout, custom_css: customCss || null,
       connected_label: connectedLabel, location, geo_greeting_enabled: geoEnabled,
-      button_radius: btnRadius, button_style: btnStyle,
-      avatar_shape: avatarShape, content_spacing: spacing,
-    } as any);
+    };
+    if (hasDesignControls) {
+      updates.button_radius = btnRadius;
+      updates.button_style = btnStyle;
+      updates.avatar_shape = avatarShape;
+      updates.content_spacing = spacing;
+    }
+    const result = await onUpdate(updates as any);
     if (!result?.error) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
     else toast.error(result.error.message);
   }, 1200);
