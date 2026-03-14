@@ -52,6 +52,7 @@ interface LinkItem {
   bg_color: string | null; text_color: string | null;
   style: string; section_title: string | null;
   scheduled_at: string | null; expires_at: string | null;
+  is_visible: boolean;
 }
 
 /* ── Animation presets ── */
@@ -105,6 +106,7 @@ const PublicProfile = () => {
           // Filter out scheduled (not yet active) and expired links
           const now = new Date().toISOString();
           const activeLinks = ((result.links as LinkItem[]) || []).filter(l => {
+            if (l.is_visible === false) return false; // hidden by creator
             if (l.scheduled_at && l.scheduled_at > now) return false; // not yet
             if (l.expires_at && l.expires_at < now) return false; // expired
             return true;

@@ -71,6 +71,7 @@ interface LinkData {
   thumbnail_url: string | null;
   scheduled_at: string | null;
   expires_at: string | null;
+  is_visible: boolean;
 }
 
 interface Props {

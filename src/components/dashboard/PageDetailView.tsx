@@ -119,7 +119,16 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             </div>
             <div>
               <h2 className="text-[13px] font-semibold text-foreground leading-none">{page.display_name || page.username}</h2>
-              <p className="text-[11px] text-muted-foreground mt-0.5">@{page.username}</p>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
+                  toast.success(t('pages.linkCopied'));
+                }}
+                className="text-[11px] text-primary/60 hover:text-primary mt-0.5 transition-colors cursor-pointer"
+                title={`${window.location.origin}/${page.username}`}
+              >
+                {window.location.host}/{page.username}
+              </button>
             </div>
           </div>
         </div>

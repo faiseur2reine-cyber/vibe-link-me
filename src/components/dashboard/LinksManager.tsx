@@ -11,13 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import {
   Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2,
-  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock,
+  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock, MousePointerClick, Eye, EyeOff, Copy,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { detectPlatform } from '@/lib/platforms';
 import LinkFavicon from '@/components/LinkFavicon';
+import { useLinkClickCounts } from '@/hooks/useLinkClickCounts';
 
 interface CustomTemplate {
   id: string;
@@ -134,6 +135,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const { user } = useAuth();
   const LINK_TEMPLATES = useLinkTemplates(t);
   const quickAddRef = useRef<HTMLInputElement>(null);
+  const clickCounts = useLinkClickCounts(links.map(l => l.id));
 
   // Cmd+K → focus quick add
   useEffect(() => {
@@ -364,11 +366,12 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   };
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination || result.source.index === result.destination.index) return;
     const items = Array.from(links);
     const [moved] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, moved);
     onReorder(items);
+    toast.success('Ordre mis à jour', { duration: 1500 });
   };
 
   // --- Render ---
@@ -480,7 +483,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             snapshot.isDragging
                               ? 'bg-card shadow-lg ring-1 ring-border scale-[1.02]'
                               : 'hover:bg-muted/60'
-                          }`}
+                          } ${link.is_visible === false ? 'opacity-40' : ''}`}
                         >
                           {/* Drag handle — bigger touch target on mobile */}
                           <div
@@ -518,6 +521,13 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
                           {/* Badges */}
                           <div className="hidden sm:flex items-center gap-1 shrink-0">
+                            {/* Click count */}
+                            {(clickCounts.get(link.id) || 0) > 0 && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex items-center gap-0.5 tabular-nums">
+                                <MousePointerClick className="w-2.5 h-2.5" />
+                                {clickCounts.get(link.id)}
+                              </span>
+                            )}
                             {link.style !== 'default' && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
                                 {link.style}
@@ -533,6 +543,28 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
                           {/* Actions — visible on hover */}
                           <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                              title={link.is_visible === false ? 'Rendre visible' : 'Masquer'}
+                              onClick={async () => {
+                                await onUpdate(link.id, { is_visible: link.is_visible === false ? true : false } as any);
+                                if (onRefetch) await onRefetch();
+                              }}
+                            >
+                              {link.is_visible === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                            </Button>
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                              title="Dupliquer"
+                              onClick={async () => {
+                                const result = await onAdd({ title: link.title, url: link.url, icon: link.icon });
+                                if (!result?.error) toast.success('Lien dupliqué');
+                              }}
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </Button>
                             <Button
                               variant="ghost" size="icon"
                               className="h-7 w-7 text-muted-foreground hover:text-foreground"
