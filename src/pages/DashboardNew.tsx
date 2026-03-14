@@ -16,6 +16,7 @@ import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
 import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
 import { DashboardTour } from '@/components/dashboard/DashboardTour';
+import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import DashboardAnalytics from './DashboardAnalytics';
 import DashboardThemes from './DashboardThemes';
 import DashboardProfile from './DashboardProfile';
@@ -215,7 +216,7 @@ const Dashboard = () => {
 
           {/* Routes */}
           <Routes>
-            <Route path="/" element={<DashboardHome />} />
+            <Route path="/" element={<DashboardOverview />} />
             <Route path="/pages" element={<DashboardHome />} />
             <Route path="/themes" element={<DashboardThemes />} />
             <Route path="/analytics" element={<DashboardAnalytics />} />
