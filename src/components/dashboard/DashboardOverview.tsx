@@ -145,7 +145,7 @@ const DashboardOverview = () => {
             className="p-5 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5"
           >
             <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-500" />
+              <Zap className="w-4 h-4 text-pop-yellow" />
               Actions rapides
             </h3>
             <div className="space-y-2">
