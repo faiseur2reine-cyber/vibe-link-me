@@ -15,7 +15,6 @@ import LinkFavicon from '@/components/LinkFavicon';
 import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
 import NsfwInlineGate from '@/components/profile/NsfwInlineGate';
-import AgeGate from '@/components/profile/AgeGate';
 import { TrackingPixels, trackPixelClick } from '@/components/profile/TrackingPixels';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
 import ImmersiveLayout from '@/components/profile/ImmersiveLayout';
@@ -75,9 +74,6 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
-  const [ageVerified, setAgeVerified] = useState(() => {
-    try { return sessionStorage.getItem('age_verified') === 'true'; } catch { return false; }
-  });
 
   // Track page view (once per session per page)
   usePageView(page?.id);
@@ -188,25 +184,6 @@ const PublicProfile = () => {
 
   const isDemo = username === 'demo';
   const isNsfwPage = page.is_nsfw;
-  const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
-
-  // ── NSFW page-level age gate (Meta compliance)
-  // Skipped in demo and preview mode
-  if (isNsfwPage && !ageVerified && !isDemo && !isPreview) {
-    return (
-      <AgeGate
-        onVerified={() => {
-          setAgeVerified(true);
-          try { sessionStorage.setItem('age_verified', 'true'); } catch {}
-        }}
-        profile={{
-          display_name: page.display_name,
-          username: page.username,
-          avatar_url: page.avatar_url,
-        }}
-      />
-    );
-  }
 
   const theme = getTheme(page.theme);
 
