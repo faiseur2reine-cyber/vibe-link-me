@@ -16,9 +16,13 @@ export type Database = {
     Tables: {
       creator_pages: {
         Row: {
+          avatar_shape: string | null
           avatar_url: string | null
           bio: string | null
+          button_radius: number | null
+          button_style: string | null
           connected_label: string
+          content_spacing: string | null
           cover_url: string | null
           created_at: string
           custom_accent_color: string | null
@@ -55,9 +59,13 @@ export type Database = {
           utm_source: string
         }
         Insert: {
+          avatar_shape?: string | null
           avatar_url?: string | null
           bio?: string | null
+          button_radius?: number | null
+          button_style?: string | null
           connected_label?: string
+          content_spacing?: string | null
           cover_url?: string | null
           created_at?: string
           custom_accent_color?: string | null
@@ -94,9 +102,13 @@ export type Database = {
           utm_source?: string
         }
         Update: {
+          avatar_shape?: string | null
           avatar_url?: string | null
           bio?: string | null
+          button_radius?: number | null
+          button_style?: string | null
           connected_label?: string
+          content_spacing?: string | null
           cover_url?: string | null
           created_at?: string
           custom_accent_color?: string | null
