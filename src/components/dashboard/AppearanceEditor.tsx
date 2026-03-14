@@ -18,6 +18,7 @@ interface AppearanceEditorProps {
   links?: PageLink[];
   plan?: string;
   onUpdate: (updates: Partial<CreatorPage>) => Promise<{ error: any }>;
+  onPreviewChange?: (overrides: Partial<CreatorPage>) => void;
 }
 
 const FONTS = [
@@ -138,7 +139,7 @@ const ColorPick = ({ label, value, onChange }: { label: string; value: string; o
 );
 
 // ═══ MAIN ═══
-const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate }: AppearanceEditorProps) => {
+const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreviewChange }: AppearanceEditorProps) => {
   const [bgColor, setBgColor] = useState(page.custom_bg_color || '');
   const [textColor, setTextColor] = useState(page.custom_text_color || '');
   const [accentColor, setAccentColor] = useState(page.custom_accent_color || '');
