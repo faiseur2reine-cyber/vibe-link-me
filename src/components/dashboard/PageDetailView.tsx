@@ -35,6 +35,8 @@ const TABS = [
   { value: 'profile', icon: User, label: 'Profil' },
   { value: 'design', icon: Paintbrush, label: 'Design' },
   { value: 'urgency', icon: Flame, label: 'Urgence' },
+  { value: 'tracking', icon: Activity, label: 'Tracking' },
+  { value: 'safepage', icon: ShieldCheck, label: 'Safe Page' },
   { value: 'theme', icon: Palette, label: 'Thème' },
   { value: 'analytics', icon: BarChart3, label: 'Stats' },
 ];
