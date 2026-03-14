@@ -61,7 +61,7 @@ export const InlinePreview = ({ page, links }: InlinePreviewProps) => {
 
               {/* Page content */}
               <motion.div
-                key={page.theme + (page.custom_bg_color || '') + (page.custom_font || '') + (page.link_layout || '')}
+                key={page.theme + (page.custom_bg_color || '') + (page.custom_font || '') + (page.link_layout || '') + (page.button_radius ?? '') + (page.button_style || '') + (page.avatar_shape || '') + (page.content_spacing || '')}
                 initial={{ opacity: 0.6 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.25 }}
@@ -130,8 +130,13 @@ const StandardPreview = ({ page, links, displayName }: {
 
   const visibleLinks = links.filter(l => l.is_visible !== false);
 
-  // Brutalist special: thick borders + offset shadow
+  // Design controls
   const isBrutalist = page.theme === 'brutalist';
+  const btnRadius = page.button_radius ?? 16;
+  const avatarShape = page.avatar_shape || 'circle';
+  const avatarR = avatarShape === 'circle' ? '50%' : avatarShape === 'rounded' ? '20%' : '0';
+  const spacing = page.content_spacing || 'default';
+  const linkGap = spacing === 'compact' ? '4px' : spacing === 'spacious' ? '12px' : '8px';
 
   return (
     <div
@@ -140,8 +145,8 @@ const StandardPreview = ({ page, links, displayName }: {
     >
       {/* Avatar */}
       <div
-        className="w-16 h-16 rounded-full overflow-hidden shrink-0"
-        style={{ boxShadow: `0 0 0 3px ${colors.ring}` }}
+        className="w-16 h-16 overflow-hidden shrink-0"
+        style={{ borderRadius: avatarR, boxShadow: `0 0 0 3px ${colors.ring}` }}
       >
         {page.avatar_url ? (
           <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -168,7 +173,9 @@ const StandardPreview = ({ page, links, displayName }: {
       )}
 
       {/* Links */}
-      <div className={`w-full mt-5 max-w-[220px] ${isGrid ? 'grid grid-cols-2 gap-1.5' : 'space-y-2'}`}>
+      <div className={`w-full mt-5 max-w-[220px] ${isGrid ? 'grid grid-cols-2 gap-1.5' : ''}`}
+        style={!isGrid ? { display: 'flex', flexDirection: 'column', gap: linkGap } : {}}
+      >
         {visibleLinks.slice(0, isGrid ? 6 : 5).map((link, idx) => {
           const platform = !link.bg_color && !page.custom_btn_color ? detectPlatform(link.url) : null;
           const linkBg = link.bg_color || btnBg;
@@ -178,9 +185,10 @@ const StandardPreview = ({ page, links, displayName }: {
           const buttonStyle: React.CSSProperties = {
             backgroundColor: linkBg,
             color: linkText,
+            borderRadius: `${Math.min(btnRadius, isGrid ? 12 : btnRadius)}px`,
             ...(isBrutalist ? { border: '2px solid #000', boxShadow: '2px 2px 0 #000' } :
               !isDark ? { border: '1px solid rgba(0,0,0,0.06)' } : { border: '1px solid rgba(255,255,255,0.06)' }),
-            ...(platformColor && !link.bg_color && !page.custom_btn_color ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
+            ...(platformColor && !link.bg_color && !page.custom_btn_color ? { borderLeft: `2px solid ${platformColor}` } : {}),
           };
 
           if (isGrid) {
@@ -190,7 +198,7 @@ const StandardPreview = ({ page, links, displayName }: {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.03, duration: 0.15 }}
-                className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl text-center"
+                className="flex flex-col items-center justify-center gap-1.5 p-2.5 text-center"
                 style={buttonStyle}
               >
                 <div
@@ -210,7 +218,7 @@ const StandardPreview = ({ page, links, displayName }: {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, duration: 0.2 }}
-              className="flex items-center gap-2.5 px-3 py-[9px] rounded-xl text-[10px] font-semibold"
+              className="flex items-center gap-2.5 px-3 py-[9px] text-[10px] font-semibold"
               style={buttonStyle}
             >
               <div

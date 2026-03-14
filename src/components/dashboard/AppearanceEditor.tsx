@@ -7,9 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Check, Lock, ChevronDown, Palette, Type, Code, Sparkles, MapPin, Wifi, RotateCcw } from 'lucide-react';
+import { Check, Lock, ChevronDown, Palette, Type, Code, Sparkles, MapPin, Wifi, RotateCcw, SlidersHorizontal, Circle, Square, RectangleHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAutoSave } from '@/hooks/useAutoSave';
+import { Slider } from '@/components/ui/slider';
 import { detectPlatform } from '@/lib/platforms';
 import LinkFavicon from '@/components/LinkFavicon';
 
@@ -167,6 +168,10 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
   const [location, setLocation] = useState(page.location || '');
   const [geoEnabled, setGeoEnabled] = useState(page.geo_greeting_enabled ?? true);
   const [selectedTheme, setSelectedTheme] = useState(page.theme || 'default');
+  const [btnRadius, setBtnRadius] = useState(page.button_radius ?? 16);
+  const [btnStyle, setBtnStyle] = useState(page.button_style || 'filled');
+  const [avatarShape, setAvatarShape] = useState(page.avatar_shape || 'circle');
+  const [spacing, setSpacing] = useState(page.content_spacing || 'default');
 
   useEffect(() => {
     setBgColor(page.custom_bg_color || '');
@@ -181,9 +186,14 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
     setLocation(page.location || '');
     setGeoEnabled(page.geo_greeting_enabled ?? true);
     setSelectedTheme(page.theme || 'default');
+    setBtnRadius(page.button_radius ?? 16);
+    setBtnStyle(page.button_style || 'filled');
+    setAvatarShape(page.avatar_shape || 'circle');
+    setSpacing(page.content_spacing || 'default');
   }, [page.id, page.theme, page.custom_bg_color, page.custom_text_color, page.custom_accent_color,
       page.custom_btn_color, page.custom_btn_text_color, page.custom_font, page.link_layout,
-      page.custom_css, page.connected_label, page.location, page.geo_greeting_enabled]);
+      page.custom_css, page.connected_label, page.location, page.geo_greeting_enabled,
+      page.button_radius, page.button_style, page.avatar_shape, page.content_spacing]);
 
   const triggerSave = useAutoSave(async () => {
     const result = await onUpdate({
@@ -192,6 +202,8 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
       custom_btn_text_color: btnTextColor || null, custom_font: font,
       link_layout: layout, custom_css: customCss || null,
       connected_label: connectedLabel, location, geo_greeting_enabled: geoEnabled,
+      button_radius: btnRadius, button_style: btnStyle,
+      avatar_shape: avatarShape, content_spacing: spacing,
     } as any);
     if (!result?.error) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
     else toast.error(result.error.message);
@@ -209,6 +221,10 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
     link_layout: layout,
     connected_label: connectedLabel,
     location,
+    button_radius: btnRadius,
+    button_style: btnStyle,
+    avatar_shape: avatarShape,
+    content_spacing: spacing,
     ...extra,
   } as Partial<CreatorPage>);
 
@@ -284,6 +300,87 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
       </div>
 
       {/* ═══ SECTIONS ═══ */}
+      <Section title="Style des boutons" icon={SlidersHorizontal} defaultOpen>
+        {/* Button radius slider */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[12px] text-muted-foreground">Arrondi</span>
+            <span className="text-[10px] text-muted-foreground/50 tabular-nums">{btnRadius}px</span>
+          </div>
+          <Slider
+            value={[btnRadius]}
+            onValueChange={([v]) => { setBtnRadius(v); save(); }}
+            min={0} max={50} step={2}
+            className="w-full"
+          />
+          <div className="flex justify-between mt-1.5">
+            {[0, 8, 16, 24, 50].map(v => (
+              <button key={v} onClick={() => { setBtnRadius(v); save(); }}
+                className={`w-7 h-5 border transition-all ${btnRadius === v ? 'border-primary bg-primary/10' : 'border-border/40 hover:border-border'}`}
+                style={{ borderRadius: v >= 50 ? '999px' : `${v}px` }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Button style picker */}
+        <div>
+          <span className="text-[12px] text-muted-foreground block mb-2">Type</span>
+          <div className="grid grid-cols-4 gap-1.5">
+            {([
+              { value: 'filled', label: 'Plein', preview: 'bg-foreground text-background' },
+              { value: 'outline', label: 'Contour', preview: 'border-2 border-foreground/20 text-foreground' },
+              { value: 'ghost', label: 'Ghost', preview: 'bg-foreground/5 text-foreground' },
+              { value: 'shadow', label: 'Ombre', preview: 'bg-card text-foreground shadow-md' },
+            ] as const).map(s => (
+              <button key={s.value} onClick={() => { setBtnStyle(s.value); save(); }}
+                className={`flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all ${
+                  btnStyle === s.value ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : 'hover:bg-muted/30'}`}>
+                <div className={`w-full h-6 rounded-md ${s.preview}`} style={{ borderRadius: `${Math.min(btnRadius, 12)}px` }} />
+                <span className="text-[9px] font-medium text-muted-foreground">{s.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Avatar shape picker */}
+        <div>
+          <span className="text-[12px] text-muted-foreground block mb-2">Avatar</span>
+          <div className="flex gap-2">
+            {([
+              { value: 'circle', label: 'Rond', radius: '50%' },
+              { value: 'rounded', label: 'Arrondi', radius: '20%' },
+              { value: 'square', label: 'Carré', radius: '0' },
+            ] as const).map(s => (
+              <button key={s.value} onClick={() => { setAvatarShape(s.value); save(); }}
+                className={`flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all flex-1 ${
+                  avatarShape === s.value ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : 'hover:bg-muted/30'}`}>
+                <div className="w-8 h-8 bg-muted" style={{ borderRadius: s.radius }} />
+                <span className="text-[9px] font-medium text-muted-foreground">{s.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Spacing picker */}
+        <div>
+          <span className="text-[12px] text-muted-foreground block mb-2">Espacement</span>
+          <div className="flex gap-1.5">
+            {([
+              { value: 'compact', label: 'Compact' },
+              { value: 'default', label: 'Normal' },
+              { value: 'spacious', label: 'Aéré' },
+            ] as const).map(s => (
+              <button key={s.value} onClick={() => { setSpacing(s.value); save(); }}
+                className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-medium transition-all ${
+                  spacing === s.value ? 'bg-foreground text-background' : 'bg-muted/40 text-muted-foreground hover:bg-muted'}`}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </Section>
+
       <Section title="Couleurs" icon={Palette} badge={activeColors > 0 ? String(activeColors) : undefined}>
         <div className="flex items-center justify-between mb-0.5">
           <p className="text-[10px] text-muted-foreground/40">Vide = couleurs du thème</p>

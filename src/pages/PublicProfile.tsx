@@ -217,6 +217,31 @@ const PublicProfile = () => {
     ? `https://fonts.googleapis.com/css2?family=${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('+')}&display=swap` : null;
   const isDarkTheme = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'cyber' ||
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
+
+  // Design controls
+  const btnRadius = page.button_radius ?? 16;
+  const btnStyleType = page.button_style || 'filled';
+  const avatarShape = page.avatar_shape || 'circle';
+  const contentSpacing = page.content_spacing || 'default';
+  const avatarRadius = avatarShape === 'circle' ? '50%' : avatarShape === 'rounded' ? '20%' : '0';
+  const spacingClass = contentSpacing === 'compact' ? 'space-y-2' : contentSpacing === 'spacious' ? 'space-y-5' : 'space-y-3';
+
+  // Build button style override based on btnStyleType
+  const getBtnStyleOverride = (customBg?: string | null): React.CSSProperties => {
+    const base: React.CSSProperties = { borderRadius: `${btnRadius}px` };
+    if (customBg) return base; // custom bg takes priority
+    switch (btnStyleType) {
+      case 'outline':
+        return { ...base, backgroundColor: 'transparent', border: `2px solid ${isDarkTheme ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'}` };
+      case 'ghost':
+        return { ...base, backgroundColor: isDarkTheme ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', border: 'none', boxShadow: 'none' };
+      case 'shadow':
+        return { ...base, backgroundColor: isDarkTheme ? 'rgba(255,255,255,0.06)' : '#fff', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)' };
+      default: // filled
+        return base;
+    }
+  };
+
   const urgency = page.urgency_config;
   const showUrgencyWidgets = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
   const clickVariant = urgency?.abTest?.enabled ? abVariant : null;
@@ -394,7 +419,7 @@ const PublicProfile = () => {
             {/* Avatar with online indicator */}
             <motion.div variants={scaleIn} className="flex justify-center">
               <div className="relative">
-                <div className={`w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden ${theme.avatarRing}`}>
+                <div className={`w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] overflow-hidden ${theme.avatarRing}`} style={{ borderRadius: avatarRadius }}>
                   {page.avatar_url ? (
                     <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" decoding="async" />
                   ) : (
@@ -473,7 +498,7 @@ const PublicProfile = () => {
           {urgency?.scarcity?.position === 'above-links' && <ScarcityBlock />}
 
           {/* ── Links ── */}
-          <motion.div variants={stagger} className="mt-8 space-y-3">
+          <motion.div variants={stagger} className={`mt-8 ${spacingClass}`}>
             {links.length === 0 && (
               <motion.div variants={fadeUp} className="text-center py-8">
                 <p className={`text-sm ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
@@ -583,8 +608,9 @@ const PublicProfile = () => {
                           onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { y: -3, scale: 1.01 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                          className={`link-item group relative flex items-center gap-4 px-4 py-4 sm:py-[18px] rounded-2xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                          className={`link-item group relative flex items-center gap-4 px-4 py-4 sm:py-[18px] text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : btnStyleType === 'filled' ? theme.btn : ''} ${isDemo ? 'cursor-default' : ''}`}
                           style={{
+                            ...getBtnStyleOverride(customBtnBg),
                             ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                             ...(customBtnText ? { color: customBtnText } : {}),
                           }}
@@ -649,8 +675,9 @@ const PublicProfile = () => {
                         onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                         variants={fadeUp}
                         whileHover={isDemo ? {} : { y: -3 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                        className={`link-item group relative flex items-center gap-4 px-4 py-3.5 sm:py-4 rounded-2xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
+                        className={`link-item group relative flex items-center gap-4 px-4 py-3.5 sm:py-4 text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : btnStyleType === 'filled' ? theme.btn : ''} ${isDemo ? 'cursor-default' : ''}`}
                         style={{
+                          ...getBtnStyleOverride(customBtnBg),
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
                           ...(platformColor && !customBtnBg && !isDarkTheme ? { borderLeft: `3px solid ${platformColor}` } : {}),

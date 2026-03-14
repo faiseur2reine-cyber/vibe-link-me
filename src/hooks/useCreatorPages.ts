@@ -29,6 +29,11 @@ export interface CreatorPage {
   custom_font: string;
   link_layout: string;
   custom_css: string | null;
+  // Design controls
+  button_radius: number;
+  button_style: string;
+  avatar_shape: string;
+  content_spacing: string;
   // Tracking
   tracking_meta_pixel: string;
   tracking_ga4: string;
