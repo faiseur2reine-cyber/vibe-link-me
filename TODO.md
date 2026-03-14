@@ -7,23 +7,23 @@
 - [ ] Dashboard: verify all tabs render without crash on a fresh page (no data)
 - [ ] ImmersiveLayout: buttons with no bg_color set should default white pill + red icon circle
 - [ ] ImmersiveLayout: links with `style: 'featured'` should have visual distinction (glow/border)
-- [ ] PublicProfile: the `<a>` tags still have `href` and `target="_blank"` — but handleLinkClick uses deeplink. Remove href to prevent double navigation
-- [ ] PagesListView: revenue_monthly and revenue_commission might be undefined on old pages — add fallback
+- [x] PublicProfile: the `<a>` tags — verified, no double navigation (e.preventDefault in all handlers)
+- [x] PagesListView: revenue_monthly/revenue_commission use ?? fallback
 - [ ] TrackingEditor/SafePageEditor: test save → reload → values persist
 - [ ] ThemeSelector: "immersive" theme preview swatch is black on black — needs visual indicator
 - [ ] NsfwInlineGate: `rounded-[inherit]` might not work in all button contexts — test on all 4 link styles (default, featured, card, minimal)
-- [ ] GeoGreeting: ipwho.is might be blocked in some countries — add third fallback (cloudflare /cdn-cgi/trace)
+- [x] GeoGreeting: 3 fallbacks (ipapi.co → ipwho.is → ipinfo.io) + sessionStorage cache
 - [ ] LivePreview iframe: loads AgeGate on NSFW pages even with ?preview=true (verify this actually works)
 
 ## ═══ PRIORITY 2 — UX IMPROVEMENTS ═══
 
 - [ ] Dashboard: auto-save on editors instead of manual "Sauvegarder" button (debounced 1.5s)
 - [ ] Dashboard: toast notifications should be consistent — some use sonner, some use shadcn toast
-- [ ] LinksManager: show platform icon (OF, MYM, IG, etc.) next to link title in the list
+- [x] LinksManager: show platform icon (OF, MYM, IG, etc.) via LinkFavicon
 - [ ] LinksManager: drag handle should be more visible on mobile
 - [ ] PageProfileEditor: cover photo upload should show crop guide for immersive hero ratio
 - [ ] DashboardOverview: add "last edited" timestamp per page
-- [ ] DashboardOverview: click on a page in "Vos pages" should navigate to that page's detail, not /pages
+- [x] DashboardOverview: click on a page → navigates to detail via ?page=id
 - [ ] Share dialog: add "Copy for Instagram bio" button (just the short URL)
 - [ ] Share dialog: QR code should include small logo in center
 - [ ] Mobile dashboard: bottom nav has 9 tabs — too many, group into fewer with submenu

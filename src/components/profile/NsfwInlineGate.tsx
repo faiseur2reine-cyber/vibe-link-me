@@ -65,7 +65,7 @@ const NsfwInlineGate = ({ children, url, onConfirm, variant = 'dark', className 
             {children}
             <div
               onClick={handleFirstClick}
-              className="absolute inset-0 z-10 cursor-pointer rounded-[inherit]"
+              className="absolute inset-0 z-10 cursor-pointer rounded-xl"
             />
           </motion.div>
         ) : (
@@ -76,10 +76,10 @@ const NsfwInlineGate = ({ children, url, onConfirm, variant = 'dark', className 
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2 }}
             onClick={handleSecondClick}
-            className={`w-full flex items-center justify-center gap-3 px-5 py-4 rounded-[inherit] cursor-pointer transition-colors ${
+            className={`w-full flex items-center justify-center gap-3 px-5 py-4 cursor-pointer transition-colors ${
               isDark
-                ? 'bg-black border border-white/10 hover:border-white/20'
-                : 'bg-zinc-900 border border-zinc-700 hover:border-zinc-500'
+                ? 'rounded-full bg-black border border-white/10 hover:border-white/20'
+                : 'rounded-xl bg-zinc-900 border border-zinc-700 hover:border-zinc-500'
             }`}
             style={{ minHeight: 68 }}
           >

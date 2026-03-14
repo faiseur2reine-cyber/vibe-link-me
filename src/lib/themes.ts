@@ -178,7 +178,7 @@ export const THEMES: Record<string, ThemeConfig> = {
     text: 'text-white',
     subtleText: 'text-white/35',
     accent: 'text-white',
-    preview: 'bg-gradient-to-b from-gray-700 to-black',
+    preview: 'bg-gradient-to-br from-indigo-900 via-gray-800 to-black',
     cardBg: 'bg-white/[0.04] border border-white/[0.06]',
     avatarRing: 'ring-[3px] ring-white/10',
     tier: 'starter',

@@ -259,6 +259,7 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
         <div className="px-4 pt-5 pb-4 max-w-[480px] mx-auto flex flex-col gap-4">
           {links.map((link, idx) => {
             const isFirst = idx === 0;
+            const isFeatured = link.style === 'featured';
             // In immersive: buttons are ALWAYS white, icon circle gets the platform color
             const iconBg = link.bg_color && link.bg_color !== '#FFFFFF' && link.bg_color !== '#ffffff'
               ? link.bg_color
@@ -275,12 +276,13 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
                   e.preventDefault();
                   handleLinkClick(link);
                 }}
-                className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-200 active:scale-[0.98] hover:-translate-y-[1px] ${isFirst ? 'animate-bounce-subtle' : ''}`}
+                className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-200 active:scale-[0.98] hover:-translate-y-[1px] ${isFirst ? 'animate-bounce-subtle' : ''} ${isFeatured ? 'shadow-lg shadow-black/10' : ''}`}
                 style={{
                   backgroundColor: '#FFFFFF',
                   color: '#000000',
-                  minHeight: 68,
+                  minHeight: isFeatured ? 72 : 68,
                   padding: '12px 20px 12px 12px',
+                  ...(isFeatured ? { boxShadow: `0 0 0 2px ${iconBg}20, 0 8px 24px ${iconBg}15` } : {}),
                 }}
               >
                 {/* Round colored icon */}
