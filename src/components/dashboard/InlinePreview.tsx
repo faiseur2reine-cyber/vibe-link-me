@@ -94,14 +94,10 @@ const THEME_COLORS: Record<string, { bg: string; text: string; sub: string; btn:
   sunset:     { bg: '#fcc891',  text: '#7c2d12', sub: '#ea580c', btn: '#fde68a',              btnText: '#92400e', ring: '#f59e0b' },
   ocean:      { bg: '#93c5fd',  text: '#1e3a5f', sub: '#1d4ed8', btn: '#bfdbfe',              btnText: '#1e3a5f', ring: '#3b82f6' },
   midnight:   { bg: '#09090f',  text: '#e4e4e7', sub: '#52525b', btn: 'rgba(255,255,255,0.08)', btnText: '#d4d4d8', ring: '#27272a' },
-  forest:     { bg: '#86efac',  text: '#14532d', sub: '#15803d', btn: '#bbf7d0',              btnText: '#14532d', ring: '#22c55e' },
   neon:       { bg: '#0a0a0f',  text: '#f0abfc', sub: '#c026d3', btn: 'rgba(192,38,211,0.25)', btnText: '#f0abfc', ring: '#86198f' },
-  glass_dark: { bg: '#18181b',  text: '#e4e4e7', sub: '#71717a', btn: 'rgba(255,255,255,0.08)', btnText: '#d4d4d8', ring: '#3f3f46' },
   pastel:     { bg: '#f0abfc',  text: '#581c87', sub: '#7c3aed', btn: '#e9d5ff',              btnText: '#6b21a8', ring: '#a855f7' },
   brutalist:  { bg: '#f5f0e8',  text: '#000000', sub: '#000000', btn: '#ffffff',              btnText: '#000000', ring: '#000000', border: '2px solid #000' },
-  aurora:     { bg: '#0f172a',  text: '#d1fae5', sub: '#34d399', btn: 'rgba(52,211,153,0.15)', btnText: '#6ee7b7', ring: '#065f46' },
   cyber:      { bg: '#050510',  text: '#a5f3fc', sub: '#06b6d4', btn: 'rgba(6,182,212,0.15)',  btnText: '#67e8f9', ring: '#155e75' },
-  marble:     { bg: '#d6d3d1',  text: '#44403c', sub: '#78716c', btn: '#f5f5f4',              btnText: '#44403c', ring: '#a8a29e' },
   minimal:    { bg: '#ffffff',  text: '#171717', sub: '#a3a3a3', btn: '#f5f5f5',              btnText: '#171717', ring: '#e5e5e5' },
 };
 
@@ -111,8 +107,7 @@ const StandardPreview = ({ page, links, displayName }: {
   const hasBg = !!page.custom_bg_color;
   const hasText = !!page.custom_text_color;
   const colors = THEME_COLORS[page.theme] || THEME_COLORS.default;
-  const isDark = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'glass_dark' ||
-    page.theme === 'aurora' || page.theme === 'cyber' ||
+  const isDark = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'cyber' ||
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
 
   const bg = hasBg ? page.custom_bg_color! : colors.bg;

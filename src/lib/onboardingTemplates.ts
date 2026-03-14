@@ -21,7 +21,7 @@ export const onboardingTemplates: OnboardingTemplate[] = [
     name: 'Influenceur',
     description: 'Parfait pour partager vos réseaux sociaux et contenus',
     icon: 'sparkles',
-    theme: 'aurora',
+    theme: 'cyber',
     suggestedLinks: [
       { title: 'Ma dernière vidéo', url: 'https://youtube.com/@votrecanal', icon: 'video' },
       { title: 'Mon podcast', url: 'https://spotify.com/votrepodcast', icon: 'mic' },

@@ -215,8 +215,7 @@ const PublicProfile = () => {
   const linkLayout = page.link_layout || 'list';
   const fontUrl = page.custom_font && page.custom_font !== 'default'
     ? `https://fonts.googleapis.com/css2?family=${page.custom_font.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('+')}&display=swap` : null;
-  const isDarkTheme = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'glass_dark' ||
-    page.theme === 'aurora' || page.theme === 'cyber' ||
+  const isDarkTheme = page.theme === 'midnight' || page.theme === 'neon' || page.theme === 'cyber' ||
     (page.custom_bg_color && isColorDark(page.custom_bg_color));
   const urgency = page.urgency_config;
   const showUrgencyWidgets = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
@@ -352,10 +351,10 @@ const PublicProfile = () => {
         {isDarkTheme && (
           <>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-30 blur-[150px] pointer-events-none"
-              style={{ background: page.custom_accent_color || (page.theme === 'neon' ? 'rgba(217,70,239,0.08)' : page.theme === 'aurora' ? 'rgba(52,211,153,0.06)' : page.theme === 'cyber' ? 'rgba(34,211,238,0.06)' : 'rgba(255,255,255,0.02)') }}
+              style={{ background: page.custom_accent_color || (page.theme === 'neon' ? 'rgba(217,70,239,0.08)' : page.theme === 'cyber' ? 'rgba(34,211,238,0.06)' : 'rgba(255,255,255,0.02)') }}
             />
             <ParticleField
-              color={page.theme === 'neon' ? '217,70,239' : page.theme === 'aurora' ? '52,211,153' : page.theme === 'cyber' ? '34,211,238' : '255,255,255'}
+              color={page.theme === 'neon' ? '217,70,239' : page.theme === 'cyber' ? '34,211,238' : '255,255,255'}
               count={35}
               className="z-0 opacity-60"
             />
