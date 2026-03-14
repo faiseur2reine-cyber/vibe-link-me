@@ -365,9 +365,9 @@
     "tracking": "Tracking",
     "safePage": "Safe Page",
     "agency": "Agency",
-    "theme": "Theme",
     "analytics": "Stats",
-    "more": "More"
+    "more": "More",
+    "apparence": "Appearance"
   },
   "pages": {
     "title": "My pages",

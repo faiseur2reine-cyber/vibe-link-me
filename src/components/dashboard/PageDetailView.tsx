@@ -5,7 +5,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import {
@@ -47,12 +47,11 @@ interface PageDetailViewProps {
 const TABS = [
   { value: 'links', icon: Link2, labelKey: 'tabs.links' },
   { value: 'profile', icon: User, labelKey: 'tabs.profile' },
-  { value: 'design', icon: Paintbrush, labelKey: 'tabs.design' },
+  { value: 'apparence', icon: Palette, labelKey: 'tabs.apparence' },
   { value: 'urgency', icon: Flame, labelKey: 'tabs.urgency' },
   { value: 'tracking', icon: Activity, labelKey: 'tabs.tracking' },
   { value: 'safepage', icon: ShieldCheck, labelKey: 'tabs.safePage' },
   { value: 'agency', icon: Briefcase, labelKey: 'tabs.agency' },
-  { value: 'theme', icon: Palette, labelKey: 'tabs.theme' },
   { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
 ];
 
@@ -221,12 +220,23 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="design" className="mt-0">
+            <TabsContent value="apparence" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">{t('editors.designTitle')}</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.designDesc')}</p>
+                {/* Theme picker first */}
+                <div className="space-y-1 mb-5">
+                  <h3 className="text-[13px] font-medium">Thème</h3>
+                  <p className="text-[11px] text-muted-foreground mb-3">Choisissez un style de base pour votre page.</p>
                 </div>
+                <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
+
+                {/* Divider */}
+                <div className="flex items-center gap-3 my-6">
+                  <div className="h-px flex-1 bg-border/40" />
+                  <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">Personnaliser</span>
+                  <div className="h-px flex-1 bg-border/40" />
+                </div>
+
+                {/* Custom overrides */}
                 <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
                 <ImmersiveSettings page={page} onUpdate={handleUpdate} />
               </Suspense>
@@ -239,12 +249,6 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                   <p className="text-[11px] text-muted-foreground mb-4">{t('editors.urgencyDesc')}</p>
                 </div>
                 <UrgencyEditor page={page} onUpdate={handleUpdate} />
-              </Suspense>
-            </TabsContent>
-
-            <TabsContent value="theme" className="mt-0">
-              <Suspense fallback={<TabLoader />}>
-                <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
               </Suspense>
             </TabsContent>
 
@@ -301,7 +305,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             {[
               { value: 'links', icon: Link2, labelKey: 'tabs.links' },
               { value: 'profile', icon: User, labelKey: 'tabs.profile' },
-              { value: 'design', icon: Paintbrush, labelKey: 'tabs.design' },
+              { value: 'apparence', icon: Palette, labelKey: 'tabs.apparence' },
               { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
             ].map(({ value, icon: Icon, labelKey }) => (
               <button
@@ -319,7 +323,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <button
               onClick={() => setShowMoreNav(!showMoreNav)}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                showMoreNav || ['urgency','tracking','safepage','agency','theme'].includes(activeTab)
+                showMoreNav || ['urgency','tracking','safepage','agency'].includes(activeTab)
                   ? 'text-foreground' : 'text-muted-foreground/60'
               }`}
             >
@@ -330,13 +334,12 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
           {/* More drawer */}
           {showMoreNav && (
-            <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 grid grid-cols-5 gap-1">
+            <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 grid grid-cols-4 gap-1">
               {[
                 { value: 'urgency', icon: Flame, labelKey: 'tabs.urgency' },
                 { value: 'tracking', icon: Activity, labelKey: 'tabs.tracking' },
                 { value: 'safepage', icon: ShieldCheck, labelKey: 'tabs.safePage' },
                 { value: 'agency', icon: Briefcase, labelKey: 'tabs.agency' },
-                { value: 'theme', icon: Palette, labelKey: 'tabs.theme' },
               ].map(({ value, icon: Icon, labelKey }) => (
                 <button
                   key={value}
