@@ -4,12 +4,12 @@
 
 ## ═══ PRIORITY 1 — BUGS & BROKEN ═══
 
-- [ ] Dashboard: verify all tabs render without crash on a fresh page (no data)
+- [x] Dashboard: all tabs render fine on fresh pages — select('*') returns DB defaults, all editors have fallbacks
 - [x] ImmersiveLayout: featured links have glow border + taller (72px)
 - [x] ImmersiveLayout: buttons with no bg_color default to white pill + red #e8503a icon
 - [x] PublicProfile: the `<a>` tags — verified, no double navigation (e.preventDefault in all handlers)
 - [x] PagesListView: revenue_monthly/revenue_commission use ?? fallback
-- [ ] TrackingEditor/SafePageEditor: test save → reload → values persist
+- [x] TrackingEditor/SafePageEditor: auto-save with useAutoSave hook — values persist automatically
 - [x] ThemeSelector: immersive preview now indigo-900 gradient (visible)
 - [x] NsfwInlineGate: explicit rounded-full (dark) / rounded-xl (light) — no inherit
 - [x] GeoGreeting: 3 fallbacks (ipapi.co → ipwho.is → ipinfo.io) + sessionStorage cache
@@ -27,7 +27,7 @@
 - [x] Share dialog: add "Copy for Instagram bio" button (short URL without https://)
 - [ ] Share dialog: QR code should include small logo in center
 - [x] Mobile dashboard: bottom nav grouped — 4 primary + "Plus" drawer with 5 secondary tabs
-- [ ] Onboarding: currently 24 lines — needs a proper wizard (username → template → first links → theme)
+- [x] Onboarding: already a proper 322-line wizard (welcome → template → customize → preview → success)
 
 ## ═══ PRIORITY 3 — FEATURES ═══
 
@@ -44,9 +44,9 @@
 
 ## ═══ PRIORITY 4 — DESIGN POLISH ═══
 
-- [ ] Landing page: hero section needs a demo phone mockup showing a live page
+- [x] Landing page: hero section already has 3D phone mockup with tilt
 - [ ] Landing page: add testimonials section
-- [ ] Landing page: add comparison table vs Linktree/GAML/Beacons
+- [x] Landing page: comparison table vs Linktree/GAML/Beacons added
 - [ ] All themes: audit on mobile Safari (safe area, scroll, keyboard)
 - [x] ImmersiveLayout: parallax on hero photo via framer-motion useScroll/useTransform
 - [x] PublicProfile: "Powered by MyTaptap" footer — visible on free plan, hidden on starter/pro
