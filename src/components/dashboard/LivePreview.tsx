@@ -25,7 +25,7 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const prevDataRef = useRef<string>('');
 
-  // Auto-refresh when page or links change
+  // Auto-refresh when page or links change (debounced)
   useEffect(() => {
     const dataFingerprint = JSON.stringify({
       username: page.username,
@@ -48,8 +48,8 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
     });
 
     if (prevDataRef.current && prevDataRef.current !== dataFingerprint) {
-      // Debounce refresh
-      const timer = setTimeout(() => setRefreshKey(k => k + 1), 600);
+      const timer = setTimeout(() => setRefreshKey(k => k + 1), 800);
+      prevDataRef.current = dataFingerprint; // update BEFORE timer fires
       return () => clearTimeout(timer);
     }
     prevDataRef.current = dataFingerprint;
