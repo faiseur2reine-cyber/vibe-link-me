@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { detectPlatform } from '@/lib/platforms';
+import LinkFavicon from '@/components/LinkFavicon';
 
 interface CustomTemplate {
   id: string;
@@ -430,13 +431,11 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                               className="w-9 h-9 rounded-lg shrink-0 flex items-center justify-center"
                               style={{ backgroundColor: link.bg_color }}
                             >
-                              {link.text_color && (
-                                <LinkIcon className="w-3.5 h-3.5" style={{ color: link.text_color }} />
-                              )}
+                              <LinkFavicon url={link.url} size="sm" className={link.text_color ? '' : 'text-white'} />
                             </div>
                           ) : (
                             <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                              <LinkIcon className="w-3.5 h-3.5 text-muted-foreground" />
+                              <LinkFavicon url={link.url} size="sm" />
                             </div>
                           )}
 

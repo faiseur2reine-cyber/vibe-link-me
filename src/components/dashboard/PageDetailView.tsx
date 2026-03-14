@@ -1,29 +1,39 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import LinksManager from '@/components/dashboard/LinksManager';
-import LinkPreview from '@/components/dashboard/LinkPreview';
-import ThemeSelector from '@/components/dashboard/ThemeSelector';
-import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
-import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
-import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
-import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
-import TrackingEditor from '@/components/dashboard/TrackingEditor';
-import SafePageEditor from '@/components/dashboard/SafePageEditor';
-import AgencyEditor from '@/components/dashboard/AgencyEditor';
-import ShareDialog from '@/components/dashboard/ShareDialog';
-import ImmersiveSettings from '@/components/dashboard/ImmersiveSettings';
-import { LivePreview } from '@/components/dashboard/LivePreview';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+
+// Eagerly loaded (always visible first)
+import LinksManager from '@/components/dashboard/LinksManager';
+import { LivePreview } from '@/components/dashboard/LivePreview';
+
+// Lazy loaded (only when tab is opened)
+const LinkPreview = lazy(() => import('@/components/dashboard/LinkPreview'));
+const ThemeSelector = lazy(() => import('@/components/dashboard/ThemeSelector'));
+const PageProfileEditor = lazy(() => import('@/components/dashboard/PageProfileEditor'));
+const PageAnalyticsPanel = lazy(() => import('@/components/dashboard/PageAnalyticsPanel'));
+const PageDesignEditor = lazy(() => import('@/components/dashboard/PageDesignEditor'));
+const UrgencyEditor = lazy(() => import('@/components/dashboard/UrgencyEditor'));
+const TrackingEditor = lazy(() => import('@/components/dashboard/TrackingEditor'));
+const SafePageEditor = lazy(() => import('@/components/dashboard/SafePageEditor'));
+const AgencyEditor = lazy(() => import('@/components/dashboard/AgencyEditor'));
+const ShareDialog = lazy(() => import('@/components/dashboard/ShareDialog'));
+const ImmersiveSettings = lazy(() => import('@/components/dashboard/ImmersiveSettings'));
+
+const TabLoader = () => (
+  <div className="flex items-center justify-center py-12">
+    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+  </div>
+);
 
 interface PageDetailViewProps {
   page: CreatorPage;
@@ -176,60 +186,76 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             </TabsContent>
 
             <TabsContent value="profile" className="mt-0">
-              <div className="space-y-1">
-                <h3 className="text-[13px] font-medium">Profil de la page</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Informations visibles sur votre page publique.</p>
-              </div>
-              <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium">Profil de la page</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">Informations visibles sur votre page publique.</p>
+                </div>
+                <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="design" className="mt-0">
-              <div className="space-y-1">
-                <h3 className="text-[13px] font-medium">Design personnalisé</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Couleurs, polices et mise en page.</p>
-              </div>
-              <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
-              <ImmersiveSettings page={page} onUpdate={handleUpdate} />
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium">Design personnalisé</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">Couleurs, polices et mise en page.</p>
+                </div>
+                <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
+                <ImmersiveSettings page={page} onUpdate={handleUpdate} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="urgency" className="mt-0">
-              <div className="space-y-1">
-                <h3 className="text-[13px] font-medium">Widgets d'urgence</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Stimulez l'engagement avec des indicateurs de rareté.</p>
-              </div>
-              <UrgencyEditor page={page} onUpdate={handleUpdate} />
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium">Widgets d'urgence</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">Stimulez l'engagement avec des indicateurs de rareté.</p>
+                </div>
+                <UrgencyEditor page={page} onUpdate={handleUpdate} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="theme" className="mt-0">
-              <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
+              <Suspense fallback={<TabLoader />}>
+                <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="tracking" className="mt-0">
-              <div className="space-y-1">
-                <h3 className="text-[13px] font-medium">Tracking & UTM</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Pixels de conversion et paramètres UTM automatiques.</p>
-              </div>
-              <TrackingEditor page={page} onUpdate={handleUpdate} />
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium">Tracking & UTM</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">Pixels de conversion et paramètres UTM automatiques.</p>
+                </div>
+                <TrackingEditor page={page} onUpdate={handleUpdate} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="safepage" className="mt-0">
-              <div className="space-y-1">
-                <h3 className="text-[13px] font-medium">Safe Page</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Page de couverture pour protéger votre contenu.</p>
-              </div>
-              <SafePageEditor page={page} onUpdate={handleUpdate} />
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium">Safe Page</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">Page de couverture pour protéger votre contenu.</p>
+                </div>
+                <SafePageEditor page={page} onUpdate={handleUpdate} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="agency" className="mt-0">
-              <div className="space-y-1">
-                <h3 className="text-[13px] font-medium">Gestion Agence</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Opérateur, revenus et notes internes.</p>
-              </div>
-              <AgencyEditor page={page} onUpdate={handleUpdate} />
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium">Gestion Agence</h3>
+                  <p className="text-[11px] text-muted-foreground mb-4">Opérateur, revenus et notes internes.</p>
+                </div>
+                <AgencyEditor page={page} onUpdate={handleUpdate} />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-0">
-              <PageAnalyticsPanel pageId={page.id} links={links} />
+              <Suspense fallback={<TabLoader />}>
+                <PageAnalyticsPanel pageId={page.id} links={links} />
+              </Suspense>
             </TabsContent>
           </Tabs>
         </div>
@@ -262,12 +288,16 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         </nav>
       )}
 
-      <ShareDialog
-        open={showShare}
-        onOpenChange={setShowShare}
-        username={page.username}
-        displayName={page.display_name || page.username}
-      />
+      {showShare && (
+        <Suspense fallback={null}>
+          <ShareDialog
+            open={showShare}
+            onOpenChange={setShowShare}
+            username={page.username}
+            displayName={page.display_name || page.username}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };
