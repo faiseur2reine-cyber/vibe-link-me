@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, AlertTriangle } from 'lucide-react';
+import { TapShield as ShieldCheck, TapAlert as AlertTriangle } from '@/components/icons/TapIcons';
 
 interface AgeGateProps {
   onVerified: () => void;

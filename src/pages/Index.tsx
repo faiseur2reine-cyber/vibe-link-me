@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/lib/plans';
 import { toast } from 'sonner';
-import { ArrowRight } from 'lucide-react';
+import { TapArrowRight as ArrowRight } from '@/components/icons/TapIcons';
 import { motion } from 'framer-motion';
 import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';

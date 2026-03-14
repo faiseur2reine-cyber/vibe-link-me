@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Monitor, Smartphone, Tablet, RefreshCw } from 'lucide-react';
+import { TapSmartphone as Smartphone, TapRefresh as RefreshCw } from '@/components/icons/TapIcons';
+import { Monitor, Tablet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 

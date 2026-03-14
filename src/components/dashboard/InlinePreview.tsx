@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { CreatorPage, PageLink } from '@/hooks/useCreatorPages';
 import { detectPlatform } from '@/lib/platforms';
-import { Smartphone, ExternalLink } from 'lucide-react';
+import { TapSmartphone as Smartphone, TapExternalLink as ExternalLink } from '@/components/icons/TapIcons';
 import LinkFavicon from '@/components/LinkFavicon';
 import { motion } from 'framer-motion';
 

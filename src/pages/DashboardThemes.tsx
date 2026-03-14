@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { THEMES, canAccessTheme, ThemeConfig } from '@/lib/themes';
-import { Lock, Check, Sparkles } from 'lucide-react';
+import { TapLock as Lock, TapCheck as Check, TapSparkles as Sparkles } from '@/components/icons/TapIcons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';

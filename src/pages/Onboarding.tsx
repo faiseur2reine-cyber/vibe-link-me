@@ -1,7 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
-import { Loader2 } from 'lucide-react';
+import { TapLoader as Loader2 } from '@/components/icons/TapIcons';
 
 const Onboarding = () => {
   const { user, loading } = useAuth();
