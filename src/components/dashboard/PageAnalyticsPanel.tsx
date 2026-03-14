@@ -1,6 +1,7 @@
 import { usePageAnalytics, PageLink } from '@/hooks/useCreatorPages';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { MousePointerClick, TrendingUp, Globe, MapPin, Link2, FlaskConical, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { MousePointerClick, TrendingUp, Globe, MapPin, Link2, FlaskConical, CheckCircle2, AlertTriangle, Clock, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const COLORS = [
   'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
@@ -63,17 +64,53 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
 
   const getClicksForLink = (linkId: string) => clickStats.find(s => s.linkId === linkId)?.totalClicks || 0;
 
+  const exportCSV = () => {
+    const rows: string[][] = [];
+    // Header
+    rows.push(['Section', 'Item', 'Value']);
+    // Summary
+    rows.push(['Summary', 'Total Clicks', String(totalClicks)]);
+    // Per link
+    links.forEach(l => rows.push(['Link', l.title, String(getClicksForLink(l.id))]));
+    // Daily
+    dailyClicks.forEach(d => rows.push(['Daily', d.date, String(d.clicks)]));
+    // Country
+    countryStats.forEach(c => rows.push(['Country', c.country, String(c.clicks)]));
+    // City
+    cityStats.forEach(c => rows.push(['City', c.city, String(c.clicks)]));
+    // Referrer
+    referrerStats.forEach(r => rows.push(['Referrer', r.referrer, String(r.clicks)]));
+    // A/B
+    abStats.forEach(a => rows.push(['A/B Variant', a.variant, String(a.clicks)]));
+
+    const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics-${pageId.slice(0, 8)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-8">
-      {/* Total clicks */}
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-          <MousePointerClick className="w-6 h-6 text-primary-foreground" />
+      {/* Total clicks + export */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
+            <MousePointerClick className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Total des clics</p>
+            <p className="text-3xl font-display font-bold text-foreground">{totalClicks}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm text-muted-foreground">Total des clics</p>
-          <p className="text-3xl font-display font-bold text-foreground">{totalClicks}</p>
-        </div>
+        {totalClicks > 0 && (
+          <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+            <Download className="w-3 h-3" /> Export CSV
+          </Button>
+        )}
       </div>
 
       {/* Per-link stats */}

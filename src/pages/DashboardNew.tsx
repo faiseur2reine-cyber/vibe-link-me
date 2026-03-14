@@ -60,8 +60,35 @@ const DashboardHome = () => {
 
   if (pagesLoading || onboardingLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
+          <div className="space-y-6">
+            {/* Skeleton header */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <div className="h-5 w-32 bg-muted rounded-lg animate-pulse" />
+                <div className="h-3 w-48 bg-muted/60 rounded-lg animate-pulse" />
+              </div>
+              <div className="h-8 w-28 bg-muted rounded-lg animate-pulse" />
+            </div>
+            {/* Skeleton page cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="rounded-xl border border-border/60 p-3.5 space-y-3 animate-pulse">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-full bg-muted" />
+                    <div className="space-y-1.5 flex-1">
+                      <div className="h-3.5 w-24 bg-muted rounded" />
+                      <div className="h-2.5 w-16 bg-muted/60 rounded" />
+                    </div>
+                  </div>
+                  <div className="h-2.5 w-full bg-muted/40 rounded" />
+                  <div className="h-2.5 w-2/3 bg-muted/30 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -143,8 +170,25 @@ const Dashboard = () => {
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem('theme');
     if (stored) return stored === 'dark';
-    return document.documentElement.classList.contains('dark');
+    // Sync with system preference
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
   });
+
+  // Apply dark class on mount and sync with system changes
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
+    if (!mq) return;
+    const handler = (e: MediaQueryListEvent) => {
+      // Only auto-switch if user hasn't manually set a preference
+      if (!localStorage.getItem('theme')) {
+        setIsDark(e.matches);
+        document.documentElement.classList.toggle('dark', e.matches);
+      }
+    };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     const checkProfile = async () => {

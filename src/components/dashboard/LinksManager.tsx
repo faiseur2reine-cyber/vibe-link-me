@@ -415,10 +415,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                               : 'hover:bg-muted/60'
                           }`}
                         >
-                          {/* Drag handle */}
+                          {/* Drag handle — bigger touch target on mobile */}
                           <div
                             {...provided.dragHandleProps}
-                            className="cursor-grab text-muted-foreground/40 hover:text-muted-foreground transition-colors shrink-0"
+                            className="cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground active:text-foreground transition-colors shrink-0 p-1.5 -ml-1.5 rounded-lg hover:bg-muted/50 touch-manipulation"
                           >
                             <GripVertical className="w-4 h-4" />
                           </div>

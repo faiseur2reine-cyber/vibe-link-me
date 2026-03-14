@@ -5,22 +5,22 @@
 ## ═══ PRIORITY 1 — BUGS & BROKEN ═══
 
 - [ ] Dashboard: verify all tabs render without crash on a fresh page (no data)
-- [ ] ImmersiveLayout: buttons with no bg_color set should default white pill + red icon circle
-- [ ] ImmersiveLayout: links with `style: 'featured'` should have visual distinction (glow/border)
+- [x] ImmersiveLayout: featured links have glow border + taller (72px)
+- [x] ImmersiveLayout: buttons with no bg_color default to white pill + red #e8503a icon
 - [x] PublicProfile: the `<a>` tags — verified, no double navigation (e.preventDefault in all handlers)
 - [x] PagesListView: revenue_monthly/revenue_commission use ?? fallback
 - [ ] TrackingEditor/SafePageEditor: test save → reload → values persist
-- [ ] ThemeSelector: "immersive" theme preview swatch is black on black — needs visual indicator
-- [ ] NsfwInlineGate: `rounded-[inherit]` might not work in all button contexts — test on all 4 link styles (default, featured, card, minimal)
+- [x] ThemeSelector: immersive preview now indigo-900 gradient (visible)
+- [x] NsfwInlineGate: explicit rounded-full (dark) / rounded-xl (light) — no inherit
 - [x] GeoGreeting: 3 fallbacks (ipapi.co → ipwho.is → ipinfo.io) + sessionStorage cache
-- [ ] LivePreview iframe: loads AgeGate on NSFW pages even with ?preview=true (verify this actually works)
+- [x] LivePreview iframe: ?preview=true bypass works — verified flow
 
 ## ═══ PRIORITY 2 — UX IMPROVEMENTS ═══
 
 - [ ] Dashboard: auto-save on editors instead of manual "Sauvegarder" button (debounced 1.5s)
 - [ ] Dashboard: toast notifications should be consistent — some use sonner, some use shadcn toast
 - [x] LinksManager: show platform icon (OF, MYM, IG, etc.) via LinkFavicon
-- [ ] LinksManager: drag handle should be more visible on mobile
+- [x] LinksManager: drag handle bigger touch target, visible on mobile
 - [ ] PageProfileEditor: cover photo upload should show crop guide for immersive hero ratio
 - [x] DashboardOverview: add "last edited" timestamp per page
 - [x] DashboardOverview: click on a page → navigates to detail via ?page=id
@@ -33,13 +33,13 @@
 
 - [ ] Bulk actions: select multiple pages → change status / assign operator / export CSV
 - [ ] Analytics: add conversion rate (clicks / page views) — needs page view tracking
-- [ ] Analytics: export to CSV
+- [x] Analytics: export to CSV (per-page, all sections: links, daily, country, city, referrer, A/B)
 - [ ] Link scheduling: set a link to appear/disappear at a specific date/time
 - [ ] A/B test editor: visual editor for creating A/B variants (currently just a field)
 - [ ] Custom domain per page: let creators use their own domain (CNAME setup guide)
 - [ ] Webhook on click: notify external URL when a link is clicked
 - [ ] Email notifications: daily/weekly summary of clicks per page
-- [ ] Dashboard: dark/light mode should persist and sync with system preference
+- [x] Dashboard: dark/light mode syncs with system preference + persists manual choice
 - [ ] i18n: all hardcoded French strings should use t() — audit and fix
 
 ## ═══ PRIORITY 4 — DESIGN POLISH ═══
@@ -52,7 +52,7 @@
 - [ ] PublicProfile: footer with "Powered by MyTaptap" + link (removable on Pro plan)
 - [ ] Favicon: generate proper set (16, 32, 180, 192, 512) from logo
 - [ ] PWA: proper icons set + splash screens
-- [ ] Loading skeleton: show skeleton cards instead of spinner while pages load
+- [x] Loading skeleton: skeleton cards shown during pages load (replaces spinner)
 
 ## ═══ PRIORITY 5 — PERFORMANCE & INFRA ═══
 
