@@ -5,12 +5,15 @@ import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Heart, Share2, ChevronRight, Check, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
+import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
+import { appendUtm } from '@/lib/utm';
 import { recordClick } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
 import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
 import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
+import { TrackingPixels, trackPixelClick } from '@/components/profile/TrackingPixels';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
 import ImmersiveLayout from '@/components/profile/ImmersiveLayout';
 import type { UrgencyConfig } from '@/components/dashboard/UrgencyEditor';
@@ -208,10 +211,28 @@ const PublicProfile = () => {
 
   const wrapNsfw = (node: React.ReactNode, link: LinkItem) =>
     isNsfwPage ? (
-      <NsfwLinkOverlay key={link.id} url={link.url} onRevealClick={() => recordClick(link.id, clickVariant)}>
+      <NsfwLinkOverlay key={link.id} url={link.url} onRevealClick={() => handleLinkClick(link)}>
         {node}
       </NsfwLinkOverlay>
     ) : node;
+
+  // Unified link click handler — deeplink + UTM + tracking pixels + analytics
+  const trackingConfig = {
+    metaPixel: page.tracking_meta_pixel,
+    ga4: page.tracking_ga4,
+    tiktokPixel: page.tracking_tiktok_pixel,
+  };
+  const utmParams = {
+    source: page.utm_source || undefined,
+    medium: page.utm_medium || undefined,
+    campaign: page.utm_campaign || undefined,
+  };
+  const handleLinkClick = (link: LinkItem) => {
+    recordClick(link.id, clickVariant);
+    trackPixelClick(link.title, trackingConfig);
+    const finalUrl = appendUtm(link.url, utmParams);
+    deeplinkNavigate(finalUrl);
+  };
 
   // In demo mode, prevent link navigation
   const demoLinkProps = isDemo ? {
@@ -226,6 +247,8 @@ const PublicProfile = () => {
     <>
       {showUrgencyWidgets && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
       {showUrgencyWidgets && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && <ProfileLocationToast enabled={true} pageId={page.id} />}
+
+      <TrackingPixels {...trackingConfig} />
 
       <Helmet>
         <title>{pageTitle}</title>
@@ -462,7 +485,7 @@ const PublicProfile = () => {
                       return wrapNsfw(
                         <motion.a
                           key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
-                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
+                          onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { scale: 1.015, y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
                           className={`group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
@@ -487,7 +510,7 @@ const PublicProfile = () => {
                       return wrapNsfw(
                         <motion.a
                           key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
-                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
+                          onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { y: -2, scale: 1.008 }} whileTap={isDemo ? {} : { scale: 0.98 }}
                           className={`link-item group relative flex items-center gap-3.5 px-4 py-3.5 sm:py-4 rounded-xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}
@@ -523,7 +546,7 @@ const PublicProfile = () => {
                       return wrapNsfw(
                         <motion.a
                           key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
-                          onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
+                          onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileTap={isDemo ? {} : { scale: 0.98 }}
                           className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${theme.text} ${isDemo ? 'cursor-default' : isDarkTheme ? 'hover:bg-white/[0.04]' : 'hover:bg-black/[0.02]'}`}
@@ -550,7 +573,7 @@ const PublicProfile = () => {
                     return wrapNsfw(
                       <motion.a
                         key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
-                        onClick={(e) => { if (isDemo) { e.preventDefault(); return; } recordClick(link.id, clickVariant); }}
+                        onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                         variants={fadeUp}
                         whileHover={isDemo ? {} : { y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
                         className={`link-item group relative flex items-center gap-3.5 px-4 py-3 sm:py-3.5 rounded-xl text-[13px] sm:text-[14px] font-semibold transition-all duration-300 overflow-hidden ${customBtnBg ? '' : theme.btn} ${isDemo ? 'cursor-default' : ''}`}

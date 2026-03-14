@@ -16,6 +16,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { detectPlatform } from '@/lib/platforms';
 
 interface CustomTemplate {
   id: string;
@@ -518,7 +519,20 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-muted-foreground">{t('dashboard.linkUrl')}</Label>
               <Input
-                value={url} onChange={(e) => setUrl(e.target.value)}
+                value={url} onChange={(e) => {
+                  const newUrl = e.target.value;
+                  setUrl(newUrl);
+                  // Auto-detect platform and fill fields if adding new link
+                  if (!editingLink) {
+                    const platform = detectPlatform(newUrl);
+                    if (platform) {
+                      if (!title || title === 'Nouveau lien' || title === '') setTitle(platform.name);
+                      if (!bgColor) setBgColor(platform.bgColor);
+                      if (!textColor) setTextColor(platform.textColor);
+                      if (linkStyle === 'default' && platform.style === 'featured') setLinkStyle('featured');
+                    }
+                  }
+                }}
                 maxLength={500} placeholder="https://example.com"
                 className="h-9"
               />

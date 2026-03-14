@@ -13,8 +13,9 @@ import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
 import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
 import TrackingEditor from '@/components/dashboard/TrackingEditor';
 import SafePageEditor from '@/components/dashboard/SafePageEditor';
+import AgencyEditor from '@/components/dashboard/AgencyEditor';
 import { LivePreview } from '@/components/dashboard/LivePreview';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck, Briefcase } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -37,6 +38,7 @@ const TABS = [
   { value: 'urgency', icon: Flame, label: 'Urgence' },
   { value: 'tracking', icon: Activity, label: 'Tracking' },
   { value: 'safepage', icon: ShieldCheck, label: 'Safe Page' },
+  { value: 'agency', icon: Briefcase, label: 'Agence' },
   { value: 'theme', icon: Palette, label: 'Thème' },
   { value: 'analytics', icon: BarChart3, label: 'Stats' },
 ];
@@ -204,6 +206,14 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                 <p className="text-[11px] text-muted-foreground mb-4">Page de couverture pour protéger votre contenu.</p>
               </div>
               <SafePageEditor page={page} onUpdate={handleUpdate} />
+            </TabsContent>
+
+            <TabsContent value="agency" className="mt-0">
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Gestion Agence</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Opérateur, revenus et notes internes.</p>
+              </div>
+              <AgencyEditor page={page} onUpdate={handleUpdate} />
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-0">
