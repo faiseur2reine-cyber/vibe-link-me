@@ -12,6 +12,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import ComparisonSection from '@/components/landing/ComparisonSection';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
 
 const Index = () => {
@@ -92,6 +93,7 @@ const Index = () => {
 
       <FeaturesSection />
       <ComparisonSection />
+      <TestimonialsSection />
       <PricingSection checkoutLoading={checkoutLoading} onUpgrade={handleUpgrade} />
 
       {/* CTA section */}

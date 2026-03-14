@@ -45,13 +45,13 @@
 ## ═══ PRIORITY 4 — DESIGN POLISH ═══
 
 - [x] Landing page: hero section already has 3D phone mockup with tilt
-- [ ] Landing page: add testimonials section
+- [x] Landing page: testimonials section with 4 creator quotes
 - [x] Landing page: comparison table vs Linktree/GAML/Beacons added
 - [ ] All themes: audit on mobile Safari (safe area, scroll, keyboard)
 - [x] ImmersiveLayout: parallax on hero photo via framer-motion useScroll/useTransform
 - [x] PublicProfile: "Powered by MyTaptap" footer — visible on free plan, hidden on starter/pro
-- [ ] Favicon: generate proper set (16, 32, 180, 192, 512) from logo
-- [ ] PWA: proper icons set + splash screens
+- [x] Favicon: full set generated (16, 32, 180, 192, 512, SVG, apple-touch-icon, favicon.ico)
+- [x] PWA: manifest.json with proper icons (192, 512, SVG) + maskable purpose
 - [x] Loading skeleton: skeleton cards shown during pages load (replaces spinner)
 
 ## ═══ PRIORITY 5 — PERFORMANCE & INFRA ═══
@@ -60,7 +60,7 @@
 - [ ] Images: add srcset/responsive images for avatars and covers
 - [ ] Service worker: cache public pages for offline viewing
 - [ ] Edge function: add ETag support for conditional requests
-- [ ] Supabase: add indexes on link_clicks(link_id, clicked_at) if not exists
+- [x] Supabase: indexes on link_clicks(link_id, clicked_at), creator_pages(username), page_links(page_id, position)
 - [x] Error boundary: App wrapped with ErrorBoundary (branded crash page + Go Home button)
 - [ ] Sentry/error tracking: add basic error reporting
 
