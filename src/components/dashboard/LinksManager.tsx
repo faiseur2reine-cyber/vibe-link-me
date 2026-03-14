@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import {
   Plus, GripVertical, Pencil, Trash2, ExternalLink, Loader2,
-  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock, MousePointerClick, Eye, EyeOff, Copy,
+  ImagePlus, X, Palette, LayoutTemplate, BookmarkPlus, ChevronDown, Link as LinkIcon, Clock, MousePointerClick, Eye, EyeOff, Copy, ArrowUpDown, ArrowDownAZ, TrendingDown,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -136,6 +136,21 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const LINK_TEMPLATES = useLinkTemplates(t);
   const quickAddRef = useRef<HTMLInputElement>(null);
   const clickCounts = useLinkClickCounts(links.map(l => l.id));
+  const [sortBy, setSortBy] = useState<'manual' | 'alpha' | 'clicks'>('manual');
+
+  // Sort links based on selected sort
+  const sortedLinks = sortBy === 'manual' ? links : [...links].sort((a, b) => {
+    if (sortBy === 'alpha') return (a.title || '').localeCompare(b.title || '');
+    if (sortBy === 'clicks') return (clickCounts.get(b.id) || 0) - (clickCounts.get(a.id) || 0);
+    return 0;
+  });
+
+  // Apply current sort order to DB positions
+  const applySortToDb = async (sorted: typeof links) => {
+    await onReorder(sorted);
+    toast.success('Ordre appliqué');
+    setSortBy('manual');
+  };
 
   // Cmd+K → focus quick add
   useEffect(() => {
@@ -367,11 +382,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination || result.source.index === result.destination.index) return;
-    const items = Array.from(links);
+    const items = Array.from(sortedLinks);
     const [moved] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, moved);
     onReorder(items);
-    toast.success('Ordre mis à jour', { duration: 1500 });
   };
 
   // --- Render ---
@@ -417,6 +431,30 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </div>
       </div>
 
+      {/* Sort controls */}
+      {links.length > 2 && (
+        <div className="flex items-center gap-1.5">
+          {([
+            { value: 'manual' as const, icon: GripVertical, label: 'Manuel' },
+            { value: 'alpha' as const, icon: ArrowDownAZ, label: 'A→Z' },
+            { value: 'clicks' as const, icon: TrendingDown, label: 'Clics' },
+          ]).map(s => (
+            <button key={s.value} onClick={() => setSortBy(s.value)}
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                sortBy === s.value ? 'bg-foreground text-background' : 'text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/30'}`}>
+              <s.icon className="w-3 h-3" />
+              {s.label}
+            </button>
+          ))}
+          {sortBy !== 'manual' && (
+            <button onClick={() => applySortToDb(sortedLinks)}
+              className="ml-auto text-[10px] text-primary hover:text-primary/80 font-medium transition-colors">
+              Appliquer cet ordre
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Quick add — paste a URL */}
       <div className="relative group">
         <Input
@@ -459,12 +497,12 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       )}
 
       {/* Links list */}
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="links">
+      <DragDropContext onDragEnd={sortBy === 'manual' ? handleDragEnd : () => {}}>
+        <Droppable droppableId="links" isDropDisabled={sortBy !== 'manual'}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-1">
-              {links.map((link, index) => {
-                const prevLink = index > 0 ? links[index - 1] : null;
+              {sortedLinks.map((link, index) => {
+                const prevLink = index > 0 ? sortedLinks[index - 1] : null;
                 const showSectionHeader = link.section_title &&
                   (!prevLink || prevLink.section_title !== link.section_title);
 
@@ -493,7 +531,11 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                           {/* Drag handle */}
                           <div
                             {...provided.dragHandleProps}
-                            className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 active:text-foreground transition-colors shrink-0 p-1.5 -ml-1.5 rounded-lg hover:bg-muted/40 touch-manipulation"
+                            className={`transition-colors shrink-0 p-1.5 -ml-1.5 rounded-lg touch-manipulation ${
+                              sortBy === 'manual'
+                                ? 'cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 hover:bg-muted/40'
+                                : 'cursor-default text-muted-foreground/10'
+                            }`}
                           >
                             <GripVertical className="w-3.5 h-3.5" />
                           </div>
