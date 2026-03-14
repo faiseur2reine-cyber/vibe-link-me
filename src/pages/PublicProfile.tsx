@@ -27,6 +27,18 @@ interface CreatorPageData {
   custom_btn_text_color?: string | null; custom_font?: string;
   link_layout?: string; custom_css?: string | null;
   urgency_config?: UrgencyConfig | null;
+  // FDR patch fields
+  safe_page_enabled?: boolean;
+  safe_page_redirect_url?: string | null;
+  geo_greeting_enabled?: boolean;
+  connected_label?: string | null;
+  location?: string | null;
+  tracking_meta_pixel?: string | null;
+  tracking_ga4?: string | null;
+  tracking_tiktok_pixel?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
 }
 
 interface LinkItem {
@@ -75,8 +87,8 @@ const PublicProfile = () => {
         if (result.page) {
           const pageData = { ...result.page, social_links: (result.page.social_links as unknown as SocialLink[]) || [] } as CreatorPageData;
           // Bot redirect to safe page if enabled
-          if (isBot && (pageData as any).safe_page_enabled) {
-            const safeUrl = (pageData as any).safe_page_redirect_url || `/safe/${username}`;
+          if (isBot && pageData.safe_page_enabled) {
+            const safeUrl = pageData.safe_page_redirect_url || `/safe/${username}`;
             window.location.replace(safeUrl);
             return;
           }
@@ -160,7 +172,7 @@ const PublicProfile = () => {
 
   // ── Immersive theme: completely different GAML-style layout
   if (page.theme === 'immersive' && !isDemo) {
-    return <ImmersiveLayout page={page as any} links={links} abVariant={abVariant} />;
+    return <ImmersiveLayout page={page} links={links} abVariant={abVariant} />;
   }
 
   const displayName = page.display_name || page.username;

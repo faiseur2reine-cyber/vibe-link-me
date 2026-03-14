@@ -33,8 +33,10 @@ interface PageData {
   is_nsfw: boolean;
   social_links: SocialLink[];
   plan?: string;
-  connected_label?: string;
-  location?: string;
+  theme?: string;
+  user_id?: string;
+  connected_label?: string | null;
+  location?: string | null;
   urgency_config?: UrgencyConfig | null;
   // Tracking
   tracking_meta_pixel?: string | null;
@@ -48,6 +50,8 @@ interface PageData {
   // Safe page
   safe_page_enabled?: boolean;
   safe_page_redirect_url?: string | null;
+  // Allow extra fields from CreatorPageData
+  [key: string]: any;
 }
 
 interface LinkData {
