@@ -16,8 +16,7 @@ const PricingSection = ({ checkoutLoading, onUpgrade }: PricingSectionProps) => 
     <section className="px-4 sm:px-6 py-24 sm:py-32 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-secondary/30" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-pop-yellow/5 rounded-full blur-3xl animate-blob" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pop-violet/5 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
+      <PricingBlobs />
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header */}
