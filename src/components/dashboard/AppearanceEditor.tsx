@@ -170,6 +170,7 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
   const [connectedLabel, setConnectedLabel] = useState(page.connected_label || 'Active now');
   const [location, setLocation] = useState(page.location || '');
   const [geoEnabled, setGeoEnabled] = useState(page.geo_greeting_enabled ?? true);
+  const [selectedTheme, setSelectedTheme] = useState(page.theme || 'default');
 
   useEffect(() => {
     setBgColor(page.custom_bg_color || '');
@@ -183,6 +184,7 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
     setConnectedLabel(page.connected_label || 'Active now');
     setLocation(page.location || '');
     setGeoEnabled(page.geo_greeting_enabled ?? true);
+    setSelectedTheme(page.theme || 'default');
   }, [page.id, page.theme, page.custom_bg_color, page.custom_text_color, page.custom_accent_color,
       page.custom_btn_color, page.custom_btn_text_color, page.custom_font, page.link_layout,
       page.custom_css, page.connected_label, page.location, page.geo_greeting_enabled]);
@@ -199,36 +201,40 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
     else toast.error(result.error.message);
   }, 1200);
 
+  // Build complete preview state (theme + all design fields)
+  const buildPreview = (extra?: Partial<CreatorPage>): Partial<CreatorPage> => ({
+    theme: selectedTheme,
+    custom_bg_color: bgColor || null,
+    custom_text_color: textColor || null,
+    custom_accent_color: accentColor || null,
+    custom_btn_color: btnColor || null,
+    custom_btn_text_color: btnTextColor || null,
+    custom_font: font,
+    link_layout: layout,
+    connected_label: connectedLabel,
+    location,
+    ...extra,
+  } as Partial<CreatorPage>);
+
   const save = () => {
     triggerSave();
-    // Instant preview update (no waiting for DB save)
-    onPreviewChange?.({
-      custom_bg_color: bgColor || null,
-      custom_text_color: textColor || null,
-      custom_accent_color: accentColor || null,
-      custom_btn_color: btnColor || null,
-      custom_btn_text_color: btnTextColor || null,
-      custom_font: font,
-      link_layout: layout,
-      connected_label: connectedLabel,
-      location,
-    } as Partial<CreatorPage>);
+    onPreviewChange?.(buildPreview());
   };
 
   const selectTheme = async (key: string) => {
-    const theme = THEMES[key];
-    if (!canAccessTheme(theme.tier, plan)) {
-      toast.error(`Plan ${theme.tier === 'pro' ? 'Pro' : 'Starter'} requis`);
+    const t = THEMES[key];
+    if (!canAccessTheme(t.tier, plan)) {
+      toast.error(`Plan ${t.tier === 'pro' ? 'Pro' : 'Starter'} requis`);
       return;
     }
-    // Instant preview before DB save
-    onPreviewChange?.({ theme: key } as Partial<CreatorPage>);
+    setSelectedTheme(key); // instant local update
+    onPreviewChange?.(buildPreview({ theme: key } as Partial<CreatorPage>));
     const result = await onUpdate({ theme: key } as any);
     if (!result?.error) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
   };
 
   const activeColors = [bgColor, textColor, accentColor, btnColor, btnTextColor].filter(Boolean).length;
-  const isImmersive = page.theme === 'immersive';
+  const isImmersive = selectedTheme === 'immersive';
   const designState = useMemo(() => ({ bgColor, textColor, btnColor, btnTextColor }), [bgColor, textColor, btnColor, btnTextColor]);
 
   return (
@@ -246,7 +252,7 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
             )}
           </AnimatePresence>
         </div>
-        <MiniPreview page={page} links={links} design={designState} />
+        <MiniPreview page={{...page, theme: selectedTheme} as CreatorPage} links={links} design={designState} />
       </div>
 
       {/* ═══ THEMES ═══ */}
@@ -254,7 +260,7 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
         <p className="text-[11px] text-muted-foreground/50 uppercase tracking-wider font-medium mb-2.5">Thème</p>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
           {Object.entries(THEMES).map(([key, theme]) => {
-            const sel = page.theme === key;
+            const sel = selectedTheme === key;
             const locked = !canAccessTheme(theme.tier, plan);
             const sc = SWATCH_COLORS[key] || SWATCH_COLORS.default;
             return (
