@@ -580,12 +580,6 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                                 {link.style}
                               </span>
                             )}
-                            {(link.scheduled_at || link.expires_at) && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 flex items-center gap-0.5">
-                                <Clock className="w-2.5 h-2.5" />
-                                {link.scheduled_at && new Date(link.scheduled_at) > new Date() ? 'Programmé' : link.expires_at ? 'Expire' : ''}
-                              </span>
-                            )}
                           </div>
 
                           {/* Actions — visible on hover */}
