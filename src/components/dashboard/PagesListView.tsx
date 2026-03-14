@@ -19,10 +19,12 @@ interface PagesListViewProps {
 }
 
 const StatPill = ({ icon: Icon, value, label }: { icon: any; value: number; label: string }) => (
-  <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-    <Icon className="w-3 h-3" />
+  <div className="flex items-center gap-2 text-[12px]">
+    <div className="w-6 h-6 rounded-lg bg-muted/50 flex items-center justify-center">
+      <Icon className="w-3 h-3 text-muted-foreground" />
+    </div>
     <span className="font-semibold text-foreground tabular-nums">{value}</span>
-    <span>{label}</span>
+    <span className="text-muted-foreground/60">{label}</span>
   </div>
 );
 
@@ -136,21 +138,21 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-24 text-center"
+          className="flex flex-col items-center justify-center py-28 text-center"
         >
-          <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
-            <Link2 className="w-4 h-4 text-muted-foreground" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4">
+            <Link2 className="w-6 h-6 text-primary/60" />
           </div>
-          <h2 className="text-sm font-medium">{t('pages.noPages')}</h2>
-          <p className="text-[13px] text-muted-foreground mt-0.5 max-w-[240px]">
+          <h2 className="text-base font-semibold">{t('pages.noPages')}</h2>
+          <p className="text-[13px] text-muted-foreground/60 mt-1 max-w-[260px]">
             {t('pages.noPagesDesc')}
           </p>
-          <Button onClick={onCreatePage} size="sm" className="mt-4 h-8 px-4 text-[12px] gap-1.5 rounded-lg shadow-none">
-            <Plus className="w-3 h-3" /> Créer une page
+          <Button onClick={onCreatePage} size="sm" className="mt-5 h-9 px-5 text-[12px] gap-2 rounded-xl">
+            <Plus className="w-3.5 h-3.5" /> {t('pages.createPage')}
           </Button>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredPages.map((page, i) => (
             <motion.div
               key={page.id}
@@ -291,10 +293,12 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
           >
             <div
               onClick={onCreatePage}
-              className="rounded-xl border border-dashed border-border/60 bg-transparent p-3.5 cursor-pointer hover:border-border hover:bg-accent/20 transition-all duration-150 flex flex-col items-center justify-center min-h-[100px] text-center"
+              className="rounded-2xl border-2 border-dashed border-border/30 bg-transparent p-3.5 cursor-pointer hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-300 flex flex-col items-center justify-center min-h-[100px] text-center group"
             >
-              <Plus className="w-4 h-4 text-muted-foreground/60 mb-1" />
-              <span className="text-[12px] text-muted-foreground">{t('pages.newPage')}</span>
+              <div className="w-9 h-9 rounded-xl bg-muted/40 group-hover:bg-primary/10 flex items-center justify-center mb-2 transition-colors duration-300">
+                <Plus className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-[12px] text-muted-foreground/50 group-hover:text-foreground transition-colors">{t('pages.newPage')}</span>
             </div>
           </motion.div>
         </div>

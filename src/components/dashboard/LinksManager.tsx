@@ -418,11 +418,11 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       </div>
 
       {/* Quick add — paste a URL */}
-      <div className="relative">
+      <div className="relative group">
         <Input
           ref={quickAddRef}
           placeholder="Coller une URL pour ajouter un lien..."
-          className="h-9 text-[13px] pl-9 pr-16 bg-muted/30 border-dashed border-border/60 focus:border-primary/40"
+          className="h-10 text-[13px] pl-10 pr-16 bg-muted/20 border-dashed border-border/40 focus:border-primary/40 focus:bg-background"
           onKeyDown={async (e) => {
             if (e.key !== 'Enter') return;
             const input = e.currentTarget;
@@ -438,18 +438,23 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             }
           }}
         />
-        <Plus className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
-        <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground/60 font-mono">⌘K</kbd>
+        <Plus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary/50 transition-colors" />
+        <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-muted/60 text-[10px] text-muted-foreground/40 font-mono border border-border/30">⌘K</kbd>
       </div>
 
       {/* Empty state */}
       {links.length === 0 && (
         <button
           onClick={openNew}
-          className="w-full py-10 rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground"
+          className="w-full py-12 rounded-2xl border-2 border-dashed border-border/30 hover:border-primary/30 transition-all duration-300 flex flex-col items-center gap-3 text-muted-foreground/50 hover:text-foreground group"
         >
-          <Plus className="w-5 h-5" />
-          <span className="text-sm font-medium">{t('linksManager.addFirstLink')}</span>
+          <div className="w-12 h-12 rounded-2xl bg-muted/40 group-hover:bg-primary/10 flex items-center justify-center transition-colors duration-300">
+            <Plus className="w-5 h-5 group-hover:text-primary transition-colors" />
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-medium block">{t('linksManager.addFirstLink')}</span>
+            <span className="text-[11px] text-muted-foreground/40 mt-0.5 block">ou collez une URL ci-dessus</span>
+          </div>
         </button>
       )}
 
@@ -479,42 +484,42 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all ${
+                          className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                             snapshot.isDragging
-                              ? 'bg-card shadow-lg ring-1 ring-border scale-[1.02]'
-                              : 'hover:bg-muted/60'
-                          } ${link.is_visible === false ? 'opacity-40' : ''}`}
+                              ? 'bg-card shadow-xl shadow-black/[0.08] ring-1 ring-border/50 scale-[1.02]'
+                              : 'hover:bg-accent/30'
+                          } ${link.is_visible === false ? 'opacity-35' : ''}`}
                         >
-                          {/* Drag handle — bigger touch target on mobile */}
+                          {/* Drag handle */}
                           <div
                             {...provided.dragHandleProps}
-                            className="cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground active:text-foreground transition-colors shrink-0 p-1.5 -ml-1.5 rounded-lg hover:bg-muted/50 touch-manipulation"
+                            className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 active:text-foreground transition-colors shrink-0 p-1.5 -ml-1.5 rounded-lg hover:bg-muted/40 touch-manipulation"
                           >
-                            <GripVertical className="w-4 h-4" />
+                            <GripVertical className="w-3.5 h-3.5" />
                           </div>
 
-                          {/* Color dot or thumbnail */}
+                          {/* Icon */}
                           {link.thumbnail_url ? (
-                            <img src={link.thumbnail_url} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                            <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/20" />
                           ) : link.bg_color ? (
                             <div
-                              className="w-9 h-9 rounded-lg shrink-0 flex items-center justify-center"
+                              className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center shadow-sm"
                               style={{ backgroundColor: link.bg_color }}
                             >
                               <LinkFavicon url={link.url} size="sm" className={link.text_color ? '' : 'text-white'} />
                             </div>
                           ) : (
-                            <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0">
                               <LinkFavicon url={link.url} size="sm" />
                             </div>
                           )}
 
                           {/* Content */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate leading-tight">
+                            <p className="text-[13px] font-medium text-foreground truncate leading-tight">
                               {link.title}
                             </p>
-                            <p className="text-xs text-muted-foreground truncate mt-0.5">
+                            <p className="text-[11px] text-muted-foreground/60 truncate mt-0.5">
                               {link.description || link.url}
                             </p>
                           </div>
