@@ -170,8 +170,8 @@ const DashboardOverview = () => {
                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-blue-500" />
+                  <div className="w-8 h-8 rounded-xl bg-pop-cyan/12 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-pop-cyan" />
                   </div>
                   <div>
                     <p className="text-[13px] font-medium text-foreground">Voir les analytics</p>
