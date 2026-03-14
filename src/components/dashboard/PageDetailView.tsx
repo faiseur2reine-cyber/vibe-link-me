@@ -190,6 +190,22 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
             </TabsContent>
 
+            <TabsContent value="tracking" className="mt-0">
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Tracking & UTM</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Pixels de conversion et paramètres UTM automatiques.</p>
+              </div>
+              <TrackingEditor page={page} onUpdate={handleUpdate} />
+            </TabsContent>
+
+            <TabsContent value="safepage" className="mt-0">
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Safe Page</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Page de couverture pour protéger votre contenu.</p>
+              </div>
+              <SafePageEditor page={page} onUpdate={handleUpdate} />
+            </TabsContent>
+
             <TabsContent value="analytics" className="mt-0">
               <PageAnalyticsPanel pageId={page.id} links={links} />
             </TabsContent>
