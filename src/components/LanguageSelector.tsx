@@ -31,8 +31,11 @@ const LanguageSelector = () => {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => i18n.changeLanguage(lang.code)}
-            className={i18n.language?.startsWith(lang.code) ? 'bg-accent' : ''}
+            onClick={() => {
+              i18n.changeLanguage(lang.code);
+              document.documentElement.lang = lang.code;
+            }}
+            className={i18n.language === lang.code ? 'bg-accent font-medium' : ''}
           >
             {lang.label}
           </DropdownMenuItem>

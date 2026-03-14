@@ -21,7 +21,9 @@ i18n
       it: { translation: it },
       pt: { translation: pt },
     },
+    supportedLngs: ['fr', 'en', 'es', 'de', 'it', 'pt'],
     fallbackLng: 'en',
+    load: 'languageOnly', // fr-FR → fr, en-US → en
     interpolation: {
       escapeValue: false,
     },
@@ -29,6 +31,9 @@ i18n
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
       lookupLocalStorage: 'i18nextLng',
+    },
+    react: {
+      useSuspense: false, // prevents blank flash on language switch
     },
   });
 
