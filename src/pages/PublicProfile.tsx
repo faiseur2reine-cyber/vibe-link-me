@@ -375,7 +375,7 @@ const PublicProfile = () => {
           <div className="profile-header text-center relative">
             {page.cover_url && (
               <motion.div variants={fadeUp} className="w-full h-24 rounded-2xl overflow-hidden mb-4">
-                <img src={page.cover_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img src={page.cover_url} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
               </motion.div>
             )}
 
@@ -398,7 +398,7 @@ const PublicProfile = () => {
               <div className="relative">
                 <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ${theme.avatarRing}`}>
                   {page.avatar_url ? (
-                    <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" />
+                    <img src={page.avatar_url} alt={displayName} className="w-full h-full object-cover" loading="eager" decoding="async" />
                   ) : (
                     <div className={`w-full h-full flex items-center justify-center ${
                       isDarkTheme
@@ -551,7 +551,7 @@ const PublicProfile = () => {
                           className={`group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
                         >
                           <PopularBadge />
-                          <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
+                          <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" decoding="async" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
                             <div className="min-w-0">
