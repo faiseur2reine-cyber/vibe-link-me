@@ -88,21 +88,21 @@ export const InlinePreview = ({ page, links }: InlinePreviewProps) => {
 
 // ═══ STANDARD THEMES ═══
 
-// Explicit colors per theme for the miniature preview (Tailwind gradients are too subtle at 260px)
-const THEME_COLORS: Record<string, { bg: string; text: string; sub: string; btn: string; btnText: string; ring: string }> = {
-  default:    { bg: '#f9fafb', text: '#111827', sub: '#9ca3af', btn: '#ffffff', btnText: '#111827', ring: '#ffffff' },
-  sunset:     { bg: '#fff5ed', text: '#431407', sub: '#c2410c', btn: '#fff7ed', btnText: '#9a3412', ring: '#fed7aa' },
-  ocean:      { bg: '#eff6ff', text: '#1e3a5f', sub: '#3b82f6', btn: '#eff6ff', btnText: '#1e40af', ring: '#bfdbfe' },
-  midnight:   { bg: '#0a0a0f', text: '#e5e7eb', sub: '#6b7280', btn: 'rgba(255,255,255,0.06)', btnText: '#d1d5db', ring: '#374151' },
-  forest:     { bg: '#ecfdf5', text: '#064e3b', sub: '#059669', btn: '#f0fdf4', btnText: '#065f46', ring: '#a7f3d0' },
-  neon:       { bg: '#08080c', text: '#f0abfc', sub: '#a855f7', btn: 'rgba(217,70,239,0.08)', btnText: '#e879f9', ring: '#581c87' },
-  glass_dark: { bg: '#111118', text: '#e5e7eb', sub: '#6b7280', btn: 'rgba(255,255,255,0.05)', btnText: '#d1d5db', ring: '#1f2937' },
-  pastel:     { bg: '#fdf2f8', text: '#4c1d95', sub: '#8b5cf6', btn: '#faf5ff', btnText: '#5b21b6', ring: '#e9d5ff' },
-  brutalist:  { bg: '#f5f0e8', text: '#000000', sub: '#000000', btn: '#ffffff', btnText: '#000000', ring: '#000000' },
-  aurora:     { bg: '#0c0a1a', text: '#e5e7eb', sub: '#34d399', btn: 'rgba(255,255,255,0.05)', btnText: '#a7f3d0', ring: '#064e3b' },
-  cyber:      { bg: '#050510', text: '#ecfeff', sub: '#22d3ee', btn: 'rgba(34,211,238,0.06)', btnText: '#a5f3fc', ring: '#164e63' },
-  marble:     { bg: '#f5f5f0', text: '#44403c', sub: '#a8a29e', btn: '#ffffff', btnText: '#44403c', ring: '#e7e5e4' },
-  minimal:    { bg: '#ffffff', text: '#171717', sub: '#a3a3a3', btn: '#ffffff', btnText: '#171717', ring: '#e5e5e5' },
+// Saturated colors for 260px miniature — must be visually distinct at a glance
+const THEME_COLORS: Record<string, { bg: string; text: string; sub: string; btn: string; btnText: string; ring: string; border?: string }> = {
+  default:    { bg: '#f0f0f2',  text: '#18181b', sub: '#a1a1aa', btn: '#ffffff',              btnText: '#18181b', ring: '#d4d4d8' },
+  sunset:     { bg: '#fcc891',  text: '#7c2d12', sub: '#ea580c', btn: '#fde68a',              btnText: '#92400e', ring: '#f59e0b' },
+  ocean:      { bg: '#93c5fd',  text: '#1e3a5f', sub: '#1d4ed8', btn: '#bfdbfe',              btnText: '#1e3a5f', ring: '#3b82f6' },
+  midnight:   { bg: '#09090f',  text: '#e4e4e7', sub: '#52525b', btn: 'rgba(255,255,255,0.08)', btnText: '#d4d4d8', ring: '#27272a' },
+  forest:     { bg: '#86efac',  text: '#14532d', sub: '#15803d', btn: '#bbf7d0',              btnText: '#14532d', ring: '#22c55e' },
+  neon:       { bg: '#0a0a0f',  text: '#f0abfc', sub: '#c026d3', btn: 'rgba(192,38,211,0.25)', btnText: '#f0abfc', ring: '#86198f' },
+  glass_dark: { bg: '#18181b',  text: '#e4e4e7', sub: '#71717a', btn: 'rgba(255,255,255,0.08)', btnText: '#d4d4d8', ring: '#3f3f46' },
+  pastel:     { bg: '#f0abfc',  text: '#581c87', sub: '#7c3aed', btn: '#e9d5ff',              btnText: '#6b21a8', ring: '#a855f7' },
+  brutalist:  { bg: '#f5f0e8',  text: '#000000', sub: '#000000', btn: '#ffffff',              btnText: '#000000', ring: '#000000', border: '2px solid #000' },
+  aurora:     { bg: '#0f172a',  text: '#d1fae5', sub: '#34d399', btn: 'rgba(52,211,153,0.15)', btnText: '#6ee7b7', ring: '#065f46' },
+  cyber:      { bg: '#050510',  text: '#a5f3fc', sub: '#06b6d4', btn: 'rgba(6,182,212,0.15)',  btnText: '#67e8f9', ring: '#155e75' },
+  marble:     { bg: '#d6d3d1',  text: '#44403c', sub: '#78716c', btn: '#f5f5f4',              btnText: '#44403c', ring: '#a8a29e' },
+  minimal:    { bg: '#ffffff',  text: '#171717', sub: '#a3a3a3', btn: '#f5f5f5',              btnText: '#171717', ring: '#e5e5e5' },
 };
 
 const StandardPreview = ({ page, links, displayName }: {
@@ -183,7 +183,8 @@ const StandardPreview = ({ page, links, displayName }: {
           const buttonStyle: React.CSSProperties = {
             backgroundColor: linkBg,
             color: linkText,
-            ...(isBrutalist ? { border: '2px solid #000', boxShadow: '2px 2px 0 #000' } : {}),
+            ...(isBrutalist ? { border: '2px solid #000', boxShadow: '2px 2px 0 #000' } :
+              !isDark ? { border: '1px solid rgba(0,0,0,0.06)' } : { border: '1px solid rgba(255,255,255,0.06)' }),
             ...(platformColor && !link.bg_color && !page.custom_btn_color ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
           };
 

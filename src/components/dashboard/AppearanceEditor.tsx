@@ -138,6 +138,24 @@ const ColorPick = ({ label, value, onChange }: { label: string; value: string; o
   </div>
 );
 
+// Saturated swatch colors for theme picker grid (must pop at tiny size)
+const SWATCH_COLORS: Record<string, { bg: string; dot: string; bar1: string; bar2: string }> = {
+  default:    { bg: '#e8e8eb', dot: 'rgba(0,0,0,0.15)', bar1: 'rgba(0,0,0,0.08)', bar2: 'rgba(0,0,0,0.05)' },
+  sunset:     { bg: 'linear-gradient(135deg, #fdba74, #f87171)', dot: 'rgba(255,255,255,0.5)', bar1: 'rgba(255,255,255,0.35)', bar2: 'rgba(255,255,255,0.2)' },
+  ocean:      { bg: 'linear-gradient(135deg, #7dd3fc, #6366f1)', dot: 'rgba(255,255,255,0.5)', bar1: 'rgba(255,255,255,0.35)', bar2: 'rgba(255,255,255,0.2)' },
+  midnight:   { bg: '#0a0a12', dot: 'rgba(255,255,255,0.15)', bar1: 'rgba(255,255,255,0.08)', bar2: 'rgba(255,255,255,0.05)' },
+  forest:     { bg: 'linear-gradient(135deg, #6ee7b7, #34d399)', dot: 'rgba(255,255,255,0.5)', bar1: 'rgba(255,255,255,0.35)', bar2: 'rgba(255,255,255,0.2)' },
+  neon:       { bg: 'linear-gradient(135deg, #d946ef, #7c3aed)', dot: 'rgba(255,255,255,0.4)', bar1: 'rgba(255,255,255,0.25)', bar2: 'rgba(255,255,255,0.15)' },
+  glass_dark: { bg: 'linear-gradient(135deg, #27272a, #18181b)', dot: 'rgba(255,255,255,0.12)', bar1: 'rgba(255,255,255,0.06)', bar2: 'rgba(255,255,255,0.04)' },
+  pastel:     { bg: 'linear-gradient(135deg, #f9a8d4, #c4b5fd)', dot: 'rgba(255,255,255,0.5)', bar1: 'rgba(255,255,255,0.35)', bar2: 'rgba(255,255,255,0.2)' },
+  brutalist:  { bg: '#f5f0e8', dot: '#000', bar1: '#000', bar2: '#000' },
+  aurora:     { bg: 'linear-gradient(135deg, #7c3aed, #34d399)', dot: 'rgba(255,255,255,0.4)', bar1: 'rgba(255,255,255,0.25)', bar2: 'rgba(255,255,255,0.15)' },
+  cyber:      { bg: 'linear-gradient(135deg, #0891b2, #06b6d4)', dot: 'rgba(255,255,255,0.4)', bar1: 'rgba(255,255,255,0.25)', bar2: 'rgba(255,255,255,0.15)' },
+  marble:     { bg: '#d6d3d1', dot: 'rgba(0,0,0,0.12)', bar1: 'rgba(0,0,0,0.06)', bar2: 'rgba(0,0,0,0.04)' },
+  minimal:    { bg: '#ffffff', dot: 'rgba(0,0,0,0.1)', bar1: 'rgba(0,0,0,0.06)', bar2: 'rgba(0,0,0,0.04)' },
+  immersive:  { bg: 'linear-gradient(135deg, #1e1b4b, #0f172a)', dot: 'rgba(255,255,255,0.4)', bar1: 'rgba(255,255,255,0.25)', bar2: 'rgba(255,255,255,0.15)' },
+};
+
 // ═══ MAIN ═══
 const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreviewChange }: AppearanceEditorProps) => {
   const [bgColor, setBgColor] = useState(page.custom_bg_color || '');
@@ -238,16 +256,17 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
           {Object.entries(THEMES).map(([key, theme]) => {
             const sel = page.theme === key;
             const locked = !canAccessTheme(theme.tier, plan);
+            const sc = SWATCH_COLORS[key] || SWATCH_COLORS.default;
             return (
               <button key={key} onClick={() => selectTheme(key)}
                 className={`relative rounded-xl overflow-hidden transition-all duration-150 ${
                   sel ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' :
                   locked ? 'opacity-30 grayscale' : 'hover:ring-1 hover:ring-border/50'}`}>
-                <div className={`h-12 ${theme.preview} flex items-center justify-center`}>
-                  <div className="flex flex-col items-center gap-[2px]">
-                    <div className="w-3 h-3 rounded-full bg-white/25" />
-                    <div className="w-7 h-[3px] rounded-full bg-white/15" />
-                    <div className="w-8 h-[3px] rounded-sm bg-white/10" />
+                <div className="h-14 flex items-center justify-center" style={{ background: sc.bg }}>
+                  <div className="flex flex-col items-center gap-[3px]">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: sc.dot }} />
+                    <div className="w-10 h-[4px] rounded-full" style={{ backgroundColor: sc.bar1 }} />
+                    <div className="w-12 h-[5px] rounded-sm" style={{ backgroundColor: sc.bar2 }} />
                   </div>
                   {sel && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
                     className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center shadow-sm">
