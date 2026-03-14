@@ -34,17 +34,33 @@ const GeoGreeting = ({ enabled, template = 'Hey {city} 👋', className }: GeoGr
       try { sessionStorage.setItem(CACHE_KEY, c); } catch {}
     };
 
-    // Try ipapi.co first (1000/day free, HTTPS)
-    fetch('https://ipapi.co/json/', opts)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(data => { if (data?.city) saveCity(data.city); else throw new Error(); })
-      .catch(() => {
-        // Fallback: ipwho.is (free, HTTPS, no key needed)
-        fetch('https://ipwho.is/', opts)
-          .then(r => r.json())
-          .then(data => { if (data?.city) saveCity(data.city); })
-          .catch(() => {}); // Both failed, silent
-      });
+    // Chain of GeoIP providers — first success wins
+    const tryGeo = async () => {
+      // 1. ipapi.co (1000/day free, HTTPS)
+      try {
+        const r = await fetch('https://ipapi.co/json/', opts);
+        if (r.ok) {
+          const data = await r.json();
+          if (data?.city) { saveCity(data.city); return; }
+        }
+      } catch {}
+
+      // 2. ipwho.is (free, HTTPS)
+      try {
+        const r = await fetch('https://ipwho.is/', opts);
+        const data = await r.json();
+        if (data?.city) { saveCity(data.city); return; }
+      } catch {}
+
+      // 3. ipinfo.io (50K/month free, HTTPS)
+      try {
+        const r = await fetch('https://ipinfo.io/json', opts);
+        const data = await r.json();
+        if (data?.city) { saveCity(data.city); return; }
+      } catch {}
+    };
+
+    tryGeo();
 
     const timeout = setTimeout(() => controller.abort(), 3000);
     return () => { controller.abort(); clearTimeout(timeout); };

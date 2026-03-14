@@ -183,8 +183,8 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     {page.operator && (
                       <span className="text-[9px] text-muted-foreground truncate max-w-[80px]">{page.operator}</span>
                     )}
-                    {page.revenue_monthly > 0 && (
-                      <span className="text-[9px] text-emerald-600 font-medium">{Math.round(page.revenue_monthly * (page.revenue_commission || 20) / 100)}€</span>
+                    {(page.revenue_monthly ?? 0) > 0 && (
+                      <span className="text-[9px] text-emerald-600 font-medium">{Math.round((page.revenue_monthly ?? 0) * (page.revenue_commission ?? 20) / 100)}€</span>
                     )}
                   </div>
                   <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity">
