@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { TapLink as Link2, TapPalette as Palette, TapChart as BarChart3, TapGrip as GripVertical, TapGlobe as Globe, TapSmartphone as Smartphone } from '@/components/icons/TapIcons';
+import { FeatureBlobs } from './PopBlobs';
 
 const features = [
   { key: 'links', icon: Link2, accent: 'pop-violet', shadow: 'shadow-pop-violet' },

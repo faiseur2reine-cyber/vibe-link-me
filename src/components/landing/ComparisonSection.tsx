@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { TapCheck as Check, TapX as X } from '@/components/icons/TapIcons';
+import { ComparisonBlobs } from './PopBlobs';
 import { Minus } from 'lucide-react';
 
 const features = [

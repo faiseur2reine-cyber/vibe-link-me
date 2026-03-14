@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { TapCheck as Check, TapLoader as Loader2, TapArrowRight as ArrowRight, TapStar as Star } from '@/components/icons/TapIcons';
+import { PricingBlobs } from './PopBlobs';
 
 interface PricingSectionProps {
   checkoutLoading: string | null;
