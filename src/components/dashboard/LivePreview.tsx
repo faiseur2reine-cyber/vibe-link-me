@@ -79,7 +79,7 @@ export const LivePreview = ({ page, links }: LivePreviewProps) => {
   }, []);
 
   const currentDevice = deviceSizes[device];
-  const previewUrl = `/${page.username}`;
+  const previewUrl = `/${page.username}?preview=true`;
 
   return (
     <Card className="flex flex-col h-full border-border/60 bg-muted/30">

@@ -12,7 +12,8 @@ import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
 import ParticleField from '@/components/profile/ParticleField';
 import SocialIcons from '@/components/profile/SocialIcons';
-import NsfwLinkOverlay from '@/components/profile/NsfwLinkOverlay';
+import NsfwInlineGate from '@/components/profile/NsfwInlineGate';
+import AgeGate from '@/components/profile/AgeGate';
 import { TrackingPixels, trackPixelClick } from '@/components/profile/TrackingPixels';
 import { ProfileUrgencyBanner, ProfileScarcityWidgets, ProfileLocationToast } from '@/components/profile/UrgencyWidgets';
 import ImmersiveLayout from '@/components/profile/ImmersiveLayout';
@@ -71,6 +72,9 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
+  const [ageVerified, setAgeVerified] = useState(() => {
+    try { return sessionStorage.getItem('age_verified') === 'true'; } catch { return false; }
+  });
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
@@ -171,6 +175,26 @@ const PublicProfile = () => {
 
   const isDemo = username === 'demo';
   const isNsfwPage = page.is_nsfw;
+  const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+
+  // ── NSFW page-level age gate (Meta compliance)
+  // Skipped in demo and preview mode
+  if (isNsfwPage && !ageVerified && !isDemo && !isPreview) {
+    return (
+      <AgeGate
+        onVerified={() => {
+          setAgeVerified(true);
+          try { sessionStorage.setItem('age_verified', 'true'); } catch {}
+        }}
+        profile={{
+          display_name: page.display_name,
+          username: page.username,
+          avatar_url: page.avatar_url,
+        }}
+      />
+    );
+  }
+
   const theme = getTheme(page.theme);
 
   // ── Immersive theme: completely different GAML-style layout
@@ -211,9 +235,14 @@ const PublicProfile = () => {
 
   const wrapNsfw = (node: React.ReactNode, link: LinkItem) =>
     isNsfwPage ? (
-      <NsfwLinkOverlay key={link.id} url={link.url} onRevealClick={() => handleLinkClick(link)}>
+      <NsfwInlineGate
+        key={link.id}
+        url={link.url}
+        onConfirm={() => handleLinkClick(link)}
+        variant={isDarkTheme ? 'dark' : 'light'}
+      >
         {node}
-      </NsfwLinkOverlay>
+      </NsfwInlineGate>
     ) : node;
 
   // Unified link click handler — deeplink + UTM + tracking pixels + analytics
