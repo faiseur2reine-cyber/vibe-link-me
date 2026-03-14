@@ -1,4 +1,4 @@
-import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapPalette as Palette, TapChart as BarChart3, TapUser as User } from '@/components/icons/TapIcons';
+import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapChart as BarChart3, TapUser as User } from '@/components/icons/TapIcons';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
 import {
@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { title: 'Aperçu', url: '/dashboard', icon: Home, end: true },
   { title: 'Pages', url: '/dashboard/pages', icon: LayoutGrid },
-  { title: 'Thèmes', url: '/dashboard/themes', icon: Palette },
   { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3 },
   { title: 'Profil', url: '/dashboard/profile', icon: User },
   { title: 'Paramètres', url: '/dashboard/settings', icon: Settings },

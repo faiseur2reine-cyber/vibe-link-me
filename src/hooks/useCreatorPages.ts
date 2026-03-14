@@ -110,7 +110,7 @@ export function useCreatorPages() {
       bio: pageData.bio || null,
       avatar_url: pageData.avatar_url || null,
       cover_url: pageData.cover_url || null,
-      theme: pageData.theme || 'default',
+      theme: pageData.theme || 'immersive',
       is_nsfw: pageData.is_nsfw || false,
     };
 

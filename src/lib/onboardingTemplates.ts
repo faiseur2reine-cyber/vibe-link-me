@@ -21,7 +21,7 @@ export const onboardingTemplates: OnboardingTemplate[] = [
     name: 'Influenceur',
     description: 'Parfait pour partager vos réseaux sociaux et contenus',
     icon: 'sparkles',
-    theme: 'cyber',
+    theme: 'immersive',
     suggestedLinks: [
       { title: 'Ma dernière vidéo', url: 'https://youtube.com/@votrecanal', icon: 'video' },
       { title: 'Mon podcast', url: 'https://spotify.com/votrepodcast', icon: 'mic' },
@@ -38,7 +38,7 @@ export const onboardingTemplates: OnboardingTemplate[] = [
     name: 'Artiste',
     description: 'Idéal pour musiciens, designers et créatifs',
     icon: 'palette',
-    theme: 'midnight',
+    theme: 'immersive',
     suggestedLinks: [
       { title: 'Mon portfolio', url: 'https://votreportfolio.com', icon: 'image' },
       { title: 'Spotify', url: 'https://spotify.com/artist/vous', icon: 'music' },
@@ -55,7 +55,7 @@ export const onboardingTemplates: OnboardingTemplate[] = [
     name: 'Agence',
     description: 'Pour gérer plusieurs marques et clients',
     icon: 'briefcase',
-    theme: 'corporate',
+    theme: 'immersive',
     suggestedLinks: [
       { title: 'Prendre rendez-vous', url: 'https://calendly.com/vous', icon: 'calendar' },
       { title: 'Nos services', url: 'https://votresite.com/services', icon: 'layout' },
@@ -72,7 +72,7 @@ export const onboardingTemplates: OnboardingTemplate[] = [
     name: 'E-commerce',
     description: 'Vendez vos produits en ligne',
     icon: 'shopping-cart',
-    theme: 'sunset',
+    theme: 'immersive',
     suggestedLinks: [
       { title: 'Boutique en ligne', url: 'https://votreboutique.com', icon: 'shopping-bag' },
       { title: 'Nouveautés', url: 'https://votreboutique.com/nouveautes', icon: 'sparkles' },

@@ -10,7 +10,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
-import { TapLogOut as LogOut, TapPlus as Plus, TapLoader as Loader2, TapSun as Sun, TapMoon as Moon, TapLink as Link2, TapPalette as Palette, TapShare as Share2 } from '@/components/icons/TapIcons';
+import { TapLogOut as LogOut, TapPlus as Plus, TapLoader as Loader2, TapSun as Sun, TapMoon as Moon, TapLink as Link2, TapShare as Share2 } from '@/components/icons/TapIcons';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
@@ -18,7 +18,6 @@ import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist'
 import { DashboardTour } from '@/components/dashboard/DashboardTour';
 import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import DashboardAnalytics from './DashboardAnalytics';
-import DashboardThemes from './DashboardThemes';
 import DashboardProfile from './DashboardProfile';
 import DashboardSettings from './DashboardSettings';
 
@@ -101,12 +100,6 @@ const DashboardHome = () => {
       label: t('checklist.createPage'),
       completed: pages.length > 0,
       icon: Link2,
-    },
-    {
-      id: 'customize-theme',
-      label: t('checklist.customizeTheme'),
-      completed: pages.some(p => p.theme !== 'default'),
-      icon: Palette,
     },
     {
       id: 'share-page',
@@ -274,7 +267,6 @@ const Dashboard = () => {
           <Routes>
             <Route path="/" element={<DashboardOverview />} />
             <Route path="/pages" element={<DashboardHome />} />
-            <Route path="/themes" element={<DashboardThemes />} />
             <Route path="/analytics" element={<DashboardAnalytics />} />
             <Route path="/profile" element={<DashboardProfile />} />
             <Route path="/settings" element={<DashboardSettings />} />
