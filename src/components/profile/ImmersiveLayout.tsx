@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
 import { deeplinkNavigate } from '@/lib/deeplink';
 import { appendUtm, type UtmParams } from '@/lib/utm';
+import { throttleClick } from '@/lib/throttle';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
 import { usePageView } from '@/hooks/usePageView';
@@ -108,6 +109,7 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
   };
 
   const handleLinkClick = (link: LinkData) => {
+    if (!throttleClick(link.id)) return;
     const finalUrl = appendUtm(link.url, utmParams);
     recordClick(link.id, clickVariant);
     trackPixelClick(link.title, trackingConfig);
@@ -374,15 +376,19 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
           </div>
         )}
 
-        {/* Footer */}
+        {/* Footer — hidden on paid plans */}
+        {(!page.plan || page.plan === 'free') && (
         <div className="text-center py-10 pb-safe">
-          <Link
-            to="/"
+          <a
+            href="https://vibe-link-me.lovable.app"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-[10px] text-white/10 hover:text-white/25 transition-colors"
           >
             {t('footer.madeWith')} <Heart className="w-2.5 h-2.5" /> MyTaptap
-          </Link>
+          </a>
         </div>
+        )}
       </div>
     </>
   );

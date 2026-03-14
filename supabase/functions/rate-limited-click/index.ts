@@ -18,6 +18,10 @@ function getCorsHeaders(req: Request) {
     "Access-Control-Allow-Origin": allowed,
     "Access-Control-Allow-Headers":
       "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Content-Type": "application/json",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
   };
 }
 
@@ -61,7 +65,7 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: corsHeaders,
     });
   }
 
@@ -71,7 +75,7 @@ Deno.serve(async (req) => {
     if (!link_id || typeof link_id !== "string") {
       return new Response(JSON.stringify({ error: "Invalid link_id" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
@@ -79,7 +83,7 @@ Deno.serve(async (req) => {
     if (link_id.startsWith("00000000-0000-0000-0000-d")) {
       return new Response(JSON.stringify({ ok: true, recorded: false }), {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
@@ -88,7 +92,7 @@ Deno.serve(async (req) => {
     if (link_id.startsWith("pageview_")) {
       return new Response(JSON.stringify({ ok: true, recorded: false, type: "pageview" }), {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
@@ -106,7 +110,7 @@ Deno.serve(async (req) => {
       // Silently accept — visitor doesn't notice, but we don't record
       return new Response(JSON.stringify({ ok: true, recorded: false }), {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
@@ -128,19 +132,19 @@ Deno.serve(async (req) => {
       console.error("record_click error:", error);
       return new Response(JSON.stringify({ error: "Failed to record" }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
     return new Response(JSON.stringify({ ok: true, recorded: true }), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: corsHeaders,
     });
   } catch (err) {
     console.error("Edge function error:", err);
     return new Response(JSON.stringify({ error: "Internal error" }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: corsHeaders,
     });
   }
 });

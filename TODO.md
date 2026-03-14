@@ -49,7 +49,7 @@
 - [ ] Landing page: add comparison table vs Linktree/GAML/Beacons
 - [ ] All themes: audit on mobile Safari (safe area, scroll, keyboard)
 - [x] ImmersiveLayout: parallax on hero photo via framer-motion useScroll/useTransform
-- [ ] PublicProfile: footer with "Powered by MyTaptap" + link (removable on Pro plan)
+- [x] PublicProfile: "Powered by MyTaptap" footer — visible on free plan, hidden on starter/pro
 - [ ] Favicon: generate proper set (16, 32, 180, 192, 512) from logo
 - [ ] PWA: proper icons set + splash screens
 - [x] Loading skeleton: skeleton cards shown during pages load (replaces spinner)
@@ -61,16 +61,16 @@
 - [ ] Service worker: cache public pages for offline viewing
 - [ ] Edge function: add ETag support for conditional requests
 - [ ] Supabase: add indexes on link_clicks(link_id, clicked_at) if not exists
-- [ ] Error boundary: wrap App with React ErrorBoundary to catch crashes gracefully
+- [x] Error boundary: App wrapped with ErrorBoundary (branded crash page + Go Home button)
 - [ ] Sentry/error tracking: add basic error reporting
 
 ## ═══ PRIORITY 6 — SECURITY ═══
 
-- [ ] CSP headers: add Content-Security-Policy to edge function responses
-- [ ] Rate limit: add rate limiting on the client side too (prevent accidental rapid clicks)
+- [x] CSP headers: X-Content-Type-Options, X-Frame-Options, Referrer-Policy on both edge functions
+- [x] Rate limit: client-side throttleClick (1.5s cooldown per link, prevents double-clicks)
 - [ ] CORS: when domain is purchased, add it to ALLOWED_ORIGINS in both edge functions
+- [x] Audit: operator/notes/revenue stripped from public API (verified)
 - [ ] Audit: check all Supabase RLS policies are correct (no cross-user data access)
-- [ ] Audit: check that operator/notes/revenue are never exposed in any public API response
 
 ## ═══ DONE ═══
 

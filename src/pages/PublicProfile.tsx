@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
+import { throttleClick } from '@/lib/throttle';
 import { recordClick } from '@/hooks/useAnalytics';
 import { usePageView } from '@/hooks/usePageView';
 import { toast } from '@/hooks/use-toast';
@@ -261,6 +262,7 @@ const PublicProfile = () => {
     campaign: page.utm_campaign || undefined,
   };
   const handleLinkClick = (link: LinkItem) => {
+    if (!throttleClick(link.id)) return; // Prevent rapid double-clicks
     recordClick(link.id, clickVariant);
     trackPixelClick(link.title, trackingConfig);
     const finalUrl = appendUtm(link.url, utmParams);
@@ -667,15 +669,19 @@ const PublicProfile = () => {
 
           {urgency?.scarcity?.position === 'bottom' && <ScarcityBlock />}
 
-          {/* Footer */}
+          {/* Footer — hidden on paid plans */}
+          {(!page.plan || page.plan === 'free') && (
           <motion.div variants={fadeUp} className="pt-14 pb-4 safe-area-bottom">
-            <Link
-              to="/"
+            <a
+              href="https://vibe-link-me.lovable.app"
+              target="_blank"
+              rel="noopener noreferrer"
               className={`group flex items-center justify-center gap-1.5 text-[10px] font-medium tracking-wide uppercase opacity-15 hover:opacity-40 transition-all duration-300 ${theme.text}`}
             >
               {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> MyTaptap
-            </Link>
+            </a>
           </motion.div>
+          )}
           </div>
         </motion.div>
 

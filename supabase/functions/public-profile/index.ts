@@ -10,7 +10,6 @@ const ALLOWED_ORIGINS = [
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get("origin") || "";
-  // Allow exact matches + any *.lovable.app subdomain
   const isAllowed = ALLOWED_ORIGINS.includes(origin)
     || origin.endsWith(".lovable.app")
     || origin.startsWith("http://localhost");
@@ -19,6 +18,10 @@ function getCorsHeaders(req: Request) {
     "Access-Control-Allow-Origin": allowed,
     "Access-Control-Allow-Headers":
       "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Content-Type": "application/json",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
   };
 }
 
@@ -103,7 +106,7 @@ Deno.serve(async (req) => {
   if (req.method !== "GET") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: corsHeaders,
     });
   }
 
@@ -114,7 +117,7 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "Service temporarily unavailable" }),
         {
           status: 503,
-          headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "30" },
+          headers: { ...corsHeaders, "Retry-After": "30" },
         }
       );
     }
@@ -125,7 +128,7 @@ Deno.serve(async (req) => {
     if (!username || typeof username !== "string" || username.length > 100) {
       return new Response(JSON.stringify({ error: "Invalid username" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
@@ -160,7 +163,7 @@ Deno.serve(async (req) => {
       ];
       return new Response(
         JSON.stringify({ page: demoPage, links: demoLinks, source: "demo" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "public, s-maxage=3600" } }
+        { status: 200, headers: { ...corsHeaders, "Cache-Control": "public, s-maxage=3600" } }
       );
     }
 
@@ -176,7 +179,6 @@ Deno.serve(async (req) => {
 
     const rateLimitHeaders = {
       ...corsHeaders,
-      "Content-Type": "application/json",
       "X-RateLimit-Limit": String(MAX_REQUESTS),
       "X-RateLimit-Remaining": String(remaining),
     };
@@ -289,7 +291,7 @@ Deno.serve(async (req) => {
     console.error("Error:", err);
     return new Response(JSON.stringify({ error: "Internal error" }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: corsHeaders,
     });
   }
 });
