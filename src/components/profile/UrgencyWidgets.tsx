@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, MapPin, Users, Flame, Zap, X, ArrowRight } from 'lucide-react';
+import { TapClock as Clock, TapMapPin as MapPin, TapZap as Zap, TapX as X, TapArrowRight as ArrowRight } from '@/components/icons/TapIcons';
+import { Users, Flame } from 'lucide-react';
 import type { UrgencyConfig } from '@/components/dashboard/UrgencyEditor';
 
 // --- Hooks ---

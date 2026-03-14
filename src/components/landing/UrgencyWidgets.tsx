@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, MapPin, Users, Flame, Zap } from 'lucide-react';
+import { TapClock as Clock, TapMapPin as MapPin, TapZap as Zap } from '@/components/icons/TapIcons';
+import { Users, Flame } from 'lucide-react';
 
 // Fake countdown that resets every session
 const useCountdown = (initialMinutes: number) => {

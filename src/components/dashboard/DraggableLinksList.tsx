@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { GripVertical, Link as LinkIcon, ExternalLink, Trash2, Edit } from 'lucide-react';
+import { TapGrip as GripVertical, TapLink as LinkIcon, TapExternalLink as ExternalLink, TapTrash as Trash2, TapPencil as Edit } from '@/components/icons/TapIcons';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';

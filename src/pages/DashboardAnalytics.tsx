@@ -4,7 +4,8 @@ import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { MousePointerClick, TrendingUp, Link2, FileText, Loader2 } from 'lucide-react';
+import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
+import { FileText } from 'lucide-react';
 
 const DashboardAnalytics = () => {
   const { t } = useTranslation();

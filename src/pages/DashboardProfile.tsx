@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, User, Mail, Calendar, Upload } from 'lucide-react';
+import { TapLoader as Loader2, TapUser as User, TapCalendar as Calendar } from '@/components/icons/TapIcons';
+import { Mail, Upload } from 'lucide-react';
 
 const DashboardProfile = () => {
   const { t } = useTranslation();

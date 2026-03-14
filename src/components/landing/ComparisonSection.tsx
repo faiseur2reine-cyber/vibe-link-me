@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Check, X, Minus } from 'lucide-react';
+import { TapCheck as Check, TapX as X } from '@/components/icons/TapIcons';
+import { Minus } from 'lucide-react';
 
 const features = [
   { name: 'Link-in-bio pages', us: true, linktree: true, gaml: true, beacons: true },

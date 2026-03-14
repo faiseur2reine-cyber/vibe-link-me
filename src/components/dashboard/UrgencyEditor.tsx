@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Clock, Flame, Users, MapPin, Zap, Eye, Save, Trash2, BookmarkPlus } from 'lucide-react';
+import { TapClock as Clock, TapMapPin as MapPin, TapZap as Zap, TapEye as Eye, TapTrash as Trash2, TapBookmark as BookmarkPlus } from '@/components/icons/TapIcons';
+import { Flame, Users, Save } from 'lucide-react';
 
 export interface UrgencyConfig {
   banner: {

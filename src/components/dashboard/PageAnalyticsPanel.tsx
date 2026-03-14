@@ -1,6 +1,7 @@
 import { usePageAnalytics, PageLink } from '@/hooks/useCreatorPages';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { MousePointerClick, TrendingUp, Globe, MapPin, Link2, FlaskConical, CheckCircle2, AlertTriangle, Clock, Download } from 'lucide-react';
+import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapClock as Clock } from '@/components/icons/TapIcons';
+import { FlaskConical, CheckCircle2, AlertTriangle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const COLORS = [
