@@ -91,11 +91,11 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/60">
+    <Sidebar collapsible="icon" className="border-r border-border/10">
       <SidebarContent className="pt-4">
         <SidebarGroup>
           <SidebarGroupLabel className={cn(
-            "transition-opacity duration-200",
+            "transition-opacity duration-200 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium",
             collapsed ? 'sr-only' : ''
           )}>
             Navigation
@@ -116,7 +116,7 @@ export function DashboardSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className={cn(
-            "transition-opacity duration-200",
+            "transition-opacity duration-200 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium",
             collapsed ? 'sr-only' : ''
           )}>
             Outils
@@ -137,7 +137,7 @@ export function DashboardSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className={cn(
-            "transition-opacity duration-200",
+            "transition-opacity duration-200 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium",
             collapsed ? 'sr-only' : ''
           )}>
             Paramètres

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import './styles/immersive.css';
 
 @tailwind base;
@@ -7,83 +7,83 @@
 
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 240 10% 4%;
+    --background: 0 0% 98%;
+    --foreground: 220 15% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
+    --card-foreground: 220 15% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
+    --popover-foreground: 220 15% 8%;
 
     --primary: 160 84% 39%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
+    --secondary: 220 8% 95%;
+    --secondary-foreground: 220 10% 15%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 220 8% 95%;
+    --muted-foreground: 220 6% 44%;
 
-    --accent: 240 5% 96%;
-    --accent-foreground: 240 6% 10%;
+    --accent: 220 8% 95%;
+    --accent-foreground: 220 10% 15%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 92%;
-    --input: 240 6% 92%;
+    --border: 220 8% 90%;
+    --input: 220 8% 90%;
     --ring: 160 84% 39%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 240 5% 98%;
-    --sidebar-foreground: 240 6% 20%;
+    --sidebar-background: 220 8% 97%;
+    --sidebar-foreground: 220 10% 25%;
     --sidebar-primary: 160 84% 39%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 96%;
-    --sidebar-accent-foreground: 240 6% 20%;
-    --sidebar-border: 240 6% 90%;
+    --sidebar-accent: 220 8% 94%;
+    --sidebar-accent-foreground: 220 10% 20%;
+    --sidebar-border: 220 8% 90%;
     --sidebar-ring: 160 84% 39%;
   }
 
   .dark {
     --background: 240 10% 4%;
-    --foreground: 0 0% 95%;
+    --foreground: 220 20% 96%;
 
-    --card: 240 10% 6%;
-    --card-foreground: 0 0% 95%;
+    --card: 240 8% 7%;
+    --card-foreground: 220 20% 96%;
 
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 240 8% 7%;
+    --popover-foreground: 220 20% 96%;
 
-    --primary: 160 84% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 165 82% 51%;
+    --primary-foreground: 240 10% 4%;
 
-    --secondary: 240 4% 12%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 240 6% 11%;
+    --secondary-foreground: 220 15% 90%;
 
-    --muted: 240 4% 12%;
-    --muted-foreground: 240 5% 55%;
+    --muted: 240 6% 10%;
+    --muted-foreground: 220 6% 42%;
 
-    --accent: 240 4% 12%;
-    --accent-foreground: 0 0% 95%;
+    --accent: 240 6% 11%;
+    --accent-foreground: 220 15% 90%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 14%;
-    --input: 240 4% 14%;
-    --ring: 160 84% 45%;
+    --border: 240 6% 12%;
+    --input: 240 6% 12%;
+    --ring: 165 82% 51%;
 
     --sidebar-background: 240 10% 5%;
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 160 84% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4% 10%;
-    --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 240 4% 12%;
-    --sidebar-ring: 160 84% 45%;
+    --sidebar-foreground: 220 10% 75%;
+    --sidebar-primary: 165 82% 51%;
+    --sidebar-primary-foreground: 240 10% 4%;
+    --sidebar-accent: 240 8% 9%;
+    --sidebar-accent-foreground: 220 10% 85%;
+    --sidebar-border: 240 6% 10%;
+    --sidebar-ring: 165 82% 51%;
   }
 }
 
@@ -94,7 +94,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Instrument Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
     letter-spacing: -0.01em;
   }
 }
@@ -114,31 +114,119 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
   .font-display {
-    font-family: 'Instrument Sans', 'Inter', system-ui, sans-serif;
-    letter-spacing: -0.025em;
+    font-family: 'Outfit', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.035em;
   }
+
+  /* Glass morphism */
+  .glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+  .dark .glass {
+    background: hsl(var(--card) / 0.3);
+    border-color: hsl(var(--border) / 0.4);
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow:
+      0 0 24px hsl(var(--primary) / 0.12),
+      0 0 6px hsl(var(--primary) / 0.08);
+  }
+  .dark .glow-primary {
+    box-shadow:
+      0 0 40px hsl(var(--primary) / 0.15),
+      0 0 10px hsl(var(--primary) / 0.1);
+  }
+
+  /* Gradient border trick */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--border) / 0.6),
+      hsl(var(--border) / 0.1),
+      hsl(var(--border) / 0.4)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* ═══ Background atmosphere ═══ */
+.dark body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 70% 50% at 5% -10%, hsl(165 82% 51% / 0.05), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 95% 100%, hsl(250 60% 50% / 0.04), transparent 50%),
+    hsl(var(--background));
+  pointer-events: none;
+}
+
+/* Noise grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.dark body::after {
+  opacity: 0.5;
 }
 
 /* ═══ Safari / iOS fixes ═══ */
 
-/* Remove blue tap highlight on iOS */
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Prevent pull-to-refresh on dashboard */
 html, body {
   overscroll-behavior: none;
 }
 
-/* Prevent iOS zoom on input focus (needs 16px minimum) */
 @supports (-webkit-touch-callout: none) {
   input, textarea, select {
     font-size: max(16px, 1em) !important;
   }
 }
 
-/* Smooth scroll in modals on iOS */
 [data-radix-scroll-area-viewport] {
   -webkit-overflow-scrolling: touch;
+}
+
+/* ═══ Enhanced scrollbar for desktop ═══ */
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border) / 0.5);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--border));
+  }
 }

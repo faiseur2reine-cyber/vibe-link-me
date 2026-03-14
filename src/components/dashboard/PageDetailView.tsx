@@ -278,7 +278,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
         {/* Preview — instant React render, no iframe */}
         <div className="hidden lg:block">
-          <div className="sticky top-16 h-[calc(100vh-6rem)] rounded-xl border border-border/40 bg-card overflow-hidden">
+          <div className="sticky top-16 h-[calc(100vh-6rem)] rounded-2xl glass overflow-hidden shadow-xl shadow-black/5">
             <InlinePreview page={{...page, ...previewOverrides} as CreatorPage} links={links} />
           </div>
         </div>
@@ -291,7 +291,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         {!showMobilePreview && (
           <button
             onClick={() => setShowMobilePreview(true)}
-            className="fixed bottom-16 right-4 z-40 w-11 h-11 rounded-full bg-foreground text-background shadow-xl shadow-black/20 flex items-center justify-center active:scale-95 transition-transform"
+            className="fixed bottom-16 right-4 z-40 w-11 h-11 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center active:scale-90 transition-all duration-200 glow-primary"
           >
             <Eye className="w-4 h-4" />
           </button>
@@ -315,7 +315,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           </div>
         )}
 
-        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/90 backdrop-blur-xl border-t border-border/60 safe-area-bottom">
+        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/60 backdrop-blur-2xl border-t border-border/20 safe-area-bottom">
           <div className="flex items-center justify-around h-12">
             {[
               { value: 'links', icon: Link2, labelKey: 'tabs.links' },

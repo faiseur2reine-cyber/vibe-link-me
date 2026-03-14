@@ -5,22 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.97]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.96]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20",
+        default: "bg-primary text-primary-foreground hover:bg-primary/85 shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/30",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-border/50 bg-background/50 hover:bg-accent/50 hover:border-border text-foreground",
+        outline: "border border-border/40 bg-card/50 backdrop-blur-sm hover:bg-accent/40 hover:border-border/60 text-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent/50 hover:text-accent-foreground",
+        ghost: "hover:bg-accent/40 hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 rounded-lg",
-        sm: "h-8 rounded-lg px-3 text-xs",
-        lg: "h-11 rounded-xl px-6",
-        icon: "h-9 w-9 rounded-lg",
+        default: "h-9 px-4 py-2 rounded-xl",
+        sm: "h-8 rounded-xl px-3 text-xs",
+        lg: "h-11 rounded-2xl px-6",
+        icon: "h-9 w-9 rounded-xl",
       },
     },
     defaultVariants: {

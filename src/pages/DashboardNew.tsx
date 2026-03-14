@@ -239,25 +239,30 @@ const Dashboard = () => {
 
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/60">
+          <header className="sticky top-0 z-50 bg-background/50 backdrop-blur-2xl backdrop-saturate-150 border-b border-border/10">
             <div className="flex items-center justify-between px-5 sm:px-8 h-[52px] max-w-6xl mx-auto w-full">
               <div className="flex items-center gap-3">
                 <SidebarTrigger className="-ml-2" />
-                <h1 className="text-[15px] font-semibold text-foreground tracking-tight font-display">
-                  MyTaptap
-                </h1>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary via-primary to-emerald-400 flex items-center justify-center shadow-md shadow-primary/25">
+                    <span className="text-[11px] font-bold text-primary-foreground tracking-tight">M</span>
+                  </div>
+                  <h1 className="text-[15px] font-semibold text-foreground tracking-tight font-display">
+                    MyTaptap
+                  </h1>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
                 <LanguageSelector />
                 <button
                   onClick={toggleTheme}
-                  className="h-[30px] w-[30px] inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-muted-foreground/50 hover:text-foreground hover:bg-accent/40 transition-all duration-200"
                 >
                   {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
                 </button>
                 <button
                   onClick={signOut}
-                  className="h-[30px] w-[30px] inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-muted-foreground/50 hover:text-foreground hover:bg-accent/40 transition-all duration-200"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                 </button>
