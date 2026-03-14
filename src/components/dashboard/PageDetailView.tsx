@@ -11,8 +11,10 @@ import PageProfileEditor from '@/components/dashboard/PageProfileEditor';
 import PageAnalyticsPanel from '@/components/dashboard/PageAnalyticsPanel';
 import PageDesignEditor from '@/components/dashboard/PageDesignEditor';
 import UrgencyEditor from '@/components/dashboard/UrgencyEditor';
+import TrackingEditor from '@/components/dashboard/TrackingEditor';
+import SafePageEditor from '@/components/dashboard/SafePageEditor';
 import { LivePreview } from '@/components/dashboard/LivePreview';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Paintbrush, Flame, Activity, ShieldCheck } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -33,6 +35,8 @@ const TABS = [
   { value: 'profile', icon: User, label: 'Profil' },
   { value: 'design', icon: Paintbrush, label: 'Design' },
   { value: 'urgency', icon: Flame, label: 'Urgence' },
+  { value: 'tracking', icon: Activity, label: 'Tracking' },
+  { value: 'safepage', icon: ShieldCheck, label: 'Safe Page' },
   { value: 'theme', icon: Palette, label: 'Thème' },
   { value: 'analytics', icon: BarChart3, label: 'Stats' },
 ];
@@ -184,6 +188,22 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
             <TabsContent value="theme" className="mt-0">
               <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
+            </TabsContent>
+
+            <TabsContent value="tracking" className="mt-0">
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Tracking & UTM</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Pixels de conversion et paramètres UTM automatiques.</p>
+              </div>
+              <TrackingEditor page={page} onUpdate={handleUpdate} />
+            </TabsContent>
+
+            <TabsContent value="safepage" className="mt-0">
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-medium">Safe Page</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">Page de couverture pour protéger votre contenu.</p>
+              </div>
+              <SafePageEditor page={page} onUpdate={handleUpdate} />
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-0">
