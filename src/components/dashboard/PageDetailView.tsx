@@ -220,7 +220,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
             <TabsContent value="apparence" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <AppearanceEditor page={page} plan={profileLike.plan} onUpdate={handleUpdate} />
+                <AppearanceEditor page={page} links={links} plan={profileLike.plan} onUpdate={handleUpdate} />
               </Suspense>
             </TabsContent>
 
