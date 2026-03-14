@@ -511,29 +511,47 @@ const UrgencyEditor = ({ page, onUpdate }: Props) => {
 
         {config.abTest?.enabled && (
           <div className="space-y-4 pl-10 border-l-2 border-primary/20">
-            <div className="p-3 rounded-lg bg-secondary/50 space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">A</span>
-                  <span className="font-medium text-foreground">Avec widgets</span>
+            {/* Visual variant preview */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg border-2 border-primary/40 bg-primary/5 p-3 text-center">
+                <span className="inline-flex w-6 h-6 rounded bg-primary text-primary-foreground items-center justify-center text-[11px] font-bold mb-1.5">A</span>
+                <p className="text-[11px] font-semibold">Avec widgets</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Urgence + compteurs</p>
+                <div className="mt-2 space-y-1">
+                  {config.banner?.enabled && <div className="h-2 rounded-full bg-primary/30" />}
+                  <div className="h-5 rounded bg-muted/60" />
+                  <div className="h-5 rounded bg-muted/60" />
+                  {config.scarcity?.enabled && <div className="h-2 rounded-full bg-amber-400/30 mt-1" />}
                 </div>
-                <span className="font-mono font-bold text-foreground">{config.abTest.splitPercent}%</span>
+                <p className="text-[13px] font-bold text-primary mt-2">{config.abTest.splitPercent}%</p>
+              </div>
+              <div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-center">
+                <span className="inline-flex w-6 h-6 rounded bg-muted text-muted-foreground items-center justify-center text-[11px] font-bold mb-1.5">B</span>
+                <p className="text-[11px] font-semibold">Sans widgets</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Page normale</p>
+                <div className="mt-2 space-y-1">
+                  <div className="h-5 rounded bg-muted/60" />
+                  <div className="h-5 rounded bg-muted/60" />
+                  <div className="h-5 rounded bg-muted/40" />
+                </div>
+                <p className="text-[13px] font-bold text-muted-foreground mt-2">{100 - (config.abTest.splitPercent ?? 50)}%</p>
+              </div>
+            </div>
+
+            {/* Slider */}
+            <div className="p-3 rounded-lg bg-secondary/50 space-y-2">
+              <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                <span>Répartition du trafic</span>
+                <span className="font-mono">{config.abTest.splitPercent}% / {100 - (config.abTest.splitPercent ?? 50)}%</span>
               </div>
               <Slider
                 value={[config.abTest.splitPercent ?? 50]}
                 onValueChange={([v]) => updateAbTest({ splitPercent: v })}
                 min={10} max={90} step={5}
               />
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded bg-muted text-muted-foreground flex items-center justify-center text-[10px] font-bold">B</span>
-                  <span className="font-medium text-foreground">Sans widgets</span>
-                </div>
-                <span className="font-mono font-bold text-foreground">{100 - (config.abTest.splitPercent ?? 50)}%</span>
-              </div>
             </div>
             <p className="text-[10px] text-muted-foreground">
-              Les visiteurs sont assignés aléatoirement. Les clics sont taggés A ou B pour comparer les conversions dans l'onglet Analytics.
+              Les visiteurs sont assignés aléatoirement. Consultez l'onglet Analytics pour voir les résultats et la significativité statistique.
             </p>
           </div>
         )}

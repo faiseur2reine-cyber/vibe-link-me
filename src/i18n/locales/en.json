@@ -46,9 +46,25 @@
     "proMonthly": "≈ €9.58/month",
     "includedInPro": "Included in Pro",
     "manageSubscription": "Manage subscription",
-    "freeFeatures": ["Up to 5 links", "3 basic themes", "MyTaptap badge"],
-    "starterFeatures": ["Up to 20 links", "All themes", "90-day analytics", "MyTaptap badge"],
-    "proFeatures": ["Unlimited links", "All themes", "Unlimited analytics + charts", "Custom domain", "Priority support", "MyTaptap badge"]
+    "freeFeatures": [
+      "Up to 5 links",
+      "3 basic themes",
+      "MyTaptap badge"
+    ],
+    "starterFeatures": [
+      "Up to 20 links",
+      "All themes",
+      "90-day analytics",
+      "MyTaptap badge"
+    ],
+    "proFeatures": [
+      "Unlimited links",
+      "All themes",
+      "Unlimited analytics + charts",
+      "Custom domain",
+      "Priority support",
+      "MyTaptap badge"
+    ]
   },
   "footer": {
     "madeWith": "Made with",
@@ -292,7 +308,12 @@
     "mockupDesign": "Custom design ✓",
     "mockupDesignSub": "CSS + fonts",
     "mockupBio": "Digital creator · Paris 🇫🇷",
-    "mockupLinks": ["My portfolio", "YouTube", "Newsletter", "1:1 Coaching"]
+    "mockupLinks": [
+      "My portfolio",
+      "YouTube",
+      "Newsletter",
+      "1:1 Coaching"
+    ]
   },
   "urgency": {
     "offerEnds": "Offer ends in",
@@ -335,5 +356,80 @@
     "privacyRightsText": "Under GDPR, you have the right to access, rectify, delete, and port your data. Contact us to exercise these rights.",
     "privacyContactTitle": "6. Contact",
     "privacyContactText": "For any questions about your personal data: support@mytaptap.com"
+  },
+  "tabs": {
+    "links": "Links",
+    "profile": "Profile",
+    "design": "Design",
+    "urgency": "Urgency",
+    "tracking": "Tracking",
+    "safePage": "Safe Page",
+    "agency": "Agency",
+    "theme": "Theme",
+    "analytics": "Stats",
+    "more": "More"
+  },
+  "pages": {
+    "title": "My pages",
+    "subtitle": "Manage your pages and track performance.",
+    "noPages": "No pages",
+    "noPagesDesc": "Create your first page to centralize your links.",
+    "createPage": "Create page",
+    "newPage": "New page",
+    "search": "Search...",
+    "all": "All",
+    "active": "Active",
+    "draft": "Draft",
+    "paused": "Paused",
+    "selection": "Select",
+    "cancel": "Cancel",
+    "activate": "Activate",
+    "pause": "Pause",
+    "linkCopied": "Link copied",
+    "duplicated": "Duplicated",
+    "deleted": "Page deleted",
+    "csvExported": "CSV exported",
+    "selected": "selected",
+    "pagesActivated": "page(s) activated",
+    "pagesPaused": "page(s) paused"
+  },
+  "editors": {
+    "saved": "Saved",
+    "save": "Save",
+    "saving": "Saving…",
+    "profileTitle": "Page profile",
+    "profileDesc": "Info visible on your public page.",
+    "designTitle": "Custom design",
+    "designDesc": "Colors, fonts, and layout.",
+    "urgencyTitle": "Urgency widgets",
+    "urgencyDesc": "Drive engagement with scarcity indicators.",
+    "trackingTitle": "Tracking & UTM",
+    "trackingDesc": "Conversion pixels and automatic UTM parameters.",
+    "safePageTitle": "Safe Page",
+    "safePageDesc": "Cover page to protect your content.",
+    "agencyTitle": "Agency management",
+    "agencyDesc": "Operator, revenue, and internal notes.",
+    "deleteTitle": "Delete this page?",
+    "deleteDesc": "The page and its links will be permanently deleted."
+  },
+  "scheduling": {
+    "title": "Scheduling",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "remove": "Remove scheduling",
+    "scheduled": "Scheduled",
+    "expires": "Expires"
+  },
+  "share": {
+    "downloadQr": "QR PNG",
+    "bioIg": "Bio IG",
+    "share": "Share",
+    "linkCopied": "Copied for Instagram bio"
+  },
+  "overview": {
+    "justNow": "just now",
+    "minutesAgo": "{n}min ago",
+    "hoursAgo": "{n}h ago",
+    "daysAgo": "{n}d ago"
   }
 }

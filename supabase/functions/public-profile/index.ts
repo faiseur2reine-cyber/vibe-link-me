@@ -196,15 +196,27 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ── Simple hash for ETag ──
+    const etag = (str: string): string => {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+      return `"${(h >>> 0).toString(36)}"`;
+    };
+
     // ── Check in-memory cache first (avoids DB hit entirely)
     const cached = getCachedPage(username);
     if (cached) {
+      const tag = etag(cached);
+      if (req.headers.get("if-none-match") === tag) {
+        return new Response(null, { status: 304, headers: rateLimitHeaders });
+      }
       return new Response(cached, {
         status: 200,
         headers: {
           ...rateLimitHeaders,
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
           "X-Cache": "HIT",
+          "ETag": tag,
         },
       });
     }
@@ -248,6 +260,7 @@ Deno.serve(async (req) => {
           headers: {
             ...rateLimitHeaders,
             "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+            "ETag": etag(responseBody),
           },
         }
       );

@@ -46,9 +46,25 @@
     "proMonthly": "≈ 9,58€/mois",
     "includedInPro": "Inclus dans Pro",
     "manageSubscription": "Gérer l'abonnement",
-    "freeFeatures": ["Jusqu'à 5 liens", "3 thèmes basiques", "Badge MyTaptap"],
-    "starterFeatures": ["Jusqu'à 20 liens", "Tous les thèmes", "Analytics 90 jours", "Badge MyTaptap"],
-    "proFeatures": ["Liens illimités", "Tous les thèmes", "Analytics illimités + graphiques", "Domaine personnalisé", "Support prioritaire", "Badge MyTaptap"]
+    "freeFeatures": [
+      "Jusqu'à 5 liens",
+      "3 thèmes basiques",
+      "Badge MyTaptap"
+    ],
+    "starterFeatures": [
+      "Jusqu'à 20 liens",
+      "Tous les thèmes",
+      "Analytics 90 jours",
+      "Badge MyTaptap"
+    ],
+    "proFeatures": [
+      "Liens illimités",
+      "Tous les thèmes",
+      "Analytics illimités + graphiques",
+      "Domaine personnalisé",
+      "Support prioritaire",
+      "Badge MyTaptap"
+    ]
   },
   "footer": {
     "madeWith": "Créé avec",
@@ -292,7 +308,12 @@
     "mockupDesign": "Design custom ✓",
     "mockupDesignSub": "CSS + polices",
     "mockupBio": "Créateur digital · Paris 🇫🇷",
-    "mockupLinks": ["Mon portfolio", "YouTube", "Newsletter", "Coaching 1:1"]
+    "mockupLinks": [
+      "Mon portfolio",
+      "YouTube",
+      "Newsletter",
+      "Coaching 1:1"
+    ]
   },
   "urgency": {
     "offerEnds": "Offre expire dans",
@@ -335,5 +356,80 @@
     "privacyRightsText": "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Contactez-nous pour exercer ces droits.",
     "privacyContactTitle": "6. Contact",
     "privacyContactText": "Pour toute question relative à vos données personnelles : support@mytaptap.com"
+  },
+  "tabs": {
+    "links": "Liens",
+    "profile": "Profil",
+    "design": "Design",
+    "urgency": "Urgence",
+    "tracking": "Tracking",
+    "safePage": "Safe Page",
+    "agency": "Agence",
+    "theme": "Thème",
+    "analytics": "Stats",
+    "more": "Plus"
+  },
+  "pages": {
+    "title": "Mes pages",
+    "subtitle": "Gérez vos pages et suivez vos performances.",
+    "noPages": "Aucune page",
+    "noPagesDesc": "Créez votre première page pour centraliser vos liens.",
+    "createPage": "Créer une page",
+    "newPage": "Nouvelle page",
+    "search": "Rechercher...",
+    "all": "Toutes",
+    "active": "Active",
+    "draft": "Draft",
+    "paused": "Paused",
+    "selection": "Sélection",
+    "cancel": "Annuler",
+    "activate": "Activer",
+    "pause": "Pause",
+    "linkCopied": "Lien copié",
+    "duplicated": "Dupliquée",
+    "deleted": "Page supprimée",
+    "csvExported": "CSV exporté",
+    "selected": "sélectionné",
+    "pagesActivated": "page(s) activée(s)",
+    "pagesPaused": "page(s) mise(s) en pause"
+  },
+  "editors": {
+    "saved": "Sauvegardé",
+    "save": "Sauvegarder",
+    "saving": "Sauvegarde…",
+    "profileTitle": "Profil de la page",
+    "profileDesc": "Informations visibles sur votre page publique.",
+    "designTitle": "Design personnalisé",
+    "designDesc": "Couleurs, polices et mise en page.",
+    "urgencyTitle": "Widgets d'urgence",
+    "urgencyDesc": "Stimulez l'engagement avec des indicateurs de rareté.",
+    "trackingTitle": "Tracking & UTM",
+    "trackingDesc": "Pixels de conversion et paramètres UTM automatiques.",
+    "safePageTitle": "Safe Page",
+    "safePageDesc": "Page de couverture pour protéger votre contenu.",
+    "agencyTitle": "Gestion Agence",
+    "agencyDesc": "Opérateur, revenus et notes internes.",
+    "deleteTitle": "Supprimer cette page ?",
+    "deleteDesc": "La page et ses liens seront supprimés définitivement."
+  },
+  "scheduling": {
+    "title": "Programmation",
+    "startDate": "Apparition",
+    "endDate": "Expiration",
+    "remove": "Retirer la programmation",
+    "scheduled": "Programmé",
+    "expires": "Expire"
+  },
+  "share": {
+    "downloadQr": "QR PNG",
+    "bioIg": "Bio IG",
+    "share": "Partager",
+    "linkCopied": "Copié pour la bio Instagram"
+  },
+  "overview": {
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a {n}min",
+    "hoursAgo": "il y a {n}h",
+    "daysAgo": "il y a {n}j"
   }
 }

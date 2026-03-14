@@ -101,6 +101,16 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
               <ImagePlus className="w-6 h-6" />
             </div>
           )}
+          {/* Crop guide overlay — shows safe zone for immersive hero */}
+          {page.theme === 'immersive' && page.cover_url && (
+            <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 h-[35%] flex items-end justify-center pb-1">
+                <span className="text-[9px] text-white/70 font-medium">← zone gradient + texte →</span>
+              </div>
+              <div className="absolute left-2 top-2 text-[9px] text-white/60 bg-black/40 px-1.5 py-0.5 rounded">9:16</div>
+            </div>
+          )}
           <div className="absolute inset-0 bg-foreground/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
             {uploadingCover ? <Loader2 className="w-6 h-6 text-primary-foreground animate-spin" /> : <Camera className="w-6 h-6 text-primary-foreground" />}
           </div>
@@ -108,7 +118,7 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
         </div>
         {page.theme === 'immersive' && (
           <p className="text-[10px] text-muted-foreground">
-            🎯 En thème immersif, la photo occupe 65% de l'écran. Utilisez un format portrait (9:16) centré sur le visage pour un meilleur rendu.
+            🎯 Format portrait 9:16 recommandé. Le visage doit être dans le tiers supérieur — le tiers inférieur sera couvert par le gradient + nom.
           </p>
         )}
       </div>
