@@ -11,9 +11,10 @@ interface CreatePageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreatePage: (pageData: { username: string; display_name?: string }) => Promise<{ data?: any; error: any }>;
+  onCreated?: (pageId: string) => void;
 }
 
-const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialogProps) => {
+const CreatePageDialog = ({ open, onOpenChange, onCreatePage, onCreated }: CreatePageDialogProps) => {
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -44,9 +45,10 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage }: CreatePageDialog
     if (result.error) {
       toast.error(result.error.message);
     } else {
-      toast.success('Page créée ! 🎉' );
+      toast.success('Page créée ! 🎉');
       onOpenChange(false);
       setUsername(''); setDisplayName(''); setUsernameStatus('idle');
+      if (result.data?.id && onCreated) onCreated(result.data.id);
     }
     setSaving(false);
   };

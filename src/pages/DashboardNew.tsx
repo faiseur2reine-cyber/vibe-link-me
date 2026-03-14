@@ -150,6 +150,7 @@ const DashboardHome = () => {
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
         onCreatePage={createPage}
+        onCreated={(pageId) => { refetchPages().then(() => setSelectedPageId(pageId)); }}
       />
 
       {showTour && (

@@ -269,11 +269,13 @@ export function usePageLinks(pageId: string | null) {
   const addLink = async (link: { title: string; url: string; icon: string }) => {
     if (!user || !pageId) return;
     const position = links.length;
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('links')
-      .insert({ ...link, user_id: user.id, page_id: pageId, position });
+      .insert({ ...link, user_id: user.id, page_id: pageId, position })
+      .select()
+      .single();
     if (!error) await fetchLinks();
-    return { error };
+    return { data, error };
   };
 
   const updateLink = async (id: string, updates: Partial<PageLink>) => {

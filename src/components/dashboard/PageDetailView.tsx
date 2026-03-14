@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
@@ -63,6 +63,17 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const [showShare, setShowShare] = useState(false);
   const [showMoreNav, setShowMoreNav] = useState(false);
 
+  // Escape → back to pages list (unless dialog/modal is open)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !showShare && !document.querySelector('[data-state="open"]')) {
+        onBack();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onBack, showShare]);
+
   const handleUpdate = async (updates: Partial<CreatorPage>) => {
     const result = await onUpdatePage(page.id, updates);
     if (!result.error) await onRefetchPages();
@@ -113,6 +124,17 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none"
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
+              toast.success(t('pages.linkCopied'));
+            }}
+          >
+            <Link2 className="w-3 h-3" />
+          </Button>
           <Button variant="outline" size="sm" className="h-7 rounded-lg gap-1 text-[11px] border-border/60 shadow-none" asChild>
             <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3 h-3" /> Voir

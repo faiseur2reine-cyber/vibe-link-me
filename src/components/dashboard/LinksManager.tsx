@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LinkItem } from '@/hooks/useDashboard';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
@@ -133,6 +133,19 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const { t } = useTranslation();
   const { user } = useAuth();
   const LINK_TEMPLATES = useLinkTemplates(t);
+  const quickAddRef = useRef<HTMLInputElement>(null);
+
+  // Cmd+K → focus quick add
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        quickAddRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [title, setTitle] = useState('');
@@ -311,15 +324,37 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
       if (result?.error) toast.error(result.error.message);
     } else {
       const result = await onAdd({ title: title.trim(), url: normalizedUrl, icon });
-      if (result?.error) toast.error(result.error.message);
+      if (result?.error) {
+        toast.error(result.error.message);
+      } else if (links.length === 0) {
+        // First link ever — celebrate!
+        toast.success('Premier lien ajouté ! 🎉', {
+          description: 'Va voir ta page en cliquant sur "Voir" en haut.',
+          duration: 6000,
+        });
+      }
     }
     setSaving(false);
     setDialogOpen(false);
   };
 
   const handleDelete = async (id: string) => {
+    // Find the link before deleting (for undo)
+    const deletedLink = links.find(l => l.id === id);
     const result = await onDelete(id);
-    if (result?.error) toast.error(result.error.message);
+    if (result?.error) {
+      toast.error(result.error.message);
+    } else if (deletedLink) {
+      toast.success('Lien supprimé', {
+        action: {
+          label: 'Annuler',
+          onClick: async () => {
+            await onAdd({ title: deletedLink.title, url: deletedLink.url, icon: deletedLink.icon });
+          },
+        },
+        duration: 5000,
+      });
+    }
   };
 
   const handleRemoveThumbnail = async () => {
@@ -377,6 +412,31 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             <Plus className="w-3.5 h-3.5" /> {t('linksManager.add')}
           </Button>
         </div>
+      </div>
+
+      {/* Quick add — paste a URL */}
+      <div className="relative">
+        <Input
+          ref={quickAddRef}
+          placeholder="Coller une URL pour ajouter un lien..."
+          className="h-9 text-[13px] pl-9 pr-16 bg-muted/30 border-dashed border-border/60 focus:border-primary/40"
+          onKeyDown={async (e) => {
+            if (e.key !== 'Enter') return;
+            const input = e.currentTarget;
+            const raw = input.value.trim();
+            if (!raw) return;
+            const url = raw.startsWith('http') ? raw : `https://${raw}`;
+            const platform = detectPlatform(url);
+            const title = platform?.name || (() => { try { return new URL(url).hostname.replace('www.', ''); } catch { return raw; } })();
+            const result = await onAdd({ title, url, icon: 'link' });
+            if (!result?.error) {
+              input.value = '';
+              toast.success(`${title} ajouté`);
+            }
+          }}
+        />
+        <Plus className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
+        <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground/60 font-mono">⌘K</kbd>
       </div>
 
       {/* Empty state */}
