@@ -38,7 +38,12 @@ const DashboardHome = () => {
       checkSubscription().then(() => refetchPages());
       toast({ title: t('common.success'), description: '🎉' });
     }
-  }, [searchParams]);
+    // Auto-select page from URL param (from overview click)
+    const pageParam = searchParams.get('page');
+    if (pageParam && pages.some(p => p.id === pageParam)) {
+      setSelectedPageId(pageParam);
+    }
+  }, [searchParams, pages]);
 
   useEffect(() => {
     if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {

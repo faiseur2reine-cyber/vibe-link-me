@@ -208,7 +208,7 @@ const DashboardOverview = () => {
                 {stats.topPages.slice(0, 5).map((p, i) => (
                   <button
                     key={p.pageId}
-                    onClick={() => navigate('/dashboard/pages')}
+                    onClick={() => navigate(`/dashboard/pages?page=${p.pageId}`)}
                     className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-accent/50 transition-colors text-left group"
                   >
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[12px] font-bold text-muted-foreground shrink-0">
