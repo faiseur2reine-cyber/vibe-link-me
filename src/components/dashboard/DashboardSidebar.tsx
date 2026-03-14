@@ -14,16 +14,10 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
-const mainItems = [
+const navItems = [
   { title: 'Aperçu', url: '/dashboard', icon: Home, end: true },
   { title: 'Pages', url: '/dashboard/pages', icon: LayoutGrid },
-];
-
-const toolsItems = [
   { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3 },
-];
-
-const settingsItems = [
   { title: 'Profil', url: '/dashboard/profile', icon: User },
   { title: 'Paramètres', url: '/dashboard/settings', icon: Settings },
 ];
@@ -94,62 +88,14 @@ export function DashboardSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/10">
       <SidebarContent className="pt-4">
         <SidebarGroup>
-          <SidebarGroupLabel className={cn(
-            "transition-opacity duration-200 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium",
-            collapsed ? 'sr-only' : ''
-          )}>
-            Navigation
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
-                <NavItem 
-                  key={item.title} 
-                  item={item} 
+              {navItems.map((item) => (
+                <NavItem
+                  key={item.title}
+                  item={item}
                   collapsed={collapsed}
                   isActive={isActive(item.url, item.end)}
-                />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className={cn(
-            "transition-opacity duration-200 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium",
-            collapsed ? 'sr-only' : ''
-          )}>
-            Outils
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {toolsItems.map((item) => (
-                <NavItem 
-                  key={item.title} 
-                  item={item} 
-                  collapsed={collapsed}
-                  isActive={isActive(item.url)}
-                />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className={cn(
-            "transition-opacity duration-200 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium",
-            collapsed ? 'sr-only' : ''
-          )}>
-            Paramètres
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {settingsItems.map((item) => (
-                <NavItem 
-                  key={item.title} 
-                  item={item} 
-                  collapsed={collapsed}
-                  isActive={isActive(item.url)}
                 />
               ))}
             </SidebarMenu>

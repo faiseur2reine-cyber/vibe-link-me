@@ -5,7 +5,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal, X } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, X, Settings } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import {
@@ -46,11 +46,8 @@ const TABS = [
   { value: 'links', icon: Link2, labelKey: 'tabs.links' },
   { value: 'profile', icon: User, labelKey: 'tabs.profile' },
   { value: 'apparence', icon: Palette, labelKey: 'tabs.apparence' },
-  { value: 'urgency', icon: Flame, labelKey: 'tabs.urgency' },
-  { value: 'tracking', icon: Activity, labelKey: 'tabs.tracking' },
-  { value: 'safepage', icon: ShieldCheck, labelKey: 'tabs.safePage' },
-  { value: 'agency', icon: Briefcase, labelKey: 'tabs.agency' },
   { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
+  { value: 'settings', icon: Settings, labelKey: 'tabs.settings' },
 ];
 
 const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPages }: PageDetailViewProps) => {
@@ -59,7 +56,6 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('links');
   const [showShare, setShowShare] = useState(false);
-  const [showMoreNav, setShowMoreNav] = useState(false);
   const [previewOverrides, setPreviewOverrides] = useState<Partial<CreatorPage>>({});
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
@@ -228,43 +224,51 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="urgency" className="mt-0">
+            <TabsContent value="settings" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">{t('editors.urgencyTitle')}</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.urgencyDesc')}</p>
-                </div>
-                <UrgencyEditor page={page} onUpdate={handleUpdate} />
-              </Suspense>
-            </TabsContent>
+                <div className="space-y-8">
+                  {/* Urgency */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Flame className="w-3.5 h-3.5 text-muted-foreground" />
+                      <h3 className="text-[13px] font-medium">{t('editors.urgencyTitle')}</h3>
+                    </div>
+                    <UrgencyEditor page={page} onUpdate={handleUpdate} />
+                  </div>
 
-            <TabsContent value="tracking" className="mt-0">
-              <Suspense fallback={<TabLoader />}>
-                <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">{t('editors.trackingTitle')}</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.trackingDesc')}</p>
-                </div>
-                <TrackingEditor page={page} onUpdate={handleUpdate} />
-              </Suspense>
-            </TabsContent>
+                  <div className="h-px bg-border/30" />
 
-            <TabsContent value="safepage" className="mt-0">
-              <Suspense fallback={<TabLoader />}>
-                <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">{t('editors.safePageTitle')}</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.safePageDesc')}</p>
-                </div>
-                <SafePageEditor page={page} onUpdate={handleUpdate} />
-              </Suspense>
-            </TabsContent>
+                  {/* Tracking */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Activity className="w-3.5 h-3.5 text-muted-foreground" />
+                      <h3 className="text-[13px] font-medium">{t('editors.trackingTitle')}</h3>
+                    </div>
+                    <TrackingEditor page={page} onUpdate={handleUpdate} />
+                  </div>
 
-            <TabsContent value="agency" className="mt-0">
-              <Suspense fallback={<TabLoader />}>
-                <div className="space-y-1">
-                  <h3 className="text-[13px] font-medium">{t('editors.agencyTitle')}</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.agencyDesc')}</p>
+                  <div className="h-px bg-border/30" />
+
+                  {/* Safe Page */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground" />
+                      <h3 className="text-[13px] font-medium">{t('editors.safePageTitle')}</h3>
+                    </div>
+                    <SafePageEditor page={page} onUpdate={handleUpdate} />
+                  </div>
+
+                  <div className="h-px bg-border/30" />
+
+                  {/* Agency */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                      <h3 className="text-[13px] font-medium">{t('editors.agencyTitle')}</h3>
+                    </div>
+                    <AgencyEditor page={page} onUpdate={handleUpdate} />
+                  </div>
                 </div>
-                <AgencyEditor page={page} onUpdate={handleUpdate} />
               </Suspense>
             </TabsContent>
 
@@ -317,58 +321,19 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
         <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/60 backdrop-blur-2xl border-t border-border/20 safe-area-bottom">
           <div className="flex items-center justify-around h-12">
-            {[
-              { value: 'links', icon: Link2, labelKey: 'tabs.links' },
-              { value: 'profile', icon: User, labelKey: 'tabs.profile' },
-              { value: 'apparence', icon: Palette, labelKey: 'tabs.apparence' },
-              { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
-            ].map(({ value, icon: Icon, labelKey }) => (
+            {TABS.map(({ value, icon: Icon, labelKey }) => (
               <button
                 key={value}
-                onClick={() => { setActiveTab(value); setShowMoreNav(false); }}
+                onClick={() => setActiveTab(value)}
                 className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                  activeTab === value && !showMoreNav ? 'text-foreground' : 'text-muted-foreground/60'
+                  activeTab === value ? 'text-foreground' : 'text-muted-foreground/50'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${activeTab === value && !showMoreNav ? '' : 'opacity-60'}`} />
+                <Icon className={`w-4 h-4 ${activeTab === value ? '' : 'opacity-50'}`} />
                 <span className="text-[9px] font-medium leading-tight">{t(labelKey)}</span>
               </button>
             ))}
-            {/* More button */}
-            <button
-              onClick={() => setShowMoreNav(!showMoreNav)}
-              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                showMoreNav || ['urgency','tracking','safepage','agency'].includes(activeTab)
-                  ? 'text-foreground' : 'text-muted-foreground/60'
-              }`}
-            >
-              <MoreHorizontal className={`w-4 h-4 ${showMoreNav ? '' : 'opacity-60'}`} />
-              <span className="text-[9px] font-medium leading-tight">{t('tabs.more')}</span>
-            </button>
           </div>
-
-          {/* More drawer */}
-          {showMoreNav && (
-            <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 grid grid-cols-4 gap-1">
-              {[
-                { value: 'urgency', icon: Flame, labelKey: 'tabs.urgency' },
-                { value: 'tracking', icon: Activity, labelKey: 'tabs.tracking' },
-                { value: 'safepage', icon: ShieldCheck, labelKey: 'tabs.safePage' },
-                { value: 'agency', icon: Briefcase, labelKey: 'tabs.agency' },
-              ].map(({ value, icon: Icon, labelKey }) => (
-                <button
-                  key={value}
-                  onClick={() => { setActiveTab(value); setShowMoreNav(false); }}
-                  className={`flex flex-col items-center justify-center gap-1 py-2 rounded-lg transition-colors ${
-                    activeTab === value ? 'text-foreground bg-accent' : 'text-muted-foreground/60'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-[9px] font-medium">{t(labelKey)}</span>
-                </button>
-              ))}
-            </div>
-          )}
         </nav>
         </>
       )}

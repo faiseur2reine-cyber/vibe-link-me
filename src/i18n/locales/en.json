@@ -361,13 +361,9 @@
     "links": "Links",
     "profile": "Profile",
     "design": "Design",
-    "urgency": "Urgency",
-    "tracking": "Tracking",
-    "safePage": "Safe Page",
-    "agency": "Agency",
     "analytics": "Stats",
-    "more": "More",
-    "apparence": "Appearance"
+    "apparence": "Appearance",
+    "settings": "Settings"
   },
   "pages": {
     "title": "My pages",
