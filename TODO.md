@@ -47,7 +47,7 @@
 - [x] Landing page: hero section already has 3D phone mockup with tilt
 - [x] Landing page: testimonials section with 4 creator quotes
 - [x] Landing page: comparison table vs Linktree/GAML/Beacons added
-- [ ] All themes: audit on mobile Safari (safe area, scroll, keyboard)
+- [x] Safari audit: viewport-fit=cover, dvh, tap highlight, overscroll, input zoom, safe areas
 - [x] ImmersiveLayout: parallax on hero photo via framer-motion useScroll/useTransform
 - [x] PublicProfile: "Powered by MyTaptap" footer — visible on free plan, hidden on starter/pro
 - [x] Favicon: full set generated (16, 32, 180, 192, 512, SVG, apple-touch-icon, favicon.ico)

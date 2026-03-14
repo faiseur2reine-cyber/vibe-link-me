@@ -157,10 +157,10 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
       {showUrgency && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
       {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && <ProfileLocationToast enabled={true} pageId={page.id} />}
 
-      <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Public Sans', sans-serif" }}>
+      <div className="min-h-screen min-h-[100dvh] bg-black text-white" style={{ fontFamily: "'Public Sans', sans-serif" }}>
 
         {/* ═══ HERO ═══ */}
-        <div ref={heroRef} className="relative w-full overflow-hidden" style={{ height: '65vh', minHeight: 420, maxHeight: 580 }}>
+        <div ref={heroRef} className="relative w-full overflow-hidden" style={{ height: '65dvh', minHeight: 420, maxHeight: 580 }}>
           {/* Photo with parallax */}
           {page.cover_url && (
             <motion.div

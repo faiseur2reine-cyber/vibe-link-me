@@ -110,8 +110,35 @@
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
   .font-display {
     font-family: 'Instrument Sans', 'Inter', system-ui, sans-serif;
     letter-spacing: -0.025em;
   }
+}
+
+/* ═══ Safari / iOS fixes ═══ */
+
+/* Remove blue tap highlight on iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent pull-to-refresh on dashboard */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* Prevent iOS zoom on input focus (needs 16px minimum) */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select {
+    font-size: max(16px, 1em) !important;
+  }
+}
+
+/* Smooth scroll in modals on iOS */
+[data-radix-scroll-area-viewport] {
+  -webkit-overflow-scrolling: touch;
 }
