@@ -50,9 +50,9 @@ export function detectBrowser(): BrowserInfo {
 export function deeplinkNavigate(url: string): boolean {
   const b = detectBrowser();
 
-  // Native browser → just go
+  // Native browser → new tab (keeps visitor on your page)
   if (!b.isInApp) {
-    window.location.href = url;
+    window.open(url, '_blank', 'noopener,noreferrer');
     return true;
   }
 
