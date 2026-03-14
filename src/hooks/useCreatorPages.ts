@@ -29,6 +29,28 @@ export interface CreatorPage {
   custom_font: string;
   link_layout: string;
   custom_css: string | null;
+  // Tracking
+  tracking_meta_pixel: string;
+  tracking_ga4: string;
+  tracking_tiktok_pixel: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  // Safe page
+  safe_page_enabled: boolean;
+  safe_page_redirect_url: string;
+  // Geo greeting
+  geo_greeting_enabled: boolean;
+  // CRM fields
+  connected_label: string;
+  location: string;
+  operator: string;
+  notes: string;
+  revenue_monthly: number;
+  revenue_commission: number;
+  status: string;
+  // Urgency
+  urgency_config: any;
 }
 
 export interface PageLink {
