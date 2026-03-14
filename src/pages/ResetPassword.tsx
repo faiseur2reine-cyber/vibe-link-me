@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { TapLoader as Loader2, TapArrowLeft as ArrowLeft } from '@/components/icons/TapIcons';
 
 const ResetPassword = () => {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Check, Link2, Palette, Share2 } from 'lucide-react';
+import { TapCheck as Check, TapLink as Link2, TapPalette as Palette, TapShare as Share2 } from '@/components/icons/TapIcons';
 import { motion } from 'framer-motion';
 
 interface ChecklistItem {

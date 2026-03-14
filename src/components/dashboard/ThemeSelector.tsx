@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { THEMES, canAccessTheme } from '@/lib/themes';
 import { Profile } from '@/hooks/useDashboard';
 import { toast } from 'sonner';
-import { Lock, Check } from 'lucide-react';
+import { TapLock as Lock, TapCheck as Check } from '@/components/icons/TapIcons';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
 
