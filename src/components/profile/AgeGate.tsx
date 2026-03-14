@@ -13,6 +13,15 @@ interface AgeGateProps {
 
 const AgeGate = ({ onVerified, profile }: AgeGateProps) => {
   const displayName = profile.display_name || profile.username;
+  
+  // Auto-detect language
+  const lang = (navigator.language || '').slice(0, 2);
+  const t = {
+    fr: { title: 'Vérification d\'âge', desc: 'peut contenir du contenu réservé aux adultes.', info: 'En continuant, vous confirmez avoir au moins 18 ans et acceptez de voir du contenu potentiellement mature.', enter: 'J\'ai 18 ans ou plus — Continuer', back: 'Retour', badge: 'Page protégée' },
+    en: { title: 'Age Verification Required', desc: 'may contain age-restricted material.', info: 'By continuing, you confirm that you are at least 18 years old and agree to view potentially mature content.', enter: 'I am 18 or older — Continue', back: 'Go back', badge: 'Protected page' },
+    es: { title: 'Verificación de edad', desc: 'puede contener material para adultos.', info: 'Al continuar, confirmas que tienes al menos 18 años.', enter: 'Tengo 18 años o más — Continuar', back: 'Volver', badge: 'Página protegida' },
+    de: { title: 'Altersüberprüfung', desc: 'kann Inhalte für Erwachsene enthalten.', info: 'Durch Fortfahren bestätigen Sie, dass Sie mindestens 18 Jahre alt sind.', enter: 'Ich bin 18 oder älter — Weiter', back: 'Zurück', badge: 'Geschützte Seite' },
+  }[lang] || { title: 'Age Verification Required', desc: 'may contain age-restricted material.', info: 'By continuing, you confirm that you are at least 18 years old and agree to view potentially mature content.', enter: 'I am 18 or older — Continue', back: 'Go back', badge: 'Protected page' };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
@@ -29,16 +38,16 @@ const AgeGate = ({ onVerified, profile }: AgeGateProps) => {
 
         {/* Title */}
         <div>
-          <h1 className="text-xl font-bold text-white">Age Verification Required</h1>
+          <h1 className="text-xl font-bold text-white">{t.title}</h1>
           <p className="text-white/50 text-sm mt-2">
-            The content on <span className="text-white/70 font-medium">@{profile.username}</span>'s page may contain age-restricted material.
+            <span className="text-white/70 font-medium">@{profile.username}</span> {t.desc}
           </p>
         </div>
 
         {/* Info */}
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
           <p className="text-white/60 text-xs leading-relaxed">
-            By continuing, you confirm that you are at least 18 years old and agree to view potentially mature content. This verification helps protect minors and ensures compliance with platform policies.
+            {t.info}
           </p>
         </div>
 
@@ -48,20 +57,20 @@ const AgeGate = ({ onVerified, profile }: AgeGateProps) => {
             onClick={onVerified}
             className="w-full py-3.5 rounded-2xl bg-white text-black font-semibold text-sm hover:bg-white/90 transition-colors"
           >
-            I am 18 or older — Continue
+            {t.enter}
           </button>
           <button
             onClick={() => window.history.back()}
             className="w-full py-3.5 rounded-2xl bg-white/5 text-white/60 font-medium text-sm border border-white/10 hover:bg-white/10 transition-colors"
           >
-            Go back
+            {t.back}
           </button>
         </div>
 
         {/* Shield badge */}
         <div className="flex items-center justify-center gap-1.5 text-white/20 text-[11px]">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Protected by MyTaptap Shield</span>
+          <span>{t.badge}</span>
         </div>
       </motion.div>
     </div>

@@ -129,11 +129,36 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-border/40">
                   <div className="flex items-center gap-1.5">
+                    {page.status && page.status !== 'draft' && (
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${
+                        page.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' :
+                        page.status === 'paused' ? 'bg-red-500/10 text-red-600' :
+                        'bg-muted text-muted-foreground'
+                      }`}>{page.status === 'active' ? 'Active' : page.status === 'paused' ? 'Paused' : page.status}</span>
+                    )}
                     {page.is_nsfw && (
                       <span className="text-[9px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded font-medium">18+</span>
                     )}
+                    {page.operator && (
+                      <span className="text-[9px] text-muted-foreground truncate max-w-[80px]">{page.operator}</span>
+                    )}
+                    {page.revenue_monthly > 0 && (
+                      <span className="text-[9px] text-emerald-600 font-medium">{Math.round(page.revenue_monthly * (page.revenue_commission || 20) / 100)}€</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const url = `${window.location.origin}/${page.username}`;
+                        navigator.clipboard.writeText(url);
+                        toast.success('Lien copié');
+                      }}
+                      className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
+                      title="Copier le lien"
+                    >
+                      <Link2 className="w-3 h-3" />
+                    </button>
                     {onDuplicatePage && (
                       <button
                         onClick={async (e) => {

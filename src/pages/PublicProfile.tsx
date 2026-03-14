@@ -513,7 +513,7 @@ const PublicProfile = () => {
                     if (isCard && link.thumbnail_url) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          key={link.id} role="button" tabIndex={0}
                           onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { scale: 1.015, y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
@@ -538,7 +538,7 @@ const PublicProfile = () => {
                     if (isFeatured) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          key={link.id} role="button" tabIndex={0}
                           onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { y: -2, scale: 1.008 }} whileTap={isDemo ? {} : { scale: 0.98 }}
@@ -574,7 +574,7 @@ const PublicProfile = () => {
                     if (isMinimal) {
                       return wrapNsfw(
                         <motion.a
-                          key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                          key={link.id} role="button" tabIndex={0}
                           onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileTap={isDemo ? {} : { scale: 0.98 }}
@@ -601,7 +601,7 @@ const PublicProfile = () => {
                     /* Default — clean premium style */
                     return wrapNsfw(
                       <motion.a
-                        key={link.id} href={isDemo ? undefined : link.url} target={isDemo ? undefined : "_blank"} rel={isDemo ? undefined : "noopener noreferrer"}
+                        key={link.id} role="button" tabIndex={0}
                         onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                         variants={fadeUp}
                         whileHover={isDemo ? {} : { y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}

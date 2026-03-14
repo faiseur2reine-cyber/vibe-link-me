@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   MousePointerClick, Link2, LayoutGrid, TrendingUp,
-  ArrowRight, Plus, Zap, Eye,
+  ArrowRight, Plus, Zap, Eye, DollarSign,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -32,9 +32,18 @@ const DashboardOverview = () => {
     || user?.email?.split('@')[0]
     || 'there';
 
+  // Revenue calculations
+  const totalRevenue = pages.reduce((sum, p) => sum + (p.revenue_monthly || 0), 0);
+  const totalNet = pages.reduce((sum, p) => {
+    const rev = p.revenue_monthly || 0;
+    const com = p.revenue_commission || 20;
+    return sum + Math.round(rev * com / 100);
+  }, 0);
+  const activePages = pages.filter(p => p.status === 'active').length;
+
   const kpis = [
     { label: 'Total clics', value: stats.totalClicks, icon: MousePointerClick, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Pages créées', value: stats.totalPages, icon: LayoutGrid, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { label: 'Pages actives', value: activePages, icon: LayoutGrid, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { label: 'Liens actifs', value: stats.totalLinks, icon: Link2, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   ];
 
@@ -81,6 +90,36 @@ const DashboardOverview = () => {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Revenue summary — only shown if any revenue entered */}
+        {totalRevenue > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12, duration: 0.4, ease }}
+            className="flex items-center gap-4 p-4 rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/5 mb-8"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+              <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div className="flex-1 flex items-center gap-6">
+              <div>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium uppercase tracking-wider">Revenue brut</p>
+                <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{totalRevenue.toLocaleString()} €</p>
+              </div>
+              <div className="w-px h-8 bg-emerald-200 dark:bg-emerald-500/20" />
+              <div>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium uppercase tracking-wider">Net agence</p>
+                <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{totalNet.toLocaleString()} €</p>
+              </div>
+              <div className="w-px h-8 bg-emerald-200 dark:bg-emerald-500/20" />
+              <div>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium uppercase tracking-wider">Pages</p>
+                <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{activePages}/{pages.length}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Quick actions + Top pages */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
