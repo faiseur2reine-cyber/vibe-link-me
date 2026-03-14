@@ -7,12 +7,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Loader2, Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye } from 'lucide-react';
+import { Paintbrush, Type, LayoutGrid, Code, RotateCcw, Sparkles, Eye, Check } from 'lucide-react';
 import DesignLivePreview from './DesignLivePreview';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, PanInfo } from 'framer-motion';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 const FONT_OPTIONS = [
   { value: 'default', label: 'Par défaut (système)' },
@@ -97,13 +98,12 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
   const [font, setFont] = useState(page.custom_font || 'default');
   const [layout, setLayout] = useState(page.link_layout || 'list');
   const [customCss, setCustomCss] = useState(page.custom_css || '');
-  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const isMobile = useIsMobile();
 
-  const handleSave = async () => {
-    setSaving(true);
+  const triggerSave = useAutoSave(async () => {
     const result = await onUpdate({
       custom_bg_color: bgColor || null,
       custom_text_color: textColor || null,
@@ -114,25 +114,29 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       link_layout: layout,
       custom_css: customCss || null,
     } as any);
-    if (result?.error) {
-      toast.error(result.error.message);
+    if (!result?.error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } else {
-      toast.success('Design sauvegardé !' );
-      if (isMobile) setDrawerOpen(false);
+      toast.error(result.error.message);
     }
-    setSaving(false);
-  };
+  }, 1500);
 
   const handleReset = () => {
-    setBgColor('');
-    setTextColor('');
-    setAccentColor('');
-    setBtnColor('');
-    setBtnTextColor('');
-    setFont('default');
-    setLayout('list');
-    setCustomCss('');
+    setBgColor(''); setTextColor(''); setAccentColor('');
+    setBtnColor(''); setBtnTextColor(''); setFont('default');
+    setLayout('list'); setCustomCss(''); triggerSave();
   };
+
+  // Wrap setters to trigger auto-save
+  const setBg = (v: string) => { setBgColor(v); triggerSave(); };
+  const setTxt = (v: string) => { setTextColor(v); triggerSave(); };
+  const setAcc = (v: string) => { setAccentColor(v); triggerSave(); };
+  const setBtn = (v: string) => { setBtnColor(v); triggerSave(); };
+  const setBtnTxt = (v: string) => { setBtnTextColor(v); triggerSave(); };
+  const setFnt = (v: string) => { setFont(v); triggerSave(); };
+  const setLay = (v: string) => { setLayout(v); triggerSave(); };
+  const setCss = (v: string) => { setCustomCss(v); triggerSave(); };
 
   const applyPreset = (preset: DesignPreset) => {
     setBgColor(preset.bgColor);
@@ -203,11 +207,11 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
         </div>
         <p className="text-xs text-muted-foreground">Personnalise les couleurs de ta page. Laisse vide pour utiliser les couleurs du thème.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <ColorInput label="Fond de page" value={bgColor} onChange={setBgColor} placeholder="#1a1a2e" />
-          <ColorInput label="Texte principal" value={textColor} onChange={setTextColor} placeholder="#ffffff" />
-          <ColorInput label="Couleur d'accent" value={accentColor} onChange={setAccentColor} placeholder="#e94560" />
-          <ColorInput label="Fond des boutons" value={btnColor} onChange={setBtnColor} placeholder="#16213e" />
-          <ColorInput label="Texte des boutons" value={btnTextColor} onChange={setBtnTextColor} placeholder="#ffffff" />
+          <ColorInput label="Fond de page" value={bgColor} onChange={setBg} placeholder="#1a1a2e" />
+          <ColorInput label="Texte principal" value={textColor} onChange={setTxt} placeholder="#ffffff" />
+          <ColorInput label="Couleur d'accent" value={accentColor} onChange={setAcc} placeholder="#e94560" />
+          <ColorInput label="Fond des boutons" value={btnColor} onChange={setBtn} placeholder="#16213e" />
+          <ColorInput label="Texte des boutons" value={btnTextColor} onChange={setBtnTxt} placeholder="#ffffff" />
         </div>
 
       </div>
@@ -218,7 +222,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
           <Type className="w-4 h-4 text-primary" />
           <h3 className="font-display font-semibold text-sm text-foreground">Police d'écriture</h3>
         </div>
-        <Select value={font} onValueChange={setFont}>
+        <Select value={font} onValueChange={setFnt}>
           <SelectTrigger className="bg-muted/50 border-border">
             <SelectValue />
           </SelectTrigger>
@@ -267,7 +271,7 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
         </p>
         <Textarea
           value={customCss}
-          onChange={(e) => setCustomCss(e.target.value)}
+          onChange={(e) => setCss(e.target.value)}
           placeholder={`.page-container {\n  /* Tes styles ici */\n}\n.link-item {\n  border-radius: 999px;\n}`}
           rows={8}
           className="font-mono text-xs bg-muted/30 border-border"
@@ -275,13 +279,15 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={handleReset} className="gap-1.5 flex-1">
+      <div className="flex items-center gap-2">
+        <Button variant="outline" onClick={handleReset} className="gap-1.5 flex-1" size="sm">
           <RotateCcw className="w-3.5 h-3.5" /> Réinitialiser
         </Button>
-        <Button onClick={handleSave} disabled={saving} className="flex-1">
-          {saving ? <Loader2 className="animate-spin" /> : 'Sauvegarder le design'}
-        </Button>
+        {saved && (
+          <div className="flex items-center gap-1.5 text-[11px] text-emerald-600">
+            <Check className="w-3 h-3" /> Sauvegardé
+          </div>
+        )}
       </div>
     </div>
   );
@@ -337,12 +343,14 @@ const PageDesignEditor = ({ page, links = [], onUpdate }: PageDesignEditorProps)
             <div className="flex gap-2">
               <DrawerClose asChild>
                 <Button variant="outline" className="flex-1">
-                  Annuler
+                  Fermer
                 </Button>
               </DrawerClose>
-              <Button onClick={handleSave} disabled={saving} className="flex-1">
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sauvegarder'}
-              </Button>
+              {saved && (
+                <div className="flex items-center gap-1.5 text-[11px] text-emerald-600">
+                  <Check className="w-3 h-3" /> Sauvegardé
+                </div>
+              )}
             </div>
           </DrawerFooter>
         </DrawerContent>

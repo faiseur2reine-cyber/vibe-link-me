@@ -137,12 +137,17 @@ const PublicProfile = () => {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
-          className="w-6 h-6 rounded-full border-2 border-white/15 border-t-white/80"
-        />
+      <div className="min-h-screen flex flex-col items-center bg-black px-4 pt-20">
+        {/* Skeleton avatar */}
+        <div className="w-24 h-24 rounded-full bg-white/[0.06] animate-pulse" />
+        <div className="mt-4 h-4 w-32 rounded-full bg-white/[0.06] animate-pulse" />
+        <div className="mt-2 h-3 w-20 rounded-full bg-white/[0.04] animate-pulse" />
+        {/* Skeleton links */}
+        <div className="mt-8 w-full max-w-[380px] space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-14 rounded-2xl bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -461,6 +466,15 @@ const PublicProfile = () => {
 
           {/* ── Links ── */}
           <motion.div variants={stagger} className="mt-7 space-y-4">
+            {links.length === 0 && (
+              <motion.div variants={fadeUp} className="text-center py-8">
+                <p className={`text-sm ${hasCustomColors ? 'opacity-30' : theme.subtleText}`}
+                  style={page.custom_text_color ? { color: page.custom_text_color } : {}}
+                >
+                  Aucun lien pour le moment
+                </p>
+              </motion.div>
+            )}
             {sections.map((section, sIdx) => (
               <motion.div key={sIdx} variants={fadeUp} className="space-y-2.5">
                 {section.title && (
