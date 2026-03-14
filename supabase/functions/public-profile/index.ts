@@ -1,10 +1,21 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = [
+  "https://vibe-link-me.lovable.app",
+  "https://mytaptap.com",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  };
+}
 
 // In-memory rate limit: max requests per IP per window
 const rateLimits = new Map<string, { count: number; resetAt: number }>();
@@ -36,6 +47,8 @@ function cleanup() {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -89,7 +102,7 @@ Deno.serve(async (req) => {
       ];
       return new Response(
         JSON.stringify({ page: demoPage, links: demoLinks, source: "demo" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "public, s-maxage=3600" } }
       );
     }
 
@@ -131,7 +144,7 @@ Deno.serve(async (req) => {
     // Try creator_pages first
     const { data: pageData } = await supabase
       .from("creator_pages")
-      .select("id, username, display_name, bio, avatar_url, cover_url, theme, user_id, is_nsfw, social_links, custom_bg_color, custom_text_color, custom_accent_color, custom_btn_color, custom_btn_text_color, custom_font, link_layout, custom_css, urgency_config")
+      .select("id, username, display_name, bio, avatar_url, cover_url, theme, user_id, is_nsfw, social_links, custom_bg_color, custom_text_color, custom_accent_color, custom_btn_color, custom_btn_text_color, custom_font, link_layout, custom_css, urgency_config, tracking_meta_pixel, tracking_ga4, tracking_tiktok_pixel, utm_source, utm_medium, utm_campaign, safe_page_enabled, safe_page_redirect_url, geo_greeting_enabled, connected_label, location, operator, notes, revenue_monthly, revenue_commission, status")
       .eq("username", username)
       .single();
 
@@ -152,7 +165,13 @@ Deno.serve(async (req) => {
 
       return new Response(
         JSON.stringify({ page: { ...pageData, plan: profileRes.data?.plan || 'free' }, links: linksRes.data || [], source: "creator_pages" }),
-        { status: 200, headers: rateLimitHeaders }
+        {
+          status: 200,
+          headers: {
+            ...rateLimitHeaders,
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+          },
+        }
       );
     }
 
@@ -179,7 +198,13 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ page: profileData, links: linksData || [], source: "profiles" }),
-      { status: 200, headers: rateLimitHeaders }
+      {
+        status: 200,
+        headers: {
+          ...rateLimitHeaders,
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
     );
   } catch (err) {
     console.error("Error:", err);
