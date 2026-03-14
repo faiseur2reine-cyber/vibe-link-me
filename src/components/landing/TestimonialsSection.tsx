@@ -38,8 +38,9 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => (
-  <section className="px-4 sm:px-6 py-20 sm:py-28 bg-muted/30">
-    <div className="max-w-5xl mx-auto">
+  <section className="px-4 sm:px-6 py-20 sm:py-28 bg-muted/30 relative overflow-hidden">
+    <TestimonialBlobs />
+    <div className="relative max-w-5xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
