@@ -17,9 +17,10 @@ interface PageProfileEditorProps {
   page: CreatorPage;
   onUpdate: (updates: Partial<CreatorPage>) => Promise<{ error: any }>;
   onRefetch: () => void;
+  onPreviewChange?: (overrides: Partial<CreatorPage>) => void;
 }
 
-const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps) => {
+const PageProfileEditor = ({ page, onUpdate, onRefetch, onPreviewChange }: PageProfileEditorProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -146,11 +147,11 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch }: PageProfileEditorProps
       <div className="space-y-3 sm:space-y-4">
         <div className="space-y-1.5">
           <Label className="text-[12px] sm:text-sm">Nom affiché</Label>
-          <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} maxLength={100} />
+          <Input value={displayName} onChange={(e) => { setDisplayName(e.target.value); onPreviewChange?.({ display_name: e.target.value } as Partial<CreatorPage>); }} maxLength={100} />
         </div>
         <div className="space-y-1.5">
           <Label className="text-[12px] sm:text-sm">Bio</Label>
-          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} placeholder="Description de cette page..." className="resize-none" />
+          <Textarea value={bio} onChange={(e) => { setBio(e.target.value); onPreviewChange?.({ bio: e.target.value } as Partial<CreatorPage>); }} maxLength={300} rows={3} placeholder="Description de cette page..." className="resize-none" />
         </div>
       </div>
 

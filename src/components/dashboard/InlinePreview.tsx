@@ -63,7 +63,7 @@ export const InlinePreview = ({ page, links }: InlinePreviewProps) => {
 
               {/* Page content */}
               <motion.div
-                key={page.theme + (page.custom_bg_color || '')}
+                key={page.theme + (page.custom_bg_color || '') + (page.custom_font || '') + (page.link_layout || '')}
                 initial={{ opacity: 0.6 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.25 }}
@@ -102,10 +102,24 @@ const StandardPreview = ({ page, links, theme, displayName }: {
   const btnBg = page.custom_btn_color;
   const btnText = page.custom_btn_text_color;
 
+  // Font mapping
+  const fontMap: Record<string, string> = {
+    'inter': "'Inter', sans-serif",
+    'poppins': "'Poppins', sans-serif",
+    'dm-sans': "'DM Sans', sans-serif",
+    'playfair': "'Playfair Display', serif",
+    'space-grotesk': "'Space Grotesk', sans-serif",
+    'jetbrains': "'JetBrains Mono', monospace",
+  };
+  const fontFamily = page.custom_font && page.custom_font !== 'default' ? fontMap[page.custom_font] : undefined;
+  const isGrid = page.link_layout === 'grid';
+
+  const visibleLinks = links.filter(l => l.is_visible !== false);
+
   return (
     <div
       className={`min-h-full flex flex-col items-center pt-12 px-5 pb-6 ${hasBg ? '' : theme.bg}`}
-      style={bgStyle}
+      style={{ ...bgStyle, ...(fontFamily ? { fontFamily } : {}) }}
     >
       {/* Avatar */}
       <div className={`w-16 h-16 rounded-full overflow-hidden shrink-0 ${theme.avatarRing}`}>
@@ -144,12 +158,35 @@ const StandardPreview = ({ page, links, theme, displayName }: {
       )}
 
       {/* Links */}
-      <div className="w-full mt-5 space-y-2 max-w-[220px]">
-        {links.filter(l => l.is_visible !== false).slice(0, 5).map((link, idx) => {
+      <div className={`w-full mt-5 max-w-[220px] ${isGrid ? 'grid grid-cols-2 gap-1.5' : 'space-y-2'}`}>
+        {visibleLinks.slice(0, isGrid ? 6 : 5).map((link, idx) => {
           const platform = !link.bg_color && !btnBg ? detectPlatform(link.url) : null;
           const bg = link.bg_color || btnBg;
           const text = link.text_color || btnText;
           const platformColor = platform?.bgColor;
+
+          if (isGrid) {
+            return (
+              <motion.div
+                key={link.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.03, duration: 0.15 }}
+                className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl text-center ${bg ? '' : theme.btn.split(' hover:')[0]}`}
+                style={bg ? { backgroundColor: bg, color: text || '#fff' } : {}}
+              >
+                <div
+                  className="w-6 h-6 rounded-lg flex items-center justify-center"
+                  style={platformColor && !bg ? { backgroundColor: platformColor } :
+                    bg ? { backgroundColor: isColorDark(bg) ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)' } :
+                    { backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)' }}
+                >
+                  <LinkFavicon url={link.url} size="xs" className={platformColor || (bg && isColorDark(bg)) ? 'text-white' : ''} />
+                </div>
+                <span className="text-[8px] font-semibold truncate w-full">{link.title}</span>
+              </motion.div>
+            );
+          }
 
           return (
             <motion.div
@@ -163,7 +200,6 @@ const StandardPreview = ({ page, links, theme, displayName }: {
                 ...(platformColor && !bg ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
               }}
             >
-              {/* Icon */}
               <div
                 className="w-[22px] h-[22px] rounded-lg flex items-center justify-center shrink-0"
                 style={platformColor && !bg ? { backgroundColor: platformColor } :
@@ -172,19 +208,17 @@ const StandardPreview = ({ page, links, theme, displayName }: {
               >
                 <LinkFavicon url={link.url} size="xs" className={platformColor || (bg && isColorDark(bg)) ? 'text-white' : ''} />
               </div>
-
-              {/* Title */}
               <span className="truncate flex-1">{link.title}</span>
             </motion.div>
           );
         })}
-        {links.length > 5 && (
-          <p className={`text-center text-[8px] pt-1 ${isDark ? 'text-white/20' : 'text-black/15'}`}>
-            +{links.length - 5} autres liens
+        {visibleLinks.length > (isGrid ? 6 : 5) && (
+          <p className={`text-center text-[8px] pt-1 ${isGrid ? 'col-span-2' : ''} ${isDark ? 'text-white/20' : 'text-black/15'}`}>
+            +{visibleLinks.length - (isGrid ? 6 : 5)} autres liens
           </p>
         )}
-        {links.length === 0 && (
-          <div className={`text-center py-6 text-[9px] ${isDark ? 'text-white/20' : 'text-black/15'}`}>
+        {visibleLinks.length === 0 && (
+          <div className={`text-center py-6 text-[9px] ${isGrid ? 'col-span-2' : ''} ${isDark ? 'text-white/20' : 'text-black/15'}`}>
             Aucun lien
           </div>
         )}

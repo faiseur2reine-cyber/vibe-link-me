@@ -5,7 +5,7 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Eye, Link2, User, Palette, BarChart3, Trash2, Flame, Activity, ShieldCheck, Briefcase, QrCode, Check, Loader2, MoreHorizontal, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import {
@@ -61,6 +61,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const [showShare, setShowShare] = useState(false);
   const [showMoreNav, setShowMoreNav] = useState(false);
   const [previewOverrides, setPreviewOverrides] = useState<Partial<CreatorPage>>({});
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   // Escape → back to pages list (unless dialog/modal is open)
   useEffect(() => {
@@ -217,7 +218,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                   <h3 className="text-[13px] font-medium">{t('editors.profileTitle')}</h3>
                   <p className="text-[11px] text-muted-foreground mb-4">{t('editors.profileDesc')}</p>
                 </div>
-                <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} />
+                <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} onPreviewChange={setPreviewOverrides} />
               </Suspense>
             </TabsContent>
 
@@ -285,6 +286,35 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
       {/* Mobile Bottom Nav — 5 primary tabs + More */}
       {isMobile && (
+        <>
+        {/* Floating preview button */}
+        {!showMobilePreview && (
+          <button
+            onClick={() => setShowMobilePreview(true)}
+            className="fixed bottom-16 right-4 z-40 w-11 h-11 rounded-full bg-foreground text-background shadow-xl shadow-black/20 flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* Fullscreen mobile preview */}
+        {showMobilePreview && (
+          <div className="fixed inset-0 z-[60] bg-background flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
+              <span className="text-[13px] font-medium">Aperçu</span>
+              <button
+                onClick={() => setShowMobilePreview(false)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <InlinePreview page={{...page, ...previewOverrides} as CreatorPage} links={links} />
+            </div>
+          </div>
+        )}
+
         <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/90 backdrop-blur-xl border-t border-border/60 safe-area-bottom">
           <div className="flex items-center justify-around h-12">
             {[
@@ -340,6 +370,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             </div>
           )}
         </nav>
+        </>
       )}
 
       {showShare && (
