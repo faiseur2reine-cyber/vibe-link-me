@@ -27,7 +27,7 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
     setUtmSource(page.utm_source || 'instagram');
     setUtmMedium(page.utm_medium || 'bio');
     setUtmCampaign(page.utm_campaign || '');
-  }, [page]);
+  }, [page.id, page.tracking_meta_pixel, page.tracking_ga4, page.tracking_tiktok_pixel, page.utm_source, page.utm_medium, page.utm_campaign]);
 
   const handleSave = async () => {
     setSaving(true);

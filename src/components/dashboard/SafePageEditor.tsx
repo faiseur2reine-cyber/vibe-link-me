@@ -20,7 +20,7 @@ const SafePageEditor = ({ page, onUpdate }: SafePageEditorProps) => {
   useEffect(() => {
     setEnabled(page.safe_page_enabled ?? false);
     setRedirectUrl(page.safe_page_redirect_url || '');
-  }, [page]);
+  }, [page.id, page.safe_page_enabled, page.safe_page_redirect_url]);
 
   const handleSave = async () => {
     setSaving(true);
