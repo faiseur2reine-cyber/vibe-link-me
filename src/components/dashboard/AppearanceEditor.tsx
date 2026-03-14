@@ -1,18 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { CreatorPage, PageLink } from '@/hooks/useCreatorPages';
-import { THEMES, canAccessTheme, getTheme } from '@/lib/themes';
+import { THEMES, canAccessTheme } from '@/lib/themes';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Check, Lock, ChevronDown, Palette, Type, Code, Sparkles, MapPin, Wifi, RotateCcw, SlidersHorizontal, Circle, Square, RectangleHorizontal } from 'lucide-react';
+import { Check, Lock, Palette, Code, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { Slider } from '@/components/ui/slider';
-import { detectPlatform } from '@/lib/platforms';
-import LinkFavicon from '@/components/LinkFavicon';
 
 interface AppearanceEditorProps {
   page: CreatorPage;
@@ -31,90 +28,6 @@ const FONTS = [
   { value: 'space-grotesk', label: 'Space Grotesk' },
   { value: 'jetbrains', label: 'JetBrains Mono' },
 ];
-
-// ═══ INLINE MINI PREVIEW ═══
-const MiniPreview = ({ page, links, design }: {
-  page: CreatorPage; links: PageLink[];
-  design: { bgColor: string; textColor: string; btnColor: string; btnTextColor: string };
-}) => {
-  const theme = getTheme(page.theme);
-  const bg = design.bgColor || undefined;
-  const text = design.textColor || undefined;
-  const btn = design.btnColor || undefined;
-  const btnText = design.btnTextColor || undefined;
-  const name = page.display_name || page.username;
-  const previewLinks = links.slice(0, 3);
-
-  return (
-    <div
-      className="rounded-2xl overflow-hidden border border-border/20 shadow-sm transition-all duration-300"
-      style={{ backgroundColor: bg, color: text }}
-    >
-      <div className={`p-5 pb-6 flex flex-col items-center ${!bg ? theme.bg : ''}`}>
-        <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white/20 shadow-lg mb-2.5">
-          {page.avatar_url ? (
-            <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-              <span className="text-base font-bold text-primary/70">{name[0]?.toUpperCase()}</span>
-            </div>
-          )}
-        </div>
-        <p className={`text-[13px] font-bold ${!text ? theme.text : ''}`} style={{ color: text }}>{name}</p>
-        <p className={`text-[9px] mt-0.5 ${!text ? theme.subtleText : 'opacity-40'}`}>@{page.username}</p>
-        <div className="w-full mt-3 space-y-1.5 max-w-[200px]">
-          {previewLinks.length > 0 ? previewLinks.map(link => {
-            const platform = detectPlatform(link.url);
-            const lBg = link.bg_color || btn;
-            const lText = link.text_color || btnText;
-            return (
-              <div key={link.id}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium ${!lBg ? theme.btn : ''}`}
-                style={{ ...(lBg ? { backgroundColor: lBg } : {}), ...(lText ? { color: lText } : {}) }}
-              >
-                <div className="w-4 h-4 rounded flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: platform?.bgColor || 'rgba(0,0,0,0.05)' }}>
-                  <LinkFavicon url={link.url} size="sm" className={platform ? 'text-white' : ''} style={{ width: 10, height: 10 }} />
-                </div>
-                <span className="truncate">{link.title}</span>
-              </div>
-            );
-          }) : [1, 2].map(i => (
-            <div key={i} className={`h-7 rounded-lg ${!btn ? 'bg-black/[0.04]' : ''}`}
-              style={btn ? { backgroundColor: btn, opacity: 0.3 + i * 0.2 } : {}} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ═══ COLLAPSIBLE SECTION ═══
-const Section = ({ title, icon: Icon, children, defaultOpen = false, badge }: {
-  title: string; icon: any; children: React.ReactNode; defaultOpen?: boolean; badge?: string;
-}) => {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className={`rounded-xl transition-all duration-150 ${open ? 'bg-muted/20 ring-1 ring-border/15' : 'hover:bg-muted/10'}`}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left">
-        <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${open ? 'bg-primary/10' : 'bg-muted/40'}`}>
-          <Icon className={`w-3 h-3 transition-colors ${open ? 'text-primary' : 'text-muted-foreground'}`} />
-        </div>
-        <span className="text-[13px] font-medium flex-1">{title}</span>
-        {badge && <span className="text-[9px] text-primary bg-primary/10 px-1.5 py-0.5 rounded-full font-medium">{badge}</span>}
-        <ChevronDown className={`w-3 h-3 text-muted-foreground/30 transition-transform duration-150 ${open ? 'rotate-180' : ''}`} />
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.12 }} className="overflow-hidden">
-            <div className="px-3.5 pb-3.5 pt-0.5 space-y-2.5">{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 // ═══ COLOR PICKER ═══
 const ColorPick = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => (
@@ -247,205 +160,186 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
 
   const activeColors = [bgColor, textColor, accentColor, btnColor, btnTextColor].filter(Boolean).length;
   const isImmersive = selectedTheme === 'immersive';
-  const designState = useMemo(() => ({ bgColor, textColor, btnColor, btnTextColor }), [bgColor, textColor, btnColor, btnTextColor]);
+  const [showColors, setShowColors] = useState(activeColors > 0);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   return (
-    <div className="space-y-5">
-      {/* ═══ PREVIEW ═══ */}
+    <div className="space-y-6">
+      {/* Save indicator */}
+      <AnimatePresence>
+        {saved && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="text-[11px] text-emerald-600 flex items-center gap-1">
+            <Check className="w-3 h-3" /> Sauvegardé
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── THEME GRID ── */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+        {Object.entries(THEMES).map(([key, theme]) => {
+          const sel = selectedTheme === key;
+          const locked = !canAccessTheme(theme.tier, plan);
+          const sc = SWATCH_COLORS[key] || SWATCH_COLORS.default;
+          return (
+            <button key={key} onClick={() => selectTheme(key)}
+              className={`relative rounded-xl overflow-hidden transition-all duration-150 ${
+                sel ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' :
+                locked ? 'opacity-30 grayscale' : 'hover:ring-1 hover:ring-border/50'}`}>
+              <div className="h-12 flex items-center justify-center" style={{ background: sc.bg }}>
+                <div className="flex flex-col items-center gap-[2px]">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: sc.dot }} />
+                  <div className="w-9 h-[3px] rounded-full" style={{ backgroundColor: sc.bar1 }} />
+                  <div className="w-10 h-[4px]" style={{ backgroundColor: sc.bar2, borderRadius: `${Math.min(btnRadius, 6)}px` }} />
+                </div>
+                {sel && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+                  className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="w-2 h-2 text-primary-foreground" />
+                </motion.div>}
+                {locked && <Lock className="absolute top-1 right-1 w-2.5 h-2.5 text-white/40" />}
+              </div>
+              <div className="py-1 bg-card text-center"><span className="text-[8px] font-medium">{theme.name}</span></div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── ARRONDI ── */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[11px] text-muted-foreground/50 uppercase tracking-wider font-medium">Aperçu</p>
-          <AnimatePresence>
-            {saved && (
-              <motion.span initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }}
-                className="text-[11px] text-emerald-600 flex items-center gap-1">
-                <Check className="w-3 h-3" /> Sauvegardé
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <span className="text-[12px] text-muted-foreground">Arrondi</span>
+          <span className="text-[10px] text-muted-foreground/40 tabular-nums">{btnRadius}px</span>
         </div>
-        <MiniPreview page={{...page, theme: selectedTheme} as CreatorPage} links={links} design={designState} />
+        <Slider value={[btnRadius]} onValueChange={([v]) => { setBtnRadius(v); save(); }} min={0} max={50} step={2} />
       </div>
 
-      {/* ═══ THEMES ═══ */}
-      <div>
-        <p className="text-[11px] text-muted-foreground/50 uppercase tracking-wider font-medium mb-2.5">Thème</p>
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-          {Object.entries(THEMES).map(([key, theme]) => {
-            const sel = selectedTheme === key;
-            const locked = !canAccessTheme(theme.tier, plan);
-            const sc = SWATCH_COLORS[key] || SWATCH_COLORS.default;
-            return (
-              <button key={key} onClick={() => selectTheme(key)}
-                className={`relative rounded-xl overflow-hidden transition-all duration-150 ${
-                  sel ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' :
-                  locked ? 'opacity-30 grayscale' : 'hover:ring-1 hover:ring-border/50'}`}>
-                <div className="h-14 flex items-center justify-center" style={{ background: sc.bg }}>
-                  <div className="flex flex-col items-center gap-[3px]">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: sc.dot }} />
-                    <div className="w-10 h-[4px] rounded-full" style={{ backgroundColor: sc.bar1 }} />
-                    <div className="w-12 h-[5px] rounded-sm" style={{ backgroundColor: sc.bar2 }} />
-                  </div>
-                  {sel && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
-                    className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center shadow-sm">
-                    <Check className="w-2.5 h-2.5 text-primary-foreground" />
-                  </motion.div>}
-                  {locked && <Lock className="absolute top-1 right-1 w-3 h-3 text-white/40" />}
-                </div>
-                <div className="py-1 bg-card text-center"><span className="text-[9px] font-medium">{theme.name}</span></div>
-              </button>
-            );
-          })}
-        </div>
+      {/* ── STYLE ── */}
+      <div className="flex gap-1.5">
+        {([
+          { value: 'filled', label: 'Plein' },
+          { value: 'outline', label: 'Contour' },
+          { value: 'ghost', label: 'Ghost' },
+          { value: 'shadow', label: 'Ombre' },
+        ] as const).map(s => (
+          <button key={s.value} onClick={() => { setBtnStyle(s.value); save(); }}
+            className={`flex-1 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
+              btnStyle === s.value ? 'bg-foreground text-background' : 'bg-muted/40 text-muted-foreground hover:bg-muted'}`}>
+            {s.label}
+          </button>
+        ))}
       </div>
 
-      {/* ═══ SECTIONS ═══ */}
-      <Section title="Style des boutons" icon={SlidersHorizontal} defaultOpen>
-        {/* Button radius slider */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[12px] text-muted-foreground">Arrondi</span>
-            <span className="text-[10px] text-muted-foreground/50 tabular-nums">{btnRadius}px</span>
-          </div>
-          <Slider
-            value={[btnRadius]}
-            onValueChange={([v]) => { setBtnRadius(v); save(); }}
-            min={0} max={50} step={2}
-            className="w-full"
-          />
-          <div className="flex justify-between mt-1.5">
-            {[0, 8, 16, 24, 50].map(v => (
-              <button key={v} onClick={() => { setBtnRadius(v); save(); }}
-                className={`w-7 h-5 border transition-all ${btnRadius === v ? 'border-primary bg-primary/10' : 'border-border/40 hover:border-border'}`}
-                style={{ borderRadius: v >= 50 ? '999px' : `${v}px` }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Button style picker */}
-        <div>
-          <span className="text-[12px] text-muted-foreground block mb-2">Type</span>
-          <div className="grid grid-cols-4 gap-1.5">
+      {/* ── AVATAR · LAYOUT · ESPACEMENT — one row each ── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-muted-foreground">Avatar</span>
+          <div className="flex gap-1">
             {([
-              { value: 'filled', label: 'Plein', preview: 'bg-foreground text-background' },
-              { value: 'outline', label: 'Contour', preview: 'border-2 border-foreground/20 text-foreground' },
-              { value: 'ghost', label: 'Ghost', preview: 'bg-foreground/5 text-foreground' },
-              { value: 'shadow', label: 'Ombre', preview: 'bg-card text-foreground shadow-md' },
-            ] as const).map(s => (
-              <button key={s.value} onClick={() => { setBtnStyle(s.value); save(); }}
-                className={`flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all ${
-                  btnStyle === s.value ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : 'hover:bg-muted/30'}`}>
-                <div className={`w-full h-6 rounded-md ${s.preview}`} style={{ borderRadius: `${Math.min(btnRadius, 12)}px` }} />
-                <span className="text-[9px] font-medium text-muted-foreground">{s.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Avatar shape picker */}
-        <div>
-          <span className="text-[12px] text-muted-foreground block mb-2">Avatar</span>
-          <div className="flex gap-2">
-            {([
-              { value: 'circle', label: 'Rond', radius: '50%' },
-              { value: 'rounded', label: 'Arrondi', radius: '20%' },
-              { value: 'square', label: 'Carré', radius: '0' },
+              { value: 'circle', r: '50%' },
+              { value: 'rounded', r: '20%' },
+              { value: 'square', r: '0' },
             ] as const).map(s => (
               <button key={s.value} onClick={() => { setAvatarShape(s.value); save(); }}
-                className={`flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all flex-1 ${
-                  avatarShape === s.value ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : 'hover:bg-muted/30'}`}>
-                <div className="w-8 h-8 bg-muted" style={{ borderRadius: s.radius }} />
-                <span className="text-[9px] font-medium text-muted-foreground">{s.label}</span>
+                className={`w-8 h-8 bg-muted transition-all ${avatarShape === s.value ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : 'hover:bg-muted/80'}`}
+                style={{ borderRadius: s.r }} />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-muted-foreground">Disposition</span>
+          <div className="flex gap-1">
+            {[{ value: 'list', label: 'Liste' }, { value: 'grid', label: 'Grille' }].map(l => (
+              <button key={l.value} onClick={() => { setLayout(l.value); save(); }}
+                className={`px-3 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  layout === l.value ? 'bg-foreground text-background' : 'bg-muted/40 text-muted-foreground hover:bg-muted'}`}>
+                {l.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Spacing picker */}
-        <div>
-          <span className="text-[12px] text-muted-foreground block mb-2">Espacement</span>
-          <div className="flex gap-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-muted-foreground">Espacement</span>
+          <div className="flex gap-1">
             {([
-              { value: 'compact', label: 'Compact' },
+              { value: 'compact', label: 'Serré' },
               { value: 'default', label: 'Normal' },
               { value: 'spacious', label: 'Aéré' },
             ] as const).map(s => (
               <button key={s.value} onClick={() => { setSpacing(s.value); save(); }}
-                className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
                   spacing === s.value ? 'bg-foreground text-background' : 'bg-muted/40 text-muted-foreground hover:bg-muted'}`}>
                 {s.label}
               </button>
             ))}
           </div>
         </div>
-      </Section>
 
-      <Section title="Couleurs" icon={Palette} badge={activeColors > 0 ? String(activeColors) : undefined}>
-        <div className="flex items-center justify-between mb-0.5">
-          <p className="text-[10px] text-muted-foreground/40">Vide = couleurs du thème</p>
-          {activeColors > 0 && (
-            <button onClick={() => { setBgColor(''); setTextColor(''); setAccentColor(''); setBtnColor(''); setBtnTextColor(''); save(); }}
-              className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
-              <RotateCcw className="w-2.5 h-2.5" /> Reset
-            </button>
-          )}
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-muted-foreground">Police</span>
+          <Select value={font} onValueChange={v => { setFont(v); save(); }}>
+            <SelectTrigger className="w-36 h-7 text-[11px]"><SelectValue /></SelectTrigger>
+            <SelectContent>{FONTS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
+          </Select>
         </div>
-        <ColorPick label="Fond" value={bgColor} onChange={v => { setBgColor(v); save(); }} />
-        <ColorPick label="Texte" value={textColor} onChange={v => { setTextColor(v); save(); }} />
-        <ColorPick label="Accent" value={accentColor} onChange={v => { setAccentColor(v); save(); }} />
-        <ColorPick label="Boutons" value={btnColor} onChange={v => { setBtnColor(v); save(); }} />
-        <ColorPick label="Texte boutons" value={btnTextColor} onChange={v => { setBtnTextColor(v); save(); }} />
-      </Section>
+      </div>
 
-      <Section title="Typographie & Layout" icon={Type}>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between gap-2 sm:gap-3">
-            <Label className="text-[12px] text-muted-foreground shrink-0">Police</Label>
-            <Select value={font} onValueChange={v => { setFont(v); save(); }}>
-              <SelectTrigger className="w-36 sm:w-44 h-8 text-[11px] sm:text-[12px]"><SelectValue /></SelectTrigger>
-              <SelectContent>{FONTS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
-            </Select>
+      {/* ── COULEURS — toggle ── */}
+      <div>
+        <button onClick={() => setShowColors(!showColors)}
+          className="text-[12px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
+          <Palette className="w-3 h-3" />
+          {showColors ? 'Masquer les couleurs' : 'Personnaliser les couleurs'}
+          {activeColors > 0 && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{activeColors}</span>}
+        </button>
+        {showColors && (
+          <div className="mt-3 space-y-1.5">
+            {activeColors > 0 && (
+              <button onClick={() => { setBgColor(''); setTextColor(''); setAccentColor(''); setBtnColor(''); setBtnTextColor(''); save(); }}
+                className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 mb-2">
+                <RotateCcw className="w-2.5 h-2.5" /> Réinitialiser
+              </button>
+            )}
+            <ColorPick label="Fond" value={bgColor} onChange={v => { setBgColor(v); save(); }} />
+            <ColorPick label="Texte" value={textColor} onChange={v => { setTextColor(v); save(); }} />
+            <ColorPick label="Accent" value={accentColor} onChange={v => { setAccentColor(v); save(); }} />
+            <ColorPick label="Boutons" value={btnColor} onChange={v => { setBtnColor(v); save(); }} />
+            <ColorPick label="Texte btn" value={btnTextColor} onChange={v => { setBtnTextColor(v); save(); }} />
           </div>
-          <div className="flex items-center justify-between gap-2 sm:gap-3">
-            <Label className="text-[12px] text-muted-foreground shrink-0">Disposition</Label>
-            <div className="flex gap-1">
-              {[{ value: 'list', label: 'Liste' }, { value: 'grid', label: 'Grille' }].map(l => (
-                <button key={l.value} onClick={() => { setLayout(l.value); save(); }}
-                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-medium transition-all ${
-                    layout === l.value ? 'bg-foreground text-background' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
-                  {l.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
+        )}
+      </div>
 
-      {isImmersive && (
-        <Section title="Mode Immersif" icon={Sparkles} defaultOpen>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between gap-2 sm:gap-3">
-              <div className="flex items-center gap-1.5 shrink-0"><Wifi className="w-3 h-3 text-muted-foreground" /><Label className="text-[12px]">Statut</Label></div>
-              <Input value={connectedLabel} onChange={e => { setConnectedLabel(e.target.value); save(); }} className="w-28 sm:w-36 h-7 text-[11px]" placeholder="Active now" />
-            </div>
-            <div className="flex items-center justify-between gap-2 sm:gap-3">
-              <div className="flex items-center gap-1.5 shrink-0"><MapPin className="w-3 h-3 text-muted-foreground" /><Label className="text-[12px]">Ville</Label></div>
-              <Input value={location} onChange={e => { setLocation(e.target.value); save(); }} className="w-28 sm:w-36 h-7 text-[11px]" placeholder="Paris, FR" />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label className="text-[12px]">Salutation géo</Label>
-              <Switch checked={geoEnabled} onCheckedChange={v => { setGeoEnabled(v); save(); }} />
-            </div>
+      {/* ── AVANCÉ — toggle ── */}
+      <div>
+        <button onClick={() => setShowAdvanced(!showAdvanced)}
+          className="text-[12px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
+          <Code className="w-3 h-3" />
+          {showAdvanced ? 'Masquer les options avancées' : 'Options avancées'}
+        </button>
+        {showAdvanced && (
+          <div className="mt-3 space-y-3">
+            {isImmersive && (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-muted-foreground">Statut</span>
+                  <Input value={connectedLabel} onChange={e => { setConnectedLabel(e.target.value); save(); }} className="w-28 h-7 text-[11px]" placeholder="Active now" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-muted-foreground">Ville</span>
+                  <Input value={location} onChange={e => { setLocation(e.target.value); save(); }} className="w-28 h-7 text-[11px]" placeholder="Paris, FR" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-muted-foreground">Salutation géo</span>
+                  <Switch checked={geoEnabled} onCheckedChange={v => { setGeoEnabled(v); save(); }} />
+                </div>
+              </>
+            )}
+            <Textarea value={customCss} onChange={e => { setCustomCss(e.target.value); save(); }}
+              placeholder={`.page-container { }`} className="font-mono text-[11px] h-16 resize-none" />
           </div>
-        </Section>
-      )}
-
-      <Section title="CSS personnalisé" icon={Code}>
-        <Textarea value={customCss} onChange={e => { setCustomCss(e.target.value); save(); }}
-          placeholder={`.page-container {\n  /* votre CSS */\n}`} className="font-mono text-[11px] h-20 resize-none bg-background" />
-        <p className="text-[10px] text-muted-foreground/40">.page-container · .link-item</p>
-      </Section>
+        )}
+      </div>
     </div>
   );
 };
