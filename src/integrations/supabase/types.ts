@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          connected_label: string
           cover_url: string | null
           created_at: string
           custom_accent_color: string | null
@@ -28,19 +29,35 @@ export type Database = {
           custom_font: string | null
           custom_text_color: string | null
           display_name: string | null
+          geo_greeting_enabled: boolean
           id: string
           is_nsfw: boolean
           link_layout: string | null
+          location: string
+          notes: string
+          operator: string
+          revenue_commission: number
+          revenue_monthly: number
+          safe_page_enabled: boolean
+          safe_page_redirect_url: string
           social_links: Json
+          status: string
           theme: string
+          tracking_ga4: string
+          tracking_meta_pixel: string
+          tracking_tiktok_pixel: string
           updated_at: string
           urgency_config: Json | null
           user_id: string
           username: string
+          utm_campaign: string
+          utm_medium: string
+          utm_source: string
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          connected_label?: string
           cover_url?: string | null
           created_at?: string
           custom_accent_color?: string | null
@@ -51,19 +68,35 @@ export type Database = {
           custom_font?: string | null
           custom_text_color?: string | null
           display_name?: string | null
+          geo_greeting_enabled?: boolean
           id?: string
           is_nsfw?: boolean
           link_layout?: string | null
+          location?: string
+          notes?: string
+          operator?: string
+          revenue_commission?: number
+          revenue_monthly?: number
+          safe_page_enabled?: boolean
+          safe_page_redirect_url?: string
           social_links?: Json
+          status?: string
           theme?: string
+          tracking_ga4?: string
+          tracking_meta_pixel?: string
+          tracking_tiktok_pixel?: string
           updated_at?: string
           urgency_config?: Json | null
           user_id: string
           username: string
+          utm_campaign?: string
+          utm_medium?: string
+          utm_source?: string
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          connected_label?: string
           cover_url?: string | null
           created_at?: string
           custom_accent_color?: string | null
@@ -74,15 +107,30 @@ export type Database = {
           custom_font?: string | null
           custom_text_color?: string | null
           display_name?: string | null
+          geo_greeting_enabled?: boolean
           id?: string
           is_nsfw?: boolean
           link_layout?: string | null
+          location?: string
+          notes?: string
+          operator?: string
+          revenue_commission?: number
+          revenue_monthly?: number
+          safe_page_enabled?: boolean
+          safe_page_redirect_url?: string
           social_links?: Json
+          status?: string
           theme?: string
+          tracking_ga4?: string
+          tracking_meta_pixel?: string
+          tracking_tiktok_pixel?: string
           updated_at?: string
           urgency_config?: Json | null
           user_id?: string
           username?: string
+          utm_campaign?: string
+          utm_medium?: string
+          utm_source?: string
         }
         Relationships: []
       }
