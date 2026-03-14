@@ -4,15 +4,17 @@
 // Public Sans font, "Active now" indicator, bounce animation, deeplink engine.
 // Used when theme === 'immersive' in PublicProfile.
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { MapPin, ChevronRight, Heart, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { useRef } from 'react';
 import { deeplinkNavigate } from '@/lib/deeplink';
 import { appendUtm, type UtmParams } from '@/lib/utm';
 import { getTheme } from '@/lib/themes';
 import { recordClick } from '@/hooks/useAnalytics';
+import { usePageView } from '@/hooks/usePageView';
 import { TrackingPixels, trackPixelClick } from '@/components/profile/TrackingPixels';
 import GeoGreeting from '@/components/profile/GeoGreeting';
 import NsfwInlineGate from '@/components/profile/NsfwInlineGate';
@@ -78,6 +80,14 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
   const { t } = useTranslation();
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+  // Parallax: hero image moves at 40% of scroll speed
+  const heroY = useTransform(scrollY, [0, 500], [0, 80]);
+
+  // Track page view
+  usePageView(page.id);
+
   const displayName = page.display_name || page.username;
   const location = page.location || '';
   const connectedLabel = page.connected_label || 'Active now';
@@ -146,18 +156,30 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
       <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Public Sans', sans-serif" }}>
 
         {/* ═══ HERO ═══ */}
-        <div className="relative w-full" style={{ height: '65vh', minHeight: 420, maxHeight: 580 }}>
-          {/* Photo */}
+        <div ref={heroRef} className="relative w-full overflow-hidden" style={{ height: '65vh', minHeight: 420, maxHeight: 580 }}>
+          {/* Photo with parallax */}
           {page.cover_url && (
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${page.cover_url})`, backgroundPosition: 'center 12%' }}
+            <motion.div
+              className="absolute inset-0 bg-cover bg-center will-change-transform"
+              style={{
+                backgroundImage: `url(${page.cover_url})`,
+                backgroundPosition: 'center 12%',
+                height: '120%',
+                top: '-10%',
+                y: heroY,
+              }}
             />
           )}
           {!page.cover_url && page.avatar_url && (
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${page.avatar_url})`, backgroundPosition: 'center 12%' }}
+            <motion.div
+              className="absolute inset-0 bg-cover bg-center will-change-transform"
+              style={{
+                backgroundImage: `url(${page.avatar_url})`,
+                backgroundPosition: 'center 12%',
+                height: '120%',
+                top: '-10%',
+                y: heroY,
+              }}
             />
           )}
           {!page.cover_url && !page.avatar_url && (

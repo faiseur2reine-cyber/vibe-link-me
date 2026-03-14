@@ -17,7 +17,7 @@
 
 ## ═══ PRIORITY 2 — UX IMPROVEMENTS ═══
 
-- [ ] Dashboard: auto-save on editors instead of manual "Sauvegarder" button (debounced 1.5s)
+- [x] Dashboard: auto-save on all editors (TrackingEditor, SafePageEditor, AgencyEditor, ImmersiveSettings)
 - [ ] Dashboard: toast notifications should be consistent — some use sonner, some use shadcn toast
 - [x] LinksManager: show platform icon (OF, MYM, IG, etc.) via LinkFavicon
 - [x] LinksManager: drag handle bigger touch target, visible on mobile
@@ -32,7 +32,7 @@
 ## ═══ PRIORITY 3 — FEATURES ═══
 
 - [ ] Bulk actions: select multiple pages → change status / assign operator / export CSV
-- [ ] Analytics: add conversion rate (clicks / page views) — needs page view tracking
+- [x] Analytics: page view tracking via usePageView hook (once per session per page)
 - [x] Analytics: export to CSV (per-page, all sections: links, daily, country, city, referrer, A/B)
 - [ ] Link scheduling: set a link to appear/disappear at a specific date/time
 - [ ] A/B test editor: visual editor for creating A/B variants (currently just a field)
@@ -48,7 +48,7 @@
 - [ ] Landing page: add testimonials section
 - [ ] Landing page: add comparison table vs Linktree/GAML/Beacons
 - [ ] All themes: audit on mobile Safari (safe area, scroll, keyboard)
-- [ ] ImmersiveLayout: add subtle parallax on hero photo scroll
+- [x] ImmersiveLayout: parallax on hero photo via framer-motion useScroll/useTransform
 - [ ] PublicProfile: footer with "Powered by MyTaptap" + link (removable on Pro plan)
 - [ ] Favicon: generate proper set (16, 32, 180, 192, 512) from logo
 - [ ] PWA: proper icons set + splash screens
@@ -56,7 +56,7 @@
 
 ## ═══ PRIORITY 5 — PERFORMANCE & INFRA ═══
 
-- [ ] Dashboard chunk is 811KB — split further (lazy load editors)
+- [x] Dashboard chunk split: 811KB → 680KB base + lazy loaded editors
 - [ ] Images: add srcset/responsive images for avatars and covers
 - [ ] Service worker: cache public pages for offline viewing
 - [ ] Edge function: add ETag support for conditional requests

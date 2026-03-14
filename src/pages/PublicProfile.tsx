@@ -8,6 +8,7 @@ import { getTheme } from '@/lib/themes';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
 import { recordClick } from '@/hooks/useAnalytics';
+import { usePageView } from '@/hooks/usePageView';
 import { toast } from '@/hooks/use-toast';
 import LinkFavicon from '@/components/LinkFavicon';
 import ParticleField from '@/components/profile/ParticleField';
@@ -75,6 +76,9 @@ const PublicProfile = () => {
   const [ageVerified, setAgeVerified] = useState(() => {
     try { return sessionStorage.getItem('age_verified') === 'true'; } catch { return false; }
   });
+
+  // Track page view (once per session per page)
+  usePageView(page?.id);
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();

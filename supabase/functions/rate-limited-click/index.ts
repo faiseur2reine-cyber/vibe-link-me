@@ -83,6 +83,15 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Page view events — acknowledged, not recorded in link_clicks
+    // These are tracked via GA4/Meta Pixel instead
+    if (link_id.startsWith("pageview_")) {
+      return new Response(JSON.stringify({ ok: true, recorded: false, type: "pageview" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Rate limit by IP + link combo
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
