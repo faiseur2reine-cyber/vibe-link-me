@@ -71,13 +71,13 @@ function getBrandLogo(url: string): ((props: { className?: string }) => JSX.Elem
 
 interface LinkFaviconProps {
   url: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 const LinkFavicon = ({ url, size = 'md', className = '' }: LinkFaviconProps) => {
   const [imgFailed, setImgFailed] = useState(false);
-  const iconSize = size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
+  const iconSize = size === 'xs' ? 'w-2.5 h-2.5' : size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
 
   const BrandLogo = getBrandLogo(url);
   if (BrandLogo) {

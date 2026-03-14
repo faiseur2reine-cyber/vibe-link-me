@@ -15,7 +15,7 @@ import {
 
 // Eagerly loaded (always visible first)
 import LinksManager from '@/components/dashboard/LinksManager';
-import { LivePreview } from '@/components/dashboard/LivePreview';
+import { InlinePreview } from '@/components/dashboard/InlinePreview';
 
 // Lazy loaded (only when tab is opened)
 const LinkPreview = lazy(() => import('@/components/dashboard/LinkPreview'));
@@ -272,10 +272,10 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           </Tabs>
         </div>
 
-        {/* Preview */}
+        {/* Preview — instant React render, no iframe */}
         <div className="hidden lg:block">
-          <div className="sticky top-16 h-[calc(100vh-6rem)]">
-            <LivePreview page={page} links={links} />
+          <div className="sticky top-16 h-[calc(100vh-6rem)] rounded-xl border border-border/40 bg-card overflow-hidden">
+            <InlinePreview page={page} links={links} />
           </div>
         </div>
       </div>
