@@ -8,6 +8,7 @@ import { getTheme } from '@/lib/themes';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
+import { detectPlatform } from '@/lib/platforms';
 import { recordClick } from '@/hooks/useAnalytics';
 import { usePageView } from '@/hooks/usePageView';
 import { toast } from 'sonner';
@@ -507,6 +508,9 @@ const PublicProfile = () => {
                     const customBtnBg = link.bg_color || page.custom_btn_color;
                     const customBtnText = link.text_color || page.custom_btn_text_color;
                     const customBgIsDark = customBtnBg ? isColorDark(customBtnBg) : null;
+                    // Auto-detect platform for icon color when no custom color set
+                    const platform = !customBtnBg ? detectPlatform(link.url) : null;
+                    const platformColor = platform?.bgColor || null;
                     const isFirstLink = sIdx === 0 && linkIdx === 0;
 
                     /* Social proof badge for first link */
@@ -591,12 +595,15 @@ const PublicProfile = () => {
                           <PopularBadge />
                           <SpotlightBorder />
                           <PulseRing />
-                          <div className={`relative w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
+                          <div
+                            className={`relative w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                             customBtnBg
                               ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
-                              : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
-                          }`}>
-                            <LinkFavicon url={link.url} size="sm" />
+                              : platformColor ? '' : isDarkTheme ? 'bg-white/[0.08]' : 'bg-black/[0.06]'
+                          }`}
+                            style={platformColor && !customBtnBg ? { backgroundColor: platformColor } : {}}
+                          >
+                            <LinkFavicon url={link.url} size="sm" className={platformColor && !customBtnBg ? 'text-white' : ''} />
                           </div>
                           <div className="flex-1 min-w-0 relative">
                             <span className="block truncate tracking-tight">{link.title}</span>
@@ -649,16 +656,20 @@ const PublicProfile = () => {
                         style={{
                           ...(customBtnBg ? { backgroundColor: customBtnBg } : {}),
                           ...(customBtnText ? { color: customBtnText } : {}),
+                          ...(platformColor && !customBtnBg && !isDarkTheme ? { boxShadow: `inset 3px 0 0 ${platformColor}` } : {}),
                         }}
                       >
                         <PopularBadge />
                         <PulseRing />
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${!isDemo ? 'group-hover:scale-105' : ''} ${
                           customBtnBg
                             ? (customBgIsDark ? 'bg-white/15' : 'bg-black/[0.06]')
-                            : isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.05]'
-                        }`}>
-                          <LinkFavicon url={link.url} size="sm" />
+                            : platformColor ? '' : isDarkTheme ? 'bg-white/[0.07]' : 'bg-black/[0.05]'
+                        }`}
+                          style={platformColor && !customBtnBg ? { backgroundColor: platformColor } : {}}
+                        >
+                          <LinkFavicon url={link.url} size="sm" className={platformColor && !customBtnBg ? 'text-white' : ''} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="truncate tracking-[-0.01em] block">{link.title}</span>

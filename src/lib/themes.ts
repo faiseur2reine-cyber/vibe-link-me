@@ -17,7 +17,7 @@ export const THEMES: Record<string, ThemeConfig> = {
   default: {
     name: 'Default',
     bg: 'bg-gradient-to-b from-gray-50 to-white',
-    btn: 'bg-white text-gray-900 border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:border-gray-300/80 hover:-translate-y-[1px]',
+    btn: 'bg-white text-gray-900 border border-gray-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-gray-300/80 hover:-translate-y-[2px]',
     text: 'text-gray-900',
     subtleText: 'text-gray-400',
     accent: 'text-gray-900',
