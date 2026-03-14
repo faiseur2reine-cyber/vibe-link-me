@@ -3,9 +3,9 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Sparkles, MapPin, Wifi, Globe } from 'lucide-react';
+import { Sparkles, MapPin, Wifi, Globe, Check } from 'lucide-react';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface ImmersiveSettingsProps {
   page: CreatorPage;
@@ -16,7 +16,7 @@ const ImmersiveSettings = ({ page, onUpdate }: ImmersiveSettingsProps) => {
   const [connectedLabel, setConnectedLabel] = useState(page.connected_label || 'Active now');
   const [location, setLocation] = useState(page.location || '');
   const [geoEnabled, setGeoEnabled] = useState(page.geo_greeting_enabled ?? true);
-  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     setConnectedLabel(page.connected_label || 'Active now');
@@ -24,17 +24,19 @@ const ImmersiveSettings = ({ page, onUpdate }: ImmersiveSettingsProps) => {
     setGeoEnabled(page.geo_greeting_enabled ?? true);
   }, [page.id, page.connected_label, page.location, page.geo_greeting_enabled]);
 
-  const handleSave = async () => {
-    setSaving(true);
+  const triggerSave = useAutoSave(async () => {
     const result = await onUpdate({
       connected_label: connectedLabel,
       location: location,
       geo_greeting_enabled: geoEnabled,
     });
-    setSaving(false);
-    if (!result.error) toast.success('Paramètres sauvegardés');
-    else toast.error(result.error.message);
-  };
+    if (!result.error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      toast.error(result.error.message);
+    }
+  }, 1500);
 
   if (page.theme !== 'immersive') return null;
 
@@ -52,7 +54,7 @@ const ImmersiveSettings = ({ page, onUpdate }: ImmersiveSettingsProps) => {
         </Label>
         <Input
           value={connectedLabel}
-          onChange={e => setConnectedLabel(e.target.value)}
+          onChange={e => { setConnectedLabel(e.target.value); triggerSave(); }}
           placeholder="Active now"
           className="h-8 text-[12px]"
         />
@@ -68,7 +70,7 @@ const ImmersiveSettings = ({ page, onUpdate }: ImmersiveSettingsProps) => {
         </Label>
         <Input
           value={location}
-          onChange={e => setLocation(e.target.value)}
+          onChange={e => { setLocation(e.target.value); triggerSave(); }}
           placeholder="Paris, Tallinn, Bali..."
           className="h-8 text-[12px]"
         />
@@ -86,12 +88,14 @@ const ImmersiveSettings = ({ page, onUpdate }: ImmersiveSettingsProps) => {
             <p className="text-[10px] text-muted-foreground">Affiche "Hey Paris 👋" basé sur la ville du visiteur.</p>
           </div>
         </div>
-        <Switch checked={geoEnabled} onCheckedChange={setGeoEnabled} />
+        <Switch checked={geoEnabled} onCheckedChange={(v) => { setGeoEnabled(v); triggerSave(); }} />
       </div>
 
-      <Button onClick={handleSave} disabled={saving} size="sm" className="h-8 text-[12px]">
-        {saving ? 'Sauvegarde…' : 'Sauvegarder'}
-      </Button>
+      {saved && (
+        <div className="flex items-center gap-1.5 text-[11px] text-emerald-600">
+          <Check className="w-3 h-3" /> Sauvegardé
+        </div>
+      )}
     </div>
   );
 };

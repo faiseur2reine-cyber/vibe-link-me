@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { BarChart3, Facebook, Hash, Music } from 'lucide-react';
+import { BarChart3, Facebook, Hash, Music, Check } from 'lucide-react';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface TrackingEditorProps {
   page: CreatorPage;
@@ -18,7 +18,7 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
   const [utmSource, setUtmSource] = useState(page.utm_source || 'instagram');
   const [utmMedium, setUtmMedium] = useState(page.utm_medium || 'bio');
   const [utmCampaign, setUtmCampaign] = useState(page.utm_campaign || '');
-  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     setMetaPixel(page.tracking_meta_pixel || '');
@@ -29,8 +29,7 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
     setUtmCampaign(page.utm_campaign || '');
   }, [page.id, page.tracking_meta_pixel, page.tracking_ga4, page.tracking_tiktok_pixel, page.utm_source, page.utm_medium, page.utm_campaign]);
 
-  const handleSave = async () => {
-    setSaving(true);
+  const triggerSave = useAutoSave(async () => {
     const result = await onUpdate({
       tracking_meta_pixel: metaPixel,
       tracking_ga4: ga4,
@@ -39,10 +38,13 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
       utm_medium: utmMedium,
       utm_campaign: utmCampaign,
     });
-    setSaving(false);
-    if (!result.error) toast.success('Tracking sauvegardé');
-    else toast.error(result.error.message);
-  };
+    if (!result.error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      toast.error(result.error.message);
+    }
+  }, 1500);
 
   return (
     <div className="space-y-6">
@@ -56,7 +58,7 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
           </Label>
           <Input
             value={metaPixel}
-            onChange={e => setMetaPixel(e.target.value)}
+            onChange={e => { setMetaPixel(e.target.value); triggerSave(); }}
             placeholder="123456789012345"
             className="h-8 text-[12px]"
           />
@@ -69,7 +71,7 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
           </Label>
           <Input
             value={ga4}
-            onChange={e => setGa4(e.target.value)}
+            onChange={e => { setGa4(e.target.value); triggerSave(); }}
             placeholder="G-XXXXXXXXXX"
             className="h-8 text-[12px]"
           />
@@ -82,7 +84,7 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
           </Label>
           <Input
             value={tiktokPixel}
-            onChange={e => setTiktokPixel(e.target.value)}
+            onChange={e => { setTiktokPixel(e.target.value); triggerSave(); }}
             placeholder="CXXXXXXXXXXXXXXXXX"
             className="h-8 text-[12px]"
           />
@@ -98,22 +100,25 @@ const TrackingEditor = ({ page, onUpdate }: TrackingEditorProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="space-y-1.5">
             <Label className="text-[11px]">utm_source</Label>
-            <Input value={utmSource} onChange={e => setUtmSource(e.target.value)} placeholder="instagram" className="h-8 text-[12px]" />
+            <Input value={utmSource} onChange={e => { setUtmSource(e.target.value); triggerSave(); }} placeholder="instagram" className="h-8 text-[12px]" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-[11px]">utm_medium</Label>
-            <Input value={utmMedium} onChange={e => setUtmMedium(e.target.value)} placeholder="bio" className="h-8 text-[12px]" />
+            <Input value={utmMedium} onChange={e => { setUtmMedium(e.target.value); triggerSave(); }} placeholder="bio" className="h-8 text-[12px]" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-[11px]">utm_campaign</Label>
-            <Input value={utmCampaign} onChange={e => setUtmCampaign(e.target.value)} placeholder="summer2025" className="h-8 text-[12px]" />
+            <Input value={utmCampaign} onChange={e => { setUtmCampaign(e.target.value); triggerSave(); }} placeholder="summer2025" className="h-8 text-[12px]" />
           </div>
         </div>
       </div>
 
-      <Button onClick={handleSave} disabled={saving} size="sm" className="h-8 text-[12px]">
-        {saving ? 'Sauvegarde…' : 'Sauvegarder le tracking'}
-      </Button>
+      {/* Auto-save status */}
+      {saved && (
+        <div className="flex items-center gap-1.5 text-[11px] text-emerald-600">
+          <Check className="w-3 h-3" /> Sauvegardé
+        </div>
+      )}
     </div>
   );
 };

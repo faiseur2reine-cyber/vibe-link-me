@@ -3,9 +3,9 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Check } from 'lucide-react';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface SafePageEditorProps {
   page: CreatorPage;
@@ -15,23 +15,25 @@ interface SafePageEditorProps {
 const SafePageEditor = ({ page, onUpdate }: SafePageEditorProps) => {
   const [enabled, setEnabled] = useState(page.safe_page_enabled ?? false);
   const [redirectUrl, setRedirectUrl] = useState(page.safe_page_redirect_url || '');
-  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     setEnabled(page.safe_page_enabled ?? false);
     setRedirectUrl(page.safe_page_redirect_url || '');
   }, [page.id, page.safe_page_enabled, page.safe_page_redirect_url]);
 
-  const handleSave = async () => {
-    setSaving(true);
+  const triggerSave = useAutoSave(async () => {
     const result = await onUpdate({
       safe_page_enabled: enabled,
       safe_page_redirect_url: redirectUrl,
     });
-    setSaving(false);
-    if (!result.error) toast.success('Safe Page sauvegardée');
-    else toast.error(result.error.message);
-  };
+    if (!result.error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      toast.error(result.error.message);
+    }
+  }, 1500);
 
   return (
     <div className="space-y-6">
@@ -48,7 +50,7 @@ const SafePageEditor = ({ page, onUpdate }: SafePageEditorProps) => {
 
       <div className="flex items-center justify-between">
         <Label className="text-[12px]">Activer la Safe Page</Label>
-        <Switch checked={enabled} onCheckedChange={setEnabled} />
+        <Switch checked={enabled} onCheckedChange={(v) => { setEnabled(v); triggerSave(); }} />
       </div>
 
       {enabled && (
@@ -56,7 +58,7 @@ const SafePageEditor = ({ page, onUpdate }: SafePageEditorProps) => {
           <Label className="text-[12px]">URL de redirection sûre</Label>
           <Input
             value={redirectUrl}
-            onChange={e => setRedirectUrl(e.target.value)}
+            onChange={e => { setRedirectUrl(e.target.value); triggerSave(); }}
             placeholder="https://google.com"
             className="h-8 text-[12px]"
           />
@@ -66,9 +68,11 @@ const SafePageEditor = ({ page, onUpdate }: SafePageEditorProps) => {
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={saving} size="sm" className="h-8 text-[12px]">
-        {saving ? 'Sauvegarde…' : 'Sauvegarder'}
-      </Button>
+      {saved && (
+        <div className="flex items-center gap-1.5 text-[11px] text-emerald-600">
+          <Check className="w-3 h-3" /> Sauvegardé
+        </div>
+      )}
     </div>
   );
 };

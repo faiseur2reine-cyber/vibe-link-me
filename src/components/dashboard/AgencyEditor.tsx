@@ -3,11 +3,9 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Users, FileText, DollarSign, Activity } from 'lucide-react';
+import { Users, FileText, DollarSign, Activity, Check } from 'lucide-react';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 interface AgencyEditorProps {
   page: CreatorPage;
@@ -26,7 +24,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
   const [revenueMonthly, setRevenueMonthly] = useState(page.revenue_monthly || 0);
   const [revenueCommission, setRevenueCommission] = useState(page.revenue_commission || 20);
   const [status, setStatus] = useState(page.status || 'draft');
-  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     setOperator(page.operator || '');
@@ -36,8 +34,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
     setStatus(page.status || 'draft');
   }, [page.id, page.operator, page.notes, page.revenue_monthly, page.revenue_commission, page.status]);
 
-  const handleSave = async () => {
-    setSaving(true);
+  const triggerSave = useAutoSave(async () => {
     const result = await onUpdate({
       operator,
       notes,
@@ -45,10 +42,13 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
       revenue_commission: revenueCommission,
       status,
     });
-    setSaving(false);
-    if (!result.error) toast.success('Paramètres agence sauvegardés');
-    else toast.error(result.error.message);
-  };
+    if (!result.error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      toast.error(result.error.message);
+    }
+  }, 1500);
 
   const netRevenue = Math.round(revenueMonthly * revenueCommission / 100);
 
@@ -63,7 +63,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
           {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
             <button
               key={key}
-              onClick={() => setStatus(key)}
+              onClick={() => { setStatus(key); triggerSave(); }}
               className={`px-3 py-1.5 rounded-lg text-[12px] font-medium border transition-all ${
                 status === key
                   ? cfg.color + ' shadow-sm'
@@ -83,7 +83,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
         </h4>
         <Input
           value={operator}
-          onChange={e => setOperator(e.target.value)}
+          onChange={e => { setOperator(e.target.value); triggerSave(); }}
           placeholder="Erica, Nomena, etc."
           className="h-8 text-[12px]"
         />
@@ -103,7 +103,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
             <Input
               type="number"
               value={revenueMonthly}
-              onChange={e => setRevenueMonthly(Number(e.target.value) || 0)}
+              onChange={e => { setRevenueMonthly(Number(e.target.value) || 0); triggerSave(); }}
               placeholder="0"
               className="h-8 text-[12px]"
             />
@@ -113,7 +113,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
             <Input
               type="number"
               value={revenueCommission}
-              onChange={e => setRevenueCommission(Number(e.target.value) || 0)}
+              onChange={e => { setRevenueCommission(Number(e.target.value) || 0); triggerSave(); }}
               placeholder="20"
               className="h-8 text-[12px]"
             />
@@ -134,7 +134,7 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
         </h4>
         <Textarea
           value={notes}
-          onChange={e => setNotes(e.target.value)}
+          onChange={e => { setNotes(e.target.value); triggerSave(); }}
           placeholder="Ex: Objectif 500 subs/mois. Ne pas poster le dimanche. Contact via Telegram uniquement."
           className="text-[12px] min-h-[100px]"
         />
@@ -143,9 +143,11 @@ const AgencyEditor = ({ page, onUpdate }: AgencyEditorProps) => {
         </p>
       </div>
 
-      <Button onClick={handleSave} disabled={saving} size="sm" className="h-8 text-[12px]">
-        {saving ? 'Sauvegarde…' : 'Sauvegarder'}
-      </Button>
+      {saved && (
+        <div className="flex items-center gap-1.5 text-[11px] text-emerald-600">
+          <Check className="w-3 h-3" /> Sauvegardé
+        </div>
+      )}
     </div>
   );
 };
