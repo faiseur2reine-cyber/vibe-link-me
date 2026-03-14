@@ -60,6 +60,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const [activeTab, setActiveTab] = useState('links');
   const [showShare, setShowShare] = useState(false);
   const [showMoreNav, setShowMoreNav] = useState(false);
+  const [previewOverrides, setPreviewOverrides] = useState<Partial<CreatorPage>>({});
 
   // Escape → back to pages list (unless dialog/modal is open)
   useEffect(() => {
@@ -220,7 +221,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
             <TabsContent value="apparence" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <AppearanceEditor page={page} links={links} plan={profileLike.plan} onUpdate={handleUpdate} />
+                <AppearanceEditor page={page} links={links} plan={profileLike.plan} onUpdate={handleUpdate} onPreviewChange={setPreviewOverrides} />
               </Suspense>
             </TabsContent>
 
@@ -275,7 +276,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         {/* Preview — instant React render, no iframe */}
         <div className="hidden lg:block">
           <div className="sticky top-16 h-[calc(100vh-6rem)] rounded-xl border border-border/40 bg-card overflow-hidden">
-            <InlinePreview page={page} links={links} />
+            <InlinePreview page={{...page, ...previewOverrides} as CreatorPage} links={links} />
           </div>
         </div>
       </div>

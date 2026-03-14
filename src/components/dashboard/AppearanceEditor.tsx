@@ -181,7 +181,21 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
     else toast.error(result.error.message);
   }, 1200);
 
-  const save = () => triggerSave();
+  const save = () => {
+    triggerSave();
+    // Instant preview update (no waiting for DB save)
+    onPreviewChange?.({
+      custom_bg_color: bgColor || null,
+      custom_text_color: textColor || null,
+      custom_accent_color: accentColor || null,
+      custom_btn_color: btnColor || null,
+      custom_btn_text_color: btnTextColor || null,
+      custom_font: font,
+      link_layout: layout,
+      connected_label: connectedLabel,
+      location,
+    } as Partial<CreatorPage>);
+  };
 
   const selectTheme = async (key: string) => {
     const theme = THEMES[key];
@@ -189,6 +203,8 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
       toast.error(`Plan ${theme.tier === 'pro' ? 'Pro' : 'Starter'} requis`);
       return;
     }
+    // Instant preview before DB save
+    onPreviewChange?.({ theme: key } as Partial<CreatorPage>);
     const result = await onUpdate({ theme: key } as any);
     if (!result?.error) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
   };
