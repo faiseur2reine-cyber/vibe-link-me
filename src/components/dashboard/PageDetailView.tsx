@@ -19,16 +19,14 @@ import { LivePreview } from '@/components/dashboard/LivePreview';
 
 // Lazy loaded (only when tab is opened)
 const LinkPreview = lazy(() => import('@/components/dashboard/LinkPreview'));
-const ThemeSelector = lazy(() => import('@/components/dashboard/ThemeSelector'));
+const AppearanceEditor = lazy(() => import('@/components/dashboard/AppearanceEditor'));
 const PageProfileEditor = lazy(() => import('@/components/dashboard/PageProfileEditor'));
 const PageAnalyticsPanel = lazy(() => import('@/components/dashboard/PageAnalyticsPanel'));
-const PageDesignEditor = lazy(() => import('@/components/dashboard/PageDesignEditor'));
 const UrgencyEditor = lazy(() => import('@/components/dashboard/UrgencyEditor'));
 const TrackingEditor = lazy(() => import('@/components/dashboard/TrackingEditor'));
 const SafePageEditor = lazy(() => import('@/components/dashboard/SafePageEditor'));
 const AgencyEditor = lazy(() => import('@/components/dashboard/AgencyEditor'));
 const ShareDialog = lazy(() => import('@/components/dashboard/ShareDialog'));
-const ImmersiveSettings = lazy(() => import('@/components/dashboard/ImmersiveSettings'));
 
 const TabLoader = () => (
   <div className="flex items-center justify-center py-12">
@@ -222,23 +220,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
 
             <TabsContent value="apparence" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                {/* Theme picker first */}
-                <div className="space-y-1 mb-5">
-                  <h3 className="text-[13px] font-medium">Thème</h3>
-                  <p className="text-[11px] text-muted-foreground mb-3">Choisissez un style de base pour votre page.</p>
-                </div>
-                <ThemeSelector profile={profileLike} onUpdate={handleUpdate as any} />
-
-                {/* Divider */}
-                <div className="flex items-center gap-3 my-6">
-                  <div className="h-px flex-1 bg-border/40" />
-                  <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">Personnaliser</span>
-                  <div className="h-px flex-1 bg-border/40" />
-                </div>
-
-                {/* Custom overrides */}
-                <PageDesignEditor page={page} links={links} onUpdate={handleUpdate} />
-                <ImmersiveSettings page={page} onUpdate={handleUpdate} />
+                <AppearanceEditor page={page} plan={profileLike.plan} onUpdate={handleUpdate} />
               </Suspense>
             </TabsContent>
 
