@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ease = [0.16, 1, 0.3, 1];
+const ease = [0.16, 1, 0.3, 1] as const;
 
 function getTimeAgo(date: Date): string {
   const now = new Date();

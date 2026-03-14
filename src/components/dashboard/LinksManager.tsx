@@ -587,17 +587,6 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             <Button
                               variant="ghost" size="icon"
                               className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                              title={link.is_visible === false ? 'Rendre visible' : 'Masquer'}
-                              onClick={async () => {
-                                await onUpdate(link.id, { is_visible: link.is_visible === false ? true : false } as any);
-                                if (onRefetch) await onRefetch();
-                              }}
-                            >
-                              {link.is_visible === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                            </Button>
-                            <Button
-                              variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
                               title="Dupliquer"
                               onClick={async () => {
                                 const result = await onAdd({ title: link.title, url: link.url, icon: link.icon });
