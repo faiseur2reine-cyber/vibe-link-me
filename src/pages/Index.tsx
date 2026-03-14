@@ -15,6 +15,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import ComparisonSection from '@/components/landing/ComparisonSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
+import { CtaBlobs } from '@/components/landing/PopBlobs';
 
 const Index = () => {
   const { t } = useTranslation();
