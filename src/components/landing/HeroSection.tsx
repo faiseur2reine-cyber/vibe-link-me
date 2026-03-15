@@ -15,7 +15,7 @@ const item = {
 };
 
 const FEATURES = [
-  { icon: Smartphone, label: 'Deeplinks', desc: 'Tes visiteurs sortent du navigateur Instagram et TikTok. Ils atterrissent direct sur Chrome.' },
+  { icon: Smartphone, label: 'Deeplinks', desc: 'Tes visiteurs quittent le navigateur in-app et atterrissent sur un vrai browser. Le taux de conversion double.' },
   { icon: ShieldCheck, label: 'Safe page', desc: 'Les bots de Meta voient une page neutre. Tes vrais visiteurs voient tes liens.' },
   { icon: BarChart3, label: 'Analytics', desc: 'Qui clique, depuis quel pays, quel referrer. Pas besoin de GA4 pour savoir ce qui marche.' },
   { icon: Zap, label: 'Urgency', desc: 'Countdown, places restantes, "X personnes connectées". Les leviers qui font cliquer.' },
@@ -76,8 +76,8 @@ const HeroSection = () => {
             variants={item}
             className="text-4xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.08] text-foreground"
           >
-            Le link-in-bio qui{' '}
-            <span className="text-pop-gradient">sort du navigateur Instagram.</span>
+            Le link-in-bio{' '}
+            <span className="text-pop-gradient">pensé pour convertir.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -85,7 +85,7 @@ const HeroSection = () => {
             variants={item}
             className="mt-5 text-muted-foreground text-[15px] sm:text-base leading-relaxed max-w-lg mx-auto"
           >
-            Tes abonnés cliquent depuis Instagram, ils atterrissent sur Chrome. Tes liens chargent dans un vrai navigateur. Ton taux de conversion change.
+            Deeplinks, safe page, urgency, analytics, mode agence. Chaque feature existe pour transformer tes visiteurs en clics.
           </motion.p>
 
           {/* ── Username claim ── */}
