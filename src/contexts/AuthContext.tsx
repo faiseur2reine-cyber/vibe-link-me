@@ -54,8 +54,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setNeedsUsername(!!data?.username?.startsWith('user_'));
   }, []);
 
+  // ── Fast plan check: reads from profiles table (no Stripe call) ──
+  // The plan field in profiles is kept in sync by the stripe-webhook edge function.
+  // This is called on every login / page refresh — it's a single DB query, not an API call.
+  const loadPlanFromDb = useCallback(async (userId: string) => {
+    try {
+      setSubscription(prev => ({ ...prev, loading: true }));
+      const { data } = await supabase
+        .from('profiles')
+        .select('plan')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      const plan = (data?.plan || 'free') as PlanKey;
+      setSubscription({
+        plan,
+        subscribed: plan !== 'free',
+        subscriptionEnd: null, // not available from DB, only from Stripe
+        loading: false,
+      });
+    } catch {
+      setSubscription(prev => ({ ...prev, loading: false }));
+    }
+  }, []);
+
+  // ── Full Stripe sync: calls edge function (expensive, use sparingly) ──
+  // Only called explicitly: after checkout success, or manual refresh.
+  // This calls Stripe API via the check-subscription edge function,
+  // which also updates profiles.plan as a side effect.
   const checkSubscription = useCallback(async () => {
-    // Only check if we have a valid session
     const { data: { session: currentSession } } = await supabase.auth.getSession();
     if (!currentSession) {
       setSubscription({ ...defaultSubscription, loading: false });
@@ -65,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setSubscription(prev => ({ ...prev, loading: true }));
       const { data, error } = await supabase.functions.invoke('check-subscription');
-      
+
       if (error) {
         console.error('check-subscription error', error);
         setSubscription(prev => ({ ...prev, loading: false }));
@@ -90,11 +117,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       if (session?.user) {
         setTimeout(() => {
-          checkSubscription();
+          // Fast: read plan from DB (no Stripe call)
+          loadPlanFromDb(session.user.id);
           checkUsernameNeeded(session.user.id);
         }, 0);
       } else {
-        // Reset subscription when logged out
         setSubscription(defaultSubscription);
         setNeedsUsername(false);
       }
@@ -104,24 +131,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setLoading(false);
       if (session?.user) {
-        checkSubscription();
+        loadPlanFromDb(session.user.id);
         checkUsernameNeeded(session.user.id);
       }
     });
 
     return () => authSub.unsubscribe();
-  }, [checkSubscription]);
+  }, [loadPlanFromDb, checkUsernameNeeded]);
 
-  // Auto-refresh subscription every 60 seconds when logged in
-  useEffect(() => {
-    if (!session?.user) return;
-    
-    const interval = setInterval(() => {
-      checkSubscription();
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [session?.user, checkSubscription]);
+  // NOTE: No more 60-second polling interval.
+  // Plan is read from profiles on login, and synced via Stripe webhook.
+  // checkSubscription() is only called after checkout success (in DashboardNew).
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -129,15 +149,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        session, 
-        user: session?.user ?? null, 
-        loading, 
+    <AuthContext.Provider
+      value={{
+        session,
+        user: session?.user ?? null,
+        loading,
         subscription,
         needsUsername,
-        signOut, 
-        checkSubscription 
+        signOut,
+        checkSubscription
       }}
     >
       {children}

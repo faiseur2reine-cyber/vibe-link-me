@@ -87,20 +87,55 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Page view events — acknowledged, not recorded in link_clicks
-    // These are tracked via GA4/Meta Pixel instead
+    // Extract IP for rate limiting (used by both pageviews and clicks)
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      "unknown";
+
+    // Page view events — record in page_views table
     if (link_id.startsWith("pageview_")) {
-      return new Response(JSON.stringify({ ok: true, recorded: false, type: "pageview" }), {
+      const pageId = link_id.replace("pageview_", "");
+      if (!pageId || pageId.length < 10) {
+        return new Response(JSON.stringify({ ok: true, recorded: false }), {
+          status: 200,
+          headers: corsHeaders,
+        });
+      }
+
+      // Rate limit pageviews: 5 per minute per IP per page
+      const pvKey = `${ip}:pv:${pageId}`;
+      if (Math.random() < 0.1) cleanup();
+      if (isRateLimited(pvKey)) {
+        return new Response(JSON.stringify({ ok: true, recorded: false }), {
+          status: 200,
+          headers: corsHeaders,
+        });
+      }
+
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+
+      const { error: pvError } = await supabase.rpc("record_page_view", {
+        p_page_id: pageId,
+        p_referrer: referrer || null,
+        p_country: null,
+        p_city: null,
+      });
+
+      if (pvError) {
+        console.error("record_page_view error:", pvError);
+      }
+
+      return new Response(JSON.stringify({ ok: true, recorded: !pvError, type: "pageview" }), {
         status: 200,
         headers: corsHeaders,
       });
     }
 
     // Rate limit by IP + link combo
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req.headers.get("cf-connecting-ip") ||
-      "unknown";
     const rateLimitKey = `${ip}:${link_id}`;
 
     // Periodic cleanup
