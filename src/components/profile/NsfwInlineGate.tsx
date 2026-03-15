@@ -1,10 +1,10 @@
 // src/components/profile/NsfwInlineGate.tsx
-// ═══ INLINE 18+ GATE (GetMySocial style) ═══
-// Invisible interceptor sits on top of the button.
-// First click → show "18+" overlay. Second click → confirm + navigate.
-// Auto-reverts after 4s. Multi-language.
+// ═══ INLINE 18+ GATE — exact GetMySocial copy ═══
+// White frosted overlay on top of button.
+// First click → show overlay + arm. Second click → navigate.
+// Click outside → dismiss (like GetMySocial's body listener).
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface NsfwInlineGateProps {
   children: React.ReactNode;
@@ -16,77 +16,91 @@ interface NsfwInlineGateProps {
 
 function getGateText() {
   const lang = (navigator.language || '').slice(0, 2);
-  const texts: Record<string, { badge: string; hint: string }> = {
-    fr: { badge: '18+', hint: 'Appuie encore pour continuer' },
-    en: { badge: '18+', hint: 'Tap again to continue' },
-    es: { badge: '18+', hint: 'Toca de nuevo para continuar' },
-    de: { badge: '18+', hint: 'Nochmal tippen zum Fortfahren' },
-    it: { badge: '18+', hint: 'Tocca di nuovo per continuare' },
-    pt: { badge: '18+', hint: 'Toque novamente para continuar' },
+  const texts: Record<string, { title: string; hint: string }> = {
+    fr: { title: 'Tu as 18 ans ou plus ?', hint: 'Appuie encore pour continuer' },
+    en: { title: 'Are you 18+?', hint: 'Click again to continue' },
+    es: { title: '¿Tienes 18+?', hint: 'Toca de nuevo para continuar' },
+    de: { title: 'Bist du 18+?', hint: 'Nochmal tippen zum Fortfahren' },
+    it: { title: 'Hai 18+ anni?', hint: 'Tocca di nuovo per continuare' },
+    pt: { title: 'Você tem 18+?', hint: 'Toque novamente para continuar' },
   };
   return texts[lang] || texts.en;
 }
 
 const NsfwInlineGate = ({ children, url, onConfirm, variant = 'dark', className }: NsfwInlineGateProps) => {
   const [armed, setArmed] = useState(false);
-  const revertTimer = useRef<ReturnType<typeof setTimeout>>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const text = getGateText();
+
+  // Click outside → dismiss (GetMySocial uses body listener)
+  useEffect(() => {
+    if (!armed) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setArmed(false);
+      }
+    };
+    // Delay to avoid catching the same click that armed it
+    const t = setTimeout(() => document.addEventListener('click', handler, true), 0);
+    return () => { clearTimeout(t); document.removeEventListener('click', handler, true); };
+  }, [armed]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!armed) {
+      // First click → arm
       setArmed(true);
-      if (revertTimer.current) clearTimeout(revertTimer.current);
-      revertTimer.current = setTimeout(() => setArmed(false), 4000);
     } else {
-      if (revertTimer.current) clearTimeout(revertTimer.current);
+      // Second click → confirm
       setArmed(false);
       onConfirm();
     }
   }, [armed, onConfirm]);
 
   return (
-    <div className={`relative ${className || ''}`}>
-      {/* Original button — always rendered, preserves shape */}
+    <div ref={containerRef} className={`relative ${className || ''}`}>
+      {/* Original button — pointer-events disabled so clicks go to interceptor */}
       <div style={{ pointerEvents: 'none' }}>
         {children}
       </div>
 
-      {/* Click interceptor — always on top, catches all taps */}
+      {/* Click interceptor — always on top */}
       <div
         onClick={handleClick}
         className="absolute inset-0 z-20 cursor-pointer"
-        style={{
-          borderRadius: 'inherit',
-          WebkitTapHighlightColor: 'transparent',
-        }}
+        style={{ borderRadius: 'inherit', WebkitTapHighlightColor: 'transparent' }}
       />
 
-      {/* 18+ overlay — appears on first click */}
+      {/* White frosted overlay — GetMySocial style */}
       {armed && (
         <div
           onClick={handleClick}
-          className="absolute inset-0 z-30 flex flex-col items-center justify-center backdrop-blur-sm cursor-pointer"
+          className="absolute inset-0 z-30 flex items-center justify-center cursor-pointer"
           style={{
-            background: 'rgba(0, 0, 0, 0.65)',
+            background: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             borderRadius: 'inherit',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)',
             WebkitTapHighlightColor: 'transparent',
           }}
         >
-          <span
-            className="inline-flex items-center justify-center rounded-full bg-red-600 text-white font-bold shadow-sm"
-            style={{ padding: '4px 14px', fontSize: 14, letterSpacing: '0.02em' }}
-          >
-            {text.badge}
-          </span>
-          <span
-            className="text-white font-medium mt-1.5"
-            style={{ fontSize: 12, opacity: 0.8 }}
-          >
-            {text.hint}
-          </span>
+          <div className="flex flex-col items-center justify-center px-4 text-center">
+            <span
+              className="inline-flex items-center justify-center rounded-full bg-red-600 text-white font-semibold tracking-wide shadow-sm"
+              style={{ padding: '3px 12px', fontSize: 13 }}
+            >
+              18+
+            </span>
+            <span className="mt-2 text-neutral-900 text-[13px] font-semibold">
+              {text.title}
+            </span>
+            <span className="mt-0.5 text-neutral-500 text-[11px]">
+              {text.hint}
+            </span>
+          </div>
         </div>
       )}
     </div>
