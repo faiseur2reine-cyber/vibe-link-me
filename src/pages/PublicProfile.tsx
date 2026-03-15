@@ -155,22 +155,23 @@ const PublicProfile = () => {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex flex-col">
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
         {/* Hero shimmer */}
-        <div className="relative w-full overflow-hidden" style={{ height: '62dvh', minHeight: 400 }}>
+        <div className="relative w-full overflow-hidden" style={{ height: '55dvh', minHeight: 380, maxHeight: 520 }}>
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent animate-pulse" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 70%, #000 95%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 40%, rgba(10,10,10,0.6) 70%, #0a0a0a 95%)' }} />
           {/* Profile placeholder at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 flex flex-col items-center">
-            <div className="h-5 w-24 rounded-full bg-white/[0.06] animate-pulse mb-3" />
-            <div className="h-3 w-16 rounded-full bg-white/[0.04] animate-pulse mb-2" />
-            <div className="h-3 w-36 rounded-full bg-white/[0.03] animate-pulse" />
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 flex flex-col items-center">
+            <div className="w-[88px] h-[88px] rounded-full bg-white/[0.06] animate-pulse mb-4" />
+            <div className="h-5 w-28 rounded-full bg-white/[0.06] animate-pulse mb-2" />
+            <div className="h-3 w-20 rounded-full bg-white/[0.04] animate-pulse mb-2" />
+            <div className="h-3 w-40 rounded-full bg-white/[0.03] animate-pulse" />
           </div>
         </div>
         {/* Button skeletons */}
-        <div className="px-4 pt-5 max-w-[440px] w-full mx-auto space-y-3">
+        <div className="px-5 pt-5 max-w-[460px] w-full mx-auto space-y-[14px]">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-[66px] rounded-full bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+            <div key={i} className="h-[64px] rounded-[20px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>

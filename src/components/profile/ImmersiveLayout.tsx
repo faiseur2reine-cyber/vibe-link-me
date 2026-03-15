@@ -70,7 +70,7 @@ const HeroImage = ({ src }: { src: string }) => {
       style={{
         backgroundImage: `url(${src})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center 20%',
+        backgroundPosition: 'center center',
         height: '125%',
         top: '-12%',
         y,
@@ -102,7 +102,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   const urgency = page.urgency_config;
   const showUrgency = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
   const clickVariant = urgency?.abTest?.enabled ? abVariant : null;
-  const heroSrc = page.cover_url || page.avatar_url;
+  const heroSrc = page.cover_url || null; // Never stretch avatar as hero
+  const ogImage = page.cover_url || page.avatar_url; // OG can use either
 
   const trackingConfig = {
     metaPixel: page.tracking_meta_pixel,
@@ -159,10 +160,10 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         <meta property="og:type" content="profile" />
         <meta property="og:url" content={`${window.location.origin}/${page.username}`} />
         <meta property="og:site_name" content="MyTaptap" />
-        {heroSrc && <meta property="og:image" content={heroSrc} />}
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta name="twitter:card" content={page.cover_url ? "summary_large_image" : "summary"} />
         <meta name="twitter:title" content={`${displayName} | MyTaptap`} />
-        {heroSrc && <meta name="twitter:image" content={heroSrc} />}
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
         {page.is_nsfw && <meta name="rating" content="adult" />}
@@ -171,7 +172,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           "@type": "ProfilePage",
           "name": `${displayName} | MyTaptap`,
           "url": `${window.location.origin}/${page.username}`,
-          ...(heroSrc ? { "image": heroSrc } : {}),
+          ...(ogImage ? { "image": ogImage } : {}),
         })}</script>
       </Helmet>
 
@@ -238,10 +239,10 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   <img
                     src={page.avatar_url}
                     alt={displayName}
-                    className="w-[88px] h-[88px] rounded-full object-cover shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
+                    className={`${heroSrc ? 'w-[88px] h-[88px]' : 'w-[100px] h-[100px]'} rounded-full object-cover shadow-[0_4px_24px_rgba(0,0,0,0.4)]`}
                     style={{ border: '3px solid rgba(255,255,255,0.15)' }}
                   />
-                  <div className="absolute bottom-0 right-0 w-[22px] h-[22px] rounded-full bg-emerald-400 border-[3px] border-[#0a0a0a] shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
+                  <div className={`absolute bottom-0 right-0 ${heroSrc ? 'w-[22px] h-[22px]' : 'w-[24px] h-[24px]'} rounded-full bg-emerald-400 border-[3px] border-[#0a0a0a] shadow-[0_0_8px_rgba(52,211,153,0.4)]`} />
                 </div>
               </motion.div>
             )}
