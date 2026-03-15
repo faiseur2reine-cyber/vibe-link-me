@@ -1,12 +1,17 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TapArrowLeft as ArrowLeft, TapExternalLink as ExternalLink, TapEye as Eye, TapLink as Link2, TapUser as User, TapPalette as Palette, TapChart as BarChart3, TapTrash as Trash2, TapBriefcase as Briefcase, TapCheck as Check, TapLoader as Loader2, TapX as X, TapSettings as Settings } from '@/components/icons/TapIcons';
-import { Flame, Activity, ShieldCheck, QrCode } from 'lucide-react';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import {
+  TapArrowLeft as ArrowLeft, TapExternalLink as ExternalLink, TapEye as Eye,
+  TapLink as Link2, TapUser as User, TapPalette as Palette, TapChart as BarChart3,
+  TapTrash as Trash2, TapLoader as Loader2, TapX as X, TapSettings as Settings,
+  TapChevronDown as ChevronDown,
+} from '@/components/icons/TapIcons';
+import { Flame, Activity, ShieldCheck, QrCode, Briefcase } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import {
@@ -14,12 +19,11 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-// Eagerly loaded (always visible first)
+// Eagerly loaded
 import LinksManager from '@/components/dashboard/LinksManager';
 import { InlinePreview } from '@/components/dashboard/InlinePreview';
 
-// Lazy loaded (only when tab is opened)
-const LinkPreview = lazy(() => import('@/components/dashboard/LinkPreview'));
+// Lazy loaded
 const AppearanceEditor = lazy(() => import('@/components/dashboard/AppearanceEditor'));
 const PageProfileEditor = lazy(() => import('@/components/dashboard/PageProfileEditor'));
 const PageAnalyticsPanel = lazy(() => import('@/components/dashboard/PageAnalyticsPanel'));
@@ -44,12 +48,46 @@ interface PageDetailViewProps {
 }
 
 const TABS = [
-  { value: 'links', icon: Link2, labelKey: 'tabs.links' },
-  { value: 'profile', icon: User, labelKey: 'tabs.profile' },
-  { value: 'apparence', icon: Palette, labelKey: 'tabs.apparence' },
-  { value: 'analytics', icon: BarChart3, labelKey: 'tabs.analytics' },
-  { value: 'settings', icon: Settings, labelKey: 'tabs.settings' },
+  { value: 'links', icon: Link2, label: 'Liens' },
+  { value: 'profile', icon: User, label: 'Profil' },
+  { value: 'apparence', icon: Palette, label: 'Design' },
+  { value: 'analytics', icon: BarChart3, label: 'Stats' },
+  { value: 'settings', icon: Settings, label: 'Réglages' },
 ];
+
+// ── Collapsible section for Settings tab ──
+const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false }: {
+  icon: any; title: string; children: React.ReactNode; defaultOpen?: boolean;
+}) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-border/40 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2.5 px-4 py-3 text-left hover:bg-muted/30 transition-colors"
+      >
+        <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+        <span className="text-[13px] font-medium flex-1">{title}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground/40 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 pt-1">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPages }: PageDetailViewProps) => {
   const { t } = useTranslation();
@@ -60,19 +98,18 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
   const [previewOverrides, setPreviewOverrides] = useState<Partial<CreatorPage>>({});
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
-  // Escape → back to pages list (unless dialog/modal is open)
+  // Escape → back
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !showShare && !document.querySelector('[data-state="open"]')) {
+      if (e.key === 'Escape' && !showShare && !showMobilePreview && !document.querySelector('[data-state="open"]')) {
         onBack();
       }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [onBack, showShare]);
+  }, [onBack, showShare, showMobilePreview]);
 
   const handleUpdate = async (updates: Partial<CreatorPage>) => {
-    // Instant preview for ALL changes (name, bio, colors, theme, etc.)
     setPreviewOverrides(prev => ({ ...prev, ...updates }));
     const result = await onUpdatePage(page.id, updates);
     if (!result.error) await onRefetchPages();
@@ -84,70 +121,73 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
     if (result.error) {
       toast.error(result.error.message);
     } else {
-      toast.success('Page supprimée' );
+      toast.success('Page supprimée');
       onBack();
     }
   };
 
-  const profileLike = {
-    id: page.id, user_id: page.user_id, username: page.username,
-    display_name: page.display_name, bio: page.bio, avatar_url: page.avatar_url,
-    cover_url: page.cover_url, theme: page.theme, plan: 'pro' as string,
-    is_nsfw: page.is_nsfw, social_links: page.social_links,
-  };
+  const status = page.status || 'draft';
+  const statusConfig = {
+    active: { dot: 'bg-emerald-500', label: 'Active' },
+    draft: { dot: 'bg-amber-500', label: 'Draft' },
+    paused: { dot: 'bg-red-500', label: 'Paused' },
+  }[status] || { dot: 'bg-gray-500', label: status };
+
+  const mergedPage = { ...page, ...previewOverrides } as CreatorPage;
 
   return (
     <div className="pb-20 md:pb-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2.5">
           <button onClick={onBack} className="h-8 w-8 rounded-xl inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200">
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full overflow-hidden bg-muted ring-2 ring-border/30">
-              {page.avatar_url ? (
-                <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
-                  <span className="text-[11px] font-bold text-primary/70">
-                    {(page.display_name || page.username)?.[0]?.toUpperCase()}
-                  </span>
-                </div>
-              )}
+
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-muted ring-2 ring-border/20 shrink-0">
+            {page.avatar_url ? (
+              <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                <span className="text-[11px] font-bold text-primary/70">
+                  {(page.display_name || page.username)?.[0]?.toUpperCase()}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-foreground leading-none truncate">{page.display_name || page.username}</h2>
+              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted/50 shrink-0">
+                <div className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                <span className="text-[9px] font-semibold text-muted-foreground">{statusConfig.label}</span>
+              </div>
             </div>
-            <div>
-              <h2 className="text-sm font-semibold text-foreground leading-none">{page.display_name || page.username}</h2>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
-                  toast.success(t('pages.linkCopied'));
-                }}
-                className="text-[11px] text-muted-foreground/60 hover:text-primary mt-0.5 transition-colors cursor-pointer"
-                title="Copier le lien"
-              >
-                {window.location.host}/{page.username} ↗
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
+                toast.success(t('pages.linkCopied'));
+              }}
+              className="text-[11px] text-muted-foreground/50 hover:text-primary mt-0.5 transition-colors cursor-pointer truncate block"
+            >
+              mytaptap.com/{page.username}
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <Button variant="outline" size="sm" className="h-8 rounded-xl gap-1.5 text-[11px]" asChild>
-            <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="w-3 h-3" /> Voir
+
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl" asChild>
+            <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer" title="Voir la page">
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 rounded-xl gap-1.5 text-[11px]"
-            onClick={() => setShowShare(true)}
-          >
-            <QrCode className="w-3 h-3" /> Partager
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl" onClick={() => setShowShare(true)} title="Partager / QR">
+            <QrCode className="w-3.5 h-3.5" />
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="h-8 w-8 inline-flex items-center justify-center text-muted-foreground/50 hover:text-destructive rounded-xl hover:bg-destructive/10 transition-all duration-200">
+              <button className="h-8 w-8 inline-flex items-center justify-center text-muted-foreground/40 hover:text-destructive rounded-xl hover:bg-destructive/10 transition-all duration-200">
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </AlertDialogTrigger>
@@ -169,29 +209,30 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
         </div>
       </div>
 
+      {/* ── Content ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main */}
+        {/* Main editor area */}
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            {/* Desktop tabs */}
+            {/* Desktop tab bar */}
             {!isMobile && (
               <div className="mb-6">
-                <div className="inline-flex items-center gap-0.5 border-b border-border/30">
-                  {TABS.map(({ value, icon: Icon, labelKey }) => (
+                <div className="inline-flex items-center gap-0.5 border-b border-border/20">
+                  {TABS.map(({ value, icon: Icon, label }) => (
                     <button
                       key={value}
                       onClick={() => setActiveTab(value)}
                       className={`relative flex items-center gap-1.5 px-3.5 py-2.5 text-[12px] font-medium transition-all duration-200 ${
                         activeTab === value
                           ? 'text-foreground'
-                          : 'text-muted-foreground/60 hover:text-muted-foreground'
+                          : 'text-muted-foreground/50 hover:text-muted-foreground'
                       }`}
                     >
                       <Icon className={`w-3 h-3 transition-colors duration-200 ${activeTab === value ? 'text-primary' : ''}`} />
-                      {t(labelKey)}
+                      {label}
                       {activeTab === value && (
                         <motion.span
-                          layoutId="active-tab"
+                          layoutId="editor-tab"
                           className="absolute bottom-0 left-3 right-3 h-[2px] bg-primary rounded-full"
                           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                         />
@@ -202,6 +243,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               </div>
             )}
 
+            {/* ── Tab: Links ── */}
             <TabsContent value="links" className="mt-0">
               <LinksManager
                 links={links} plan="pro" onAdd={addLink} onUpdate={updateLink}
@@ -209,136 +251,162 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               />
             </TabsContent>
 
+            {/* ── Tab: Profile ── */}
             <TabsContent value="profile" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <div className="space-y-1">
+                <div className="space-y-1 mb-4">
                   <h3 className="text-[13px] font-medium">{t('editors.profileTitle')}</h3>
-                  <p className="text-[11px] text-muted-foreground mb-4">{t('editors.profileDesc')}</p>
+                  <p className="text-[11px] text-muted-foreground">{t('editors.profileDesc')}</p>
                 </div>
                 <PageProfileEditor page={page} onUpdate={handleUpdate} onRefetch={onRefetchPages} onPreviewChange={setPreviewOverrides} />
               </Suspense>
             </TabsContent>
 
+            {/* ── Tab: Appearance ── */}
             <TabsContent value="apparence" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <AppearanceEditor page={page} links={links} plan={profileLike.plan} onUpdate={handleUpdate} onPreviewChange={setPreviewOverrides} />
+                <AppearanceEditor page={page} links={links} plan="pro" onUpdate={handleUpdate} onPreviewChange={setPreviewOverrides} />
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="settings" className="mt-0">
-              <Suspense fallback={<TabLoader />}>
-                <div className="space-y-8">
-                  {/* Urgency */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Flame className="w-3.5 h-3.5 text-muted-foreground" />
-                      <h3 className="text-[13px] font-medium">{t('editors.urgencyTitle')}</h3>
-                    </div>
-                    <UrgencyEditor page={page} onUpdate={handleUpdate} />
-                  </div>
-
-                  <div className="h-px bg-border/30" />
-
-                  {/* Tracking */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Activity className="w-3.5 h-3.5 text-muted-foreground" />
-                      <h3 className="text-[13px] font-medium">{t('editors.trackingTitle')}</h3>
-                    </div>
-                    <TrackingEditor page={page} onUpdate={handleUpdate} />
-                  </div>
-
-                  <div className="h-px bg-border/30" />
-
-                  {/* Safe Page */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground" />
-                      <h3 className="text-[13px] font-medium">{t('editors.safePageTitle')}</h3>
-                    </div>
-                    <SafePageEditor page={page} onUpdate={handleUpdate} />
-                  </div>
-
-                  <div className="h-px bg-border/30" />
-
-                  {/* Agency */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
-                      <h3 className="text-[13px] font-medium">{t('editors.agencyTitle')}</h3>
-                    </div>
-                    <AgencyEditor page={page} onUpdate={handleUpdate} />
-                  </div>
-                </div>
-              </Suspense>
-            </TabsContent>
-
+            {/* ── Tab: Analytics ── */}
             <TabsContent value="analytics" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <PageAnalyticsPanel pageId={page.id} links={links} />
               </Suspense>
             </TabsContent>
+
+            {/* ── Tab: Settings (accordion) ── */}
+            <TabsContent value="settings" className="mt-0">
+              <Suspense fallback={<TabLoader />}>
+                <div className="space-y-3">
+                  <SettingsSection icon={Flame} title={t('editors.urgencyTitle')} defaultOpen>
+                    <UrgencyEditor page={page} onUpdate={handleUpdate} />
+                  </SettingsSection>
+
+                  <SettingsSection icon={Activity} title={t('editors.trackingTitle')}>
+                    <TrackingEditor page={page} onUpdate={handleUpdate} />
+                  </SettingsSection>
+
+                  <SettingsSection icon={ShieldCheck} title={t('editors.safePageTitle')}>
+                    <SafePageEditor page={page} onUpdate={handleUpdate} />
+                  </SettingsSection>
+
+                  <SettingsSection icon={Briefcase} title={t('editors.agencyTitle')}>
+                    <AgencyEditor page={page} onUpdate={handleUpdate} />
+                  </SettingsSection>
+                </div>
+              </Suspense>
+            </TabsContent>
           </Tabs>
         </div>
 
-        {/* Preview — instant React render, no iframe */}
+        {/* ── Desktop preview ── */}
         <div className="hidden lg:block">
           <div className="sticky top-16 h-[calc(100vh-6rem)] rounded-2xl glass overflow-hidden shadow-xl shadow-black/5">
-            <InlinePreview page={{...page, ...previewOverrides} as CreatorPage} links={links} />
+            <InlinePreview page={mergedPage} links={links} />
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Nav — 5 primary tabs + More */}
-      {isMobile && (
-        <>
-        {/* Floating preview button */}
-        {!showMobilePreview && (
-          <button
-            onClick={() => setShowMobilePreview(true)}
-            className="fixed bottom-16 right-4 z-40 w-11 h-11 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center active:scale-90 transition-all duration-200 glow-primary"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-        )}
-
-        {/* Fullscreen mobile preview */}
-        {showMobilePreview && (
-          <div className="fixed inset-0 z-[60] bg-background flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
-              <span className="text-[13px] font-medium">Aperçu</span>
-              <button
-                onClick={() => setShowMobilePreview(false)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <InlinePreview page={{...page, ...previewOverrides} as CreatorPage} links={links} />
-            </div>
-          </div>
-        )}
-
-        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/60 backdrop-blur-2xl border-t border-border/20 safe-area-bottom">
-          <div className="flex items-center justify-around h-12">
-            {TABS.map(({ value, icon: Icon, labelKey }) => (
-              <button
-                key={value}
-                onClick={() => setActiveTab(value)}
-                className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                  activeTab === value ? 'text-foreground' : 'text-muted-foreground/50'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${activeTab === value ? '' : 'opacity-50'}`} />
-                <span className="text-[9px] font-medium leading-tight">{t(labelKey)}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-        </>
+      {/* ── Mobile: preview FAB ── */}
+      {isMobile && !showMobilePreview && (
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3, type: 'spring', stiffness: 300, damping: 20 }}
+          onClick={() => setShowMobilePreview(true)}
+          className="fixed bottom-[68px] right-4 z-40 w-11 h-11 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center active:scale-90 transition-transform glow-primary"
+        >
+          <Eye className="w-4 h-4" />
+        </motion.button>
       )}
 
+      {/* ── Mobile: preview sheet (half screen, slide-up) ── */}
+      <AnimatePresence>
+        {isMobile && showMobilePreview && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed inset-x-0 bottom-0 z-[60] h-[75vh] bg-background rounded-t-2xl shadow-2xl shadow-black/20 flex flex-col"
+          >
+            {/* Drag handle + header */}
+            <div className="flex flex-col items-center pt-2 pb-1 border-b border-border/20">
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/15 mb-2" />
+              <div className="flex items-center justify-between w-full px-4 pb-2">
+                <span className="text-[13px] font-medium">Aperçu</span>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`/${page.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-primary font-medium"
+                  >
+                    Ouvrir ↗
+                  </a>
+                  <button
+                    onClick={() => setShowMobilePreview(false)}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            {/* Preview content */}
+            <div className="flex-1 overflow-hidden">
+              <InlinePreview page={mergedPage} links={links} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Backdrop for mobile preview */}
+      <AnimatePresence>
+        {isMobile && showMobilePreview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowMobilePreview(false)}
+            className="fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Mobile: bottom tab bar ── */}
+      {isMobile && (
+        <nav className="fixed bottom-0 inset-x-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-border/15 safe-area-bottom">
+          <div className="flex items-center justify-around h-13">
+            {TABS.map(({ value, icon: Icon, label }) => {
+              const isActive = activeTab === value;
+              return (
+                <button
+                  key={value}
+                  onClick={() => { setActiveTab(value); setShowMobilePreview(false); }}
+                  className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
+                    isActive ? 'text-foreground' : 'text-muted-foreground/40'
+                  }`}
+                >
+                  <Icon className={`w-[18px] h-[18px] transition-all duration-200 ${isActive ? 'scale-110' : ''}`} />
+                  <span className="text-[9px] font-medium leading-tight">{label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="mobile-tab-dot"
+                      className="absolute top-0.5 w-4 h-[2px] bg-primary rounded-full"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+
+      {/* ── Share dialog ── */}
       {showShare && (
         <Suspense fallback={null}>
           <ShareDialog
