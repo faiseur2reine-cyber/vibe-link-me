@@ -4,108 +4,21 @@ import { LinkItem } from '@/hooks/useDashboard';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import {
-  TapPlus as Plus, TapGrip as GripVertical, TapPencil as Pencil, TapTrash as Trash2, TapExternalLink as ExternalLink, TapLoader as Loader2,
-  TapImagePlus as ImagePlus, TapX as X, TapPalette as Palette, TapLayout as LayoutTemplate, TapBookmark as BookmarkPlus, TapChevronDown as ChevronDown, TapLink as LinkIcon, TapClock as Clock, TapClick as MousePointerClick, TapEye as Eye, TapEyeOff as EyeOff, TapCopy as Copy, TapSortUpDown as ArrowUpDown, TapSortAZ as ArrowDownAZ, TapTrendingDown as TrendingDown,
+  TapPlus as Plus, TapGrip as GripVertical, TapPencil as Pencil, TapTrash as Trash2,
+  TapExternalLink as ExternalLink, TapLayout as LayoutTemplate, TapBookmark as BookmarkPlus,
+  TapLink as LinkIcon, TapClock as Clock, TapClick as MousePointerClick,
+  TapEyeOff as EyeOff, TapCopy as Copy, TapSortAZ as ArrowDownAZ, TapTrendingDown as TrendingDown,
 } from '@/components/icons/TapIcons';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
 import { detectPlatform } from '@/lib/platforms';
 import LinkFavicon from '@/components/LinkFavicon';
 import { useLinkClickCounts } from '@/hooks/useLinkClickCounts';
 
-interface CustomTemplate {
-  id: string;
-  user_id: string;
-  name: string;
-  description: string | null;
-  links: Array<{ title: string; url: string; icon: string; style: string; section_title: string | null; description: string | null; bg_color: string | null; text_color: string | null }>;
-  created_at: string;
-}
-
-const useLinkTemplates = (t: (key: string) => string) => [
-  {
-    id: 'onlyfans-creator',
-    name: '🔥 OnlyFans Creator',
-    desc: t('linksManager.tplOnlyfansDesc'),
-    gradient: 'from-sky-400 to-blue-500',
-    links: [
-      { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplOnlyfansSub'), bg_color: '#1BAFE8', text_color: '#FFFFFF' },
-      { title: 'OnlyFans VIP', url: 'https://onlyfans.com/', icon: 'link', style: 'default', section_title: null, description: t('linksManager.tplOnlyfansSub'), bg_color: '#FFFFFF', text_color: '#B05A90' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#0F1419', text_color: '#FFFFFF' },
-      { title: 'Telegram', url: 'https://t.me/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#229ED9', text_color: '#FFFFFF' },
-    ],
-  },
-  {
-    id: 'content-creator',
-    name: '🎬 Content Creator',
-    desc: t('linksManager.tplCreatorDesc'),
-    gradient: 'from-red-500 to-pink-500',
-    links: [
-      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplYoutubeSub'), bg_color: '#FF1E1E', text_color: '#FFFFFF' },
-      { title: 'Join Membership', url: 'https://youtube.com/', icon: 'link', style: 'default', section_title: null, description: t('linksManager.tplYoutubeSub'), bg_color: '#FFFFFF', text_color: '#CC334E' },
-      { title: 'Twitch', url: 'https://twitch.tv/', icon: 'link', style: 'default', section_title: t('linksManager.sectionLive'), description: null, bg_color: '#9146FF', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Discord', url: 'https://discord.gg/', icon: 'link', style: 'default', section_title: t('linksManager.sectionCommunity'), description: t('linksManager.tplDiscordSub'), bg_color: '#5865F2', text_color: '#FFFFFF' },
-    ],
-  },
-  {
-    id: 'agency-multi',
-    name: '🏢 ' + t('linksManager.tplAgencyName'),
-    desc: t('linksManager.tplAgencyDesc'),
-    gradient: 'from-violet-500 to-purple-600',
-    links: [
-      { title: 'OnlyFans — Creator 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 1', description: '@creator1 · Top Creator 🌟', bg_color: '#1BAFE8', text_color: '#FFFFFF' },
-      { title: 'Instagram — Creator 1', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'OnlyFans — Creator 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 2', description: '@creator2 · Exclusive Content 💎', bg_color: '#111827', text_color: '#FFFFFF' },
-      { title: 'Instagram — Creator 2', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 2', description: null, bg_color: '#FFFFFF', text_color: '#B05A90' },
-    ],
-  },
-  {
-    id: 'music-artist',
-    name: '🎵 ' + t('linksManager.tplMusicName'),
-    desc: t('linksManager.tplMusicDesc'),
-    gradient: 'from-emerald-400 to-teal-500',
-    links: [
-      { title: 'Spotify', url: 'https://open.spotify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplSpotifySub'), bg_color: '#1DB954', text_color: '#FFFFFF' },
-      { title: 'Pre-save New Track', url: 'https://example.com/', icon: 'link', style: 'default', section_title: null, description: t('linksManager.tplSpotifySub'), bg_color: '#FFFFFF', text_color: '#1E7A52' },
-      { title: 'Apple Music', url: 'https://music.apple.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FA243C', text_color: '#FFFFFF' },
-      { title: 'SoundCloud', url: 'https://soundcloud.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FF5500', text_color: '#FFFFFF' },
-      { title: t('linksManager.tplBooking'), url: 'mailto:booking@example.com', icon: 'link', style: 'default', section_title: 'Business', description: t('linksManager.tplBookingSub'), bg_color: '#111827', text_color: '#FFFFFF' },
-    ],
-  },
-  {
-    id: 'ecommerce',
-    name: '🛍️ E-commerce',
-    desc: t('linksManager.tplEcommerceDesc'),
-    gradient: 'from-amber-400 to-orange-500',
-    links: [
-      { title: t('linksManager.myShop'), url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.discoverCollection'), bg_color: '#111827', text_color: '#FFFFFF' },
-      { title: t('linksManager.newDrop'), url: 'https://example.com/drop', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: t('linksManager.limitedCollection'), bg_color: '#FFFFFF', text_color: '#8C5A22' },
-      { title: t('linksManager.promo20'), url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
-      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-    ],
-  },
-  {
-    id: 'fitness-coach',
-    name: '💪 ' + t('linksManager.tplFitnessName'),
-    desc: t('linksManager.tplFitnessDesc'),
-    gradient: 'from-lime-400 to-green-500',
-    links: [
-      { title: t('linksManager.tplCoaching'), url: 'https://cal.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplCoachingSub'), bg_color: '#10B981', text_color: '#FFFFFF' },
-      { title: t('linksManager.tplPrograms'), url: 'https://example.com/programs', icon: 'link', style: 'default', section_title: t('linksManager.sectionPrograms'), description: null, bg_color: '#FFFFFF', text_color: '#158A64' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: t('linksManager.tplWorkoutSub'), bg_color: '#FF1E1E', text_color: '#FFFFFF' },
-    ],
-  },
-];
+// Sub-components
+import LinkEditDialog from './links/LinkEditDialog';
+import LinkTemplatesDialog from './links/LinkTemplatesDialog';
+import SaveTemplateDialog from './links/SaveTemplateDialog';
 
 interface LinksManagerProps {
   links: LinkItem[];
@@ -118,36 +31,30 @@ interface LinksManagerProps {
   pageId?: string;
 }
 
-const LINK_STYLES = [
-  { value: 'default', label: 'Standard' },
-  { value: 'featured', label: 'Featured' },
-  { value: 'card', label: 'Card' },
-  { value: 'minimal', label: 'Minimal' },
-];
-
-const PRESET_COLORS = [
-  '#000000', '#FFFFFF', '#EF4444', '#F97316', '#EAB308', '#22C55E',
-  '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6',
-];
-
 const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId }: LinksManagerProps) => {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const LINK_TEMPLATES = useLinkTemplates(t);
   const quickAddRef = useRef<HTMLInputElement>(null);
   const clickCounts = useLinkClickCounts(links.map(l => l.id));
   const [sortBy, setSortBy] = useState<'manual' | 'alpha' | 'clicks'>('manual');
 
-  // Sort links based on selected sort
+  // Dialog states
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+
+  const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
+  const canAddMore = links.length < maxLinks;
+
+  // Sort
   const sortedLinks = sortBy === 'manual' ? links : [...links].sort((a, b) => {
     if (sortBy === 'alpha') return (a.title || '').localeCompare(b.title || '');
     if (sortBy === 'clicks') return (clickCounts.get(b.id) || 0) - (clickCounts.get(a.id) || 0);
     return 0;
   });
 
-  // Apply current sort order to DB positions
-  const applySortToDb = async (sorted: typeof links) => {
-    await onReorder(sorted);
+  const applySortToDb = async () => {
+    await onReorder(sortedLinks);
     toast.success('Ordre appliqué');
     setSortBy('manual');
   };
@@ -163,200 +70,22 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, []);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
-  const [title, setTitle] = useState('');
-  const [url, setUrl] = useState('');
-  const [icon, setIcon] = useState('link');
-  const [description, setDescription] = useState('');
-  const [bgColor, setBgColor] = useState('');
-  const [textColor, setTextColor] = useState('');
-  const [linkStyle, setLinkStyle] = useState('default');
-  const [sectionTitle, setSectionTitle] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-  const [uploadingThumb, setUploadingThumb] = useState(false);
-  const [showCustomization, setShowCustomization] = useState(false);
-  const [scheduledAt, setScheduledAt] = useState('');
-  const [expiresAt, setExpiresAt] = useState('');
-  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
-  const [applyingTemplate, setApplyingTemplate] = useState(false);
-  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
-  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
-  const [templateName, setTemplateName] = useState('');
-  const [templateDesc, setTemplateDesc] = useState('');
-  const [savingTemplate, setSavingTemplate] = useState(false);
 
-  const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
-  const canAddMore = links.length < maxLinks;
-
-  // --- Template logic ---
-  const fetchCustomTemplates = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from('custom_templates')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    if (data) setCustomTemplates(data as unknown as CustomTemplate[]);
-  };
-
-  const handleSaveAsTemplate = async () => {
-    if (!user || !templateName.trim() || links.length === 0) return;
-    setSavingTemplate(true);
-    const templateLinks = links.map(l => ({
-      title: l.title, url: l.url, icon: l.icon, style: l.style,
-      section_title: l.section_title, description: l.description,
-      bg_color: l.bg_color, text_color: l.text_color,
-    }));
-    const { error } = await supabase.from('custom_templates').insert({
-      user_id: user.id, name: templateName.trim(),
-      description: templateDesc.trim() || null, links: templateLinks as any,
-    });
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success(t('linksManager.templateSaved') );
-      setSaveTemplateOpen(false);
-      setTemplateName('');
-      setTemplateDesc('');
-      await fetchCustomTemplates();
-    }
-    setSavingTemplate(false);
-  };
-
-  const handleDeleteCustomTemplate = async (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const { error } = await supabase.from('custom_templates').delete().eq('id', id);
-    if (!error) {
-      setCustomTemplates(prev => prev.filter(t => t.id !== id));
-      toast.success(t('linksManager.templateDeleted') );
-    }
-  };
-
-  const applyTemplateLinks = async (templateLinks: Array<{ title: string; url: string; icon: string; style: string; section_title: string | null; description: string | null; bg_color: string | null; text_color: string | null }>) => {
-    if (!user) return;
-    const remaining = maxLinks === Infinity ? Infinity : maxLinks - links.length;
-    const toInsert = templateLinks.slice(0, remaining === Infinity ? undefined : remaining);
-    if (toInsert.length === 0) {
-      toast.error(t('linksManager.linkLimitReached'));
-      return;
-    }
-    setApplyingTemplate(true);
-    const startPosition = links.length;
-    const inserts = toInsert.map((tl, idx) => ({
-      title: tl.title, url: tl.url, icon: tl.icon, user_id: user.id,
-      position: startPosition + idx, style: tl.style,
-      section_title: tl.section_title, description: tl.description,
-      bg_color: tl.bg_color, text_color: tl.text_color,
-      ...(pageId ? { page_id: pageId } : {}),
-    }));
-    const { error } = await supabase.from('links').insert(inserts);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success(t('linksManager.templateApplied') );
-      if (onRefetch) await onRefetch();
-    }
-    setApplyingTemplate(false);
-    setTemplateDialogOpen(false);
-  };
-
-  // --- Link CRUD ---
   const openNew = () => {
     if (!canAddMore) {
       toast.error(t(plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5'));
       return;
     }
-    setEditingLink(null); setTitle(''); setUrl(''); setIcon('link');
-    setDescription(''); setBgColor(''); setTextColor('');
-    setLinkStyle('default'); setSectionTitle('');
-    setThumbnailFile(null); setThumbnailPreview(null);
-    setShowCustomization(false); setScheduledAt(''); setExpiresAt('');
-    setDialogOpen(true);
+    setEditingLink(null);
+    setEditDialogOpen(true);
   };
 
   const openEdit = (link: LinkItem) => {
-    setEditingLink(link); setTitle(link.title); setUrl(link.url); setIcon(link.icon);
-    setDescription(link.description || ''); setBgColor(link.bg_color || '');
-    setTextColor(link.text_color || ''); setLinkStyle(link.style || 'default');
-    setSectionTitle(link.section_title || '');
-    setThumbnailFile(null); setThumbnailPreview(link.thumbnail_url || null);
-    setScheduledAt(link.scheduled_at ? link.scheduled_at.slice(0, 16) : '');
-    setExpiresAt(link.expires_at ? link.expires_at.slice(0, 16) : '');
-    setShowCustomization(!!(link.bg_color || link.text_color || link.description || link.style !== 'default' || link.section_title || link.scheduled_at || link.expires_at));
-    setDialogOpen(true);
-  };
-
-  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('linksManager.imageTooLarge'));
-      return;
-    }
-    setThumbnailFile(file);
-    setThumbnailPreview(URL.createObjectURL(file));
-  };
-
-  const uploadThumbnail = async (linkId: string): Promise<string | null> => {
-    if (!thumbnailFile || !user) return null;
-    const ext = thumbnailFile.name.split('.').pop();
-    const path = `${user.id}/thumbnails/${linkId}.${ext}`;
-    const { error } = await supabase.storage.from('media').upload(path, thumbnailFile, { upsert: true });
-    if (error) return null;
-    const { data } = supabase.storage.from('media').getPublicUrl(path);
-    return data.publicUrl;
-  };
-
-  const handleSave = async () => {
-    if (!title.trim() || !url.trim()) return;
-    setSaving(true);
-    let normalizedUrl = url.trim();
-    if (!/^https?:\/\//i.test(normalizedUrl)) normalizedUrl = 'https://' + normalizedUrl;
-
-    const customFields = {
-      description: description.trim() || null,
-      bg_color: bgColor.trim() || null,
-      text_color: textColor.trim() || null,
-      style: linkStyle,
-      section_title: sectionTitle.trim() || null,
-      scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : null,
-      expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
-    };
-
-    if (editingLink) {
-      let thumbUrl = editingLink.thumbnail_url;
-      if (thumbnailFile) {
-        setUploadingThumb(true);
-        thumbUrl = await uploadThumbnail(editingLink.id);
-        setUploadingThumb(false);
-      }
-      const result = await onUpdate(editingLink.id, {
-        title: title.trim(), url: normalizedUrl, icon,
-        ...customFields,
-        ...(thumbnailFile ? { thumbnail_url: thumbUrl } : {}),
-      });
-      if (result?.error) toast.error(result.error.message);
-    } else {
-      const result = await onAdd({ title: title.trim(), url: normalizedUrl, icon });
-      if (result?.error) {
-        toast.error(result.error.message);
-      } else if (links.length === 0) {
-        // First link ever — celebrate!
-        toast.success('Premier lien ajouté ! 🎉', {
-          description: 'Va voir ta page en cliquant sur "Voir" en haut.',
-          duration: 6000,
-        });
-      }
-    }
-    setSaving(false);
-    setDialogOpen(false);
+    setEditingLink(link);
+    setEditDialogOpen(true);
   };
 
   const handleDelete = async (id: string) => {
-    // Find the link before deleting (for undo)
     const deletedLink = links.find(l => l.id === id);
     const result = await onDelete(id);
     if (result?.error) {
@@ -374,12 +103,6 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     }
   };
 
-  const handleRemoveThumbnail = async () => {
-    if (editingLink) await onUpdate(editingLink.id, { thumbnail_url: null } as any);
-    setThumbnailFile(null);
-    setThumbnailPreview(null);
-  };
-
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination || result.source.index === result.destination.index) return;
     const items = Array.from(sortedLinks);
@@ -388,39 +111,39 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
     onReorder(items);
   };
 
-  // --- Render ---
+  const handleQuickAdd = async (raw: string) => {
+    const url = raw.startsWith('http') ? raw : `https://${raw}`;
+    const platform = detectPlatform(url);
+    const title = platform?.name || (() => {
+      try { return new URL(url).hostname.replace('www.', ''); } catch { return raw; }
+    })();
+    const result = await onAdd({ title, url, icon: 'link' });
+    if (!result?.error) toast.success(`${title} ajouté`);
+    return result;
+  };
+
   return (
     <div className="space-y-5">
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
             <LinkIcon className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="font-semibold text-sm text-foreground">
-              {t('dashboard.links')}
-            </h3>
+            <h3 className="font-semibold text-sm text-foreground">{t('dashboard.links')}</h3>
             <p className="text-xs text-muted-foreground">
               {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} {t('linksManager.linksCount')}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          <Button
-            onClick={() => { setTemplateDialogOpen(true); fetchCustomTemplates(); }}
-            size="sm" variant="ghost"
-            className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-          >
+          <Button onClick={() => setTemplatesOpen(true)} size="sm" variant="ghost" className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground">
             <LayoutTemplate className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Templates</span>
           </Button>
           {links.length > 0 && (
-            <Button
-              onClick={() => setSaveTemplateOpen(true)}
-              size="sm" variant="ghost"
-              className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-            >
+            <Button onClick={() => setSaveTemplateOpen(true)} size="sm" variant="ghost" className="h-8 rounded-lg gap-1.5 text-xs text-muted-foreground hover:text-foreground">
               <BookmarkPlus className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{t('linksManager.saveAsTemplate')}</span>
             </Button>
@@ -431,7 +154,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </div>
       </div>
 
-      {/* Sort controls */}
+      {/* ── Sort controls ── */}
       {links.length > 2 && (
         <div className="flex items-center gap-1.5">
           {([
@@ -447,15 +170,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </button>
           ))}
           {sortBy !== 'manual' && (
-            <button onClick={() => applySortToDb(sortedLinks)}
-              className="ml-auto text-[10px] text-primary hover:text-primary/80 font-medium transition-colors">
+            <button onClick={applySortToDb} className="ml-auto text-[10px] text-primary hover:text-primary/80 font-medium transition-colors">
               Appliquer cet ordre
             </button>
           )}
         </div>
       )}
 
-      {/* Quick add — paste a URL */}
+      {/* ── Quick add ── */}
       <div className="relative group">
         <Input
           ref={quickAddRef}
@@ -466,21 +188,15 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             const input = e.currentTarget;
             const raw = input.value.trim();
             if (!raw) return;
-            const url = raw.startsWith('http') ? raw : `https://${raw}`;
-            const platform = detectPlatform(url);
-            const title = platform?.name || (() => { try { return new URL(url).hostname.replace('www.', ''); } catch { return raw; } })();
-            const result = await onAdd({ title, url, icon: 'link' });
-            if (!result?.error) {
-              input.value = '';
-              toast.success(`${title} ajouté`);
-            }
+            const result = await handleQuickAdd(raw);
+            if (!result?.error) input.value = '';
           }}
         />
         <Plus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary/50 transition-colors" />
         <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-muted/60 text-[10px] text-muted-foreground/40 font-mono border border-border/30">⌘K</kbd>
       </div>
 
-      {/* Empty state */}
+      {/* ── Empty state ── */}
       {links.length === 0 && (
         <button
           onClick={openNew}
@@ -496,27 +212,26 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </button>
       )}
 
-      {/* Links list */}
+      {/* ── Links list (drag & drop) ── */}
       <DragDropContext onDragEnd={sortBy === 'manual' ? handleDragEnd : () => {}}>
         <Droppable droppableId="links" isDropDisabled={sortBy !== 'manual'}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-1">
               {sortedLinks.map((link, index) => {
                 const prevLink = index > 0 ? sortedLinks[index - 1] : null;
-                const showSectionHeader = link.section_title &&
-                  (!prevLink || prevLink.section_title !== link.section_title);
+                const showSectionHeader = link.section_title && (!prevLink || prevLink.section_title !== link.section_title);
 
                 return (
                   <div key={link.id}>
+                    {/* Section divider */}
                     {showSectionHeader && (
                       <div className="flex items-center gap-2 pt-3 pb-1">
                         <div className="h-px flex-1 bg-border" />
-                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                          {link.section_title}
-                        </span>
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{link.section_title}</span>
                         <div className="h-px flex-1 bg-border" />
                       </div>
                     )}
+
                     <Draggable draggableId={link.id} index={index}>
                       {(provided, snapshot) => (
                         <div
@@ -540,14 +255,11 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             <GripVertical className="w-3.5 h-3.5" />
                           </div>
 
-                          {/* Icon */}
+                          {/* Icon / thumbnail */}
                           {link.thumbnail_url ? (
                             <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/20" />
                           ) : link.bg_color ? (
-                            <div
-                              className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center shadow-sm"
-                              style={{ backgroundColor: link.bg_color }}
-                            >
+                            <div className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center shadow-sm" style={{ backgroundColor: link.bg_color }}>
                               <LinkFavicon url={link.url} size="sm" className={link.text_color ? '' : 'text-white'} />
                             </div>
                           ) : (
@@ -558,17 +270,12 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
                           {/* Content */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-medium text-foreground truncate leading-tight">
-                              {link.title}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground/60 truncate mt-0.5">
-                              {link.description || link.url}
-                            </p>
+                            <p className="text-[13px] font-medium text-foreground truncate leading-tight">{link.title}</p>
+                            <p className="text-[11px] text-muted-foreground/60 truncate mt-0.5">{link.description || link.url}</p>
                           </div>
 
                           {/* Badges */}
                           <div className="hidden sm:flex items-center gap-1 shrink-0">
-                            {/* Click count */}
                             {(clickCounts.get(link.id) || 0) > 0 && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex items-center gap-0.5 tabular-nums">
                                 <MousePointerClick className="w-2.5 h-2.5" />
@@ -576,9 +283,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                               </span>
                             )}
                             {link.style !== 'default' && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
-                                {link.style}
-                              </span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">{link.style}</span>
                             )}
                             {(link.scheduled_at || link.expires_at) && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 flex items-center gap-0.5">
@@ -586,40 +291,29 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                                 {link.scheduled_at && new Date(link.scheduled_at) > new Date() ? 'Programmé' : link.expires_at ? 'Expire' : ''}
                               </span>
                             )}
+                            {link.is_visible === false && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex items-center gap-0.5">
+                                <EyeOff className="w-2.5 h-2.5" />
+                              </span>
+                            )}
                           </div>
 
-                          {/* Actions — visible on hover */}
+                          {/* Actions */}
                           <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                              title="Dupliquer"
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" title="Dupliquer"
                               onClick={async () => {
                                 const result = await onAdd({ title: link.title, url: link.url, icon: link.icon });
                                 if (!result?.error) toast.success('Lien dupliqué');
-                              }}
-                            >
+                              }}>
                               <Copy className="w-3.5 h-3.5" />
                             </Button>
-                            <Button
-                              variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                              onClick={() => openEdit(link)}
-                            >
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => openEdit(link)}>
                               <Pencil className="w-3.5 h-3.5" />
                             </Button>
-                            <Button
-                              variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                              onClick={() => window.open(link.url, '_blank')}
-                            >
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => window.open(link.url, '_blank')}>
                               <ExternalLink className="w-3.5 h-3.5" />
                             </Button>
-                            <Button
-                              variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                              onClick={() => handleDelete(link.id)}
-                            >
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(link.id)}>
                               <Trash2 className="w-3.5 h-3.5" />
                             </Button>
                           </div>
@@ -635,407 +329,32 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </Droppable>
       </DragDropContext>
 
-      {/* ── Add / Edit Dialog ── */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">
-              {editingLink ? t('dashboard.editLink') : t('dashboard.addLink')}
-            </DialogTitle>
-          </DialogHeader>
+      {/* ── Dialogs ── */}
+      <LinkEditDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        editingLink={editingLink}
+        onAdd={onAdd}
+        onUpdate={onUpdate}
+        linksCount={links.length}
+      />
 
-          <div className="space-y-4 pt-1">
-            {/* Title */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">{t('dashboard.linkTitle')}</Label>
-              <Input
-                value={title} onChange={(e) => setTitle(e.target.value)}
-                maxLength={100} placeholder="Ex: OnlyFans - Marie"
-                className="h-9"
-              />
-            </div>
+      <LinkTemplatesDialog
+        open={templatesOpen}
+        onOpenChange={setTemplatesOpen}
+        linksCount={links.length}
+        maxLinks={maxLinks}
+        pageId={pageId}
+        onRefetch={onRefetch}
+      />
 
-            {/* URL */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">{t('dashboard.linkUrl')}</Label>
-              <Input
-                value={url} onChange={(e) => {
-                  const newUrl = e.target.value;
-                  setUrl(newUrl);
-                  // Auto-detect platform and fill fields if adding new link
-                  if (!editingLink) {
-                    const platform = detectPlatform(newUrl);
-                    if (platform) {
-                      if (!title || title === 'Nouveau lien' || title === '') setTitle(platform.name);
-                      if (!bgColor) setBgColor(platform.bgColor);
-                      if (!textColor) setTextColor(platform.textColor);
-                      if (linkStyle === 'default' && platform.style === 'featured') setLinkStyle('featured');
-                    }
-                  }
-                }}
-                maxLength={500} placeholder="https://example.com"
-                className="h-9"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">{t('linksManager.description')}</Label>
-              <Textarea
-                value={description} onChange={(e) => setDescription(e.target.value)}
-                maxLength={200} placeholder="Ex: @marie_official • Top 1% 🔥"
-                rows={2} className="resize-none text-sm"
-              />
-            </div>
-
-            {/* Thumbnail */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">{t('linksManager.photo')}</Label>
-              {thumbnailPreview ? (
-                <div className="relative w-full h-28 rounded-lg overflow-hidden bg-muted">
-                  <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
-                  <button
-                    type="button" onClick={handleRemoveThumbnail}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-foreground/60 text-background flex items-center justify-center hover:bg-foreground/80 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex items-center justify-center gap-2 w-full h-20 rounded-lg border border-dashed border-border cursor-pointer hover:border-primary/40 hover:bg-muted/40 transition-colors text-muted-foreground text-xs">
-                  <ImagePlus className="w-4 h-4" />
-                  <span>{t('linksManager.addImage')}</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
-                </label>
-              )}
-            </div>
-
-            {/* Customization toggle */}
-            <button
-              type="button"
-              onClick={() => setShowCustomization(!showCustomization)}
-              className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Palette className="w-3.5 h-3.5" />
-              {t('linksManager.advancedCustomization')}
-              <ChevronDown className={`w-3 h-3 transition-transform ${showCustomization ? 'rotate-180' : ''}`} />
-            </button>
-
-            <AnimatePresence>
-              {showCustomization && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
-                >
-                  <div className="space-y-4 p-3 rounded-lg bg-muted/40 border border-border">
-                    {/* Section */}
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">{t('linksManager.section')}</Label>
-                      <Input
-                        value={sectionTitle} onChange={(e) => setSectionTitle(e.target.value)}
-                        maxLength={50} placeholder={t('linksManager.sectionPlaceholder')}
-                        className="h-8 text-sm"
-                      />
-                    </div>
-
-                    {/* Style */}
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">{t('linksManager.style')}</Label>
-                      <Select value={linkStyle} onValueChange={setLinkStyle}>
-                        <SelectTrigger className="h-8 text-sm">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {LINK_STYLES.map(s => (
-                            <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Colors */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">{t('linksManager.background')}</Label>
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {PRESET_COLORS.map(color => (
-                            <button
-                              key={color} type="button"
-                              onClick={() => setBgColor(bgColor === color ? '' : color)}
-                              className={`w-5 h-5 rounded-full transition-all ${bgColor === color ? 'ring-2 ring-primary ring-offset-1 ring-offset-background scale-110' : 'hover:scale-110'}`}
-                              style={{ backgroundColor: color, border: color === '#FFFFFF' ? '1px solid hsl(var(--border))' : undefined }}
-                            />
-                          ))}
-                          {bgColor && (
-                            <button type="button" onClick={() => setBgColor('')} className="text-[10px] text-muted-foreground hover:text-foreground ml-1">✕</button>
-                          )}
-                        </div>
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">{t('linksManager.textColor')}</Label>
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {['#FFFFFF', '#000000'].map(color => (
-                            <button
-                              key={color} type="button"
-                              onClick={() => setTextColor(textColor === color ? '' : color)}
-                              className={`w-5 h-5 rounded-full transition-all ${textColor === color ? 'ring-2 ring-primary ring-offset-1 ring-offset-background scale-110' : 'hover:scale-110'}`}
-                              style={{ backgroundColor: color, border: color === '#FFFFFF' ? '1px solid hsl(var(--border))' : undefined }}
-                            />
-                          ))}
-                          <Input
-                            type="color" value={textColor || '#FFFFFF'}
-                            onChange={(e) => setTextColor(e.target.value)}
-                            className="w-5 h-5 p-0 border-0 cursor-pointer rounded-full overflow-hidden"
-                          />
-                          {textColor && (
-                            <button type="button" onClick={() => setTextColor('')} className="text-[10px] text-muted-foreground hover:text-foreground ml-1">✕</button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Mini preview */}
-                    {(bgColor || textColor) && (
-                      <div
-                        className="flex items-center justify-center px-4 py-2.5 rounded-lg text-xs font-medium"
-                        style={{ backgroundColor: bgColor || undefined, color: textColor || undefined }}
-                      >
-                        {title || t('linksManager.linkPreview')}
-                      </div>
-                    )}
-
-                    {/* Scheduling */}
-                    <div className="space-y-2 pt-2 border-t border-border/40">
-                      <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
-                        <Clock className="w-3 h-3" /> Programmation
-                      </Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="space-y-1">
-                          <span className="text-[10px] text-muted-foreground">Apparition</span>
-                          <Input
-                            type="datetime-local"
-                            value={scheduledAt}
-                            onChange={(e) => setScheduledAt(e.target.value)}
-                            className="h-7 text-[11px]"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <span className="text-[10px] text-muted-foreground">Expiration</span>
-                          <Input
-                            type="datetime-local"
-                            value={expiresAt}
-                            onChange={(e) => setExpiresAt(e.target.value)}
-                            className="h-7 text-[11px]"
-                          />
-                        </div>
-                      </div>
-                      {(scheduledAt || expiresAt) && (
-                        <button
-                          type="button"
-                          onClick={() => { setScheduledAt(''); setExpiresAt(''); }}
-                          className="text-[10px] text-muted-foreground hover:text-foreground"
-                        >
-                          ✕ Retirer la programmation
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <DialogFooter className="gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setDialogOpen(false)} size="sm" className="rounded-lg">
-              {t('dashboard.cancel')}
-            </Button>
-            <Button onClick={handleSave} disabled={saving || !title.trim() || !url.trim()} size="sm" className="rounded-lg">
-              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('dashboard.save')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* ── Templates Dialog ── */}
-      <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg p-0">
-          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border px-5 pt-5 pb-4">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <LayoutTemplate className="w-4.5 h-4.5 text-primary" />
-                </div>
-                Templates
-              </DialogTitle>
-            </DialogHeader>
-            <p className="text-xs text-muted-foreground mt-1.5">
-              {t('linksManager.templatesSubtitle')}
-            </p>
-          </div>
-
-          <div className="px-5 pb-5 space-y-4">
-            {/* Custom templates */}
-            {customTemplates.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">{t('linksManager.myTemplates')}</p>
-                <div className="grid grid-cols-1 gap-2">
-                  {customTemplates.map(template => (
-                    <TemplateCard
-                      key={template.id}
-                      name={template.name}
-                      desc={template.description}
-                      links={template.links}
-                      loading={applyingTemplate}
-                      onApply={() => applyTemplateLinks(template.links)}
-                      onDelete={(e) => handleDeleteCustomTemplate(template.id, e)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Built-in */}
-            <div className="space-y-2.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">{t('linksManager.preConfigured')}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {LINK_TEMPLATES.map(template => (
-                  <TemplateCard
-                    key={template.id}
-                    name={template.name}
-                    desc={template.desc}
-                    links={template.links}
-                    gradient={template.gradient}
-                    loading={applyingTemplate}
-                    onApply={() => applyTemplateLinks(template.links)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* ── Save Template Dialog ── */}
-      <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold flex items-center gap-2">
-              <BookmarkPlus className="w-4 h-4" /> {t('linksManager.saveAsTemplateTitle')}
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-xs text-muted-foreground -mt-1">
-            {t('linksManager.linksSaved', { count: links.length })}
-          </p>
-          <div className="space-y-3 pt-1">
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{t('linksManager.name')}</Label>
-              <Input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Ex: Setup Marie" className="h-9" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{t('linksManager.description')}</Label>
-              <Input value={templateDesc} onChange={e => setTemplateDesc(e.target.value)} placeholder="Optionnel" className="h-9" />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {links.slice(0, 6).map((l, idx) => (
-                <span
-                  key={idx}
-                  className="text-[10px] px-1.5 py-0.5 rounded font-medium"
-                  style={{
-                    backgroundColor: l.bg_color || 'hsl(var(--muted))',
-                    color: l.text_color || 'hsl(var(--muted-foreground))',
-                  }}
-                >
-                  {l.title}
-                </span>
-              ))}
-              {links.length > 6 && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-muted text-muted-foreground">
-                  +{links.length - 6}
-                </span>
-              )}
-            </div>
-          </div>
-          <DialogFooter className="gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setSaveTemplateOpen(false)} size="sm">{t('dashboard.cancel')}</Button>
-            <Button onClick={handleSaveAsTemplate} disabled={savingTemplate || !templateName.trim()} size="sm">
-              {savingTemplate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('dashboard.save')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <SaveTemplateDialog
+        open={saveTemplateOpen}
+        onOpenChange={setSaveTemplateOpen}
+        links={links}
+      />
     </div>
   );
 };
-
-/* ── Template Card sub-component ── */
-function TemplateCard({
-  name, desc, links, gradient, loading, onApply, onDelete,
-}: {
-  name: string;
-  desc: string | null;
-  links: Array<{ title: string; bg_color: string | null; text_color: string | null }>;
-  gradient?: string;
-  loading: boolean;
-  onApply: () => void;
-  onDelete?: (e: React.MouseEvent) => void;
-}) {
-  const { t } = useTranslation();
-  return (
-    <button
-      onClick={() => !loading && onApply()}
-      className="w-full text-left rounded-2xl border border-border overflow-hidden hover:border-primary/30 transition-all group active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-    >
-      {/* Visual preview strip */}
-      <div className={`relative h-16 flex items-end gap-1 px-3 pb-2 overflow-hidden ${gradient ? `bg-gradient-to-br ${gradient}` : 'bg-muted'}`}>
-        <div className="absolute inset-0 bg-black/10" />
-        {links.slice(0, 4).map((tl, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: idx * 0.05, duration: 0.3 }}
-            className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-semibold shadow-sm backdrop-blur-sm truncate max-w-[100px]"
-            style={{
-              backgroundColor: tl.bg_color || 'rgba(255,255,255,0.9)',
-              color: tl.text_color || '#000',
-            }}
-          >
-            <span className="truncate">{tl.title}</span>
-          </motion.div>
-        ))}
-        {links.length > 4 && (
-          <span className="relative text-[9px] font-bold text-white/70 px-1">
-            +{links.length - 4}
-          </span>
-        )}
-      </div>
-
-      {/* Info */}
-      <div className="px-3.5 py-3 flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-foreground truncate">{name}</p>
-          {desc && <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{desc}</p>}
-        </div>
-        <div className="flex items-center gap-1 shrink-0">
-          {onDelete && (
-            <span
-              role="button"
-              onClick={onDelete}
-              className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </span>
-          )}
-          <span className="text-[11px] font-semibold text-primary opacity-60 group-hover:opacity-100 transition-opacity">
-            {loading ? '...' : t('linksManager.apply')}
-          </span>
-        </div>
-      </div>
-    </button>
-  );
-}
 
 export default LinksManager;
