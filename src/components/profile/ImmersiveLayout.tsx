@@ -106,8 +106,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
   return (
     <>
+      <TrackingPixels {...trackingConfig} />
       <Helmet>
-        <TrackingPixels {...trackingConfig} />
         <title>{displayName} | MyTaptap</title>
         <meta name="description" content={page.bio || `${displayName}'s links`} />
         {page.is_nsfw && <meta name="robots" content="noindex, nofollow" />}
