@@ -238,7 +238,7 @@ Deno.serve(async (req) => {
       const [linksRes, profileRes] = await Promise.all([
         supabase
           .from("links")
-          .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title")
+          .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title, is_visible, scheduled_at, expires_at")
           .eq("page_id", pageData.id)
           .order("position", { ascending: true }),
         supabase

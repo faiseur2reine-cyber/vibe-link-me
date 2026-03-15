@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { TapLoader as Loader2, TapCrown as Crown, TapCreditCard as CreditCard, TapAlert as AlertTriangle, TapLogOut as LogOut, TapRefresh as RefreshCw, TapCalendar as Calendar, TapSparkles as Sparkles, TapGlobe as Globe, TapCheck as Check, TapCopy as Copy, TapExternalLink as ExternalLink, TapAtSign as AtSign, TapX as X, TapTrash as Trash2 } from '@/components/icons/TapIcons';
 import { PLANS, type PlanKey } from '@/lib/plans';
+import { checkUsernameAvailability } from '@/lib/username';
 import { Mail } from 'lucide-react';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
@@ -31,7 +32,7 @@ const DashboardSettings = () => {
   // Username change state
   const [currentUsername, setCurrentUsername] = useState('');
   const [newUsername, setNewUsername] = useState('');
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'reserved'>('idle');
   const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
   const [usernameSaving, setUsernameSaving] = useState(false);
 
@@ -80,8 +81,8 @@ const DashboardSettings = () => {
     if (cleaned.length < 3 || cleaned === currentUsername) { setUsernameStatus('idle'); return; }
     setUsernameStatus('checking');
     const timer = setTimeout(async () => {
-      const { data } = await supabase.from('profiles').select('username').eq('username', cleaned).maybeSingle();
-      setUsernameStatus(data ? 'taken' : 'available');
+      const result = await checkUsernameAvailability(cleaned);
+      setUsernameStatus(result);
     }, 500);
     setUsernameTimer(timer);
   };
@@ -90,20 +91,19 @@ const DashboardSettings = () => {
     if (usernameStatus !== 'available') return;
     setUsernameSaving(true);
 
-    // Update profiles + all creator_pages in parallel
-    const [profileResult, pagesResult] = await Promise.all([
-      supabase.from('profiles').update({ username: newUsername }).eq('user_id', user!.id),
-      supabase.from('creator_pages').update({ username: newUsername }).eq('user_id', user!.id),
-    ]);
+    // Update profile username only — page usernames are managed per-page in the page editor
+    const { error } = await supabase
+      .from('profiles')
+      .update({ username: newUsername })
+      .eq('user_id', user!.id);
 
-    const error = profileResult.error || pagesResult.error;
     if (error) {
       toast.error(t('common.error'));
     } else {
       setCurrentUsername(newUsername);
       setNewUsername('');
       setUsernameStatus('idle');
-      toast.success(t('settings.usernameSaved') );
+      toast.success(t('settings.usernameSaved'));
     }
     setUsernameSaving(false);
   };
@@ -489,7 +489,7 @@ const DashboardSettings = () => {
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                   {usernameStatus === 'available' && <Check className="w-4 h-4 text-primary" />}
-                  {usernameStatus === 'taken' && <X className="w-4 h-4 text-destructive" />}
+                  {(usernameStatus === 'taken' || usernameStatus === 'reserved') && <X className="w-4 h-4 text-destructive" />}
                 </div>
               </div>
               <Button
@@ -500,6 +500,7 @@ const DashboardSettings = () => {
               </Button>
             </div>
             {usernameStatus === 'taken' && <p className="text-xs text-destructive">{t('auth.usernameTaken')}</p>}
+            {usernameStatus === 'reserved' && <p className="text-xs text-destructive">Ce nom est réservé</p>}
             {usernameStatus === 'available' && <p className="text-xs text-primary">{t('auth.usernameAvailable')}</p>}
           </CardContent>
         </Card>
