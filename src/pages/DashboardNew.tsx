@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
@@ -11,15 +11,19 @@ import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
 import { TapLogOut as LogOut, TapPlus as Plus, TapLoader as Loader2, TapSun as Sun, TapMoon as Moon, TapLink as Link2, TapShare as Share2 } from '@/components/icons/TapIcons';
+
+// Eagerly loaded (always visible on first dashboard load)
+import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import PagesListView from '@/components/dashboard/PagesListView';
 import PageDetailView from '@/components/dashboard/PageDetailView';
 import CreatePageDialog from '@/components/dashboard/CreatePageDialog';
 import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
 import { DashboardTour } from '@/components/dashboard/DashboardTour';
-import DashboardOverview from '@/components/dashboard/DashboardOverview';
-import DashboardAnalytics from './DashboardAnalytics';
-import DashboardProfile from './DashboardProfile';
-import DashboardSettings from './DashboardSettings';
+
+// Lazy loaded (heavy sub-pages, loaded on navigate)
+const DashboardAnalytics = lazy(() => import('./DashboardAnalytics'));
+const DashboardProfile = lazy(() => import('./DashboardProfile'));
+const DashboardSettings = lazy(() => import('./DashboardSettings'));
 
 const DashboardHome = () => {
   const { t } = useTranslation();
@@ -267,9 +271,9 @@ const Dashboard = () => {
           <Routes>
             <Route path="/" element={<DashboardOverview />} />
             <Route path="/pages" element={<DashboardHome />} />
-            <Route path="/analytics" element={<DashboardAnalytics />} />
-            <Route path="/profile" element={<DashboardProfile />} />
-            <Route path="/settings" element={<DashboardSettings />} />
+            <Route path="/analytics" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>}><DashboardAnalytics /></Suspense>} />
+            <Route path="/profile" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>}><DashboardProfile /></Suspense>} />
+            <Route path="/settings" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>}><DashboardSettings /></Suspense>} />
           </Routes>
         </div>
       </div>
