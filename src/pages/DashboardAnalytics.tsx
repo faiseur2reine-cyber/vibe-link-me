@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import ProFeatureGate from '@/components/dashboard/ProFeatureGate';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Sector } from 'recharts';
@@ -279,6 +280,7 @@ const DashboardAnalytics = () => {
           <BreakdownList items={stats.referrerStats} labelKey="referrer" valueKey="count" max={10} />
 
         {/* Device / Browser / OS — Pie Charts */}
+        <ProFeatureGate requiredPlan="starter" label="Statistiques d'appareils">
         {(stats.deviceStats.length > 0 || stats.browserStats.length > 0 || stats.osStats.length > 0) && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -348,6 +350,7 @@ const DashboardAnalytics = () => {
             ))}
           </div>
         )}
+        </ProFeatureGate>
       </div>
       </div>
     </div>
