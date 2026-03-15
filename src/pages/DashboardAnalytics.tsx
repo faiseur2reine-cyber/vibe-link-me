@@ -90,9 +90,6 @@ const DashboardAnalytics = () => {
     stats.countryStats.forEach(c => rows.push(['Country', c.country, String(c.count)]));
     stats.cityStats.forEach(c => rows.push(['City', c.city, String(c.count)]));
     stats.referrerStats.forEach(r => rows.push(['Referrer', r.referrer, String(r.count)]));
-    stats.deviceStats.forEach(d => rows.push(['Device', d.device, String(d.count)]));
-    stats.browserStats.forEach(b => rows.push(['Browser', b.browser, String(b.count)]));
-    stats.osStats.forEach(o => rows.push(['OS', o.os, String(o.count)]));
 
     const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -246,33 +243,6 @@ const DashboardAnalytics = () => {
           </div>
           <BreakdownList items={stats.referrerStats} labelKey="referrer" valueKey="count" max={10} />
         </div>
-
-        {/* Device / Browser / OS */}
-        {(stats.deviceStats.length > 0 || stats.browserStats.length > 0 || stats.osStats.length > 0) && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-5 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-2 mb-3">
-                <MousePointerClick className="w-4 h-4 text-muted-foreground" />
-                <h4 className="font-display font-semibold text-foreground">Appareils</h4>
-              </div>
-              <PercentList items={stats.deviceStats.map(d => ({ ...d, device: d.device === 'mobile' ? '📱 Mobile' : d.device === 'tablet' ? '📱 Tablet' : '💻 Desktop' }))} labelKey="device" valueKey="count" />
-            </div>
-            <div className="p-5 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-2 mb-3">
-                <Globe className="w-4 h-4 text-muted-foreground" />
-                <h4 className="font-display font-semibold text-foreground">Navigateurs</h4>
-              </div>
-              <PercentList items={stats.browserStats} labelKey="browser" valueKey="count" />
-            </div>
-            <div className="p-5 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                <h4 className="font-display font-semibold text-foreground">Systèmes</h4>
-              </div>
-              <PercentList items={stats.osStats} labelKey="os" valueKey="count" />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
