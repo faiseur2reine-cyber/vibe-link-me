@@ -17,7 +17,9 @@ const COLORS = [
 ];
 
 const renderActiveShape = (props: any) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, value, payload } = props;
+  const total = props.payload && props.payload._total ? props.payload._total : value;
+  const percent = Math.round((value / total) * 100);
   return (
     <g>
       <Sector
@@ -30,6 +32,12 @@ const renderActiveShape = (props: any) => {
         fill={fill}
         style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.25))', transition: 'all 0.2s ease-out' }}
       />
+      <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="central" className="fill-foreground" style={{ fontSize: 20, fontWeight: 700 }}>
+        {percent}%
+      </text>
+      <text x={cx} y={cy + 12} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground" style={{ fontSize: 10 }}>
+        {payload?.name}
+      </text>
     </g>
   );
 };
@@ -287,7 +295,7 @@ const DashboardAnalytics = () => {
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
                       <Pie
-                        data={data}
+                        data={data.map(d => ({ ...d, _total: data.reduce((s, x) => s + x.value, 0) }))}
                         cx="50%"
                         cy="50%"
                         innerRadius={45}
