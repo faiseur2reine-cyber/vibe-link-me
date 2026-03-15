@@ -294,6 +294,16 @@ const DashboardAnalytics = () => {
                 {data.length > 0 ? (
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
+                      {activeIndices[title] === undefined && (
+                        <text x="50%" y="46%" textAnchor="middle" dominantBaseline="central" className="fill-foreground" style={{ fontSize: 20, fontWeight: 700 }}>
+                          {data.reduce((s, d) => s + d.value, 0)}
+                        </text>
+                      )}
+                      {activeIndices[title] === undefined && (
+                        <text x="50%" y="58%" textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground" style={{ fontSize: 10 }}>
+                          Total
+                        </text>
+                      )}
                       <Pie
                         data={data.map(d => ({ ...d, _total: data.reduce((s, x) => s + x.value, 0) }))}
                         cx="50%"
