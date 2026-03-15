@@ -251,13 +251,13 @@ Deno.serve(async (req) => {
       // Strip agency-internal fields from public response
       const { operator: _op, notes: _notes, revenue_monthly: _rm, revenue_commission: _rc, ...publicPageData } = pageData as any;
 
-      // Enforce plan link limits — soft-hide excess links (not deleted, just not served)
+      // Enforce plan link limits — send all links but flag if over limit
       const userPlan = profileRes.data?.plan || 'free';
       const maxLinks = userPlan === 'pro' ? Infinity : userPlan === 'starter' ? 20 : 5;
       const allLinks = linksRes.data || [];
-      const visibleLinks = allLinks.slice(0, maxLinks);
+      const paymentIssue = allLinks.length > maxLinks;
 
-      const responseBody = JSON.stringify({ page: { ...publicPageData, plan: userPlan }, links: visibleLinks, source: "creator_pages" });
+      const responseBody = JSON.stringify({ page: { ...publicPageData, plan: userPlan }, links: allLinks, payment_issue: paymentIssue, source: "creator_pages" });
       setCachedPage(username, responseBody);
 
       return new Response(
@@ -298,9 +298,9 @@ Deno.serve(async (req) => {
     const legacyPlan = profileData.plan || 'free';
     const legacyMaxLinks = legacyPlan === 'pro' ? Infinity : legacyPlan === 'starter' ? 20 : 5;
     const allLegacyLinks = linksData || [];
-    const visibleLegacyLinks = allLegacyLinks.slice(0, legacyMaxLinks);
+    const legacyPaymentIssue = allLegacyLinks.length > legacyMaxLinks;
 
-    const legacyBody = JSON.stringify({ page: profileData, links: visibleLegacyLinks, source: "profiles" });
+    const legacyBody = JSON.stringify({ page: profileData, links: allLegacyLinks, payment_issue: legacyPaymentIssue, source: "profiles" });
     setCachedPage(username, legacyBody);
 
     return new Response(

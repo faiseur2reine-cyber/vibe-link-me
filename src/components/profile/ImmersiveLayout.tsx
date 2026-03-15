@@ -47,7 +47,7 @@ interface LinkData {
   scheduled_at: string | null; expires_at: string | null; is_visible: boolean;
 }
 
-interface Props { page: PageData; links: LinkData[]; abVariant: 'A' | 'B'; }
+interface Props { page: PageData; links: LinkData[]; abVariant: 'A' | 'B'; paymentIssue?: boolean; }
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -80,7 +80,7 @@ const HeroImage = ({ src }: { src: string }) => {
   );
 };
 
-const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
+const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props) => {
   const { t } = useTranslation();
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +107,7 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
   };
 
   const handleLinkClick = (link: LinkData) => {
+    if (paymentIssue) return; // links disabled during payment issue
     if (!throttleClick(link.id)) return;
     const finalUrl = appendUtm(link.url, utmParams);
     recordClick(link.id, clickVariant);
@@ -290,7 +291,22 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
         )}
 
         {/* ═══ BUTTONS ═══ */}
-        <div className="px-4 sm:px-6 pt-5 pb-4 max-w-[440px] sm:max-w-[480px] mx-auto flex flex-col gap-3">
+        {paymentIssue && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.4, ease }}
+            className="mx-4 sm:mx-6 mt-4 max-w-[440px] sm:max-w-[480px] mx-auto"
+          >
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.06] backdrop-blur-md border border-white/[0.06]">
+              <span className="text-[18px] shrink-0">💤</span>
+              <p className="text-[12px] text-white/50 leading-relaxed">
+                Les liens de cette page sont temporairement indisponibles. Revenez bientôt !
+              </p>
+            </div>
+          </motion.div>
+        )}
+        <div className={`px-4 sm:px-6 pt-5 pb-4 max-w-[440px] sm:max-w-[480px] mx-auto flex flex-col gap-3 ${paymentIssue ? 'opacity-40 pointer-events-none select-none' : ''}`}>
           {sections.map((section, sIdx) => (
             <div key={sIdx}>
               {/* Section header */}
@@ -321,7 +337,7 @@ const ImmersiveLayout = ({ page, links, abVariant }: Props) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 + idx * 0.05, duration: 0.35, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-200 active:scale-[0.98] hover:-translate-y-[1px] ${idx === 0 ? 'animate-bounce-subtle' : ''}`}
+                    className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-200 ${paymentIssue ? 'cursor-default' : 'active:scale-[0.98] hover:-translate-y-[1px]'} ${idx === 0 && !paymentIssue ? 'animate-bounce-subtle' : ''}`}
                     style={{
                       backgroundColor: '#FFFFFF',
                       color: '#000000',

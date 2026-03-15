@@ -82,6 +82,7 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [abVariant, setAbVariant] = useState<'A' | 'B'>('A');
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [paymentIssue, setPaymentIssue] = useState(false);
 
   // Track scroll for back-to-top button
   useEffect(() => {
@@ -126,6 +127,7 @@ const PublicProfile = () => {
             return true;
           });
           setLinks(activeLinks);
+          setPaymentIssue(!!result.payment_issue);
           const uc = pageData.urgency_config;
           if (uc?.abTest?.enabled) {
             const storageKey = `ab_${pageData.id}`;
@@ -217,7 +219,7 @@ const PublicProfile = () => {
 
   // ── Immersive theme: completely different GAML-style layout
   if (page.theme === 'immersive' && !isDemo) {
-    return <ImmersiveLayout page={page} links={links} abVariant={abVariant} />;
+    return <ImmersiveLayout page={page} links={links} abVariant={abVariant} paymentIssue={paymentIssue} />;
   }
 
   const displayName = page.display_name || page.username;
