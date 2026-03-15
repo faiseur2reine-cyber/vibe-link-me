@@ -11,6 +11,7 @@ import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
 import { TapLogOut as LogOut, TapPlus as Plus, TapLoader as Loader2, TapSun as Sun, TapMoon as Moon, TapLink as Link2, TapShare as Share2 } from '@/components/icons/TapIcons';
+import RetentionModal from '@/components/dashboard/RetentionModal';
 
 import { PLANS } from '@/lib/plans';
 import type { PlanKey } from '@/lib/plans';
