@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { TapArrowRight as ArrowRight, TapCheck as Check, TapX as X, TapLoader as Loader2 } from '@/components/icons/TapIcons';
-import { supabase } from '@/integrations/supabase/client';
+import { cleanUsername, checkUsernameAvailability } from '@/lib/username';
 import { Zap, BarChart3, ShieldCheck, Smartphone, Palette, Globe, Clock, Users } from 'lucide-react';
 
 const container = {
@@ -30,29 +30,26 @@ const HeroSection = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
-  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'reserved'>('idle');
   const [checkTimer, setCheckTimer] = useState<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUsernameChange = (value: string) => {
     if (checkTimer) clearTimeout(checkTimer);
-    const cleaned = value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    const cleaned = cleanUsername(value);
     setUsername(cleaned);
     if (cleaned.length < 3) { setStatus('idle'); return; }
     setStatus('checking');
     const timer = setTimeout(async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('username', cleaned)
-        .maybeSingle();
-      setStatus(data ? 'taken' : 'available');
+      const result = await checkUsernameAvailability(cleaned);
+      setStatus(result);
     }, 400);
     setCheckTimer(timer);
   };
 
   const handleClaim = () => {
     if (username.length < 3) { inputRef.current?.focus(); return; }
+    if (status !== 'available') return;
     navigate(`/auth?tab=signup&username=${encodeURIComponent(username)}`);
   };
 
@@ -113,7 +110,7 @@ const HeroSection = () => {
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   {status === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground/40" />}
                   {status === 'available' && <Check className="w-4 h-4 text-emerald-500" />}
-                  {status === 'taken' && <X className="w-4 h-4 text-red-500" />}
+                  {(status === 'taken' || status === 'reserved') && <X className="w-4 h-4 text-red-500" />}
                 </div>
               </div>
               <button
@@ -134,6 +131,11 @@ const HeroSection = () => {
               {status === 'taken' && (
                 <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-[12px] text-red-500 font-medium">
                   {t('landing.usernameTaken')}
+                </motion.p>
+              )}
+              {status === 'reserved' && (
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-[12px] text-red-500 font-medium">
+                  Ce nom est réservé
                 </motion.p>
               )}
             </div>

@@ -71,6 +71,12 @@ export function deeplinkNavigate(url: string): boolean {
     return true;
   }
 
+  // Dangerous schemes — block entirely
+  if (/^(javascript:|data:|vbscript:|blob:)/i.test(url)) {
+    console.warn('[deeplink] blocked dangerous URL scheme:', url);
+    return false;
+  }
+
   // Ensure URL has a protocol
   const safeUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
 

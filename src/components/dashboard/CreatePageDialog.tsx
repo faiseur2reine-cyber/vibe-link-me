@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { TapLoader as Loader2, TapCheck as Check, TapX as X } from '@/components/icons/TapIcons';
-import { supabase } from '@/integrations/supabase/client';
+import { cleanUsername, checkUsernameAvailability } from '@/lib/username';
 
 interface CreatePageDialogProps {
   open: boolean;
@@ -18,18 +18,18 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage, onCreated }: Creat
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [saving, setSaving] = useState(false);
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'reserved'>('idle');
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   const checkUsername = (value: string) => {
     if (timer) clearTimeout(timer);
-    const cleaned = value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    const cleaned = cleanUsername(value);
     setUsername(cleaned);
     if (cleaned.length < 3) { setUsernameStatus('idle'); return; }
     setUsernameStatus('checking');
     const t = setTimeout(async () => {
-      const { data } = await supabase.from('creator_pages').select('username').eq('username', cleaned).maybeSingle();
-      setUsernameStatus(data ? 'taken' : 'available');
+      const result = await checkUsernameAvailability(cleaned);
+      setUsernameStatus(result);
     }, 500);
     setTimer(t);
   };
@@ -73,7 +73,7 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage, onCreated }: Creat
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
                 {usernameStatus === 'checking' && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
                 {usernameStatus === 'available' && <Check className="w-3 h-3 text-primary" />}
-                {usernameStatus === 'taken' && <X className="w-3 h-3 text-destructive" />}
+                {(usernameStatus === 'taken' || usernameStatus === 'reserved') && <X className="w-3 h-3 text-destructive" />}
               </div>
             </div>
             {usernameStatus === 'available' && (
@@ -81,6 +81,9 @@ const CreatePageDialog = ({ open, onOpenChange, onCreatePage, onCreated }: Creat
             )}
             {usernameStatus === 'taken' && (
               <p className="text-[11px] text-destructive">Ce username est déjà pris</p>
+            )}
+            {usernameStatus === 'reserved' && (
+              <p className="text-[11px] text-destructive">Ce nom est réservé</p>
             )}
           </div>
           <div className="space-y-1.5">
