@@ -1,15 +1,71 @@
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
-import { FileText } from 'lucide-react';
+import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
+import { Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const COLORS = [
+  'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
+  'hsl(200, 80%, 50%)', 'hsl(150, 60%, 45%)', 'hsl(45, 90%, 50%)',
+];
+
+const BreakdownList = ({ items, labelKey, valueKey, max = 8 }: {
+  items: Record<string, any>[];
+  labelKey: string;
+  valueKey: string;
+  max?: number;
+}) => {
+  if (items.length === 0) return <p className="text-sm text-muted-foreground py-2">Pas encore de données</p>;
+  const topVal = items[0]?.[valueKey] || 1;
+  return (
+    <div className="space-y-1.5">
+      {items.slice(0, max).map((item, i) => (
+        <div key={item[labelKey]} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+          <span className="text-sm text-foreground truncate flex-1 mr-2">{item[labelKey]}</span>
+          <div className="flex items-center gap-2">
+            <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full rounded-full" style={{ width: `${(item[valueKey] / topVal) * 100}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+            </div>
+            <span className="text-xs font-semibold text-muted-foreground w-8 text-right">{item[valueKey]}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const PercentList = ({ items, labelKey, valueKey, max = 6 }: {
+  items: Record<string, any>[];
+  labelKey: string;
+  valueKey: string;
+  max?: number;
+}) => {
+  if (items.length === 0) return <p className="text-sm text-muted-foreground py-2">Pas encore de données</p>;
+  const total = items.reduce((s, d) => s + d[valueKey], 0);
+  return (
+    <div className="space-y-1.5">
+      {items.slice(0, max).map((item, i) => {
+        const pct = total > 0 ? Math.round((item[valueKey] / total) * 100) : 0;
+        return (
+          <div key={item[labelKey]} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+            <span className="text-sm text-foreground">{item[labelKey]}</span>
+            <div className="flex items-center gap-2">
+              <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+              </div>
+              <span className="text-xs font-semibold text-muted-foreground w-10 text-right">{pct}%</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const DashboardAnalytics = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const { pages, loading: pagesLoading } = useCreatorPages();
   const pageIds = pages.map(p => p.id);
   const stats = useGlobalAnalytics(pageIds);
@@ -22,136 +78,201 @@ const DashboardAnalytics = () => {
     );
   }
 
+  const exportCSV = () => {
+    const rows: string[][] = [['Section', 'Item', 'Value']];
+    rows.push(['Summary', 'Total Views', String(stats.totalViews)]);
+    rows.push(['Summary', 'Total Clicks', String(stats.totalClicks)]);
+    rows.push(['Summary', 'Conversion', `${stats.conversionRate}%`]);
+    rows.push(['Summary', 'Pages', String(stats.totalPages)]);
+    rows.push(['Summary', 'Links', String(stats.totalLinks)]);
+    stats.topPages.forEach(p => rows.push(['Page', p.displayName || p.username, `${p.views} views, ${p.clicks} clicks`]));
+    stats.dailyClicks.forEach((d, i) => rows.push(['Daily', d.date, `${stats.dailyViews[i]?.views || 0} views, ${d.clicks} clicks`]));
+    stats.countryStats.forEach(c => rows.push(['Country', c.country, String(c.count)]));
+    stats.cityStats.forEach(c => rows.push(['City', c.city, String(c.count)]));
+    stats.referrerStats.forEach(r => rows.push(['Referrer', r.referrer, String(r.count)]));
+    stats.deviceStats.forEach(d => rows.push(['Device', d.device, String(d.count)]));
+    stats.browserStats.forEach(b => rows.push(['Browser', b.browser, String(b.count)]));
+    stats.osStats.forEach(o => rows.push(['OS', o.os, String(o.count)]));
+
+    const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'analytics-global.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">{t('dashboard.analytics')}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t('analytics.overview')}
-          </p>
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-display font-bold text-foreground">{t('dashboard.analytics')}</h1>
+            <p className="text-sm text-muted-foreground mt-1">Vue d'ensemble de toutes vos pages</p>
+          </div>
+          {stats.totalClicks > 0 && (
+            <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+              <Download className="w-3 h-3" /> Export CSV
+            </Button>
+          )}
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <MousePointerClick className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('dashboard.totalClicks')}</p>
-                  <p className="text-3xl font-display font-bold text-foreground">{stats.totalClicks}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-secondary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('analytics.pagesCreated')}</p>
-                  <p className="text-3xl font-display font-bold text-foreground">{stats.totalPages}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Link2 className="w-6 h-6 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('analytics.activeLinks')}</p>
-                  <p className="text-3xl font-display font-bold text-foreground">{stats.totalLinks}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Stats row */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="p-4 rounded-xl bg-muted/50 border border-border">
+            <p className="text-[11px] text-muted-foreground font-medium">Vues</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{stats.totalViews}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+            <p className="text-[11px] text-muted-foreground font-medium">Clics</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{stats.totalClicks}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/50 border border-border">
+            <p className="text-[11px] text-muted-foreground font-medium">Conversion</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{stats.conversionRate}%</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/50 border border-border">
+            <p className="text-[11px] text-muted-foreground font-medium">Pages</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{stats.totalPages}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/50 border border-border">
+            <p className="text-[11px] text-muted-foreground font-medium">Liens</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{stats.totalLinks}</p>
+          </div>
         </div>
 
-        {/* Daily Chart */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-muted-foreground" />
-              <CardTitle className="text-base">{t('analytics.last30Days')}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {stats.dailyClicks.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={stats.dailyClicks}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-                    tickFormatter={(v) => {
-                      const d = new Date(v);
-                      return `${d.getDate()}/${d.getMonth() + 1}`;
-                    }}
-                    interval="preserveStartEnd"
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
-                    allowDecimals={false} 
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '0.75rem',
-                      color: 'hsl(var(--foreground))',
-                    }}
-                    labelFormatter={(v) => new Date(v).toLocaleDateString()}
-                  />
-                  <Bar dataKey="clicks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-center text-muted-foreground py-12">{t('analytics.noData')}</p>
-            )}
-          </CardContent>
-        </Card>
+        {/* Daily chart — Views + Clicks */}
+        <div className="p-5 rounded-xl border border-border bg-card">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="w-4 h-4 text-muted-foreground" />
+            <h4 className="font-display font-semibold text-foreground">Activité (30 jours)</h4>
+          </div>
+          {stats.dailyClicks.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={stats.dailyClicks.map((d, i) => ({
+                date: d.date,
+                clicks: d.clicks,
+                views: stats.dailyViews[i]?.views || 0,
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  tickFormatter={(v) => { const d = new Date(v); return `${d.getDate()}/${d.getMonth() + 1}`; }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '0.75rem', color: 'hsl(var(--foreground))' }}
+                  labelFormatter={(v) => new Date(v).toLocaleDateString()}
+                />
+                <Bar dataKey="views" fill="hsl(var(--muted-foreground)/0.15)" radius={[4, 4, 0, 0]} name="Vues" />
+                <Bar dataKey="clicks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Clics" />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-muted-foreground py-12">Pas encore de données</p>
+          )}
+        </div>
 
-        {/* Top Pages */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t('analytics.topPages')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {stats.topPages.length > 0 ? (
-              <div className="space-y-3">
-                {stats.topPages.map((page, idx) => (
-                  <div key={page.pageId} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-muted-foreground w-6">#{idx + 1}</span>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {page.displayName || page.username}
-                        </p>
+        {/* Top Pages — views + clicks */}
+        <div className="p-5 rounded-xl border border-border bg-card">
+          <div className="flex items-center gap-2 mb-4">
+            <Link2 className="w-4 h-4 text-muted-foreground" />
+            <h4 className="font-display font-semibold text-foreground">Performance par page</h4>
+          </div>
+          {stats.topPages.length > 0 ? (
+            <div className="space-y-2">
+              {stats.topPages.map((page, idx) => {
+                const cvr = page.views > 0 ? ((page.clicks / page.views) * 100).toFixed(1) : '—';
+                return (
+                  <div key={page.pageId} className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <span className="text-sm font-bold text-muted-foreground/50 w-6 shrink-0">#{idx + 1}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{page.displayName || page.username}</p>
                         <p className="text-xs text-muted-foreground">@{page.username}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <MousePointerClick className="w-3.5 h-3.5 text-muted-foreground" />
-                      <span className="text-sm font-semibold text-foreground">{page.clicks}</span>
+                    <div className="flex items-center gap-5 shrink-0">
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Vues</p>
+                        <p className="text-sm font-semibold text-foreground">{page.views}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Clics</p>
+                        <p className="text-sm font-semibold text-foreground">{page.clicks}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">CVR</p>
+                        <p className="text-sm font-semibold text-foreground">{cvr}%</p>
+                      </div>
                     </div>
                   </div>
-                ))}
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-8">Aucune page pour le moment</p>
+          )}
+        </div>
+
+        {/* Geo — Countries + Cities */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-5 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2 mb-3">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-display font-semibold text-foreground">Pays</h4>
+            </div>
+            <BreakdownList items={stats.countryStats} labelKey="country" valueKey="count" />
+          </div>
+          <div className="p-5 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2 mb-3">
+              <MapPin className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-display font-semibold text-foreground">Villes</h4>
+            </div>
+            <BreakdownList items={stats.cityStats} labelKey="city" valueKey="count" />
+          </div>
+        </div>
+
+        {/* Sources */}
+        <div className="p-5 rounded-xl border border-border bg-card">
+          <div className="flex items-center gap-2 mb-3">
+            <Link2 className="w-4 h-4 text-muted-foreground" />
+            <h4 className="font-display font-semibold text-foreground">Sources de trafic</h4>
+          </div>
+          <BreakdownList items={stats.referrerStats} labelKey="referrer" valueKey="count" max={10} />
+        </div>
+
+        {/* Device / Browser / OS */}
+        {(stats.deviceStats.length > 0 || stats.browserStats.length > 0 || stats.osStats.length > 0) && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-5 rounded-xl border border-border bg-card">
+              <div className="flex items-center gap-2 mb-3">
+                <MousePointerClick className="w-4 h-4 text-muted-foreground" />
+                <h4 className="font-display font-semibold text-foreground">Appareils</h4>
               </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-8">{t('analytics.noPages')}</p>
-            )}
-          </CardContent>
-        </Card>
+              <PercentList items={stats.deviceStats.map(d => ({ ...d, device: d.device === 'mobile' ? '📱 Mobile' : d.device === 'tablet' ? '📱 Tablet' : '💻 Desktop' }))} labelKey="device" valueKey="count" />
+            </div>
+            <div className="p-5 rounded-xl border border-border bg-card">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="w-4 h-4 text-muted-foreground" />
+                <h4 className="font-display font-semibold text-foreground">Navigateurs</h4>
+              </div>
+              <PercentList items={stats.browserStats} labelKey="browser" valueKey="count" />
+            </div>
+            <div className="p-5 rounded-xl border border-border bg-card">
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                <h4 className="font-display font-semibold text-foreground">Systèmes</h4>
+              </div>
+              <PercentList items={stats.osStats} labelKey="os" valueKey="count" />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
