@@ -7,6 +7,8 @@ Disallow: /set-username
 Disallow: /reset-password
 Disallow: /safe/
 
+Sitemap: https://deyoyodhtilhmzhjorsp.supabase.co/functions/v1/sitemap
+
 User-agent: Googlebot
 Allow: /
 
