@@ -105,10 +105,10 @@ serve(async (req) => {
     <h1>Ouvre dans ton navigateur</h1>
     <p>Appuie sur le bouton pour continuer</p>
     <a id="manual-btn" class="btn" href="${safeTarget}">
-      Ouvrir ↗
+      Ouvrir dans le navigateur
     </a>
     <p class="hint">
-      Ou appuie sur <strong>⋯</strong> en haut → <strong>Ouvrir dans le navigateur</strong>
+      Ou appuie sur <strong>⋯</strong> en haut puis <strong>Ouvrir dans le navigateur</strong>
     </p>
   </div>
 

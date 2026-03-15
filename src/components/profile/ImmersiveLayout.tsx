@@ -84,7 +84,6 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   const heroRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [browserInfo] = useState(() => detectBrowser());
-  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   usePageView(page.id);
 
@@ -180,32 +179,28 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       <div className="min-h-screen min-h-[100dvh] bg-[#0a0a0a] text-white antialiased" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
 
         {/* ═══ IN-APP BROWSER BANNER ═══ */}
-        {browserInfo.isInApp && !bannerDismissed && (
-          <div className="sticky top-0 z-50 bg-white px-4 py-3 flex items-center gap-3"
-            style={{ paddingTop: 'max(12px, env(safe-area-inset-top, 12px))' }}
+        {browserInfo.isInApp && (
+          <button
+            onClick={() => {
+              const goUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/go?url=${encodeURIComponent(window.location.href)}`;
+              window.location.href = goUrl;
+            }}
+            className="sticky top-0 z-50 w-full bg-white flex items-center justify-between gap-3 active:bg-gray-50 transition-colors"
+            style={{
+              padding: 'max(14px, env(safe-area-inset-top, 14px)) 20px 14px 20px',
+              minHeight: 56,
+            }}
           >
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-bold text-black">Ouvre dans ton navigateur</p>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-[14px] font-bold text-black">Ouvrir dans le navigateur</p>
               <p className="text-[11px] text-black/40 mt-0.5">
-                {browserInfo.appName || 'Cette app'} limite l'expérience
+                Appuie ici pour une meilleure expérience
               </p>
             </div>
-            <button
-              onClick={() => {
-                const goUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/go?url=${encodeURIComponent(window.location.href)}`;
-                window.location.href = goUrl;
-              }}
-              className="shrink-0 bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full active:scale-95 transition-transform"
-            >
-              Ouvrir ↗
-            </button>
-            <button
-              onClick={() => setBannerDismissed(true)}
-              className="shrink-0 w-8 h-8 flex items-center justify-center text-black/20 hover:text-black/50"
-            >
-              ✕
-            </button>
-          </div>
+            <span className="shrink-0 bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full">
+              Ouvrir
+            </span>
+          </button>
         )}
 
         {/* ═══ HERO ═══ */}
