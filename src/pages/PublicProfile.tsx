@@ -107,7 +107,12 @@ const PublicProfile = () => {
           `${supabaseUrl}/functions/v1/public-profile?username=${encodeURIComponent(username)}`,
           { headers: { apikey: anonKey } },
         );
-        if (res.status === 429 || res.status === 404) { setNotFound(true); setLoading(false); return; }
+        if (res.status === 404) { setNotFound(true); setLoading(false); return; }
+        if (res.status === 429) {
+          // Rate limited — retry after 2s
+          setTimeout(fetchData, 2000);
+          return;
+        }
         const result = await res.json();
         if (result.page) {
           const pageData = { ...result.page, social_links: (result.page.social_links as unknown as SocialLink[]) || [] } as CreatorPageData;
