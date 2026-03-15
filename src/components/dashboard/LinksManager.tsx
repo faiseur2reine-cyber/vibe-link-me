@@ -20,6 +20,7 @@ import { useLinkClickCounts } from '@/hooks/useLinkClickCounts';
 import LinkEditDialog from './links/LinkEditDialog';
 import LinkTemplatesDialog from './links/LinkTemplatesDialog';
 import SaveTemplateDialog from './links/SaveTemplateDialog';
+import CelebrationModal from './CelebrationModal';
 
 interface LinksManagerProps {
   links: LinkItem[];
@@ -30,9 +31,10 @@ interface LinksManagerProps {
   onReorder: (links: LinkItem[]) => Promise<void>;
   onRefetch?: () => Promise<void>;
   pageId?: string;
+  username?: string;
 }
 
-const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId }: LinksManagerProps) => {
+const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRefetch, pageId, username }: LinksManagerProps) => {
   const { t } = useTranslation();
   const quickAddRef = useRef<HTMLInputElement>(null);
   const clickCounts = useLinkClickCounts(links.map(l => l.id));
@@ -43,6 +45,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [celebrationOpen, setCelebrationOpen] = useState(false);
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
@@ -114,13 +117,20 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   };
 
   const handleQuickAdd = async (raw: string) => {
+    const wasEmpty = links.length === 0;
     const url = raw.startsWith('http') ? raw : `https://${raw}`;
     const platform = detectPlatform(url);
     const title = platform?.name || (() => {
       try { return new URL(url).hostname.replace('www.', ''); } catch { return raw; }
     })();
     const result = await onAdd({ title, url, icon: 'link' });
-    if (!result?.error) toast.success(`${title} ajouté`);
+    if (!result?.error) {
+      if (wasEmpty && username) {
+        setCelebrationOpen(true);
+      } else {
+        toast.success(`${title} ajouté`);
+      }
+    }
     return result;
   };
 
@@ -369,6 +379,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         onAdd={onAdd}
         onUpdate={onUpdate}
         linksCount={links.length}
+        onFirstLink={() => setCelebrationOpen(true)}
       />
 
       <LinkTemplatesDialog
@@ -385,6 +396,14 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         onOpenChange={setSaveTemplateOpen}
         links={links}
       />
+
+      {username && (
+        <CelebrationModal
+          open={celebrationOpen}
+          onOpenChange={setCelebrationOpen}
+          username={username}
+        />
+      )}
     </div>
   );
 };

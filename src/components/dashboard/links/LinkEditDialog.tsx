@@ -36,9 +36,10 @@ interface LinkEditDialogProps {
   onAdd: (link: { title: string; url: string; icon: string }) => Promise<{ error: any } | undefined>;
   onUpdate: (id: string, updates: Partial<LinkItem>) => Promise<{ error: any } | undefined>;
   linksCount: number;
+  onFirstLink?: () => void;
 }
 
-const LinkEditDialog = ({ open, onOpenChange, editingLink, onAdd, onUpdate, linksCount }: LinkEditDialogProps) => {
+const LinkEditDialog = ({ open, onOpenChange, editingLink, onAdd, onUpdate, linksCount, onFirstLink }: LinkEditDialogProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [title, setTitle] = useState('');
@@ -143,11 +144,8 @@ const LinkEditDialog = ({ open, onOpenChange, editingLink, onAdd, onUpdate, link
       const result = await onAdd({ title: title.trim(), url: normalizedUrl, icon });
       if (result?.error) {
         toast.error(result.error.message);
-      } else if (linksCount === 0) {
-        toast.success('Premier lien ajouté ! 🎉', {
-          description: 'Va voir ta page en cliquant sur "Voir" en haut.',
-          duration: 6000,
-        });
+      } else if (linksCount === 0 && onFirstLink) {
+        onFirstLink();
       }
     }
     setSaving(false);

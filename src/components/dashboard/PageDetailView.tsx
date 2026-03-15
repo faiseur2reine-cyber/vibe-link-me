@@ -251,6 +251,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
               <LinksManager
                 links={links} plan={userPlan} onAdd={addLink} onUpdate={updateLink}
                 onDelete={deleteLink} onReorder={reorderLinks} onRefetch={refetchLinks} pageId={page.id}
+                username={page.username}
               />
             </TabsContent>
 
