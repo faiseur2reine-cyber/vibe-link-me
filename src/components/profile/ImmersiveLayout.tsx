@@ -57,28 +57,25 @@ const HeroImage = ({ src }: { src: string }) => {
   const y = useTransform(scrollY, [0, 600], [0, 100]);
   const scale = useTransform(scrollY, [0, 300], [1, 1.06]);
 
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => setLoaded(true);
-    img.src = src;
-  }, [src]);
-
   return (
     <motion.div
-      className="absolute inset-0 will-change-transform"
-      style={{
-        backgroundImage: `url(${src})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        height: '125%',
-        top: '-12%',
-        y,
-        scale,
-        filter: loaded ? 'none' : 'blur(24px)',
-        transform: loaded ? undefined : 'scale(1.08)',
-        transition: 'filter 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)',
-      }}
-    />
+      className="absolute inset-0 will-change-transform overflow-hidden"
+      style={{ height: '125%', top: '-12%', y, scale }}
+    >
+      <img
+        src={src}
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className="w-full h-full object-cover object-center"
+        style={{
+          filter: loaded ? 'none' : 'blur(24px)',
+          transform: loaded ? 'scale(1)' : 'scale(1.08)',
+          transition: 'filter 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)',
+        }}
+      />
+    </motion.div>
   );
 };
 
@@ -238,6 +235,10 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   <img
                     src={page.avatar_url}
                     alt={displayName}
+                    width={heroSrc ? 88 : 100}
+                    height={heroSrc ? 88 : 100}
+                    decoding="async"
+                    fetchPriority="high"
                     className={`${heroSrc ? 'w-[88px] h-[88px]' : 'w-[100px] h-[100px]'} rounded-full object-cover shadow-[0_4px_24px_rgba(0,0,0,0.4)]`}
                     style={{ border: '3px solid rgba(255,255,255,0.15)' }}
                   />
@@ -444,8 +445,11 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         <img
                           src={link.thumbnail_url}
                           alt={link.title}
-                          className="w-full h-full object-cover"
+                          width={48}
+                          height={48}
+                          decoding="async"
                           loading="lazy"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     ) : (

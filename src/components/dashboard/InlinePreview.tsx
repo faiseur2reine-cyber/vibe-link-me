@@ -255,61 +255,98 @@ const StandardPreview = ({ page, links, displayName }: {
 const ImmersivePreview = ({ page, links, displayName }: {
   page: CreatorPage; links: PageLink[]; displayName: string;
 }) => {
-  return (
-    <div className="w-full h-full bg-black text-white flex flex-col">
-      {/* Hero */}
-      <div className="relative h-[52%] shrink-0 overflow-hidden">
-        {page.cover_url || page.avatar_url ? (
-          <img
-            src={page.cover_url || page.avatar_url || ''}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }} />
-        )}
-        {/* Gradient overlay */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 15%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.8) 70%, #000 95%)' }} />
+  const heroSrc = page.cover_url || null;
+  const visibleLinks = links.filter(l => l.is_visible !== false);
 
-        {/* Name overlay */}
-        <div className="absolute bottom-3 left-4 right-4">
-          <div className="flex items-center gap-1.5 mb-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[7px] text-white/40">{page.connected_label || 'Active now'}</span>
+  return (
+    <div className="w-full h-full bg-[#0a0a0a] text-white flex flex-col" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
+      {/* Hero — mirrors real 55dvh hero */}
+      <div className="relative shrink-0 overflow-hidden" style={{ height: '48%' }}>
+        {heroSrc ? (
+          <img src={heroSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        ) : (
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)' }} />
+        )}
+        {/* Cinematic gradient — matches real 7-stop */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(180deg, rgba(10,10,10,0.15) 0%, transparent 25%, transparent 40%, rgba(10,10,10,0.35) 55%, rgba(10,10,10,0.75) 72%, rgba(10,10,10,0.95) 85%, #0a0a0a 98%)',
+        }} />
+
+        {/* Profile info at bottom of hero */}
+        <div className="absolute bottom-2.5 left-3 right-3 text-center">
+          {/* Avatar */}
+          {page.avatar_url && (
+            <div className="flex justify-center mb-2">
+              <div className="relative">
+                <img
+                  src={page.avatar_url}
+                  alt=""
+                  className={`${heroSrc ? 'w-10 h-10' : 'w-12 h-12'} rounded-full object-cover`}
+                  style={{ border: '2px solid rgba(255,255,255,0.15)' }}
+                />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-[1.5px] border-[#0a0a0a]" />
+              </div>
+            </div>
+          )}
+          <p className="text-[13px] font-extrabold tracking-tight leading-tight">{displayName}</p>
+          <div className="flex items-center justify-center gap-1 mt-0.5">
+            {!page.avatar_url && <div className="w-1 h-1 rounded-full bg-emerald-400" />}
+            <span className="text-[7px] text-white/35 font-medium">{page.connected_label || 'Active now'}</span>
           </div>
-          <p className="text-[14px] font-bold tracking-tight leading-tight">{displayName}</p>
           {page.bio && (
-            <p className="text-[8px] text-white/35 mt-0.5 line-clamp-1">{page.bio}</p>
+            <p className="text-[7px] text-white/40 mt-1 line-clamp-2 max-w-[180px] mx-auto leading-relaxed">{page.bio}</p>
           )}
         </div>
       </div>
 
-      {/* Links */}
-      <div className="flex-1 px-4 pt-4 pb-3 space-y-2 overflow-y-auto scrollbar-hide">
-        {links.filter(l => l.is_visible !== false).slice(0, 4).map((link, idx) => {
-          const platform = detectPlatform(link.url);
-          const iconBg = link.bg_color || platform?.bgColor || '#e8503a';
+      {/* Links — glass squircle buttons like real layout */}
+      <div className="flex-1 px-3 pt-3 pb-3 flex flex-col gap-[6px] overflow-y-auto scrollbar-hide">
+        {visibleLinks.slice(0, 5).map((link, idx) => {
+          const iconBg = link.bg_color && link.bg_color !== '#FFFFFF' && link.bg_color !== '#ffffff'
+            ? link.bg_color : '#e8503a';
 
           return (
             <motion.div
               key={link.id}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05, duration: 0.2 }}
-              className="flex items-center gap-2.5 bg-white rounded-full px-3 py-[7px]"
+              transition={{ delay: idx * 0.04, duration: 0.2 }}
+              className="flex items-center gap-2"
+              style={{
+                background: 'rgba(255,255,255,0.96)',
+                borderRadius: 10,
+                padding: '6px 8px 6px 6px',
+                border: '1px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06)',
+              }}
             >
-              <div
-                className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0"
-                style={{ backgroundColor: iconBg }}
-              >
-                <LinkFavicon url={link.url} size="xs" className="text-white" />
+              {/* Squircle icon */}
+              {link.thumbnail_url ? (
+                <div className="w-[24px] h-[24px] rounded-[6px] overflow-hidden shrink-0">
+                  <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center shrink-0" style={{ backgroundColor: iconBg }}>
+                  <LinkFavicon url={link.url} size="xs" className="text-white" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <span className="block text-[9px] font-semibold text-[#111] truncate">{link.title}</span>
+                {link.description && (
+                  <span className="block text-[6px] text-[#999] truncate mt-px">{link.description}</span>
+                )}
               </div>
-              <span className="text-[10px] font-semibold text-black truncate flex-1">{link.title}</span>
+              <div className="w-4 h-4 rounded-[4px] bg-black/[0.04] flex items-center justify-center shrink-0">
+                <svg className="w-2 h-2 text-black/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
             </motion.div>
           );
         })}
-        {links.length > 4 && (
-          <p className="text-center text-[7px] text-white/15 pt-1">+{links.length - 4} liens</p>
+        {visibleLinks.length > 5 && (
+          <p className="text-center text-[7px] text-white/15 pt-0.5">+{visibleLinks.length - 5} liens</p>
+        )}
+        {visibleLinks.length === 0 && (
+          <p className="text-center text-[7px] text-white/15 pt-4">Pas encore de liens</p>
         )}
       </div>
     </div>

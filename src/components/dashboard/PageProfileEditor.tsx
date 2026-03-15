@@ -42,7 +42,9 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch, onPreviewChange }: PageP
     const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
     if (uploadError) { toast.error(uploadError.message); setUploading(false); return; }
     const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-    await onUpdate({ avatar_url: `${data.publicUrl}?t=${Date.now()}` });
+    const newUrl = `${data.publicUrl}?t=${Date.now()}`;
+    await onUpdate({ avatar_url: newUrl });
+    onPreviewChange?.({ avatar_url: newUrl } as Partial<CreatorPage>);
     onRefetch();
     setUploading(false);
   };
@@ -56,7 +58,9 @@ const PageProfileEditor = ({ page, onUpdate, onRefetch, onPreviewChange }: PageP
     const { error: uploadError } = await supabase.storage.from('media').upload(path, file, { upsert: true });
     if (uploadError) { toast.error(uploadError.message); setUploadingCover(false); return; }
     const { data } = supabase.storage.from('media').getPublicUrl(path);
-    await onUpdate({ cover_url: `${data.publicUrl}?t=${Date.now()}` });
+    const newUrl = `${data.publicUrl}?t=${Date.now()}`;
+    await onUpdate({ cover_url: newUrl });
+    onPreviewChange?.({ cover_url: newUrl } as Partial<CreatorPage>);
     onRefetch();
     setUploadingCover(false);
   };

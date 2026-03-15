@@ -114,29 +114,30 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
     else toast.error(result.error.message);
   }, 1200);
 
-  // Build complete preview state (theme + all design fields)
-  const buildPreview = (extra?: Partial<CreatorPage>): Partial<CreatorPage> => ({
-    theme: 'immersive',
-    custom_bg_color: bgColor || null,
-    custom_text_color: textColor || null,
-    custom_accent_color: accentColor || null,
-    custom_btn_color: btnColor || null,
-    custom_btn_text_color: btnTextColor || null,
-    custom_font: font,
-    link_layout: layout,
-    connected_label: connectedLabel,
-    location,
-    button_radius: btnRadius,
-    button_style: btnStyle,
-    avatar_shape: avatarShape,
-    content_spacing: spacing,
-    ...extra,
-  } as Partial<CreatorPage>);
-
   const save = () => {
     triggerSave();
-    onPreviewChange?.(buildPreview());
   };
+
+  // Live preview — fires on every state change, always reads fresh values
+  useEffect(() => {
+    onPreviewChange?.({
+      theme: 'immersive',
+      custom_bg_color: bgColor || null,
+      custom_text_color: textColor || null,
+      custom_accent_color: accentColor || null,
+      custom_btn_color: btnColor || null,
+      custom_btn_text_color: btnTextColor || null,
+      custom_font: font,
+      link_layout: layout,
+      connected_label: connectedLabel,
+      location,
+      button_radius: btnRadius,
+      button_style: btnStyle,
+      avatar_shape: avatarShape,
+      content_spacing: spacing,
+    } as Partial<CreatorPage>);
+  }, [bgColor, textColor, accentColor, btnColor, btnTextColor, font, layout,
+      connectedLabel, location, btnRadius, btnStyle, avatarShape, spacing]);
 
   // Auto-migrate to immersive theme if not already set
   useEffect(() => {

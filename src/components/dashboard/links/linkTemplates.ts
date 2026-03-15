@@ -1,4 +1,4 @@
-// ── Built-in link template presets ──
+// ── Link template presets — practical combos for creators ──
 
 export interface TemplateLink {
   title: string;
@@ -28,80 +28,98 @@ export interface CustomTemplate {
   created_at: string;
 }
 
-export const useLinkTemplates = (t: (key: string) => string): LinkTemplate[] => [
+const link = (title: string, url: string, bg: string, opts?: { featured?: boolean; desc?: string; text?: string }): TemplateLink => ({
+  title, url, icon: 'link',
+  style: opts?.featured ? 'featured' : 'default',
+  section_title: null,
+  description: opts?.desc || null,
+  bg_color: bg,
+  text_color: opts?.text || '#FFFFFF',
+});
+
+export const useLinkTemplates = (_t: (key: string) => string): LinkTemplate[] => [
   {
-    id: 'onlyfans-creator',
-    name: '🔥 OnlyFans Creator',
-    desc: t('linksManager.tplOnlyfansDesc'),
+    id: 'of-mym',
+    name: '🔥 OnlyFans + MYM',
+    desc: 'Le duo classique',
     gradient: 'from-sky-400 to-blue-500',
     links: [
-      { title: 'OnlyFans', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplOnlyfansSub'), bg_color: '#1BAFE8', text_color: '#FFFFFF' },
-      { title: 'OnlyFans VIP', url: 'https://onlyfans.com/', icon: 'link', style: 'default', section_title: null, description: t('linksManager.tplOnlyfansSub'), bg_color: '#FFFFFF', text_color: '#B05A90' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'Twitter / X', url: 'https://x.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#0F1419', text_color: '#FFFFFF' },
-      { title: 'Telegram', url: 'https://t.me/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#229ED9', text_color: '#FFFFFF' },
+      link('OnlyFans', 'https://onlyfans.com/', '#1BAFE8', { featured: true, desc: 'Contenu exclusif' }),
+      link('MYM', 'https://mym.fans/', '#FF2D55', { desc: 'Photos & vidéos' }),
+      link('Instagram', 'https://instagram.com/', '#E4405F'),
+      link('Twitter / X', 'https://x.com/', '#0F1419'),
     ],
   },
   {
-    id: 'content-creator',
-    name: '🎬 Content Creator',
-    desc: t('linksManager.tplCreatorDesc'),
-    gradient: 'from-red-500 to-pink-500',
+    id: 'of-telegram',
+    name: '💎 OnlyFans + Telegram',
+    desc: 'OF + channel gratuit pour teaser',
+    gradient: 'from-sky-400 to-cyan-500',
     links: [
-      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplYoutubeSub'), bg_color: '#FF1E1E', text_color: '#FFFFFF' },
-      { title: 'Join Membership', url: 'https://youtube.com/', icon: 'link', style: 'default', section_title: null, description: t('linksManager.tplYoutubeSub'), bg_color: '#FFFFFF', text_color: '#CC334E' },
-      { title: 'Twitch', url: 'https://twitch.tv/', icon: 'link', style: 'default', section_title: t('linksManager.sectionLive'), description: null, bg_color: '#9146FF', text_color: '#FFFFFF' },
-      { title: 'TikTok', url: 'https://tiktok.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#000000', text_color: '#FFFFFF' },
-      { title: 'Discord', url: 'https://discord.gg/', icon: 'link', style: 'default', section_title: t('linksManager.sectionCommunity'), description: t('linksManager.tplDiscordSub'), bg_color: '#5865F2', text_color: '#FFFFFF' },
+      link('OnlyFans', 'https://onlyfans.com/', '#1BAFE8', { featured: true, desc: 'Contenu exclusif' }),
+      link('Telegram', 'https://t.me/', '#229ED9', { desc: 'Previews gratuites' }),
+      link('Instagram', 'https://instagram.com/', '#E4405F'),
+    ],
+  },
+  {
+    id: 'of-mym-tg',
+    name: '🚀 OF + MYM + Telegram',
+    desc: 'Le trio complet',
+    gradient: 'from-violet-500 to-purple-600',
+    links: [
+      link('OnlyFans', 'https://onlyfans.com/', '#1BAFE8', { featured: true }),
+      link('MYM', 'https://mym.fans/', '#FF2D55'),
+      link('Telegram VIP', 'https://t.me/', '#229ED9', { desc: 'Channel privé' }),
+      link('Instagram', 'https://instagram.com/', '#E4405F'),
+      link('Twitter / X', 'https://x.com/', '#0F1419'),
+      link('Snapchat', 'https://snapchat.com/', '#FFFC00', { text: '#000000' }),
+    ],
+  },
+  {
+    id: 'of-fansly',
+    name: '⚡ OnlyFans + Fansly',
+    desc: 'Double plateforme',
+    gradient: 'from-blue-400 to-indigo-500',
+    links: [
+      link('OnlyFans', 'https://onlyfans.com/', '#1BAFE8', { featured: true }),
+      link('Fansly', 'https://fansly.com/', '#1A9DF7', { desc: 'Backup & exclusivités' }),
+      link('Instagram', 'https://instagram.com/', '#E4405F'),
+      link('Twitter / X', 'https://x.com/', '#0F1419'),
     ],
   },
   {
     id: 'agency-multi',
-    name: '🏢 ' + t('linksManager.tplAgencyName'),
-    desc: t('linksManager.tplAgencyDesc'),
-    gradient: 'from-violet-500 to-purple-600',
-    links: [
-      { title: 'OnlyFans — Creator 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 1', description: '@creator1 · Top Creator 🌟', bg_color: '#1BAFE8', text_color: '#FFFFFF' },
-      { title: 'Instagram — Creator 1', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'OnlyFans — Creator 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Creator 2', description: '@creator2 · Exclusive Content 💎', bg_color: '#111827', text_color: '#FFFFFF' },
-      { title: 'Instagram — Creator 2', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Creator 2', description: null, bg_color: '#FFFFFF', text_color: '#B05A90' },
-    ],
-  },
-  {
-    id: 'music-artist',
-    name: '🎵 ' + t('linksManager.tplMusicName'),
-    desc: t('linksManager.tplMusicDesc'),
-    gradient: 'from-emerald-400 to-teal-500',
-    links: [
-      { title: 'Spotify', url: 'https://open.spotify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplSpotifySub'), bg_color: '#1DB954', text_color: '#FFFFFF' },
-      { title: 'Pre-save New Track', url: 'https://example.com/', icon: 'link', style: 'default', section_title: null, description: t('linksManager.tplSpotifySub'), bg_color: '#FFFFFF', text_color: '#1E7A52' },
-      { title: 'Apple Music', url: 'https://music.apple.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FA243C', text_color: '#FFFFFF' },
-      { title: 'SoundCloud', url: 'https://soundcloud.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionMusic'), description: null, bg_color: '#FF5500', text_color: '#FFFFFF' },
-      { title: t('linksManager.tplBooking'), url: 'mailto:booking@example.com', icon: 'link', style: 'default', section_title: 'Business', description: t('linksManager.tplBookingSub'), bg_color: '#111827', text_color: '#FFFFFF' },
-    ],
-  },
-  {
-    id: 'ecommerce',
-    name: '🛍️ E-commerce',
-    desc: t('linksManager.tplEcommerceDesc'),
+    name: '🏢 Agence — 2 créatrices',
+    desc: 'Multi-profils avec sections',
     gradient: 'from-amber-400 to-orange-500',
     links: [
-      { title: t('linksManager.myShop'), url: 'https://shopify.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.discoverCollection'), bg_color: '#111827', text_color: '#FFFFFF' },
-      { title: t('linksManager.newDrop'), url: 'https://example.com/drop', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: t('linksManager.limitedCollection'), bg_color: '#FFFFFF', text_color: '#8C5A22' },
-      { title: t('linksManager.promo20'), url: 'https://example.com/promo', icon: 'link', style: 'default', section_title: t('linksManager.sectionProducts'), description: 'Code: MYTAPTAP20', bg_color: '#EF4444', text_color: '#FFFFFF' },
-      { title: 'Instagram Shop', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans — Créatrice 1', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 1', description: null, bg_color: '#1BAFE8', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 1', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
+      { title: 'OnlyFans — Créatrice 2', url: 'https://onlyfans.com/', icon: 'link', style: 'featured', section_title: 'Créatrice 2', description: null, bg_color: '#111827', text_color: '#FFFFFF' },
+      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: 'Créatrice 2', description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
     ],
   },
   {
-    id: 'fitness-coach',
-    name: '💪 ' + t('linksManager.tplFitnessName'),
-    desc: t('linksManager.tplFitnessDesc'),
-    gradient: 'from-lime-400 to-green-500',
+    id: 'content-creator',
+    name: '🎬 Créateur de contenu',
+    desc: 'YouTube, TikTok, Twitch, Discord',
+    gradient: 'from-red-500 to-pink-500',
     links: [
-      { title: t('linksManager.tplCoaching'), url: 'https://cal.com/', icon: 'link', style: 'featured', section_title: null, description: t('linksManager.tplCoachingSub'), bg_color: '#10B981', text_color: '#FFFFFF' },
-      { title: t('linksManager.tplPrograms'), url: 'https://example.com/programs', icon: 'link', style: 'default', section_title: t('linksManager.sectionPrograms'), description: null, bg_color: '#FFFFFF', text_color: '#158A64' },
-      { title: 'Instagram', url: 'https://instagram.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: null, bg_color: '#E4405F', text_color: '#FFFFFF' },
-      { title: 'YouTube', url: 'https://youtube.com/', icon: 'link', style: 'default', section_title: t('linksManager.sectionSocial'), description: t('linksManager.tplWorkoutSub'), bg_color: '#FF1E1E', text_color: '#FFFFFF' },
+      link('YouTube', 'https://youtube.com/', '#FF1E1E', { featured: true, desc: 'Ma chaîne' }),
+      link('TikTok', 'https://tiktok.com/', '#000000'),
+      link('Twitch', 'https://twitch.tv/', '#9146FF'),
+      link('Discord', 'https://discord.gg/', '#5865F2', { desc: 'Rejoins le serveur' }),
+    ],
+  },
+  {
+    id: 'minimal',
+    name: '✨ Minimal',
+    desc: 'Juste tes réseaux',
+    gradient: 'from-gray-400 to-gray-600',
+    links: [
+      link('Instagram', 'https://instagram.com/', '#E4405F'),
+      link('TikTok', 'https://tiktok.com/', '#000000'),
+      link('Twitter / X', 'https://x.com/', '#0F1419'),
     ],
   },
 ];
