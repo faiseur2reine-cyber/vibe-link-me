@@ -295,7 +295,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           </motion.div>
         )}
 
-        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-[14px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
+        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-5 ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
           {links.length === 0 && !paymentIssue && (
             <motion.div
               initial={{ opacity: 0 }}
