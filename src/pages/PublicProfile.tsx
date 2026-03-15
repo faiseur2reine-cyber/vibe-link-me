@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { TapExternalLink as ExternalLink, TapHeart as Heart, TapShare as Share2, TapChevronRight as ChevronRight, TapCheck as Check, TapArrowRight as ArrowRight, TapArrowUp as ArrowUp } from '@/components/icons/TapIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
+import { BRAND } from '@/lib/brand';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
@@ -152,13 +153,22 @@ const PublicProfile = () => {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center bg-black px-5 sm:px-6 pt-16 sm:pt-20">
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/[0.06] animate-pulse" />
-        <div className="mt-3 sm:mt-4 h-4 w-28 sm:w-32 rounded-full bg-white/[0.06] animate-pulse" />
-        <div className="mt-2 h-3 w-16 sm:w-20 rounded-full bg-white/[0.04] animate-pulse" />
-        <div className="mt-6 sm:mt-8 w-full max-w-[340px] sm:max-w-[400px] space-y-2.5 sm:space-y-3">
+      <div className="min-h-screen bg-black flex flex-col">
+        {/* Hero shimmer */}
+        <div className="relative w-full overflow-hidden" style={{ height: '62dvh', minHeight: 400 }}>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent animate-pulse" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 70%, #000 95%)' }} />
+          {/* Profile placeholder at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 flex flex-col items-center">
+            <div className="h-5 w-24 rounded-full bg-white/[0.06] animate-pulse mb-3" />
+            <div className="h-3 w-16 rounded-full bg-white/[0.04] animate-pulse mb-2" />
+            <div className="h-3 w-36 rounded-full bg-white/[0.03] animate-pulse" />
+          </div>
+        </div>
+        {/* Button skeletons */}
+        <div className="px-4 pt-5 max-w-[440px] w-full mx-auto space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+            <div key={i} className="h-[66px] rounded-full bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>
@@ -721,12 +731,12 @@ const PublicProfile = () => {
           {(!page.plan || page.plan === 'free') && (
           <motion.div variants={fadeUp} className="pt-14 pb-4 safe-area-bottom">
             <a
-              href="https://vibe-link-me.lovable.app"
+              href={BRAND.url}
               target="_blank"
               rel="noopener noreferrer"
               className={`group flex items-center justify-center gap-1.5 text-[10px] font-medium tracking-wide uppercase opacity-15 hover:opacity-40 transition-all duration-300 ${theme.text}`}
             >
-              {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> MyTaptap
+              {t('footer.madeWith')} <Heart className="w-2.5 h-2.5 transition-transform group-hover:scale-125" /> {BRAND.name}
             </a>
           </motion.div>
           )}
