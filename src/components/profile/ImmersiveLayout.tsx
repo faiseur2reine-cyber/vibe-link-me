@@ -179,8 +179,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           {browserInfo.isInApp && (
             <button
               onClick={() => {
-                const goUrl = `${(import.meta as any).env?.VITE_SUPABASE_URL || ''}/functions/v1/go?url=${encodeURIComponent(window.location.href)}`;
-                window.location.href = goUrl;
+                window.location.href = `/go.html?url=${encodeURIComponent(window.location.href)}`;
               }}
               className="sticky top-0 z-50 w-full bg-white flex items-center justify-between gap-3 active:bg-gray-50 transition-colors"
               style={{

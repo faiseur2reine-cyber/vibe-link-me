@@ -93,15 +93,10 @@ export function deeplinkNavigate(url: string): boolean {
     return true;
   }
 
-  // ── In-app browser → server-side breakout via /go edge function ──
-  // The edge function serves HTML with intent://, x-safari, and fallback UI.
-  // Full page navigation — Instagram can't sandbox this.
-  const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL || '';
-  if (supabaseUrl) {
-    window.location.href = `${supabaseUrl}/functions/v1/go?url=${encodeURIComponent(safeUrl)}`;
-  } else {
-    window.location.href = safeUrl;
-  }
+  // ── In-app browser → breakout page on our own domain ──
+  // /go.html is a static page with intent://, x-safari, and fallback UI.
+  // Served from our domain = no Supabase CSP sandbox blocking JS.
+  window.location.href = `/go.html?url=${encodeURIComponent(safeUrl)}`;
   return true;
 }
 
