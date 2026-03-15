@@ -83,8 +83,16 @@ const HeroImage = ({ src }: { src: string }) => {
 const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props) => {
   const { t } = useTranslation();
   const heroRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
 
   usePageView(page.id);
+
+  // Hide scroll indicator after user scrolls
+  useEffect(() => {
+    const handler = () => { if (window.scrollY > 50) setScrolled(true); };
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
 
   const displayName = page.display_name || page.username;
   const location = page.location || '';
@@ -286,24 +294,32 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
               </motion.div>
             )}
 
-            {/* Scroll indicator */}
-            {links.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="mt-5 flex justify-center"
-              >
+            {/* Scroll indicator — fades on scroll */}
+            <AnimatePresence>
+              {links.length > 0 && !scrolled && (
                 <motion.div
-                  animate={{ y: [0, 4, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="text-white/15"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.8, duration: 0.3 }}
+                  className="mt-5 flex justify-center"
                 >
-                  <ChevronDownIcon className="w-5 h-5" />
+                  <motion.div
+                    animate={{ y: [0, 4, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    className="text-white/15"
+                  >
+                    <ChevronDownIcon className="w-5 h-5" />
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            )}
+              )}
+            </AnimatePresence>
           </div>
+        </div>
+
+        {/* Subtle glow transition */}
+        <div className="relative h-px mx-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
         </div>
 
         {/* Scarcity above links */}
@@ -336,8 +352,9 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
               {section.title && (
                 <motion.div
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 + globalLinkIndex * 0.04 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
                   className="flex items-center gap-3 mt-3 mb-2 px-1"
                 >
                   <div className="h-px flex-1 bg-white/[0.06]" />
@@ -356,9 +373,10 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 const linkButton = (
                   <motion.button
                     key={link.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 + idx * 0.05, duration: 0.35, ease }}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-20px' }}
+                    transition={{ delay: idx < 4 ? idx * 0.06 : 0, duration: 0.4, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
                     className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-250 ${
                       paymentIssue
@@ -375,18 +393,34 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         : '0 2px 8px rgba(0,0,0,0.06)',
                     }}
                   >
-                    {/* Colored icon circle */}
-                    <div
-                      className={`w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0 transition-all duration-250 ${
-                        paymentIssue ? '' : 'group-hover:scale-110 group-hover:shadow-lg'
-                      }`}
-                      style={{
-                        backgroundColor: iconBg,
-                        boxShadow: `0 2px 8px ${iconBg}30`,
-                      }}
-                    >
-                      <LinkFavicon url={link.url} size="sm" />
-                    </div>
+                    {/* Icon / Thumbnail */}
+                    {link.thumbnail_url ? (
+                      <div
+                        className={`w-[44px] h-[44px] rounded-full overflow-hidden shrink-0 transition-all duration-250 ${
+                          paymentIssue ? '' : 'group-hover:scale-110 group-hover:shadow-lg'
+                        }`}
+                        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                      >
+                        <img
+                          src={link.thumbnail_url}
+                          alt={link.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className={`w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0 transition-all duration-250 ${
+                          paymentIssue ? '' : 'group-hover:scale-110 group-hover:shadow-lg'
+                        }`}
+                        style={{
+                          backgroundColor: iconBg,
+                          boxShadow: `0 2px 8px ${iconBg}30`,
+                        }}
+                      >
+                        <LinkFavicon url={link.url} size="sm" />
+                      </div>
+                    )}
 
                     {/* Text */}
                     <div className="flex-1 min-w-0">
