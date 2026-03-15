@@ -251,11 +251,35 @@ Deno.serve(async (req) => {
       // Strip agency-internal fields from public response
       const { operator: _op, notes: _notes, revenue_monthly: _rm, revenue_commission: _rc, ...publicPageData } = pageData as any;
 
-      // Enforce plan link limits — send all links but flag if over limit
+      // Enforce plan PAGE limits — count user's pages, flag if this page is over limit
       const userPlan = profileRes.data?.plan || 'free';
-      const maxLinks = userPlan === 'pro' ? Infinity : userPlan === 'starter' ? 20 : 5;
+      const maxPages = userPlan === 'pro' ? Infinity : userPlan === 'starter' ? 10 : 1;
       const allLinks = linksRes.data || [];
-      const paymentIssue = allLinks.length > maxLinks;
+
+      let paymentIssue = false;
+      if (maxPages !== Infinity) {
+        // Count all pages for this user, ordered by creation date
+        const { count } = await supabase
+          .from("creator_pages")
+          .select("id", { count: "exact", head: false })
+          .eq("user_id", pageData.user_id)
+          .order("created_at", { ascending: true });
+
+        const totalPages = count || 0;
+
+        if (totalPages > maxPages) {
+          // Check if THIS page is within the allowed limit (by creation order)
+          const { data: allowedPages } = await supabase
+            .from("creator_pages")
+            .select("id")
+            .eq("user_id", pageData.user_id)
+            .order("created_at", { ascending: true })
+            .limit(maxPages);
+
+          const allowedIds = (allowedPages || []).map((p: any) => p.id);
+          paymentIssue = !allowedIds.includes(pageData.id);
+        }
+      }
 
       const responseBody = JSON.stringify({ page: { ...publicPageData, plan: userPlan }, links: allLinks, payment_issue: paymentIssue, source: "creator_pages" });
       setCachedPage(username, responseBody);
@@ -294,11 +318,9 @@ Deno.serve(async (req) => {
       .is("page_id", null)
       .order("position", { ascending: true });
 
-    // Enforce plan link limits on legacy path
-    const legacyPlan = profileData.plan || 'free';
-    const legacyMaxLinks = legacyPlan === 'pro' ? Infinity : legacyPlan === 'starter' ? 20 : 5;
+    // Legacy path = single profile page = always within page limit (no payment issue)
     const allLegacyLinks = linksData || [];
-    const legacyPaymentIssue = allLegacyLinks.length > legacyMaxLinks;
+    const legacyPaymentIssue = false;
 
     const legacyBody = JSON.stringify({ page: profileData, links: allLegacyLinks, payment_issue: legacyPaymentIssue, source: "profiles" });
     setCachedPage(username, legacyBody);

@@ -294,9 +294,9 @@ const DashboardSettings = () => {
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {currentPlan.maxLinks === Infinity 
-                        ? t('settings.unlimitedLinks')
-                        : t('settings.upToLinks', { count: currentPlan.maxLinks })
+                      {currentPlan.maxPages === Infinity 
+                        ? 'Pages illimitées'
+                        : `${currentPlan.maxPages} page${currentPlan.maxPages > 1 ? 's' : ''} max`
                       }
                     </p>
                     {subscription.subscriptionEnd && (

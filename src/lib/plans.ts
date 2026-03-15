@@ -4,7 +4,7 @@ export const PLANS = {
     name: 'Free',
     price_id: null,
     product_id: null,
-    maxLinks: 5,
+    maxPages: 1,
     price: 0,
     interval: null,
   },
@@ -12,7 +12,7 @@ export const PLANS = {
     name: 'Starter',
     price_id: 'price_1T8hm0F6s5PSwitkpD9F97lO',
     product_id: 'prod_U6vdnK2jJJR2CL',
-    maxLinks: 20,
+    maxPages: 10,
     price: 1999, // cents
     interval: 'month',
   },
@@ -20,7 +20,7 @@ export const PLANS = {
     name: 'Pro',
     price_id: 'price_1T8hiXF6s5PSwitkQraXZXeN',
     product_id: 'prod_U6vZTPcXRFWtXQ',
-    maxLinks: Infinity,
+    maxPages: Infinity,
     price: 11500, // cents
     interval: 'year',
   },

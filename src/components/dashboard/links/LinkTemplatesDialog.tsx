@@ -12,12 +12,11 @@ interface LinkTemplatesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   linksCount: number;
-  maxLinks: number;
   pageId?: string;
   onRefetch?: () => Promise<void>;
 }
 
-const LinkTemplatesDialog = ({ open, onOpenChange, linksCount, maxLinks, pageId, onRefetch }: LinkTemplatesDialogProps) => {
+const LinkTemplatesDialog = ({ open, onOpenChange, linksCount, pageId, onRefetch }: LinkTemplatesDialogProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const LINK_TEMPLATES = useLinkTemplates(t);
@@ -39,12 +38,7 @@ const LinkTemplatesDialog = ({ open, onOpenChange, linksCount, maxLinks, pageId,
 
   const applyTemplateLinks = async (templateLinks: TemplateLink[]) => {
     if (!user) return;
-    const remaining = maxLinks === Infinity ? Infinity : maxLinks - linksCount;
-    const toInsert = templateLinks.slice(0, remaining === Infinity ? undefined : remaining);
-    if (toInsert.length === 0) {
-      toast.error(t('linksManager.linkLimitReached'));
-      return;
-    }
+    const toInsert = templateLinks;
     setApplying(true);
     const inserts = toInsert.map((tl, idx) => ({
       title: tl.title, url: tl.url, icon: tl.icon, user_id: user.id,
