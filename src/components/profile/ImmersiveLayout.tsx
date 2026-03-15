@@ -7,7 +7,7 @@ import { TapMapPin as MapPin, TapHeart as Heart, TapShare as Share2 } from '@/co
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { deeplinkNavigate, detectBrowser, isSocialUrl } from '@/lib/deeplink';
+import { deeplinkNavigate, isSocialUrl } from '@/lib/deeplink';
 import { appendUtm, type UtmParams } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { getTheme } from '@/lib/themes';
@@ -52,7 +52,6 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props) => {
   const { t } = useTranslation();
-  const [browserInfo] = useState(() => detectBrowser());
   const [imgLoaded, setImgLoaded] = useState(false);
 
   usePageView(page.id);
@@ -176,46 +175,6 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         <div className="relative z-10">
 
           {/* ── In-app banner ── */}
-          {browserInfo.isInApp && (
-            <button
-              onClick={() => {
-                const pageUrl = window.location.href;
-                if (browserInfo.isIOS) {
-                  const safariUrl = pageUrl.replace('https://', 'x-safari-https://');
-                  if (browserInfo.isIG) {
-                    window.open(safariUrl, '_blank');
-                  } else {
-                    window.location.href = safariUrl;
-                  }
-                  setTimeout(() => {
-                    if (!document.hidden) window.location.href = `/go.html?url=${encodeURIComponent(pageUrl)}`;
-                  }, 2500);
-                } else if (browserInfo.isAndroid) {
-                  try {
-                    const parsed = new URL(pageUrl);
-                    window.location.href = `intent://${parsed.host}${parsed.pathname}${parsed.search}#Intent;scheme=${parsed.protocol.replace(':', '')};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(pageUrl)};end`;
-                  } catch { window.location.href = `/go.html?url=${encodeURIComponent(pageUrl)}`; }
-                } else {
-                  window.location.href = `/go.html?url=${encodeURIComponent(pageUrl)}`;
-                }
-              }}
-              className="sticky top-0 z-50 w-full bg-white flex items-center justify-between gap-3 active:bg-gray-50 transition-colors"
-              style={{
-                padding: 'max(14px, env(safe-area-inset-top, 14px)) 20px 14px 20px',
-                minHeight: 56,
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              <div className="flex-1 min-w-0 text-left">
-                <p className="text-[14px] font-bold text-black">Ouvrir dans le navigateur</p>
-                <p className="text-[11px] text-black/40 mt-0.5">Appuie ici pour une meilleure expérience</p>
-              </div>
-              <span className="shrink-0 bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full">
-                Ouvrir
-              </span>
-            </button>
-          )}
-
           {/* ── Share button ── */}
           <motion.button
             initial={{ opacity: 0 }}
