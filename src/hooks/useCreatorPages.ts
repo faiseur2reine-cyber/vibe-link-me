@@ -112,6 +112,7 @@ export function useCreatorPages() {
       cover_url: pageData.cover_url || null,
       theme: pageData.theme || 'immersive',
       is_nsfw: pageData.is_nsfw || false,
+      status: 'active',
     };
 
     if (pageData.social_links) {
@@ -212,7 +213,37 @@ export function useCreatorPages() {
         cover_url: source.cover_url,
         theme: source.theme,
         is_nsfw: source.is_nsfw,
+        status: 'active',
         social_links: JSON.parse(JSON.stringify(source.social_links)),
+        // Design
+        custom_bg_color: (source as any).custom_bg_color || null,
+        custom_text_color: (source as any).custom_text_color || null,
+        custom_accent_color: (source as any).custom_accent_color || null,
+        custom_btn_color: (source as any).custom_btn_color || null,
+        custom_btn_text_color: (source as any).custom_btn_text_color || null,
+        custom_font: (source as any).custom_font || null,
+        custom_css: (source as any).custom_css || null,
+        link_layout: (source as any).link_layout || null,
+        button_radius: (source as any).button_radius ?? null,
+        button_style: (source as any).button_style || null,
+        avatar_shape: (source as any).avatar_shape || null,
+        content_spacing: (source as any).content_spacing || null,
+        // Profile
+        connected_label: (source as any).connected_label || null,
+        location: (source as any).location || null,
+        geo_greeting_enabled: (source as any).geo_greeting_enabled ?? true,
+        // Urgency
+        urgency_config: (source as any).urgency_config ? JSON.parse(JSON.stringify((source as any).urgency_config)) : null,
+        // Tracking
+        tracking_meta_pixel: (source as any).tracking_meta_pixel || null,
+        tracking_ga4: (source as any).tracking_ga4 || null,
+        tracking_tiktok_pixel: (source as any).tracking_tiktok_pixel || null,
+        utm_source: (source as any).utm_source || null,
+        utm_medium: (source as any).utm_medium || null,
+        utm_campaign: (source as any).utm_campaign || null,
+        // Safe page
+        safe_page_enabled: (source as any).safe_page_enabled || false,
+        safe_page_redirect_url: (source as any).safe_page_redirect_url || null,
       })
       .select()
       .single();
@@ -243,6 +274,9 @@ export function useCreatorPages() {
         text_color: l.text_color,
         style: l.style,
         section_title: l.section_title,
+        is_visible: l.is_visible ?? true,
+        scheduled_at: l.scheduled_at,
+        expires_at: l.expires_at,
       }));
       await supabase.from('links').insert(newLinks);
     }
