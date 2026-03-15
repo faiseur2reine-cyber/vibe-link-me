@@ -16,6 +16,24 @@ const COLORS = [
   'hsl(330, 85%, 60%)',  // pop-pink
 ];
 
+const renderActiveShape = (props: any) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  return (
+    <g>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius - 3}
+        outerRadius={outerRadius + 8}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.25))', transition: 'all 0.2s ease-out' }}
+      />
+    </g>
+  );
+};
+
 const BreakdownList = ({ items, labelKey, valueKey, max = 8 }: {
   items: Record<string, any>[];
   labelKey: string;
