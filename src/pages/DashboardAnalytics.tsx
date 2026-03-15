@@ -295,7 +295,7 @@ const DashboardAnalytics = () => {
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
                       <Pie
-                        data={data}
+                        data={data.map(d => ({ ...d, _total: data.reduce((s, x) => s + x.value, 0) }))}
                         cx="50%"
                         cy="50%"
                         innerRadius={45}
