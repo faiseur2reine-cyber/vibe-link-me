@@ -423,22 +423,20 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     viewport={{ once: true, margin: '-10px' }}
                     transition={{ delay: idx < 5 ? idx * 0.06 : 0, duration: 0.45, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center text-left ${
+                    className={`group relative w-full flex items-center gap-3 text-left ${
                       paymentIssue ? 'cursor-default' : ''
                     }`}
                     style={{
-                      background: isFeatured
-                        ? iconBg
-                        : 'rgba(255,255,255,0.97)',
+                      background: isFeatured ? iconBg : 'rgba(255,255,255,0.97)',
                       borderRadius: 16,
-                      minHeight: isFeatured ? 72 : 64,
-                      padding: isFeatured ? '0 20px 0 0' : '0 18px 0 0',
+                      padding: '12px 16px',
                       border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.1)',
                       boxShadow: isFeatured
                         ? `0 4px 20px ${iconBg}40, 0 2px 8px rgba(0,0,0,0.15)`
                         : '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06)',
                       transition: 'transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease',
                       transform: 'translateY(0)',
+                      WebkitTapHighlightColor: 'transparent',
                     }}
                     {...(!paymentIssue ? {
                       onPointerDown: (e: React.PointerEvent) => {
@@ -460,38 +458,30 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   >
                     {/* Icon */}
                     {link.thumbnail_url ? (
-                      <div className="w-[64px] h-full flex items-center justify-center shrink-0"
-                        style={{ minHeight: isFeatured ? 72 : 64 }}
-                      >
-                        <div className={`w-[44px] h-[44px] rounded-[12px] overflow-hidden transition-transform duration-200 ${
-                          paymentIssue ? '' : 'group-hover:scale-[1.06]'
-                        }`}>
-                          <img
-                            src={link.thumbnail_url}
-                            alt={link.title}
-                            width={44}
-                            height={44}
-                            decoding="async"
-                            loading="lazy"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                      <div className={`w-[44px] h-[44px] rounded-[12px] overflow-hidden shrink-0 transition-transform duration-200 ${
+                        paymentIssue ? '' : 'group-hover:scale-[1.06]'
+                      }`}>
+                        <img
+                          src={link.thumbnail_url}
+                          alt={link.title}
+                          width={44}
+                          height={44}
+                          decoding="async"
+                          loading="lazy"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     ) : (
-                      <div className="w-[64px] h-full flex items-center justify-center shrink-0"
-                        style={{ minHeight: isFeatured ? 72 : 64 }}
+                      <div
+                        className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                          paymentIssue ? '' : 'group-hover:scale-[1.06]'
+                        }`}
+                        style={{
+                          backgroundColor: isFeatured ? 'rgba(255,255,255,0.2)' : iconBg,
+                          boxShadow: isFeatured ? 'none' : `0 2px 8px ${iconBg}25`,
+                        }}
                       >
-                        <div
-                          className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center transition-transform duration-200 ${
-                            paymentIssue ? '' : 'group-hover:scale-[1.06]'
-                          }`}
-                          style={{
-                            backgroundColor: isFeatured ? 'rgba(255,255,255,0.2)' : iconBg,
-                            boxShadow: isFeatured ? 'none' : `0 2px 8px ${iconBg}25`,
-                          }}
-                        >
-                          <LinkFavicon url={link.url} size="sm" />
-                        </div>
+                        <LinkFavicon url={link.url} size="sm" />
                       </div>
                     )}
 
