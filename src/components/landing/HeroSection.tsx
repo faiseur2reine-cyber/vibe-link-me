@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { TapArrowRight as ArrowRight, TapCheck as Check, TapX as X, TapLoader as Loader2 } from '@/components/icons/TapIcons';
@@ -14,18 +15,19 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
-const FEATURES = [
-  { icon: Smartphone, label: 'Deeplinks', desc: 'Instagram, TikTok, Snapchat ouvrent un navigateur pourri. On le bypass. Tes visiteurs arrivent sur Chrome ou Safari, déjà connectés.' },
-  { icon: ShieldCheck, label: 'Safe page', desc: 'Les bots de Meta voient une page neutre. Tes vrais visiteurs voient tes liens.' },
-  { icon: BarChart3, label: 'Analytics', desc: 'Qui clique, depuis quel pays, quel referrer. Pas besoin de GA4 pour savoir ce qui marche.' },
-  { icon: Zap, label: 'Urgency', desc: 'Countdown, places restantes, "X personnes connectées". Les leviers qui font cliquer.' },
-  { icon: Users, label: 'Mode agence', desc: 'Un compte, plusieurs pages. Opérateur, revenus, commissions. Fait pour gérer une équipe.' },
-  { icon: Globe, label: 'Pixels & UTM', desc: 'Meta Pixel, TikTok Pixel, GA4. Les UTM se collent tout seuls sur chaque lien.' },
-  { icon: Palette, label: 'Design immersive', desc: 'Photo hero plein écran, boutons blancs, effet parallaxe. Pas un Linktree de plus.' },
-  { icon: Clock, label: 'Scheduling', desc: 'Un lien qui apparait vendredi soir et disparait lundi matin. Sans y toucher.' },
+const FEATURE_KEYS = [
+  { icon: Smartphone, key: 'Deeplinks' },
+  { icon: ShieldCheck, key: 'SafePage' },
+  { icon: BarChart3, key: 'Analytics' },
+  { icon: Zap, key: 'Urgency' },
+  { icon: Users, key: 'Agency' },
+  { icon: Globe, key: 'Pixels' },
+  { icon: Palette, key: 'Design' },
+  { icon: Clock, key: 'Scheduling' },
 ];
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
@@ -76,8 +78,8 @@ const HeroSection = () => {
             variants={item}
             className="text-4xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.08] text-foreground"
           >
-            Le lien en bio qui transforme{' '}
-            <span className="text-pop-gradient">tes vues en revenus.</span>
+            {t('hero.title')}{' '}
+            <span className="text-pop-gradient">{t('hero.titleHighlight')}</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -85,7 +87,7 @@ const HeroSection = () => {
             variants={item}
             className="mt-5 text-muted-foreground text-[15px] sm:text-base leading-relaxed max-w-lg mx-auto"
           >
-            Deeplinks, safe page, urgency, pixels. Chaque feature est là pour une raison : plus de conversions.
+            {t('hero.subtitle')}
           </motion.p>
 
           {/* ── Username claim ── */}
@@ -93,7 +95,7 @@ const HeroSection = () => {
             <div className="flex items-center max-w-md mx-auto">
               <div className="relative flex-1">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[14px] text-muted-foreground/40 font-medium select-none pointer-events-none">
-                  mytaptap.com/
+                  {t('landing.urlPrefix')}
                 </span>
                 <input
                   ref={inputRef}
@@ -101,7 +103,7 @@ const HeroSection = () => {
                   value={username}
                   onChange={(e) => handleUsernameChange(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleClaim()}
-                  placeholder="tonnom"
+                  placeholder={t('landing.usernamePlaceholder')}
                   maxLength={30}
                   className="w-full h-14 pl-[128px] pr-12 text-[15px] font-semibold text-foreground bg-card border-2 border-border/60 rounded-2xl rounded-r-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-muted-foreground/25"
                   autoCapitalize="none"
@@ -118,7 +120,7 @@ const HeroSection = () => {
                 onClick={handleClaim}
                 className="h-14 px-6 bg-primary text-primary-foreground text-[14px] font-bold rounded-2xl rounded-l-none border-2 border-primary hover:bg-primary/90 transition-all active:scale-[0.97] flex items-center gap-2 shrink-0"
               >
-                C'est parti
+                {t('hero.cta')}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -126,12 +128,12 @@ const HeroSection = () => {
             <div className="h-5 mt-2">
               {status === 'available' && username.length >= 3 && (
                 <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-[12px] text-emerald-600 font-medium">
-                  mytaptap.com/{username} est disponible
+                  mytaptap.com/{username} {t('landing.usernameAvailable')}
                 </motion.p>
               )}
               {status === 'taken' && (
                 <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-[12px] text-red-500 font-medium">
-                  Déjà pris, essaie un autre
+                  {t('landing.usernameTaken')}
                 </motion.p>
               )}
             </div>
@@ -141,15 +143,15 @@ const HeroSection = () => {
           <motion.div variants={item} className="mt-3 flex items-center gap-5 justify-center text-[12px] text-muted-foreground/50 font-medium">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Gratuit
+              {t('landing.trustFree')}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-              Sans carte
+              {t('landing.trustNoCard')}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-              30 secondes
+              {t('landing.trust30s')}
             </span>
           </motion.div>
 
@@ -158,9 +160,9 @@ const HeroSection = () => {
             variants={item}
             className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-left max-w-2xl mx-auto"
           >
-            {FEATURES.map((f, i) => (
+            {FEATURE_KEYS.map((f, i) => (
               <motion.div
-                key={f.label}
+                key={f.key}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.05, duration: 0.3 }}
@@ -170,8 +172,8 @@ const HeroSection = () => {
                     <f.icon className="w-4 h-4 text-muted-foreground/50" />
                   </div>
                   <div>
-                    <p className="text-[13px] font-semibold text-foreground">{f.label}</p>
-                    <p className="text-[12px] text-muted-foreground/60 mt-0.5 leading-relaxed">{f.desc}</p>
+                    <p className="text-[13px] font-semibold text-foreground">{t(`landing.feat${f.key}`)}</p>
+                    <p className="text-[12px] text-muted-foreground/60 mt-0.5 leading-relaxed">{t(`landing.feat${f.key}Desc`)}</p>
                   </div>
                 </div>
               </motion.div>

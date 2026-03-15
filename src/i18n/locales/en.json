@@ -8,10 +8,10 @@
     "pricing": "Pricing"
   },
   "hero": {
-    "title": "All your links,",
-    "titleHighlight": "one place.",
-    "subtitle": "Create your personalized link page in seconds. Share everything that matters with your audience.",
-    "cta": "Create my page for free",
+    "title": "The link in bio that turns",
+    "titleHighlight": "views into revenue.",
+    "subtitle": "Deeplinks, safe page, urgency, pixels. Every feature exists for one reason: more conversions.",
+    "cta": "Let's go",
     "ctaSecondary": "See an example"
   },
   "features": {
@@ -313,7 +313,30 @@
       "YouTube",
       "Newsletter",
       "1:1 Coaching"
-    ]
+    ],
+    "trustFree": "Free",
+    "trustNoCard": "No card",
+    "trust30s": "30 seconds",
+    "usernameAvailable": "is available",
+    "usernameTaken": "Already taken, try another",
+    "urlPrefix": "mytaptap.com/",
+    "usernamePlaceholder": "yourname",
+    "featDeeplinks": "Deeplinks",
+    "featDeeplinksDesc": "Instagram, TikTok, Snapchat open a broken browser. We bypass it. Your visitors land on Chrome or Safari, already logged in.",
+    "featSafePage": "Safe page",
+    "featSafePageDesc": "Meta bots see a clean page. Your real visitors see your links.",
+    "featAnalytics": "Analytics",
+    "featAnalyticsDesc": "Who clicks, from which country, which referrer. No need for GA4 to know what works.",
+    "featUrgency": "Urgency",
+    "featUrgencyDesc": "Countdown, spots left, \"X people online\". The triggers that make people click.",
+    "featAgency": "Agency mode",
+    "featAgencyDesc": "One account, multiple pages. Operator, revenue, commissions. Built to manage a team.",
+    "featPixels": "Pixels & UTM",
+    "featPixelsDesc": "Meta Pixel, TikTok Pixel, GA4. UTMs are added automatically to every link.",
+    "featDesign": "Immersive design",
+    "featDesignDesc": "Full-screen hero photo, white pill buttons, parallax. Not another Linktree clone.",
+    "featScheduling": "Scheduling",
+    "featSchedulingDesc": "A link that goes live Friday night and disappears Monday morning. Hands-free."
   },
   "urgency": {
     "offerEnds": "Offer ends in",

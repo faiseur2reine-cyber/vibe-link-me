@@ -8,10 +8,10 @@
     "pricing": "Tarifs"
   },
   "hero": {
-    "title": "Tous vos liens,",
-    "titleHighlight": "un seul endroit.",
-    "subtitle": "Créez votre page de liens personnalisée en quelques secondes. Partagez tout ce qui compte avec votre audience.",
-    "cta": "Créer ma page gratuitement",
+    "title": "Le lien en bio qui transforme",
+    "titleHighlight": "tes vues en revenus.",
+    "subtitle": "Deeplinks, safe page, urgency, pixels. Chaque feature est là pour une raison : plus de conversions.",
+    "cta": "C'est parti",
     "ctaSecondary": "Voir un exemple"
   },
   "features": {
@@ -313,7 +313,30 @@
       "YouTube",
       "Newsletter",
       "Coaching 1:1"
-    ]
+    ],
+    "trustFree": "Gratuit",
+    "trustNoCard": "Sans carte",
+    "trust30s": "30 secondes",
+    "usernameAvailable": "est disponible",
+    "usernameTaken": "Déjà pris, essaie un autre",
+    "urlPrefix": "mytaptap.com/",
+    "usernamePlaceholder": "tonnom",
+    "featDeeplinks": "Deeplinks",
+    "featDeeplinksDesc": "Instagram, TikTok, Snapchat ouvrent un navigateur pourri. On le bypass. Tes visiteurs arrivent sur Chrome ou Safari, déjà connectés.",
+    "featSafePage": "Safe page",
+    "featSafePageDesc": "Les bots de Meta voient une page neutre. Tes vrais visiteurs voient tes liens.",
+    "featAnalytics": "Analytics",
+    "featAnalyticsDesc": "Qui clique, depuis quel pays, quel referrer. Pas besoin de GA4 pour savoir ce qui marche.",
+    "featUrgency": "Urgency",
+    "featUrgencyDesc": "Countdown, places restantes, \"X personnes connectées\". Les leviers qui font cliquer.",
+    "featAgency": "Mode agence",
+    "featAgencyDesc": "Un compte, plusieurs pages. Opérateur, revenus, commissions. Fait pour gérer une équipe.",
+    "featPixels": "Pixels & UTM",
+    "featPixelsDesc": "Meta Pixel, TikTok Pixel, GA4. Les UTM se collent tout seuls sur chaque lien.",
+    "featDesign": "Design immersive",
+    "featDesignDesc": "Photo hero plein écran, boutons blancs, effet parallaxe. Pas un Linktree de plus.",
+    "featScheduling": "Scheduling",
+    "featSchedulingDesc": "Un lien qui apparait vendredi soir et disparait lundi matin. Sans y toucher."
   },
   "urgency": {
     "offerEnds": "Offre expire dans",

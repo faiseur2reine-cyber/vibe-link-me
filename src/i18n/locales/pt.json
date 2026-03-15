@@ -8,10 +8,10 @@
     "pricing": "Preços"
   },
   "hero": {
-    "title": "Todos os seus links,",
-    "titleHighlight": "um só lugar.",
-    "subtitle": "Crie sua página de links personalizada em segundos. Compartilhe tudo que importa com seu público.",
-    "cta": "Criar minha página grátis",
+    "title": "O link na bio que transforma",
+    "titleHighlight": "visualizações em receita.",
+    "subtitle": "Deeplinks, safe page, urgency, pixels. Cada feature existe por um motivo: mais conversões.",
+    "cta": "Começar",
     "ctaSecondary": "Ver um exemplo"
   },
   "features": {
@@ -313,7 +313,30 @@
       "YouTube",
       "Newsletter",
       "Coaching 1:1"
-    ]
+    ],
+    "trustFree": "Grátis",
+    "trustNoCard": "Sem cartão",
+    "trust30s": "30 segundos",
+    "usernameAvailable": "está disponível",
+    "usernameTaken": "Já em uso, tente outro",
+    "urlPrefix": "mytaptap.com/",
+    "usernamePlaceholder": "seunome",
+    "featDeeplinks": "Deeplinks",
+    "featDeeplinksDesc": "Instagram, TikTok, Snapchat abrem um navegador quebrado. A gente bypassa. Seus visitantes chegam no Chrome ou Safari, já logados.",
+    "featSafePage": "Safe page",
+    "featSafePageDesc": "Os bots do Meta veem uma página neutra. Seus visitantes reais veem seus links.",
+    "featAnalytics": "Analytics",
+    "featAnalyticsDesc": "Quem clica, de qual país, qual referrer. Sem precisar de GA4 pra saber o que funciona.",
+    "featUrgency": "Urgency",
+    "featUrgencyDesc": "Contagem regressiva, vagas restantes, \"X pessoas online\". Os gatilhos que geram clique.",
+    "featAgency": "Modo agência",
+    "featAgencyDesc": "Uma conta, várias páginas. Operador, receita, comissões. Feito pra gerenciar equipe.",
+    "featPixels": "Pixels & UTM",
+    "featPixelsDesc": "Meta Pixel, TikTok Pixel, GA4. Os UTMs são adicionados sozinhos em cada link.",
+    "featDesign": "Design imersivo",
+    "featDesignDesc": "Foto hero em tela cheia, botões pill brancos, parallax. Não é mais um clone.",
+    "featScheduling": "Scheduling",
+    "featSchedulingDesc": "Um link que aparece sexta à noite e desaparece segunda de manhã. Sem encostar."
   },
   "urgency": {
     "offerEnds": "Oferta termina em",

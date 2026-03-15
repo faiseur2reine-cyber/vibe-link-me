@@ -8,10 +8,10 @@
     "pricing": "Preise"
   },
   "hero": {
-    "title": "Alle deine Links,",
-    "titleHighlight": "ein Ort.",
-    "subtitle": "Erstelle deine personalisierte Linkseite in Sekunden. Teile alles, was zählt, mit deinem Publikum.",
-    "cta": "Meine Seite kostenlos erstellen",
+    "title": "Der Link in Bio, der",
+    "titleHighlight": "Views in Umsatz verwandelt.",
+    "subtitle": "Deeplinks, Safe Page, Urgency, Pixels. Jedes Feature hat einen Grund: mehr Conversions.",
+    "cta": "Los geht's",
     "ctaSecondary": "Beispiel ansehen"
   },
   "features": {
@@ -313,7 +313,30 @@
       "YouTube",
       "Newsletter",
       "1:1 Coaching"
-    ]
+    ],
+    "trustFree": "Kostenlos",
+    "trustNoCard": "Ohne Karte",
+    "trust30s": "30 Sekunden",
+    "usernameAvailable": "ist verfügbar",
+    "usernameTaken": "Schon vergeben, versuch einen anderen",
+    "urlPrefix": "mytaptap.com/",
+    "usernamePlaceholder": "deinname",
+    "featDeeplinks": "Deeplinks",
+    "featDeeplinksDesc": "Instagram, TikTok, Snapchat öffnen einen kaputten Browser. Wir umgehen ihn. Deine Besucher landen in Chrome oder Safari, bereits eingeloggt.",
+    "featSafePage": "Safe Page",
+    "featSafePageDesc": "Meta-Bots sehen eine neutrale Seite. Deine echten Besucher sehen deine Links.",
+    "featAnalytics": "Analytics",
+    "featAnalyticsDesc": "Wer klickt, aus welchem Land, welcher Referrer. Kein GA4 nötig.",
+    "featUrgency": "Urgency",
+    "featUrgencyDesc": "Countdown, verbleibende Plätze, \"X Personen online\". Die Trigger, die zum Klick führen.",
+    "featAgency": "Agentur-Modus",
+    "featAgencyDesc": "Ein Konto, mehrere Seiten. Operator, Umsatz, Provisionen. Gemacht für Teamverwaltung.",
+    "featPixels": "Pixels & UTM",
+    "featPixelsDesc": "Meta Pixel, TikTok Pixel, GA4. UTMs werden automatisch an jeden Link gehängt.",
+    "featDesign": "Immersives Design",
+    "featDesignDesc": "Vollbild-Hero-Foto, weiße Pill-Buttons, Parallaxe. Kein weiterer Linktree-Klon.",
+    "featScheduling": "Scheduling",
+    "featSchedulingDesc": "Ein Link, der Freitagabend erscheint und Montagmorgen verschwindet. Ohne Aufwand."
   },
   "urgency": {
     "offerEnds": "Angebot endet in",
