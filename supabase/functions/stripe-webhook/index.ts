@@ -111,12 +111,13 @@ serve(async (req) => {
         if (status === "active") {
           // Payment OK — grant the plan
           await updateUserPlan(supabase, user.id, plan);
-        } else if (status === "past_due" || status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
-          // Payment failed or subscription ended — downgrade immediately
+        } else if (status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
+          // All retries failed or subscription ended — downgrade
           logStep("Downgrading user due to status", { userId: user.id, status });
           await updateUserPlan(supabase, user.id, "free");
         }
-        // "trialing", "incomplete" → do nothing, wait for resolution
+        // "past_due" → grace period, Stripe retries payment (configurable in Stripe Dashboard)
+        // "trialing", "incomplete" → wait for resolution
         break;
       }
 
