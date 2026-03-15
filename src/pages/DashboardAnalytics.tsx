@@ -280,6 +280,7 @@ const DashboardAnalytics = () => {
           <BreakdownList items={stats.referrerStats} labelKey="referrer" valueKey="count" max={10} />
 
         {/* Device / Browser / OS — Pie Charts */}
+        <ProFeatureGate requiredPlan="starter" label="Statistiques d'appareils">
         {(stats.deviceStats.length > 0 || stats.browserStats.length > 0 || stats.osStats.length > 0) && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
