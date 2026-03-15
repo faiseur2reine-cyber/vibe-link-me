@@ -57,31 +57,29 @@ interface PageAnalyticsPanelProps {
 }
 
 const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
-  const { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, abStats, loading } = usePageAnalytics(pageId);
+  const { clickStats, dailyClicks, dailyViews, totalClicks, totalViews, countryStats, cityStats, referrerStats, deviceStats, browserStats, osStats, abStats, loading } = usePageAnalytics(pageId);
 
   if (loading) {
     return <p className="text-center text-muted-foreground py-8">Chargement...</p>;
   }
 
   const getClicksForLink = (linkId: string) => clickStats.find(s => s.linkId === linkId)?.totalClicks || 0;
+  const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '—';
 
   const exportCSV = () => {
     const rows: string[][] = [];
-    // Header
     rows.push(['Section', 'Item', 'Value']);
-    // Summary
+    rows.push(['Summary', 'Total Views', String(totalViews)]);
     rows.push(['Summary', 'Total Clicks', String(totalClicks)]);
-    // Per link
+    rows.push(['Summary', 'Conversion Rate', `${conversionRate}%`]);
     links.forEach(l => rows.push(['Link', l.title, String(getClicksForLink(l.id))]));
-    // Daily
-    dailyClicks.forEach(d => rows.push(['Daily', d.date, String(d.clicks)]));
-    // Country
+    dailyClicks.forEach((d, i) => rows.push(['Daily', d.date, `${dailyViews[i]?.views || 0} views, ${d.clicks} clicks`]));
     countryStats.forEach(c => rows.push(['Country', c.country, String(c.clicks)]));
-    // City
     cityStats.forEach(c => rows.push(['City', c.city, String(c.clicks)]));
-    // Referrer
     referrerStats.forEach(r => rows.push(['Referrer', r.referrer, String(r.clicks)]));
-    // A/B
+    deviceStats.forEach(d => rows.push(['Device', d.device, String(d.count)]));
+    browserStats.forEach(b => rows.push(['Browser', b.browser, String(b.count)]));
+    osStats.forEach(o => rows.push(['OS', o.os, String(o.count)]));
     abStats.forEach(a => rows.push(['A/B Variant', a.variant, String(a.clicks)]));
 
     const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -96,22 +94,30 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
 
   return (
     <div className="space-y-8">
-      {/* Total clicks + export */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-            <MousePointerClick className="w-6 h-6 text-primary-foreground" />
+      {/* Stats row: Views, Clicks, Conversion */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-display font-semibold text-foreground">Vue d'ensemble</h4>
+          {totalClicks > 0 && (
+            <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+              <Download className="w-3 h-3" /> Export CSV
+            </Button>
+          )}
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-4 rounded-xl bg-muted/50 border border-border">
+            <p className="text-[11px] text-muted-foreground font-medium">Vues</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{totalViews}</p>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Total des clics</p>
-            <p className="text-3xl font-display font-bold text-foreground">{totalClicks}</p>
+          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+            <p className="text-[11px] text-muted-foreground font-medium">Clics</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{totalClicks}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/50 border border-border">
+            <p className="text-[11px] text-muted-foreground font-medium">Conversion</p>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{conversionRate}%</p>
           </div>
         </div>
-        {totalClicks > 0 && (
-          <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
-            <Download className="w-3 h-3" /> Export CSV
-          </Button>
-        )}
       </div>
 
       {/* Per-link stats */}
@@ -137,14 +143,18 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
         ))}
       </div>
 
-      {/* Daily chart */}
+      {/* Daily chart — Views + Clicks */}
       <div>
         <div className="flex items-center gap-2 mb-3">
           <TrendingUp className="w-4 h-4 text-muted-foreground" />
-          <h4 className="font-display font-semibold text-foreground">Clics (30 jours)</h4>
+          <h4 className="font-display font-semibold text-foreground">Activité (30 jours)</h4>
         </div>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={dailyClicks}>
+          <BarChart data={dailyClicks.map((d, i) => ({
+            date: d.date,
+            clicks: d.clicks,
+            views: dailyViews[i]?.views || 0,
+          }))}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis
               dataKey="date"
@@ -165,7 +175,8 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
               }}
               labelFormatter={(v) => new Date(v).toLocaleDateString()}
             />
-            <Bar dataKey="clicks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="views" fill="hsl(var(--muted-foreground)/0.2)" radius={[4, 4, 0, 0]} name="Vues" />
+            <Bar dataKey="clicks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Clics" />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -265,6 +276,99 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
           </div>
         )}
       </div>
+
+      {/* Device / Browser / OS */}
+      {(deviceStats.length > 0 || browserStats.length > 0 || osStats.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Devices */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <MousePointerClick className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-display font-semibold text-foreground">Appareils</h4>
+            </div>
+            {deviceStats.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Pas encore de données</p>
+            ) : (
+              <div className="space-y-1.5">
+                {deviceStats.map((stat, i) => {
+                  const total = deviceStats.reduce((s, d) => s + d.count, 0);
+                  const pct = total > 0 ? Math.round((stat.count / total) * 100) : 0;
+                  const label = stat.device === 'mobile' ? '📱 Mobile' : stat.device === 'tablet' ? '📱 Tablet' : '💻 Desktop';
+                  return (
+                    <div key={stat.device} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+                      <span className="text-sm text-foreground">{label}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                        </div>
+                        <span className="text-xs font-semibold text-muted-foreground w-10 text-right">{pct}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Browsers */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-display font-semibold text-foreground">Navigateurs</h4>
+            </div>
+            {browserStats.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Pas encore de données</p>
+            ) : (
+              <div className="space-y-1.5">
+                {browserStats.slice(0, 6).map((stat, i) => {
+                  const total = browserStats.reduce((s, d) => s + d.count, 0);
+                  const pct = total > 0 ? Math.round((stat.count / total) * 100) : 0;
+                  return (
+                    <div key={stat.browser} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+                      <span className="text-sm text-foreground">{stat.browser}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                        </div>
+                        <span className="text-xs font-semibold text-muted-foreground w-10 text-right">{pct}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* OS */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-display font-semibold text-foreground">Systèmes</h4>
+            </div>
+            {osStats.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Pas encore de données</p>
+            ) : (
+              <div className="space-y-1.5">
+                {osStats.slice(0, 6).map((stat, i) => {
+                  const total = osStats.reduce((s, d) => s + d.count, 0);
+                  const pct = total > 0 ? Math.round((stat.count / total) * 100) : 0;
+                  return (
+                    <div key={stat.os} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+                      <span className="text-sm text-foreground">{stat.os}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                        </div>
+                        <span className="text-xs font-semibold text-muted-foreground w-10 text-right">{pct}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* A/B Test Results with Statistical Significance */}
       {abStats.length > 0 && (() => {

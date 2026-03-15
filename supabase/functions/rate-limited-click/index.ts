@@ -93,6 +93,29 @@ Deno.serve(async (req) => {
       req.headers.get("cf-connecting-ip") ||
       "unknown";
 
+    // ── Geo from Cloudflare headers (Supabase runs on CF) ──
+    const country = req.headers.get("cf-ipcountry") || req.headers.get("x-country") || null;
+    const city = req.headers.get("cf-ipcity") || req.headers.get("x-city") || null;
+
+    // ── Parse User-Agent for device/browser/OS ──
+    const ua = req.headers.get("user-agent") || "";
+    const deviceType = /Mobile|Android|iPhone|iPad|iPod/i.test(ua)
+      ? (/iPad|Tablet/i.test(ua) ? "tablet" : "mobile")
+      : "desktop";
+    const browser = /Edg\//i.test(ua) ? "Edge"
+      : /OPR\//i.test(ua) ? "Opera"
+      : /Chrome/i.test(ua) ? "Chrome"
+      : /Safari/i.test(ua) ? "Safari"
+      : /Firefox/i.test(ua) ? "Firefox"
+      : /MSIE|Trident/i.test(ua) ? "IE"
+      : "Other";
+    const os = /Windows/i.test(ua) ? "Windows"
+      : /Mac OS X|Macintosh/i.test(ua) ? (/iPhone|iPad|iPod/i.test(ua) ? "iOS" : "macOS")
+      : /Android/i.test(ua) ? "Android"
+      : /Linux/i.test(ua) ? "Linux"
+      : /CrOS/i.test(ua) ? "ChromeOS"
+      : "Other";
+
     // Page view events — record in page_views table
     if (link_id.startsWith("pageview_")) {
       const pageId = link_id.replace("pageview_", "");
@@ -121,8 +144,11 @@ Deno.serve(async (req) => {
       const { error: pvError } = await supabase.rpc("record_page_view", {
         p_page_id: pageId,
         p_referrer: referrer || null,
-        p_country: null,
-        p_city: null,
+        p_country: country,
+        p_city: city,
+        p_device_type: deviceType,
+        p_browser: browser,
+        p_os: os,
       });
 
       if (pvError) {
@@ -158,9 +184,12 @@ Deno.serve(async (req) => {
     const { error } = await supabase.rpc("record_click", {
       p_link_id: link_id,
       p_referrer: referrer || null,
-      p_country: null,
-      p_city: null,
+      p_country: country,
+      p_city: city,
       p_ab_variant: ab_variant || null,
+      p_device_type: deviceType,
+      p_browser: browser,
+      p_os: os,
     });
 
     if (error) {

@@ -356,82 +356,94 @@ export function usePageAnalytics(pageId: string | null) {
   const { user } = useAuth();
   const [clickStats, setClickStats] = useState<{ linkId: string; totalClicks: number }[]>([]);
   const [dailyClicks, setDailyClicks] = useState<{ date: string; clicks: number }[]>([]);
+  const [dailyViews, setDailyViews] = useState<{ date: string; views: number }[]>([]);
   const [totalClicks, setTotalClicks] = useState(0);
+  const [totalViews, setTotalViews] = useState(0);
   const [countryStats, setCountryStats] = useState<{ country: string; clicks: number }[]>([]);
   const [cityStats, setCityStats] = useState<{ city: string; clicks: number }[]>([]);
   const [referrerStats, setReferrerStats] = useState<{ referrer: string; clicks: number }[]>([]);
+  const [deviceStats, setDeviceStats] = useState<{ device: string; count: number }[]>([]);
+  const [browserStats, setBrowserStats] = useState<{ browser: string; count: number }[]>([]);
+  const [osStats, setOsStats] = useState<{ os: string; count: number }[]>([]);
   const [abStats, setAbStats] = useState<{ variant: string; clicks: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
     if (!user || !pageId) { setLoading(false); return; }
 
+    // Fetch links, clicks, and page views in parallel
     const { data: links } = await supabase
       .from('links')
       .select('id')
       .eq('page_id', pageId);
 
-    if (!links || links.length === 0) { setLoading(false); return; }
+    const linkIds = (links || []).map(l => l.id);
 
-    const linkIds = links.map(l => l.id);
+    const [clicksRes, viewsRes] = await Promise.all([
+      linkIds.length > 0
+        ? supabase.from('link_clicks').select('link_id, clicked_at, country, city, referrer, ab_variant, device_type, browser, os').in('link_id', linkIds)
+        : Promise.resolve({ data: [] }),
+      supabase.from('page_views').select('viewed_at, country, city, referrer, device_type, browser, os').eq('page_id', pageId),
+    ]);
 
-    const { data: clicks } = await supabase
-      .from('link_clicks')
-      .select('link_id, clicked_at, country, city, referrer, ab_variant')
-      .in('link_id', linkIds);
+    const clicks = (clicksRes as any).data || [];
+    const views = viewsRes.data || [];
 
-    if (!clicks) { setLoading(false); return; }
-
-    // Per link
+    // === CLICKS ===
     const perLink: Record<string, number> = {};
-    clicks.forEach(c => { perLink[c.link_id] = (perLink[c.link_id] || 0) + 1; });
+    clicks.forEach((c: any) => { perLink[c.link_id] = (perLink[c.link_id] || 0) + 1; });
     setClickStats(linkIds.map(id => ({ linkId: id, totalClicks: perLink[id] || 0 })));
     setTotalClicks(clicks.length);
 
-    // Daily (last 30 days)
-    const daily: Record<string, number> = {};
+    // Daily clicks (last 30 days)
     const now = new Date();
+    const dailyC: Record<string, number> = {};
+    const dailyV: Record<string, number> = {};
     for (let i = 29; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      daily[d.toISOString().split('T')[0]] = 0;
+      const d = new Date(now); d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      dailyC[key] = 0;
+      dailyV[key] = 0;
     }
-    clicks.forEach(c => {
-      const day = new Date(c.clicked_at).toISOString().split('T')[0];
-      if (daily[day] !== undefined) daily[day]++;
-    });
-    setDailyClicks(Object.entries(daily).map(([date, clicks]) => ({ date, clicks })));
+    clicks.forEach((c: any) => { const d = new Date(c.clicked_at).toISOString().split('T')[0]; if (dailyC[d] !== undefined) dailyC[d]++; });
+    setDailyClicks(Object.entries(dailyC).map(([date, clicks]) => ({ date, clicks })));
 
-    // Country
+    // === PAGE VIEWS ===
+    setTotalViews(views.length);
+    views.forEach((v: any) => { const d = new Date(v.viewed_at).toISOString().split('T')[0]; if (dailyV[d] !== undefined) dailyV[d]++; });
+    setDailyViews(Object.entries(dailyV).map(([date, views]) => ({ date, views })));
+
+    // === GEO (merge clicks + views for richer data) ===
+    const allEvents = [...clicks, ...views];
     const countries: Record<string, number> = {};
-    clicks.forEach(c => {
-      const country = c.country || 'Unknown';
-      countries[country] = (countries[country] || 0) + 1;
-    });
+    allEvents.forEach((e: any) => { const c = e.country || null; if (c) countries[c] = (countries[c] || 0) + 1; });
     setCountryStats(Object.entries(countries).map(([country, clicks]) => ({ country, clicks })).sort((a, b) => b.clicks - a.clicks));
 
-    // City
     const cities: Record<string, number> = {};
-    clicks.forEach(c => {
-      const city = c.city || 'Unknown';
-      cities[city] = (cities[city] || 0) + 1;
-    });
+    allEvents.forEach((e: any) => { const c = e.city || null; if (c) cities[c] = (cities[c] || 0) + 1; });
     setCityStats(Object.entries(cities).map(([city, clicks]) => ({ city, clicks })).sort((a, b) => b.clicks - a.clicks));
 
-    // Referrer
+    // === REFERRERS (merge) ===
     const referrers: Record<string, number> = {};
-    clicks.forEach(c => {
-      const ref = c.referrer || 'Direct';
-      referrers[ref] = (referrers[ref] || 0) + 1;
-    });
+    allEvents.forEach((e: any) => { const r = e.referrer || 'Direct'; referrers[r] = (referrers[r] || 0) + 1; });
     setReferrerStats(Object.entries(referrers).map(([referrer, clicks]) => ({ referrer, clicks })).sort((a, b) => b.clicks - a.clicks));
 
-    // A/B variant stats
+    // === DEVICE / BROWSER / OS (merge) ===
+    const devices: Record<string, number> = {};
+    allEvents.forEach((e: any) => { const d = e.device_type || null; if (d) devices[d] = (devices[d] || 0) + 1; });
+    setDeviceStats(Object.entries(devices).map(([device, count]) => ({ device, count })).sort((a, b) => b.count - a.count));
+
+    const browsers: Record<string, number> = {};
+    allEvents.forEach((e: any) => { const b = e.browser || null; if (b) browsers[b] = (browsers[b] || 0) + 1; });
+    setBrowserStats(Object.entries(browsers).map(([browser, count]) => ({ browser, count })).sort((a, b) => b.count - a.count));
+
+    const oses: Record<string, number> = {};
+    allEvents.forEach((e: any) => { const o = e.os || null; if (o) oses[o] = (oses[o] || 0) + 1; });
+    setOsStats(Object.entries(oses).map(([os, count]) => ({ os, count })).sort((a, b) => b.count - a.count));
+
+    // === A/B ===
     const variants: Record<string, number> = {};
-    clicks.forEach(c => {
-      const v = (c as any).ab_variant || null;
-      if (v) variants[v] = (variants[v] || 0) + 1;
-    });
+    clicks.forEach((c: any) => { const v = c.ab_variant || null; if (v) variants[v] = (variants[v] || 0) + 1; });
     setAbStats(Object.entries(variants).map(([variant, clicks]) => ({ variant, clicks })).sort((a, b) => a.variant.localeCompare(b.variant)));
 
     setLoading(false);
@@ -439,5 +451,5 @@ export function usePageAnalytics(pageId: string | null) {
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
-  return { clickStats, dailyClicks, totalClicks, countryStats, cityStats, referrerStats, abStats, loading, refetch: fetchStats };
+  return { clickStats, dailyClicks, dailyViews, totalClicks, totalViews, countryStats, cityStats, referrerStats, deviceStats, browserStats, osStats, abStats, loading, refetch: fetchStats };
 }
