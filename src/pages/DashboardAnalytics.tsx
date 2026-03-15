@@ -7,8 +7,12 @@ import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const COLORS = [
-  'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
-  'hsl(200, 80%, 50%)', 'hsl(150, 60%, 45%)', 'hsl(45, 90%, 50%)',
+  'hsl(280, 80%, 55%)',  // pop-violet
+  'hsl(12, 90%, 62%)',   // pop-coral
+  'hsl(185, 85%, 50%)',  // pop-cyan
+  'hsl(100, 75%, 50%)',  // pop-lime
+  'hsl(45, 100%, 60%)',  // pop-yellow
+  'hsl(330, 85%, 60%)',  // pop-pink
 ];
 
 const BreakdownList = ({ items, labelKey, valueKey, max = 8 }: {
