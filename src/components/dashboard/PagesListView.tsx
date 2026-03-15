@@ -2,12 +2,21 @@ import { CreatorPage } from '@/hooks/useCreatorPages';
 import { useTranslation } from 'react-i18next';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { Button } from '@/components/ui/button';
-import { TapPlus as Plus, TapExternalLink as ExternalLink, TapCopy as Copy, TapTrash as Trash2, TapSearch as Search, TapArrowUpRight as ArrowUpRight, TapLink as Link2, TapClick as MousePointerClick, TapGrid as LayoutGrid, TapCheckSquare as CheckSquare, TapSquare as Square, TapX as X } from '@/components/icons/TapIcons';
+import {
+  TapPlus as Plus, TapExternalLink as ExternalLink, TapCopy as Copy,
+  TapTrash as Trash2, TapSearch as Search, TapLink as Link2,
+  TapClick as MousePointerClick, TapDollar as DollarSign,
+  TapCheckSquare as CheckSquare, TapSquare as Square, TapX as X,
+  TapArrowUpRight as ArrowUpRight,
+} from '@/components/icons/TapIcons';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface PagesListViewProps {
   pages: CreatorPage[];
@@ -18,15 +27,12 @@ interface PagesListViewProps {
   onBulkUpdate?: (ids: string[], updates: Partial<CreatorPage>) => Promise<{ error: any }>;
 }
 
-const StatPill = ({ icon: Icon, value, label }: { icon: any; value: number; label: string }) => (
-  <div className="flex items-center gap-2 text-[12px]">
-    <div className="w-6 h-6 rounded-lg bg-muted/50 flex items-center justify-center">
-      <Icon className="w-3 h-3 text-muted-foreground" />
-    </div>
-    <span className="font-semibold text-foreground tabular-nums">{value}</span>
-    <span className="text-muted-foreground/60">{label}</span>
-  </div>
-);
+// ── Status config ──
+const STATUS = {
+  active: { label: 'Active', dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
+  draft: { label: 'Draft', dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500/10' },
+  paused: { label: 'Paused', dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400', bg: 'bg-red-500/10' },
+} as const;
 
 const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage, onBulkUpdate }: PagesListViewProps) => {
   const { t } = useTranslation();
@@ -34,15 +40,12 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [bulkAction, setBulkAction] = useState(false);
+  const [bulkMode, setBulkMode] = useState(false);
 
+  // ── Filters ──
   const filteredPages = useMemo(() => {
     let result = pages;
-    // Status filter
-    if (statusFilter !== 'all') {
-      result = result.filter(p => (p.status || 'draft') === statusFilter);
-    }
-    // Search filter
+    if (statusFilter !== 'all') result = result.filter(p => (p.status || 'draft') === statusFilter);
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(p =>
@@ -54,274 +57,310 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
     return result;
   }, [pages, search, statusFilter]);
 
-  // Count pages per status
   const statusCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: pages.length, draft: 0, active: 0, paused: 0 };
-    pages.forEach(p => { const s = p.status || 'draft'; counts[s] = (counts[s] || 0) + 1; });
-    return counts;
+    const c: Record<string, number> = { all: pages.length, draft: 0, active: 0, paused: 0 };
+    pages.forEach(p => { const s = p.status || 'draft'; c[s] = (c[s] || 0) + 1; });
+    return c;
   }, [pages]);
 
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
   const globalStats = useGlobalAnalytics(pageIds);
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const totalRevenue = pages.reduce((sum, p) => {
+    return sum + Math.round((p.revenue_monthly ?? 0) * (p.revenue_commission ?? 20) / 100);
+  }, 0);
+
+  // ── Empty state ──
+  if (pages.length === 0) {
+    return (
+      <div className="space-y-6">
         <h1 className="text-xl font-semibold tracking-tight font-display">{t('pages.title')}</h1>
-        <p className="text-[13px] text-muted-foreground mt-0.5">
-          {t('pages.subtitle')}
-        </p>
-      </div>
-
-      {/* Stats */}
-      {pages.length > 0 && (
-        <div data-tour="stats" className="flex items-center gap-5 text-sm">
-          <StatPill icon={LayoutGrid} value={globalStats.totalPages} label="pages" />
-          <StatPill icon={Link2} value={globalStats.totalLinks} label="liens" />
-          <StatPill icon={MousePointerClick} value={globalStats.totalClicks} label="clics" />
-        </div>
-      )}
-
-      {/* Search + Bulk toggle */}
-      {pages.length > 1 && (
-        <div className="flex items-center gap-2">
-          {pages.length > 2 && (
-            <div className="relative flex-1 sm:flex-none sm:w-56">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                placeholder={t('pages.search')}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 h-8 text-[13px] bg-transparent border-border/60 rounded-lg"
-              />
-            </div>
-          )}
-          <Button
-            variant={bulkAction ? 'default' : 'outline'}
-            size="sm"
-            className="h-8 px-3 text-[11px] gap-1.5 shrink-0"
-            onClick={() => { setBulkAction(!bulkAction); setSelected(new Set()); }}
-          >
-            <CheckSquare className="w-3 h-3" />
-            {bulkAction ? t('pages.cancel') : t('pages.selection')}
-          </Button>
-        </div>
-      )}
-
-      {/* Status filter chips */}
-      {pages.length > 1 && (
-        <div className="flex items-center gap-1.5">
-          {[
-            { key: 'all', label: 'Toutes', color: '' },
-            { key: 'active', label: 'Active', color: 'text-emerald-600' },
-            { key: 'draft', label: 'Draft', color: 'text-amber-600' },
-            { key: 'paused', label: 'Paused', color: 'text-red-600' },
-          ].map(({ key, label, color }) => (
-            <button
-              key={key}
-              onClick={() => setStatusFilter(key)}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                statusFilter === key
-                  ? 'bg-foreground text-background'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              }`}
-            >
-              {label} {statusCounts[key] > 0 && <span className="ml-0.5 opacity-60">{statusCounts[key]}</span>}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Pages */}
-      {pages.length === 0 ? (
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-28 text-center"
+          transition={{ duration: 0.4 }}
+          className="flex flex-col items-center justify-center py-32 text-center"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4">
-            <Link2 className="w-6 h-6 text-primary/60" />
+          <div className="relative mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent flex items-center justify-center">
+              <Link2 className="w-7 h-7 text-primary/60" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center">
+              <Plus className="w-2.5 h-2.5 text-primary" />
+            </div>
           </div>
-          <h2 className="text-base font-semibold">{t('pages.noPages')}</h2>
-          <p className="text-[13px] text-muted-foreground/60 mt-1 max-w-[260px]">
+          <h2 className="text-lg font-semibold tracking-tight">{t('pages.noPages')}</h2>
+          <p className="text-[13px] text-muted-foreground/50 mt-1.5 max-w-[280px] leading-relaxed">
             {t('pages.noPagesDesc')}
           </p>
-          <Button onClick={onCreatePage} size="sm" className="mt-5 h-9 px-5 text-[12px] gap-2 rounded-xl">
-            <Plus className="w-3.5 h-3.5" /> {t('pages.createPage')}
+          <Button onClick={onCreatePage} size="sm" className="mt-6 h-10 px-6 text-[13px] gap-2 rounded-xl font-semibold">
+            <Plus className="w-4 h-4" /> {t('pages.createPage')}
           </Button>
         </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredPages.map((page, i) => (
-            <motion.div
-              key={page.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.02 }}
-            >
-              <div
-                onClick={() => {
-                  if (bulkAction) {
-                    setSelected(prev => {
-                      const next = new Set(prev);
-                      next.has(page.id) ? next.delete(page.id) : next.add(page.id);
-                      return next;
-                    });
-                  } else {
-                    onSelectPage(page.id);
-                  }
-                }}
-                className={`group relative rounded-2xl p-3.5 cursor-pointer transition-all duration-300 ${
-                  selected.has(page.id)
-                    ? 'bg-primary/10 border border-primary/30 shadow-lg shadow-primary/5'
-                    : 'glass hover:border-border/60 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-1'
-                }`}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight font-display">{t('pages.title')}</h1>
+          <p className="text-[12px] text-muted-foreground/50 mt-0.5">
+            {pages.length} page{pages.length > 1 ? 's' : ''}
+            {globalStats.totalClicks > 0 && <> · {globalStats.totalClicks.toLocaleString()} clics</>}
+            {totalRevenue > 0 && <> · {totalRevenue.toLocaleString()}€</>}
+          </p>
+        </div>
+        <Button onClick={onCreatePage} size="sm" className="h-9 px-4 text-[12px] gap-1.5 rounded-xl font-medium">
+          <Plus className="w-3.5 h-3.5" /> Nouvelle page
+        </Button>
+      </div>
+
+      {/* ── Toolbar ── */}
+      {pages.length > 1 && (
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
+            <Input
+              placeholder="Rechercher..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 h-8 text-[12px] bg-transparent border-border/40 rounded-lg placeholder:text-muted-foreground/30"
+            />
+          </div>
+
+          <div className="hidden sm:flex items-center gap-1">
+            {(['all', 'active', 'draft', 'paused'] as const).map(key => {
+              const count = statusCounts[key] || 0;
+              if (key !== 'all' && count === 0) return null;
+              const label = key === 'all' ? 'Toutes' : STATUS[key].label;
+              return (
+                <button
+                  key={key}
+                  onClick={() => setStatusFilter(key)}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-150 ${
+                    statusFilter === key
+                      ? 'bg-foreground text-background shadow-sm'
+                      : 'text-muted-foreground/60 hover:text-muted-foreground hover:bg-muted/50'
+                  }`}
+                >
+                  {label}
+                  {count > 0 && <span className="ml-1 opacity-50">{count}</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => { setBulkMode(!bulkMode); setSelected(new Set()); }}
+            className={`h-8 px-2.5 rounded-lg text-[11px] font-medium transition-all duration-150 flex items-center gap-1.5 shrink-0 ${
+              bulkMode
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/50'
+            }`}
+          >
+            <CheckSquare className="w-3 h-3" />
+            {bulkMode ? 'Annuler' : 'Sélection'}
+          </button>
+        </div>
+      )}
+
+      {/* ── Page rows ── */}
+      <div className="space-y-1">
+        <AnimatePresence mode="popLayout">
+          {filteredPages.map((page, i) => {
+            const status = STATUS[(page.status || 'draft') as keyof typeof STATUS] || STATUS.draft;
+            const clicks = globalStats.topPages.find(p => p.pageId === page.id)?.clicks ?? 0;
+            const commission = Math.round((page.revenue_monthly ?? 0) * (page.revenue_commission ?? 20) / 100);
+            const isSelected = selected.has(page.id);
+
+            return (
+              <motion.div
+                key={page.id}
+                layout
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ delay: i * 0.015, duration: 0.2 }}
               >
-                <div className="flex items-center gap-2.5">
+                <div
+                  onClick={() => bulkMode ? toggleSelect(page.id) : onSelectPage(page.id)}
+                  className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
+                    isSelected
+                      ? 'bg-primary/8 ring-1 ring-primary/20'
+                      : 'hover:bg-muted/40'
+                  }`}
+                >
                   {/* Bulk checkbox */}
-                  {bulkAction && (
-                    <div className="shrink-0">
-                      {selected.has(page.id)
+                  {bulkMode && (
+                    <div className="shrink-0 w-5 flex items-center justify-center">
+                      {isSelected
                         ? <CheckSquare className="w-4 h-4 text-primary" />
-                        : <Square className="w-4 h-4 text-muted-foreground/40" />
+                        : <Square className="w-4 h-4 text-muted-foreground/25" />
                       }
                     </div>
                   )}
-                  <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-muted">
+
+                  {/* Avatar */}
+                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-muted/60 ring-1 ring-border/20">
                     {page.avatar_url ? (
-                      <img src={page.avatar_url} alt="" className="w-full h-full object-cover" />
+                      <img src={page.avatar_url} alt="" className="w-full h-full object-cover" loading="lazy" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-[11px] font-semibold text-muted-foreground">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/40">
+                        <span className="text-[13px] font-semibold text-muted-foreground/50">
                           {(page.display_name || page.username)?.[0]?.toUpperCase()}
                         </span>
                       </div>
                     )}
                   </div>
+
+                  {/* Name + meta */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[13px] truncate">{page.display_name || page.username}</p>
-                    <p className="text-[11px] text-muted-foreground">@{page.username}</p>
-                  </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0" />
-                </div>
-
-                {page.bio && (
-                  <p className="text-[11px] text-muted-foreground mt-2.5 line-clamp-2 leading-relaxed">{page.bio}</p>
-                )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-border/40">
-                  <div className="flex items-center gap-1.5">
-                    {page.status && page.status !== 'draft' && (
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${
-                        page.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' :
-                        page.status === 'paused' ? 'bg-red-500/10 text-red-600' :
-                        'bg-muted text-muted-foreground'
-                      }`}>{page.status === 'active' ? 'Active' : page.status === 'paused' ? 'Paused' : page.status}</span>
-                    )}
-                    {page.is_nsfw && (
-                      <span className="text-[9px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded font-medium">18+</span>
-                    )}
-                    {page.operator && (
-                      <span className="text-[9px] text-muted-foreground truncate max-w-[80px]">{page.operator}</span>
-                    )}
-                    {(page.revenue_monthly ?? 0) > 0 && (
-                      <span className="text-[9px] text-emerald-600 font-medium">{Math.round((page.revenue_monthly ?? 0) * (page.revenue_commission ?? 20) / 100)}€</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {/* Click count — always visible */}
-                    <span className="text-[10px] text-muted-foreground tabular-nums flex items-center gap-1">
-                      <MousePointerClick className="w-2.5 h-2.5" />
-                      {globalStats.topPages.find(p => p.pageId === page.id)?.clicks ?? 0}
-                    </span>
-                    <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const url = `${window.location.origin}/${page.username}`;
-                        navigator.clipboard.writeText(url);
-                        toast.success(t('pages.linkCopied'));
-                      }}
-                      className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
-                      title="Copier le lien"
-                    >
-                      <Link2 className="w-3 h-3" />
-                    </button>
-                    {onDuplicatePage && (
-                      <button
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          const r = await onDuplicatePage(page.id);
-                          r?.error ? toast.error('Erreur') : toast.success(t('pages.duplicated'));
-                        }}
-                        className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
-                    )}
-                    {onDeletePage && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setDeleteTarget(page); }}
-                        className="p-1.5 text-muted-foreground hover:text-destructive rounded-md hover:bg-destructive/10 transition-colors"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    )}
-                    <a
-                      href={`/${page.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] font-semibold truncate">{page.display_name || page.username}</span>
+                      {page.is_nsfw && (
+                        <span className="text-[8px] bg-red-500/10 text-red-500 px-1 py-px rounded font-bold tracking-wider">18+</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[11px] text-muted-foreground/40">@{page.username}</span>
+                      {page.operator && (
+                        <>
+                          <span className="text-muted-foreground/15">·</span>
+                          <span className="text-[11px] text-muted-foreground/35 truncate max-w-[100px]">{page.operator}</span>
+                        </>
+                      )}
                     </div>
                   </div>
+
+                  {/* Status */}
+                  <div className={`hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md ${status.bg}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                    <span className={`text-[10px] font-semibold ${status.text}`}>{status.label}</span>
+                  </div>
+
+                  {/* Metrics */}
+                  <div className="hidden md:flex items-center gap-4 text-[11px] tabular-nums mr-1">
+                    <span className="flex items-center gap-1 text-muted-foreground/50" title="Clics">
+                      <MousePointerClick className="w-3 h-3" />
+                      {clicks.toLocaleString()}
+                    </span>
+                    {commission > 0 && (
+                      <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium" title="Commission">
+                        <DollarSign className="w-3 h-3" />
+                        {commission.toLocaleString()}€
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions (hover) */}
+                  {!bulkMode && (
+                    <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
+                          toast.success(t('pages.linkCopied'));
+                        }}
+                        className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-accent/60 transition-colors"
+                        title="Copier le lien"
+                      >
+                        <Link2 className="w-3 h-3" />
+                      </button>
+                      {onDuplicatePage && (
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            const r = await onDuplicatePage(page.id);
+                            r?.error ? toast.error('Erreur') : toast.success(t('pages.duplicated'));
+                          }}
+                          className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-accent/60 transition-colors"
+                          title="Dupliquer"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </button>
+                      )}
+                      <a
+                        href={`/${page.username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-accent/60 transition-colors"
+                        title="Voir la page"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      {onDeletePage && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(page); }}
+                          className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Chevron mobile */}
+                  {!bulkMode && (
+                    <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/20 sm:hidden shrink-0" />
+                  )}
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
 
-          {/* Add card */}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: filteredPages.length * 0.02 }}
+        {/* No results */}
+        {filteredPages.length === 0 && pages.length > 0 && (
+          <div className="text-center py-16">
+            <p className="text-[13px] text-muted-foreground/40">Aucun résultat</p>
+          </div>
+        )}
+
+        {/* Add row */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+          <div
+            onClick={onCreatePage}
+            className="flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer border border-dashed border-border/20 hover:border-primary/20 hover:bg-primary/[0.02] transition-all duration-200 group"
           >
-            <div
-              onClick={onCreatePage}
-              className="rounded-2xl border-2 border-dashed border-border/30 bg-transparent p-3.5 cursor-pointer hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-300 flex flex-col items-center justify-center min-h-[100px] text-center group"
-            >
-              <div className="w-9 h-9 rounded-xl bg-muted/40 group-hover:bg-primary/10 flex items-center justify-center mb-2 transition-colors duration-300">
-                <Plus className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-              </div>
-              <span className="text-[12px] text-muted-foreground/50 group-hover:text-foreground transition-colors">{t('pages.newPage')}</span>
+            <div className="w-10 h-10 rounded-full bg-muted/30 group-hover:bg-primary/10 flex items-center justify-center transition-colors duration-200">
+              <Plus className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
             </div>
-          </motion.div>
-        </div>
-      )}
+            <span className="text-[13px] text-muted-foreground/30 group-hover:text-foreground/60 transition-colors">{t('pages.newPage')}</span>
+          </div>
+        </motion.div>
+      </div>
 
-      {/* Bulk action bar */}
+      {/* ── Bulk action bar ── */}
       <AnimatePresence>
-        {bulkAction && selected.size > 0 && (
+        {bulkMode && selected.size > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-foreground text-background rounded-xl px-4 py-2.5 shadow-2xl flex items-center gap-3"
+            exit={{ opacity: 0, y: 16 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-foreground text-background rounded-xl px-4 py-2.5 shadow-2xl shadow-black/20 flex items-center gap-3"
           >
-            <span className="text-[12px] font-semibold">{selected.size} sélectionné{selected.size > 1 ? 's' : ''}</span>
-            <div className="w-px h-5 bg-background/20" />
+            <span className="text-[12px] font-semibold tabular-nums">{selected.size} sélectionné{selected.size > 1 ? 's' : ''}</span>
+            <div className="w-px h-4 bg-background/15" />
             {onBulkUpdate && (
               <>
                 <button
                   onClick={async () => {
                     await onBulkUpdate(Array.from(selected), { status: 'active' });
                     toast.success(`${selected.size} page(s) activée(s)`);
-                    setSelected(new Set()); setBulkAction(false);
+                    setSelected(new Set()); setBulkMode(false);
                   }}
                   className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
                 >
@@ -331,7 +370,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                   onClick={async () => {
                     await onBulkUpdate(Array.from(selected), { status: 'paused' });
                     toast.success(`${selected.size} page(s) mise(s) en pause`);
-                    setSelected(new Set()); setBulkAction(false);
+                    setSelected(new Set()); setBulkMode(false);
                   }}
                   className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-colors"
                 >
@@ -341,7 +380,6 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
             )}
             <button
               onClick={() => {
-                // Export selected pages to CSV
                 const rows = [['Username', 'Display Name', 'Status', 'Operator', 'Revenue', 'Commission']];
                 pages.filter(p => selected.has(p.id)).forEach(p => {
                   rows.push([p.username, p.display_name || '', p.status || 'draft', p.operator || '', String(p.revenue_monthly ?? 0), String(p.revenue_commission ?? 20)]);
@@ -359,7 +397,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
               CSV
             </button>
             <button
-              onClick={() => { setSelected(new Set()); setBulkAction(false); }}
+              onClick={() => { setSelected(new Set()); setBulkMode(false); }}
               className="p-1 rounded-lg hover:bg-background/20 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
@@ -368,13 +406,13 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
         )}
       </AnimatePresence>
 
-      {/* Delete dialog */}
+      {/* ── Delete dialog ── */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer cette page ?</AlertDialogTitle>
             <AlertDialogDescription>
-              La page <span className="font-semibold">@{deleteTarget?.username}</span> et ses liens seront supprimés définitivement.
+              La page <span className="font-semibold">@{deleteTarget?.username}</span> et tous ses liens seront supprimés définitivement.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
