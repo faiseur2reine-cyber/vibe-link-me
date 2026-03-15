@@ -179,7 +179,25 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           {browserInfo.isInApp && (
             <button
               onClick={() => {
-                window.location.href = `/go.html?url=${encodeURIComponent(window.location.href)}`;
+                const pageUrl = window.location.href;
+                if (browserInfo.isIOS) {
+                  const safariUrl = pageUrl.replace('https://', 'x-safari-https://');
+                  if (browserInfo.isIG) {
+                    window.open(safariUrl, '_blank');
+                  } else {
+                    window.location.href = safariUrl;
+                  }
+                  setTimeout(() => {
+                    if (!document.hidden) window.location.href = `/go.html?url=${encodeURIComponent(pageUrl)}`;
+                  }, 2500);
+                } else if (browserInfo.isAndroid) {
+                  try {
+                    const parsed = new URL(pageUrl);
+                    window.location.href = `intent://${parsed.host}${parsed.pathname}${parsed.search}#Intent;scheme=${parsed.protocol.replace(':', '')};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(pageUrl)};end`;
+                  } catch { window.location.href = `/go.html?url=${encodeURIComponent(pageUrl)}`; }
+                } else {
+                  window.location.href = `/go.html?url=${encodeURIComponent(pageUrl)}`;
+                }
               }}
               className="sticky top-0 z-50 w-full bg-white flex items-center justify-between gap-3 active:bg-gray-50 transition-colors"
               style={{
