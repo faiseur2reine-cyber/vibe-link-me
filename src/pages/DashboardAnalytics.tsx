@@ -275,9 +275,14 @@ const DashboardAnalytics = () => {
                         paddingAngle={3}
                         dataKey="value"
                         stroke="none"
+                        animationBegin={0}
+                        animationDuration={1200}
+                        animationEasing="ease-out"
+                        startAngle={90}
+                        endAngle={-270}
                       >
                         {data.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} className="drop-shadow-lg" />
                         ))}
                       </Pie>
                       <Tooltip
