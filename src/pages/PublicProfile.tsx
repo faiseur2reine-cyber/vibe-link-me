@@ -98,8 +98,52 @@ const PublicProfile = () => {
     const ua = navigator.userAgent.toLowerCase();
     const isBot = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|pinterest|slackbot|discordbot|googlebot|bingbot|applebot|yandexbot|baiduspider|duckduckbot|semrushbot|ahrefsbot|mj12bot/i.test(ua);
 
+    const processResult = (result: any) => {
+      if (!result || !result.page) { setNotFound(true); setLoading(false); return; }
+      const pageData = { ...result.page, social_links: (result.page.social_links as unknown as SocialLink[]) || [] } as CreatorPageData;
+      if (isBot && pageData.safe_page_enabled) {
+        const safeUrl = pageData.safe_page_redirect_url || `/safe/${username}`;
+        window.location.replace(safeUrl);
+        return;
+      }
+      setPage(pageData);
+      const now = new Date().toISOString();
+      const activeLinks = ((result.links as LinkItem[]) || []).filter(l => {
+        if (l.is_visible === false) return false;
+        if (l.scheduled_at && l.scheduled_at > now) return false;
+        if (l.expires_at && l.expires_at < now) return false;
+        return true;
+      });
+      setLinks(activeLinks);
+      setPaymentIssue(!!result.payment_issue);
+      const uc = pageData.urgency_config;
+      if (uc?.abTest?.enabled) {
+        const storageKey = `ab_${pageData.id}`;
+        const stored = sessionStorage.getItem(storageKey);
+        if (stored === 'A' || stored === 'B') { setAbVariant(stored); }
+        else {
+          const variant = Math.random() * 100 < (uc.abTest.splitPercent ?? 50) ? 'A' : 'B';
+          sessionStorage.setItem(storageKey, variant);
+          setAbVariant(variant);
+        }
+      }
+      setLoading(false);
+    };
+
     const fetchData = async () => {
       if (!username) return;
+
+      // Use prefetched data if available (fired in index.html before React loaded)
+      const prefetch = (window as any).__PREFETCH;
+      if (prefetch) {
+        (window as any).__PREFETCH = null; // consume once
+        try {
+          const result = await prefetch;
+          if (result) { processResult(result); return; }
+        } catch {}
+        // Prefetch failed — fall through to normal fetch
+      }
+
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       try {
@@ -109,44 +153,12 @@ const PublicProfile = () => {
         );
         if (res.status === 404) { setNotFound(true); setLoading(false); return; }
         if (res.status === 429) {
-          // Rate limited — retry after 2s
           setTimeout(fetchData, 2000);
           return;
         }
         const result = await res.json();
-        if (result.page) {
-          const pageData = { ...result.page, social_links: (result.page.social_links as unknown as SocialLink[]) || [] } as CreatorPageData;
-          // Bot redirect to safe page if enabled
-          if (isBot && pageData.safe_page_enabled) {
-            const safeUrl = pageData.safe_page_redirect_url || `/safe/${username}`;
-            window.location.replace(safeUrl);
-            return;
-          }
-          setPage(pageData);
-          // Filter out scheduled (not yet active) and expired links
-          const now = new Date().toISOString();
-          const activeLinks = ((result.links as LinkItem[]) || []).filter(l => {
-            if (l.is_visible === false) return false; // hidden by creator
-            if (l.scheduled_at && l.scheduled_at > now) return false; // not yet
-            if (l.expires_at && l.expires_at < now) return false; // expired
-            return true;
-          });
-          setLinks(activeLinks);
-          setPaymentIssue(!!result.payment_issue);
-          const uc = pageData.urgency_config;
-          if (uc?.abTest?.enabled) {
-            const storageKey = `ab_${pageData.id}`;
-            const stored = sessionStorage.getItem(storageKey);
-            if (stored === 'A' || stored === 'B') { setAbVariant(stored); }
-            else {
-              const variant = Math.random() * 100 < (uc.abTest.splitPercent ?? 50) ? 'A' : 'B';
-              sessionStorage.setItem(storageKey, variant);
-              setAbVariant(variant);
-            }
-          }
-        } else { setNotFound(true); }
-      } catch { setNotFound(true); }
-      setLoading(false);
+        processResult(result);
+      } catch { setNotFound(true); setLoading(false); }
     };
     fetchData();
   }, [username]);

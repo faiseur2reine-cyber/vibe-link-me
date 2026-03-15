@@ -87,6 +87,24 @@
 
   <body>
     <script>
+      // Prefetch public profile data BEFORE React loads.
+      // Saves 2-4s by running fetch in parallel with JS bundle download.
+      (function(){
+        var path = window.location.pathname;
+        // Only prefetch for /:username routes (not /dashboard, /auth, etc.)
+        var reserved = /^\/(dashboard|auth|login|register|reset|onboarding|set-username|legal|safe|go\.html|$)/;
+        if (reserved.test(path)) return;
+        var username = path.replace(/^\//, '').replace(/\/.*$/, '');
+        if (!username || username.length < 1) return;
+        var url = 'https://deyoyodhtilhmzhjorsp.supabase.co/functions/v1/public-profile?username=' + encodeURIComponent(username);
+        var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRleW95b2RodGlsaG16aGpvcnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzgwNDksImV4cCI6MjA4NzAxNDA0OX0.VsxOLk012EDTscIv-erfr_CpM3ID73RoS8dyr1NcSX0';
+        window.__PREFETCH = fetch(url, { headers: { apikey: key } }).then(function(r) {
+          if (!r.ok) return null;
+          return r.json();
+        }).catch(function() { return null; });
+      })();
+    </script>
+    <script>
       (function(){
         var stored = localStorage.getItem('theme');
         var isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
