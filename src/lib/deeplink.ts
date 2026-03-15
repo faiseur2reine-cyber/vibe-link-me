@@ -49,32 +49,31 @@ export function detectBrowser(): BrowserInfo {
   };
 }
 
-// ── APP URL SCHEMES ──
-// Apps with native schemes can be opened directly from any webview.
-// This is how GetMySocial opens Twitter/TikTok/YouTube — not via x-safari.
-const APP_SCHEMES: Record<string, (url: string) => string | null> = {
-  'twitter.com':      (u) => { const m = u.match(/twitter\.com\/([^/?#]+)/); return m ? `twitter://user?screen_name=${m[1]}` : null; },
-  'x.com':            (u) => { const m = u.match(/x\.com\/([^/?#]+)/); return m ? `twitter://user?screen_name=${m[1]}` : null; },
-  'tiktok.com':       (u) => { const m = u.match(/tiktok\.com\/@([^/?#]+)/); return m ? `snssdk1233://user/profile/${m[1]}` : null; },
-  'youtube.com':      (u) => `vnd.youtube://${u.replace(/^https?:\/\/(www\.)?youtube\.com/, '')}`,
-  'youtu.be':         (u) => { const m = u.match(/youtu\.be\/([^/?#]+)/); return m ? `vnd.youtube://watch?v=${m[1]}` : null; },
-  'instagram.com':    (u) => { const m = u.match(/instagram\.com\/([^/?#]+)/); return m ? `instagram://user?username=${m[1]}` : null; },
-  'snapchat.com':     (u) => { const m = u.match(/snapchat\.com\/add\/([^/?#]+)/); return m ? `snapchat://add/${m[1]}` : null; },
-  'open.spotify.com': (u) => u.replace('https://open.spotify.com', 'spotify://'),
-  't.me':             (u) => { const m = u.match(/t\.me\/([^/?#]+)/); return m ? `tg://resolve?domain=${m[1]}` : null; },
-  'telegram.me':      (u) => { const m = u.match(/telegram\.me\/([^/?#]+)/); return m ? `tg://resolve?domain=${m[1]}` : null; },
-};
+// ── DOMAINS WITH NATIVE APPS (universal links) ──
+// iOS opens these in their native app automatically when you navigate to them.
+// We just need to do window.location.href — NO x-safari, NO custom schemes.
+const HAS_NATIVE_APP = [
+  'twitter.com', 'x.com',
+  'tiktok.com',
+  'youtube.com', 'youtu.be',
+  'instagram.com',
+  'snapchat.com',
+  'open.spotify.com', 'spotify.com',
+  't.me', 'telegram.me', 'telegram.org',
+  'facebook.com', 'fb.com',
+  'linkedin.com',
+  'pinterest.com',
+  'reddit.com',
+  'twitch.tv',
+  'discord.com', 'discord.gg',
+  'amazon.com', 'amazon.fr', 'amazon.co.uk',
+];
 
-function getAppScheme(url: string): string | null {
+function hasNativeApp(url: string): boolean {
   try {
     const host = new URL(url).hostname.replace(/^www\./, '');
-    for (const key in APP_SCHEMES) {
-      if (host === key || host.endsWith(`.${key}`)) {
-        return APP_SCHEMES[key](url);
-      }
-    }
-  } catch {}
-  return null;
+    return HAS_NATIVE_APP.some(d => host === d || host.endsWith(`.${d}`));
+  } catch { return false; }
 }
 
 function getIOSVersion(): number {
@@ -86,8 +85,13 @@ function getIOSVersion(): number {
  * Navigate to URL, breaking out of in-app browser if needed.
  * 
  * CRITICAL: This must be called directly from a click handler
- * to preserve the user gesture context. window.open() is blocked
- * without a gesture in Instagram's webview.
+ * to preserve the user gesture context.
+ *
+ * Strategy:
+ * - Native browser → new tab
+ * - In-app + target has app (X, TikTok, YT...) → direct navigate (universal links open the app)
+ * - In-app + target has NO app (MYM, OF...) → x-safari breakout to Safari
+ * - Android → intent:// to open in Chrome
  */
 export function deeplinkNavigate(url: string): boolean {
   // Special schemes — direct
@@ -117,18 +121,13 @@ export function deeplinkNavigate(url: string): boolean {
     return true;
   }
 
-  // ── In-app: try app URL scheme first ──
-  const scheme = getAppScheme(safeUrl);
-  if (scheme) {
-    window.location.href = scheme;
-    // Fallback: if app not installed, open in webview after 1.5s
-    setTimeout(() => {
-      if (!document.hidden) window.location.href = safeUrl;
-    }, 1500);
+  // ── In-app + target has native app → let iOS universal links handle it ──
+  if (hasNativeApp(safeUrl)) {
+    window.location.href = safeUrl;
     return true;
   }
 
-  // ── Android: intent:// ──
+  // ── Android: intent:// to open in Chrome ──
   if (b.isAndroid) {
     try {
       const parsed = new URL(safeUrl);
@@ -143,21 +142,20 @@ export function deeplinkNavigate(url: string): boolean {
     return true;
   }
 
-  // ── iOS 17+: x-safari (MUST run in click context!) ──
+  // ── iOS 17+: x-safari breakout (for sites WITHOUT native apps) ──
   if (b.isIOS && getIOSVersion() >= 17) {
     const safariUrl = safeUrl.startsWith('https://')
       ? safeUrl.replace('https://', 'x-safari-https://')
       : safeUrl.replace('http://', 'x-safari-http://');
 
     if (b.isIG) {
-      // Instagram iOS: window.open works better than location.href
-      // This is GetMySocial's exact technique
+      // Instagram iOS: window.open preserves gesture context better
       window.open(safariUrl, '_blank');
     } else {
       window.location.href = safariUrl;
     }
 
-    // If still here after 2.5s → x-safari failed → go to fallback page
+    // If still here after 2.5s → x-safari failed → fallback page
     setTimeout(() => {
       if (!document.hidden) {
         window.location.href = `/go.html?url=${encodeURIComponent(safeUrl)}`;
