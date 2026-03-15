@@ -312,7 +312,7 @@ const DashboardOverview = () => {
               <span className="font-semibold text-foreground">{last7Total} clics cette semaine.</span>
               {' '}Avec le Pro, tu pourrais tracker les referrers, ajouter des pixels et des urgency widgets.
             </p>
-            <Button size="sm" variant="outline" className="h-7 rounded-lg text-[11px] font-semibold gap-1 shrink-0 border-primary/20 text-primary hover:bg-primary/10" asChild>
+            <Button size="sm" variant="outline" className="h-9 rounded-lg text-[12px] font-semibold gap-1.5 shrink-0 border-primary/20 text-primary hover:bg-primary/10" asChild>
               <a href="/dashboard/settings">
                 <Sparkles className="w-3 h-3" /> Upgrade
               </a>

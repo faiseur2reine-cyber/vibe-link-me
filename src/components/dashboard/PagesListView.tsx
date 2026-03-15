@@ -157,7 +157,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
             />
           </div>
 
-          <div className="hidden sm:flex items-center gap-1">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
             {(['all', 'active', 'draft', 'paused'] as const).map(key => {
               const count = statusCounts[key] || 0;
               if (key !== 'all' && count === 0) return null;
@@ -262,7 +262,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                   </div>
 
                   {/* Status */}
-                  <div className={`hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md ${status.bg}`}>
+                  <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md ${status.bg}`}>
                     <div className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
                     <span className={`text-[10px] font-semibold ${status.text}`}>{status.label}</span>
                   </div>
@@ -281,62 +281,57 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     )}
                   </div>
 
-                  {/* Actions (hover) */}
+                  {/* Actions — visible on mobile, hover on desktop */}
                   {!bulkMode && (
-                    <div className="flex items-center gap-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <div className="flex items-center gap-0.5 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150">
+                      <a
+                        href={`/${page.username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-8 h-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors"
+                        title="Voir la page"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                      {onDeletePage && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(page); }}
+                          className="w-8 h-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
                           toast.success(t('pages.linkCopied'));
                         }}
-                        className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-accent/60 transition-colors"
+                        className="hidden sm:inline-flex w-8 h-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors"
                         title="Copier le lien"
                       >
-                        <Link2 className="w-3 h-3" />
+                        <Link2 className="w-3.5 h-3.5" />
                       </button>
                       {onDuplicatePage && (
                         <button
                           onClick={async (e) => {
                             e.stopPropagation();
                             if (maxPages !== undefined && maxPages !== Infinity && pages.length >= maxPages) {
-                              onCreatePage(); // triggers the limit toast in DashboardNew
+                              onCreatePage();
                               return;
                             }
                             const r = await onDuplicatePage(page.id);
                             r?.error ? toast.error('Erreur') : toast.success(t('pages.duplicated'));
                           }}
-                          className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-accent/60 transition-colors"
+                          className="hidden sm:inline-flex w-8 h-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors"
                           title="Dupliquer"
                         >
-                          <Copy className="w-3 h-3" />
-                        </button>
-                      )}
-                      <a
-                        href={`/${page.username}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-accent/60 transition-colors"
-                        title="Voir la page"
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                      {onDeletePage && (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(page); }}
-                          className="w-7 h-7 inline-flex items-center justify-center rounded-md text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-3 h-3" />
+                          <Copy className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
-                  )}
-
-                  {/* Chevron mobile */}
-                  {!bulkMode && (
-                    <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/20 sm:hidden shrink-0" />
                   )}
                 </div>
               </motion.div>

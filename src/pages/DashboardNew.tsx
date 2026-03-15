@@ -272,19 +272,19 @@ const Dashboard = () => {
                   </h1>
                 </div>
               </div>
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-1">
                 <LanguageSelector />
                 <button
                   onClick={toggleTheme}
-                  className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-muted-foreground/50 hover:text-foreground hover:bg-accent/40 transition-all duration-200"
+                  className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200"
                 >
-                  {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
                 <button
                   onClick={signOut}
-                  className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-muted-foreground/50 hover:text-foreground hover:bg-accent/40 transition-all duration-200"
+                  className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-4 h-4" />
                 </button>
               </div>
             </div>
