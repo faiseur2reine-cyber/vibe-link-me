@@ -119,6 +119,10 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   };
 
   const handleQuickAdd = async (raw: string) => {
+    if (!canAddMore) {
+      setUpgradeNudgeOpen(true);
+      return;
+    }
     const wasEmpty = links.length === 0;
     const url = raw.startsWith('http') ? raw : `https://${raw}`;
     const platform = detectPlatform(url);
@@ -184,19 +188,19 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </div>
       </div>
 
-      {/* ── Hidden links warning ── */}
+      {/* ── Over limit warning — all links disabled on public page ── */}
       {hiddenCount > 0 && (
-        <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl bg-amber-500/[0.06] border border-amber-500/15">
-          <EyeOff className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+        <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl bg-red-500/[0.06] border border-red-500/15">
+          <EyeOff className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-medium text-amber-700 dark:text-amber-300">
-              {hiddenCount} lien{hiddenCount > 1 ? 's' : ''} masqué{hiddenCount > 1 ? 's' : ''} sur votre page publique
+            <p className="text-[12px] font-medium text-red-700 dark:text-red-300">
+              Tous tes liens sont désactivés sur ta page publique
             </p>
-            <p className="text-[11px] text-amber-600/60 dark:text-amber-400/50 mt-0.5">
-              Plan {plan === 'free' ? 'gratuit' : 'Starter'} : {maxLinks} liens max. Passez au plan supérieur pour tout afficher.
+            <p className="text-[11px] text-red-600/60 dark:text-red-400/50 mt-0.5">
+              Tu as {links.length} liens mais ton plan en autorise {maxLinks}. Supprime {hiddenCount} lien{hiddenCount > 1 ? 's' : ''} ou passe en Pro.
             </p>
           </div>
-          <a href="/dashboard/settings" className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[11px] font-semibold hover:bg-amber-500/25 transition-colors">
+          <a href="/dashboard/settings" className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/15 text-red-700 dark:text-red-300 text-[11px] font-semibold hover:bg-red-500/25 transition-colors">
             <Crown className="w-3 h-3" /> Upgrade
           </a>
         </div>
@@ -445,7 +449,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             </div>
             <h3 className="text-lg font-bold text-foreground">Tu as atteint la limite</h3>
             <p className="text-[13px] text-muted-foreground mt-2 leading-relaxed">
-              Le plan gratuit inclut {maxLinks} liens. Passe en Pro pour des liens illimités et toutes les features.
+              Ton plan actuel inclut {maxLinks} liens. Passe en Pro pour des liens illimités et toutes les features.
             </p>
             <div className="mt-5 space-y-2">
               <Button asChild className="w-full h-11 rounded-xl gap-2 font-semibold">
