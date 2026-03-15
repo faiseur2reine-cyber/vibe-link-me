@@ -258,7 +258,7 @@ const DashboardOverview = () => {
           ) : (
             <div className="p-3.5 rounded-xl glass">
               <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Liens actifs</span>
-              <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : stats.totalLinks.toLocaleString()}</p>
+              <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <AnimatedCounter value={stats.totalLinks} />}</p>
             </div>
           )}
         </motion.div>
