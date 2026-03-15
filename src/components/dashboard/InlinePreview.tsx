@@ -259,95 +259,92 @@ const ImmersivePreview = ({ page, links, displayName }: {
   const visibleLinks = links.filter(l => l.is_visible !== false);
 
   return (
-    <div className="w-full h-full bg-[#0a0a0a] text-white flex flex-col" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
-      {/* Hero — mirrors real 55dvh hero */}
-      <div className="relative shrink-0 overflow-hidden" style={{ height: '48%' }}>
+    <div className="w-full h-full bg-[#0a0a0a] text-white flex flex-col relative overflow-hidden" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
+      {/* Fixed background */}
+      <div className="absolute inset-0">
         {heroSrc ? (
-          <img src={heroSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={heroSrc} alt="" className="w-full h-full object-cover" />
         ) : (
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)' }} />
+          <div className="w-full h-full" style={{ background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)' }} />
         )}
-        {/* Cinematic gradient — matches real 7-stop */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, rgba(10,10,10,0.15) 0%, transparent 25%, transparent 40%, rgba(10,10,10,0.35) 55%, rgba(10,10,10,0.75) 72%, rgba(10,10,10,0.95) 85%, #0a0a0a 98%)',
-        }} />
-
-        {/* Profile info at bottom of hero */}
-        <div className="absolute bottom-2.5 left-3 right-3 text-center">
-          {/* Avatar */}
-          {page.avatar_url && (
-            <div className="flex justify-center mb-2">
-              <div className="relative">
-                <img
-                  src={page.avatar_url}
-                  alt=""
-                  className={`${heroSrc ? 'w-10 h-10' : 'w-12 h-12'} rounded-full object-cover`}
-                  style={{ border: '2px solid rgba(255,255,255,0.15)' }}
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-[1.5px] border-[#0a0a0a]" />
-              </div>
-            </div>
-          )}
-          <p className="text-[13px] font-extrabold tracking-tight leading-tight">{displayName}</p>
-          <div className="flex items-center justify-center gap-1 mt-0.5">
-            {!page.avatar_url && <div className="w-1 h-1 rounded-full bg-emerald-400" />}
-            <span className="text-[7px] text-white/35 font-medium">{page.connected_label || 'Active now'}</span>
-          </div>
-          {page.bio && (
-            <p className="text-[7px] text-white/40 mt-1 line-clamp-2 max-w-[180px] mx-auto leading-relaxed">{page.bio}</p>
-          )}
-        </div>
       </div>
 
-      {/* Links — glass squircle buttons like real layout */}
-      <div className="flex-1 px-3 pt-3 pb-3 flex flex-col gap-[6px] overflow-y-auto scrollbar-hide">
-        {visibleLinks.slice(0, 5).map((link, idx) => {
-          const iconBg = link.bg_color && link.bg_color !== '#FFFFFF' && link.bg_color !== '#ffffff'
-            ? link.bg_color : '#e8503a';
+      {/* Photo spacer */}
+      <div className="shrink-0" style={{ height: '50%' }} />
 
-          return (
-            <motion.div
-              key={link.id}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.04, duration: 0.2 }}
-              className="flex items-center gap-2"
-              style={{
-                background: 'rgba(255,255,255,0.96)',
-                borderRadius: 10,
-                padding: '6px 8px 6px 6px',
-                border: '1px solid rgba(255,255,255,0.12)',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06)',
-              }}
-            >
-              {/* Squircle icon */}
-              {link.thumbnail_url ? (
-                <div className="w-[24px] h-[24px] rounded-[6px] overflow-hidden shrink-0">
-                  <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
-                </div>
-              ) : (
-                <div className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center shrink-0" style={{ backgroundColor: iconBg }}>
-                  <LinkFavicon url={link.url} size="xs" className="text-white" />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <span className="block text-[9px] font-semibold text-[#111] truncate">{link.title}</span>
-                {link.description && (
-                  <span className="block text-[6px] text-[#999] truncate mt-px">{link.description}</span>
-                )}
+      {/* Content overlay */}
+      <div className="relative flex-1 flex flex-col">
+        <div className="absolute -top-12 left-0 right-0 h-12 pointer-events-none" style={{
+          background: 'linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.5) 40%, #0a0a0a 100%)',
+        }} />
+
+        <div className="bg-[#0a0a0a] flex-1 flex flex-col px-3 pb-3">
+          {/* Compact profile row */}
+          <div className="flex items-center gap-2 mb-2.5">
+            {page.avatar_url && (
+              <img src={page.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover shrink-0" style={{ border: '1.5px solid rgba(255,255,255,0.12)' }} />
+            )}
+            <div className="min-w-0">
+              <p className="text-[11px] font-extrabold tracking-tight leading-tight truncate">{displayName}</p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <div className="w-1 h-1 rounded-full bg-emerald-400" />
+                <span className="text-[7px] text-white/35 font-medium">{page.connected_label || 'Active now'}</span>
               </div>
-              <div className="w-4 h-4 rounded-[4px] bg-black/[0.04] flex items-center justify-center shrink-0">
-                <svg className="w-2 h-2 text-black/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
-              </div>
-            </motion.div>
-          );
-        })}
-        {visibleLinks.length > 5 && (
-          <p className="text-center text-[7px] text-white/15 pt-0.5">+{visibleLinks.length - 5} liens</p>
-        )}
-        {visibleLinks.length === 0 && (
-          <p className="text-center text-[7px] text-white/15 pt-4">Pas encore de liens</p>
-        )}
+            </div>
+          </div>
+          {page.bio && (
+            <p className="text-[7px] text-white/40 mb-2 line-clamp-2 leading-relaxed">{page.bio}</p>
+          )}
+
+          {/* Links */}
+          <div className="flex-1 flex flex-col gap-[5px] overflow-y-auto scrollbar-hide">
+            {visibleLinks.slice(0, 5).map((link, idx) => {
+              const iconBg = link.bg_color && link.bg_color !== '#FFFFFF' && link.bg_color !== '#ffffff'
+                ? link.bg_color : '#e8503a';
+              const isFeatured = link.style === 'featured';
+
+              return (
+                <motion.div
+                  key={link.id}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.04, duration: 0.2 }}
+                  className="flex items-center gap-2"
+                  style={{
+                    background: isFeatured ? iconBg : 'rgba(255,255,255,0.97)',
+                    borderRadius: 8,
+                    padding: '5px 8px',
+                    border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: isFeatured ? `0 2px 8px ${iconBg}40` : '0 1px 3px rgba(0,0,0,0.04)',
+                  }}
+                >
+                  {link.thumbnail_url ? (
+                    <div className="w-[22px] h-[22px] rounded-[5px] overflow-hidden shrink-0">
+                      <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-[22px] h-[22px] rounded-[5px] flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: isFeatured ? 'rgba(255,255,255,0.2)' : iconBg }}>
+                      <LinkFavicon url={link.url} size="xs" className="text-white" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className={`block text-[9px] font-bold truncate ${isFeatured ? 'text-white' : 'text-[#111]'}`}>{link.title}</span>
+                    {link.description && (
+                      <span className={`block text-[6px] truncate mt-px ${isFeatured ? 'text-white/50' : 'text-[#999]'}`}>{link.description}</span>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+            {visibleLinks.length > 5 && (
+              <p className="text-center text-[7px] text-white/15 pt-0.5">+{visibleLinks.length - 5} liens</p>
+            )}
+            {visibleLinks.length === 0 && (
+              <p className="text-center text-[7px] text-white/15 pt-4">Pas encore de liens</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

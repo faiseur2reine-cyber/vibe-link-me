@@ -183,10 +183,17 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-semibold text-foreground leading-none truncate">{page.display_name || page.username}</h2>
-              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted/50 shrink-0">
+              <button
+                onClick={async () => {
+                  const next = status === 'active' ? 'paused' : 'active';
+                  await handleUpdate({ status: next } as any);
+                  toast.success(next === 'active' ? 'Page activée' : 'Page en pause');
+                }}
+                className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted/50 shrink-0 hover:bg-muted transition-colors active:scale-95"
+              >
                 <div className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
                 <span className="text-[9px] font-semibold text-muted-foreground">{statusConfig.label}</span>
-              </div>
+              </button>
             </div>
             <button
               onClick={() => {
@@ -200,19 +207,19 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl" asChild>
+        <div className="flex items-center gap-1.5">
+          <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl" asChild>
             <a href={`/${page.username}`} target="_blank" rel="noopener noreferrer" title="Voir la page">
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-4 h-4" />
             </a>
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl" onClick={() => setShowShare(true)} title="Partager / QR">
-            <QrCode className="w-3.5 h-3.5" />
+          <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl" onClick={() => setShowShare(true)} title="Partager / QR">
+            <QrCode className="w-4 h-4" />
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="h-8 w-8 inline-flex items-center justify-center text-muted-foreground/40 hover:text-destructive rounded-xl hover:bg-destructive/10 transition-all duration-200">
-                <Trash2 className="w-3.5 h-3.5" />
+              <button className="h-9 w-9 inline-flex items-center justify-center text-muted-foreground hover:text-destructive rounded-xl hover:bg-destructive/10 transition-all duration-200">
+                <Trash2 className="w-4 h-4" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
