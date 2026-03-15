@@ -305,44 +305,39 @@ const ImmersivePreview = ({ page, links, displayName }: {
           const iconBg = link.bg_color && link.bg_color !== '#FFFFFF' && link.bg_color !== '#ffffff'
             ? link.bg_color : '#e8503a';
 
-          const isFeatured = link.style === 'featured';
-
           return (
             <motion.div
               key={link.id}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, duration: 0.2 }}
-              className="flex items-center"
+              className="flex items-center gap-2"
               style={{
-                background: isFeatured ? iconBg : 'rgba(255,255,255,0.97)',
-                borderRadius: 8,
-                padding: '0 8px 0 0',
-                minHeight: isFeatured ? 36 : 32,
-                border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                boxShadow: isFeatured
-                  ? `0 2px 8px ${iconBg}40`
-                  : '0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06)',
+                background: 'rgba(255,255,255,0.96)',
+                borderRadius: 10,
+                padding: '6px 8px 6px 6px',
+                border: '1px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06)',
               }}
             >
-              {/* Icon */}
-              <div className="w-[32px] h-full flex items-center justify-center shrink-0" style={{ minHeight: isFeatured ? 36 : 32 }}>
-                {link.thumbnail_url ? (
-                  <div className="w-[22px] h-[22px] rounded-[5px] overflow-hidden shrink-0">
-                    <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
-                  </div>
-                ) : (
-                  <div className="w-[22px] h-[22px] rounded-[5px] flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: isFeatured ? 'rgba(255,255,255,0.2)' : iconBg }}>
-                    <LinkFavicon url={link.url} size="xs" className="text-white" />
-                  </div>
+              {/* Squircle icon */}
+              {link.thumbnail_url ? (
+                <div className="w-[24px] h-[24px] rounded-[6px] overflow-hidden shrink-0">
+                  <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center shrink-0" style={{ backgroundColor: iconBg }}>
+                  <LinkFavicon url={link.url} size="xs" className="text-white" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <span className="block text-[9px] font-semibold text-[#111] truncate">{link.title}</span>
+                {link.description && (
+                  <span className="block text-[6px] text-[#999] truncate mt-px">{link.description}</span>
                 )}
               </div>
-              <div className="flex-1 min-w-0">
-                <span className={`block text-[9px] font-bold truncate ${isFeatured ? 'text-white' : 'text-[#111]'}`}>{link.title}</span>
-                {link.description && (
-                  <span className={`block text-[6px] truncate mt-px ${isFeatured ? 'text-white/50' : 'text-[#999]'}`}>{link.description}</span>
-                )}
+              <div className="w-4 h-4 rounded-[4px] bg-black/[0.04] flex items-center justify-center shrink-0">
+                <svg className="w-2 h-2 text-black/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
               </div>
             </motion.div>
           );
