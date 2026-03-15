@@ -102,14 +102,21 @@ serve(async (req) => {
 
         logStep("Subscription event", { email: customer.email, priceId, plan, status });
 
-        if (status === "active") {
-          const user = await findUserByEmail(supabase, customer.email);
-          if (user) {
-            await updateUserPlan(supabase, user.id, plan);
-          } else {
-            logStep("User not found", { email: customer.email });
-          }
+        const user = await findUserByEmail(supabase, customer.email);
+        if (!user) {
+          logStep("User not found", { email: customer.email });
+          break;
         }
+
+        if (status === "active") {
+          // Payment OK — grant the plan
+          await updateUserPlan(supabase, user.id, plan);
+        } else if (status === "past_due" || status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
+          // Payment failed or subscription ended — downgrade immediately
+          logStep("Downgrading user due to status", { userId: user.id, status });
+          await updateUserPlan(supabase, user.id, "free");
+        }
+        // "trialing", "incomplete" → do nothing, wait for resolution
         break;
       }
 
