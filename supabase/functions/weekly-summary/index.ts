@@ -18,6 +18,16 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
 
+  // Called daily by Cronitor, but only send emails on Mondays
+  // Pass ?force=true to bypass day check (for testing)
+  const url = new URL(req.url);
+  const force = url.searchParams.get("force") === "true";
+  const today = new Date().getUTCDay(); // 0=Sun, 1=Mon
+  if (!force && today !== 1) {
+    log("Skipped — not Monday", { day: today });
+    return new Response(JSON.stringify({ skipped: true, reason: "not_monday", day: today }), { status: 200 });
+  }
+
   const resendKey = Deno.env.get("RESEND_API_KEY");
   if (!resendKey) {
     log("ERROR", { message: "RESEND_API_KEY not set" });
