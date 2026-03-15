@@ -297,6 +297,27 @@ const DashboardOverview = () => {
           </motion.div>
         )}
 
+        {/* ── Stats-based upgrade nudge ── */}
+        {!stats.loading && subscription.plan === 'free' && last7Total >= 20 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12, duration: 0.3, ease }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/[0.04] border border-primary/10"
+          >
+            <Sparkles className="w-4 h-4 text-primary shrink-0" />
+            <p className="text-[12px] text-foreground/70 flex-1">
+              <span className="font-semibold text-foreground">{last7Total} clics cette semaine.</span>
+              {' '}Avec le Pro, tu pourrais tracker les referrers, ajouter des pixels et des urgency widgets.
+            </p>
+            <Button size="sm" variant="outline" className="h-7 rounded-lg text-[11px] font-semibold gap-1 shrink-0 border-primary/20 text-primary hover:bg-primary/10" asChild>
+              <a href="/dashboard/settings">
+                <Sparkles className="w-3 h-3" /> Upgrade
+              </a>
+            </Button>
+          </motion.div>
+        )}
+
         {/* ── Two columns ── */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Leaderboard — 3 col */}

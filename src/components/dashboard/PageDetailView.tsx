@@ -10,7 +10,7 @@ import {
   TapArrowLeft as ArrowLeft, TapExternalLink as ExternalLink, TapEye as Eye,
   TapLink as Link2, TapUser as User, TapPalette as Palette, TapChart as BarChart3,
   TapTrash as Trash2, TapLoader as Loader2, TapX as X, TapSettings as Settings,
-  TapChevronDown as ChevronDown,
+  TapChevronDown as ChevronDown, TapLock as Lock, TapSparkles as Sparkles,
 } from '@/components/icons/TapIcons';
 import { Flame, Activity, ShieldCheck, QrCode, Briefcase } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -57,18 +57,23 @@ const TABS = [
 ];
 
 // ── Collapsible section for Settings tab ──
-const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false }: {
-  icon: any; title: string; children: React.ReactNode; defaultOpen?: boolean;
+const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false, locked = false }: {
+  icon: any; title: string; children: React.ReactNode; defaultOpen?: boolean; locked?: boolean;
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border border-border/40 rounded-xl overflow-hidden">
+    <div className={`border rounded-xl overflow-hidden ${locked ? 'border-border/20' : 'border-border/40'}`}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-2.5 px-4 py-3 text-left hover:bg-muted/30 transition-colors"
       >
-        <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-        <span className="text-[13px] font-medium flex-1">{title}</span>
+        <Icon className={`w-3.5 h-3.5 shrink-0 ${locked ? 'text-muted-foreground/30' : 'text-muted-foreground'}`} />
+        <span className={`text-[13px] font-medium flex-1 ${locked ? 'text-muted-foreground/50' : ''}`}>{title}</span>
+        {locked && (
+          <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary/8 text-primary text-[10px] font-semibold">
+            <Lock className="w-2.5 h-2.5" /> Pro
+          </span>
+        )}
         <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground/40 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence initial={false}>
@@ -80,9 +85,25 @@ const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false }: {
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 pt-1">
-              {children}
-            </div>
+            {locked ? (
+              <div className="px-4 py-6 text-center relative">
+                <div className="absolute inset-0 bg-muted/20 backdrop-blur-[1px]" />
+                <div className="relative">
+                  <Lock className="w-5 h-5 text-muted-foreground/30 mx-auto mb-2" />
+                  <p className="text-[12px] text-muted-foreground/60">
+                    Disponible avec le plan Pro
+                  </p>
+                  <a
+                    href="/dashboard/settings"
+                    className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[11px] font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3" /> Passer en Pro
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 pb-4 pt-1">{children}</div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -284,19 +305,19 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             <TabsContent value="settings" className="mt-0">
               <Suspense fallback={<TabLoader />}>
                 <div className="space-y-3">
-                  <SettingsSection icon={Flame} title={t('editors.urgencyTitle')} defaultOpen>
+                  <SettingsSection icon={Flame} title={t('editors.urgencyTitle')} defaultOpen locked={userPlan === 'free'}>
                     <UrgencyEditor page={page} onUpdate={handleUpdate} />
                   </SettingsSection>
 
-                  <SettingsSection icon={Activity} title={t('editors.trackingTitle')}>
+                  <SettingsSection icon={Activity} title={t('editors.trackingTitle')} locked={userPlan === 'free'}>
                     <TrackingEditor page={page} onUpdate={handleUpdate} />
                   </SettingsSection>
 
-                  <SettingsSection icon={ShieldCheck} title={t('editors.safePageTitle')}>
+                  <SettingsSection icon={ShieldCheck} title={t('editors.safePageTitle')} locked={userPlan === 'free'}>
                     <SafePageEditor page={page} onUpdate={handleUpdate} />
                   </SettingsSection>
 
-                  <SettingsSection icon={Briefcase} title={t('editors.agencyTitle')}>
+                  <SettingsSection icon={Briefcase} title={t('editors.agencyTitle')} locked={userPlan === 'free'}>
                     <AgencyEditor page={page} onUpdate={handleUpdate} />
                   </SettingsSection>
                 </div>

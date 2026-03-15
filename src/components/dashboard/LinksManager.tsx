@@ -4,13 +4,14 @@ import { LinkItem } from '@/hooks/useDashboard';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import {
   TapPlus as Plus, TapGrip as GripVertical, TapPencil as Pencil, TapTrash as Trash2,
   TapExternalLink as ExternalLink, TapLayout as LayoutTemplate, TapBookmark as BookmarkPlus,
   TapLink as LinkIcon, TapClock as Clock, TapClick as MousePointerClick,
   TapEyeOff as EyeOff, TapCopy as Copy, TapSortAZ as ArrowDownAZ, TapTrendingDown as TrendingDown,
-  TapCrown as Crown,
+  TapCrown as Crown, TapLock as Lock, TapSparkles as Sparkles,
 } from '@/components/icons/TapIcons';
 import { detectPlatform } from '@/lib/platforms';
 import LinkFavicon from '@/components/LinkFavicon';
@@ -46,6 +47,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
   const [celebrationOpen, setCelebrationOpen] = useState(false);
+  const [upgradeNudgeOpen, setUpgradeNudgeOpen] = useState(false);
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
@@ -78,7 +80,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
   const openNew = () => {
     if (!canAddMore) {
-      toast.error(t(plan === 'starter' ? 'dashboard.maxLinks20' : 'dashboard.maxLinks5'));
+      setUpgradeNudgeOpen(true);
       return;
     }
     setEditingLink(null);
@@ -144,9 +146,25 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           </div>
           <div>
             <h3 className="font-semibold text-sm text-foreground">{t('dashboard.links')}</h3>
-            <p className="text-xs text-muted-foreground">
-              {links.length}{plan !== 'pro' ? ` / ${maxLinks}` : ''} {t('linksManager.linksCount')}
-            </p>
+            {plan !== 'pro' ? (
+              <div className="flex items-center gap-2 mt-0.5">
+                <div className="w-20 h-1.5 rounded-full bg-muted/60 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      links.length >= maxLinks ? 'bg-red-500' : links.length >= maxLinks - 1 ? 'bg-amber-500' : 'bg-primary'
+                    }`}
+                    style={{ width: `${Math.min((links.length / maxLinks) * 100, 100)}%` }}
+                  />
+                </div>
+                <span className={`text-[11px] font-medium ${links.length >= maxLinks ? 'text-red-500' : links.length >= maxLinks - 1 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                  {links.length}/{maxLinks}
+                </span>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {links.length} {t('linksManager.linksCount')}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -181,6 +199,19 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           <a href="/dashboard/settings" className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[11px] font-semibold hover:bg-amber-500/25 transition-colors">
             <Crown className="w-3 h-3" /> Upgrade
           </a>
+        </div>
+      )}
+
+      {/* ── Approaching limit nudge ── */}
+      {hiddenCount === 0 && plan !== 'pro' && links.length >= maxLinks - 1 && links.length > 0 && (
+        <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-primary/[0.04] border border-primary/10">
+          <Sparkles className="w-4 h-4 text-primary/60 shrink-0" />
+          <p className="text-[12px] text-muted-foreground flex-1">
+            {links.length >= maxLinks
+              ? <>Tu as atteint la limite de {maxLinks} liens. <a href="/dashboard/settings" className="text-primary font-medium hover:underline">Passe en Pro →</a></>
+              : <>Plus qu'un lien disponible. <a href="/dashboard/settings" className="text-primary font-medium hover:underline">Passe en Pro</a> pour des liens illimités.</>
+            }
+          </p>
         </div>
       )}
 
@@ -404,6 +435,32 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
           username={username}
         />
       )}
+
+      {/* ── Upgrade nudge dialog ── */}
+      <Dialog open={upgradeNudgeOpen} onOpenChange={setUpgradeNudgeOpen}>
+        <DialogContent className="sm:max-w-xs p-0 overflow-hidden border-0">
+          <div className="px-6 pt-8 pb-6 text-center">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground">Tu as atteint la limite</h3>
+            <p className="text-[13px] text-muted-foreground mt-2 leading-relaxed">
+              Le plan gratuit inclut {maxLinks} liens. Passe en Pro pour des liens illimités et toutes les features.
+            </p>
+            <div className="mt-5 space-y-2">
+              <Button asChild className="w-full h-11 rounded-xl gap-2 font-semibold">
+                <a href="/dashboard/settings">
+                  <Sparkles className="w-4 h-4" />
+                  Passer en Pro
+                </a>
+              </Button>
+              <Button variant="ghost" className="w-full h-9 rounded-xl text-[12px] text-muted-foreground" onClick={() => setUpgradeNudgeOpen(false)}>
+                Plus tard
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
