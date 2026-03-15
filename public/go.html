@@ -16,7 +16,6 @@
   .hint{margin-top:20px;font-size:12px;color:rgba(255,255,255,0.2);line-height:1.6;max-width:280px}
   .hint strong{color:rgba(255,255,255,0.4)}
   .hidden{display:none}
-  .url-display{font-size:11px;color:rgba(255,255,255,0.15);margin-top:24px;word-break:break-all;max-width:280px}
 </style>
 </head>
 <body>
@@ -28,14 +27,12 @@
 
   <div id="fallback" class="hidden">
     <h1>Ouvre dans ton navigateur</h1>
-    <p class="sub">Cette app bloque l'ouverture directe</p>
-    <button id="manual-btn" class="btn">
-      Ouvrir dans le navigateur
-    </button>
+    <p class="sub">Appuie pour continuer</p>
+    <button id="manual-btn" class="btn">Ouvrir dans le navigateur</button>
     <p class="hint">
-      Si ça ne marche pas, appuie sur <strong>⋯</strong> en haut à droite puis <strong>Ouvrir dans Safari</strong>
+      Si ça ne marche pas :<br>
+      <strong>⋯</strong> en haut → <strong>Ouvrir dans Safari</strong>
     </p>
-    <p id="url-text" class="url-display"></p>
   </div>
 
 <script>
@@ -47,48 +44,140 @@
   var ua = navigator.userAgent || '';
   var isAndroid = /Android/i.test(ua);
   var isIOS = /iPhone|iPad|iPod/i.test(ua);
+  var isIG = /instagram/i.test(ua);
+  var isFB = /FBAN|FBAV/i.test(ua);
+  var isTT = /musical_ly|BytedanceWebview|TikTok/i.test(ua);
+  var isInApp = isIG || isFB || isTT || /Snapchat|Twitter|LinkedIn|Line\//i.test(ua);
+  var timer;
 
-  // === ATTEMPT BREAKOUT (no fallback to target URL) ===
+  // iOS version
+  var iosVer = 0;
+  var iosMatch = ua.match(/OS (\d+)/);
+  if (iosMatch) iosVer = parseInt(iosMatch[1]);
 
-  if (isAndroid) {
-    // intent:// — asks OS to open in default browser
-    var stripped = target.replace(/^https?:\/\//, '');
-    var scheme = target.indexOf('https://') === 0 ? 'https' : 'http';
-    window.location.href = 'intent://' + stripped + '#Intent;scheme=' + scheme + ';action=android.intent.action.VIEW;S.browser_fallback_url=' + encodeURIComponent(target) + ';end';
-  } else if (isIOS) {
-    // x-safari — opens Safari directly (iOS 17.4+)
-    var safariUrl = target.indexOf('https://') === 0
-      ? target.replace('https://', 'x-safari-https://')
-      : target.replace('http://', 'x-safari-http://');
-    window.location.href = safariUrl;
+  // === APP URL SCHEMES ===
+  // For apps that have native URL schemes, open the app directly
+  var APP_SCHEMES = {
+    'twitter.com':    function(u) { var m = u.match(/twitter\.com\/([^/?#]+)/); return m ? 'twitter://user?screen_name=' + m[1] : null; },
+    'x.com':          function(u) { var m = u.match(/x\.com\/([^/?#]+)/); return m ? 'twitter://user?screen_name=' + m[1] : null; },
+    'tiktok.com':     function(u) { var m = u.match(/tiktok\.com\/@([^/?#]+)/); return m ? 'snssdk1233://user/profile/' + m[1] : null; },
+    'youtube.com':    function(u) { return 'vnd.youtube://' + u.replace(/^https?:\/\/(www\.)?youtube\.com/, ''); },
+    'youtu.be':       function(u) { var m = u.match(/youtu\.be\/([^/?#]+)/); return m ? 'vnd.youtube://watch?v=' + m[1] : null; },
+    'instagram.com':  function(u) { var m = u.match(/instagram\.com\/([^/?#]+)/); return m ? 'instagram://user?username=' + m[1] : null; },
+    'snapchat.com':   function(u) { var m = u.match(/snapchat\.com\/add\/([^/?#]+)/); return m ? 'snapchat://add/' + m[1] : null; },
+    'open.spotify.com': function(u) { return u.replace('https://open.spotify.com', 'spotify://'); },
+    't.me':           function(u) { return u.replace('https://t.me', 'tg://resolve?domain=').replace('/', ''); },
+    'telegram.me':    function(u) { return u.replace('https://telegram.me', 'tg://resolve?domain=').replace('/', ''); },
+  };
+
+  function getAppScheme(url) {
+    try {
+      var host = new URL(url).hostname.replace(/^www\./, '');
+      for (var key in APP_SCHEMES) {
+        if (host === key || host.endsWith('.' + key)) {
+          return APP_SCHEMES[key](url);
+        }
+      }
+    } catch(e) {}
+    return null;
   }
 
-  // === SHOW FALLBACK AFTER 2s (if we're still here = breakout failed) ===
+  function directRedirect(url) {
+    clearTimeout(timer);
+    window.location.href = url;
+  }
 
-  setTimeout(function() {
-    // If we're not on this page anymore, breakout worked
-    if (!document.hasFocus()) return;
-
+  function showFallback() {
+    if (document.hidden) return;
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('fallback').classList.remove('hidden');
-    document.getElementById('url-text').textContent = target;
+    document.getElementById('manual-btn').onclick = function() { attemptBreakout(true); };
+  }
 
-    // Manual button: retry breakout with user interaction (more permissions)
-    document.getElementById('manual-btn').addEventListener('click', function() {
-      if (isAndroid) {
-        var stripped = target.replace(/^https?:\/\//, '');
-        var scheme = target.indexOf('https://') === 0 ? 'https' : 'http';
-        window.location.href = 'intent://' + stripped + '#Intent;scheme=' + scheme + ';action=android.intent.action.VIEW;S.browser_fallback_url=' + encodeURIComponent(target) + ';end';
-      } else if (isIOS) {
-        var safariUrl = target.indexOf('https://') === 0
-          ? target.replace('https://', 'x-safari-https://')
-          : target.replace('http://', 'x-safari-http://');
-        window.location.href = safariUrl;
-      }
-      // NO fallback to window.location.href = target
-      // That would open in the webview which defeats the purpose
-    });
-  }, 2000);
+  function attemptBreakout(isManual) {
+    // 1. Try app URL scheme first (works in webviews!)
+    var scheme = getAppScheme(target);
+    if (scheme) {
+      window.location.href = scheme;
+      timer = setTimeout(function() {
+        // If still here, app not installed → fallback to target
+        if (!document.hidden) directRedirect(target);
+      }, 1500);
+      return;
+    }
+
+    // 2. Android: intent://
+    if (isAndroid) {
+      try {
+        var parsed = new URL(target);
+        var intentUrl = 'intent://' + parsed.host + parsed.pathname + parsed.search
+          + '#Intent;scheme=' + parsed.protocol.replace(':', '')
+          + ';package=com.android.chrome'
+          + ';S.browser_fallback_url=' + encodeURIComponent(target)
+          + ';end';
+        window.location.href = intentUrl;
+        timer = setTimeout(function() {
+          if (!document.hidden) directRedirect(target);
+        }, 1500);
+      } catch(e) { directRedirect(target); }
+      return;
+    }
+
+    // 3. iOS 17+ : x-safari
+    if (isIOS && iosVer >= 17) {
+      try {
+        var parsed = new URL(target);
+        var safariUrl = 'x-safari-' + target;
+
+        if (isIG) {
+          // Instagram on iOS: window.open works better than location.href
+          window.open(safariUrl, '_blank');
+
+          // Listen for visibility change = breakout worked
+          var onVis = function() {
+            if (document.visibilityState === 'hidden') {
+              document.removeEventListener('visibilitychange', onVis);
+            }
+          };
+          document.addEventListener('visibilitychange', onVis);
+
+          timer = setTimeout(function() {
+            document.removeEventListener('visibilitychange', onVis);
+            if (!document.hidden) {
+              // x-safari failed → show fallback (not direct redirect)
+              if (isManual) {
+                // User already tapped the button once, redirect as last resort
+                directRedirect(target);
+              } else {
+                showFallback();
+              }
+            }
+          }, 2500);
+        } else {
+          // Other in-app browsers on iOS
+          window.location.href = safariUrl;
+          timer = setTimeout(function() {
+            if (!document.hidden) {
+              if (isManual) directRedirect(target);
+              else showFallback();
+            }
+          }, 2500);
+        }
+      } catch(e) { directRedirect(target); }
+      return;
+    }
+
+    // 4. Older iOS or unknown: direct redirect
+    directRedirect(target);
+  }
+
+  // === GO ===
+  if (!isInApp) {
+    // Native browser: just redirect
+    directRedirect(target);
+  } else {
+    attemptBreakout(false);
+  }
 
 })();
 </script>
