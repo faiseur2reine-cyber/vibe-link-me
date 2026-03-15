@@ -56,6 +56,29 @@ const Sparkline = ({ data, color = 'currentColor' }: { data: number[]; color?: s
   );
 };
 
+// ── Animated counter ──
+const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    const duration = 800;
+    const startTime = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(eased * value));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [isInView, value]);
+
+  return <span ref={ref}>{displayValue.toLocaleString()}{suffix}</span>;
+};
+
 const DashboardOverview = () => {
   const { t } = useTranslation();
   const { user, subscription } = useAuth();
