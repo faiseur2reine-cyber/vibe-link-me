@@ -222,7 +222,7 @@ const DashboardOverview = () => {
             <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Pages actives</span>
             <div className="flex items-baseline gap-1.5 mt-2">
               <span className="text-2xl font-bold tabular-nums">{activePages}</span>
-              <span className="text-[12px] text-muted-foreground/40">/ {pages.length}</span>
+              <span className="text-[12px] text-muted-foreground/60">/ {pages.length}</span>
             </div>
           </div>
 
@@ -252,17 +252,17 @@ const DashboardOverview = () => {
               <DollarSign className="w-4 h-4 text-emerald-500 shrink-0" />
               <div className="flex items-center gap-6">
                 <div>
-                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">Brut</p>
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">Brut</p>
                   <p className="text-[15px] font-bold tabular-nums">{totalRevenue.toLocaleString()}€</p>
                 </div>
                 <div className="w-px h-6 bg-border/30" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">Net agence</p>
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">Net agence</p>
                   <p className="text-[15px] font-bold tabular-nums text-emerald-600 dark:text-emerald-400">{totalNet.toLocaleString()}€</p>
                 </div>
                 <div className="w-px h-6 bg-border/30" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">Liens</p>
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">Liens</p>
                   <p className="text-[15px] font-bold tabular-nums">{stats.totalLinks}</p>
                 </div>
               </div>
@@ -343,7 +343,7 @@ const DashboardOverview = () => {
 
             {pages.length === 0 ? (
               <div className="text-center py-10">
-                <p className="text-[12px] text-muted-foreground/40 mb-3">Aucune page créée</p>
+                <p className="text-[12px] text-muted-foreground/60 mb-3">Aucune page créée</p>
                 <Button size="sm" variant="outline" className="h-8 text-[11px] rounded-lg" onClick={() => navigate('/dashboard/pages')}>
                   <Plus className="w-3 h-3 mr-1" /> Créer
                 </Button>
@@ -364,7 +364,7 @@ const DashboardOverview = () => {
                       className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-muted/40 transition-colors text-left group"
                     >
                       {/* Rank */}
-                      <span className="text-[11px] font-bold text-muted-foreground/25 w-4 text-center tabular-nums shrink-0">{i + 1}</span>
+                      <span className="text-[11px] font-bold text-muted-foreground/50 w-4 text-center tabular-nums shrink-0">{i + 1}</span>
 
                       {/* Avatar */}
                       <div className="relative w-8 h-8 rounded-full overflow-hidden bg-muted/60 shrink-0">
@@ -372,7 +372,7 @@ const DashboardOverview = () => {
                           <img src={pageData.avatar_url} alt="" className="w-full h-full object-cover" loading="lazy" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-[11px] font-semibold text-muted-foreground/40">
+                            <span className="text-[11px] font-semibold text-muted-foreground/60">
                               {(p.displayName || p.username).charAt(0).toUpperCase()}
                             </span>
                           </div>
@@ -383,7 +383,7 @@ const DashboardOverview = () => {
                       {/* Info */}
                       <div className="flex-1 min-w-0">
                         <span className="text-[12px] font-medium truncate block">{p.displayName || p.username}</span>
-                        <span className="text-[10px] text-muted-foreground/40">@{p.username}</span>
+                        <span className="text-[10px] text-muted-foreground/50">@{p.username}</span>
                       </div>
 
                       {/* Revenue */}
@@ -396,10 +396,10 @@ const DashboardOverview = () => {
                       {/* Clicks */}
                       <div className="text-right shrink-0">
                         <span className="text-[12px] font-semibold tabular-nums">{p.clicks.toLocaleString()}</span>
-                        <span className="text-[10px] text-muted-foreground/30 ml-0.5">clics</span>
+                        <span className="text-[10px] text-muted-foreground/50 ml-0.5">clics</span>
                       </div>
 
-                      <ArrowRight className="w-3 h-3 text-muted-foreground/15 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
+                      <ArrowRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-muted-foreground/60 transition-colors shrink-0" />
                     </button>
                   );
                 })}
@@ -421,7 +421,7 @@ const DashboardOverview = () => {
                 Activité récente
               </h3>
               {recentlyEdited.length === 0 ? (
-                <p className="text-[12px] text-muted-foreground/40 py-4 text-center">Aucune activité</p>
+                <p className="text-[12px] text-muted-foreground/60 py-4 text-center">Aucune activité</p>
               ) : (
                 <div className="space-y-1">
                   {recentlyEdited.map(page => (
@@ -435,14 +435,14 @@ const DashboardOverview = () => {
                           <img src={page.avatar_url} alt="" className="w-full h-full object-cover" loading="lazy" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-[9px] font-semibold text-muted-foreground/40">
+                            <span className="text-[9px] font-semibold text-muted-foreground/60">
                               {(page.display_name || page.username)?.[0]?.toUpperCase()}
                             </span>
                           </div>
                         )}
                       </div>
                       <span className="text-[11px] font-medium truncate flex-1">{page.display_name || page.username}</span>
-                      <span className="text-[10px] text-muted-foreground/30 tabular-nums shrink-0">
+                      <span className="text-[10px] text-muted-foreground/50 tabular-nums shrink-0">
                         {timeAgo(new Date(page.updated_at))}
                       </span>
                     </button>

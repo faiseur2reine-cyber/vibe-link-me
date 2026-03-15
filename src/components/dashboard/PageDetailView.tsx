@@ -67,7 +67,7 @@ const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false, loc
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-2.5 px-4 py-3 text-left hover:bg-muted/30 transition-colors"
       >
-        <Icon className={`w-3.5 h-3.5 shrink-0 ${locked ? 'text-muted-foreground/30' : 'text-muted-foreground'}`} />
+        <Icon className={`w-3.5 h-3.5 shrink-0 ${locked ? 'text-muted-foreground/50' : 'text-muted-foreground'}`} />
         <span className={`text-[13px] font-medium flex-1 ${locked ? 'text-muted-foreground/50' : ''}`}>{title}</span>
         {locked && (
           <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary/8 text-primary text-[10px] font-semibold">
@@ -89,7 +89,7 @@ const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false, loc
               <div className="px-4 py-6 text-center relative">
                 <div className="absolute inset-0 bg-muted/20 backdrop-blur-[1px]" />
                 <div className="relative">
-                  <Lock className="w-5 h-5 text-muted-foreground/30 mx-auto mb-2" />
+                  <Lock className="w-5 h-5 text-muted-foreground/50 mx-auto mb-2" />
                   <p className="text-[12px] text-muted-foreground/60">
                     Disponible avec le plan Pro
                   </p>
@@ -419,7 +419,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
                   key={value}
                   onClick={() => { setActiveTab(value); setShowMobilePreview(false); }}
                   className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                    isActive ? 'text-foreground' : 'text-muted-foreground/40'
+                    isActive ? 'text-foreground' : 'text-muted-foreground/50'
                   }`}
                 >
                   <Icon className={`w-[18px] h-[18px] transition-all duration-200 ${isActive ? 'scale-110' : ''}`} />

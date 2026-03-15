@@ -195,7 +195,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
             if (!result?.error) input.value = '';
           }}
         />
-        <Plus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary/50 transition-colors" />
+        <Plus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 group-focus-within:text-primary/50 transition-colors" />
         <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-muted/60 text-[10px] text-muted-foreground/40 font-mono border border-border/30">⌘K</kbd>
       </div>
 
@@ -251,8 +251,8 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             {...provided.dragHandleProps}
                             className={`transition-colors shrink-0 p-1.5 -ml-1.5 rounded-lg touch-manipulation ${
                               sortBy === 'manual'
-                                ? 'cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 hover:bg-muted/40'
-                                : 'cursor-default text-muted-foreground/10'
+                                ? 'cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground/60 hover:bg-muted/40'
+                                : 'cursor-default text-muted-foreground/20'
                             }`}
                           >
                             <GripVertical className="w-3.5 h-3.5" />

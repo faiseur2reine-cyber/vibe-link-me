@@ -7,7 +7,6 @@ import {
   TapTrash as Trash2, TapSearch as Search, TapLink as Link2,
   TapClick as MousePointerClick, TapDollar as DollarSign,
   TapCheckSquare as CheckSquare, TapSquare as Square, TapX as X,
-  TapArrowUpRight as ArrowUpRight,
 } from '@/components/icons/TapIcons';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -224,7 +223,7 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     <div className="shrink-0 w-5 flex items-center justify-center">
                       {isSelected
                         ? <CheckSquare className="w-4 h-4 text-primary" />
-                        : <Square className="w-4 h-4 text-muted-foreground/25" />
+                        : <Square className="w-4 h-4 text-muted-foreground/40" />
                       }
                     </div>
                   )}
@@ -254,8 +253,8 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                       <span className="text-[11px] text-muted-foreground/40">@{page.username}</span>
                       {page.operator && (
                         <>
-                          <span className="text-muted-foreground/15">·</span>
-                          <span className="text-[11px] text-muted-foreground/35 truncate max-w-[100px]">{page.operator}</span>
+                          <span className="text-muted-foreground/30">·</span>
+                          <span className="text-[11px] text-muted-foreground/50 truncate max-w-[100px]">{page.operator}</span>
                         </>
                       )}
                     </div>

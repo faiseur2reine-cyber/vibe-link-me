@@ -782,8 +782,8 @@ const PublicProfile = () => {
                   >
                     {t('public.ctaLearnMore')}
                   </Link>
-                  <span className={`text-[10px] ${isDarkTheme ? 'text-white/10' : 'text-black/10'}`}>•</span>
-                  <span className={`text-[10px] ${isDarkTheme ? 'text-white/20' : 'text-black/15'}`}>
+                  <span className={`text-[10px] ${isDarkTheme ? 'text-white/25' : 'text-black/20'}`}>•</span>
+                  <span className={`text-[10px] ${isDarkTheme ? 'text-white/35' : 'text-black/25'}`}>
                     {t('public.ctaTagline')}
                   </span>
                 </div>
