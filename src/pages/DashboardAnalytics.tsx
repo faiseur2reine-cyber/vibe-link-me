@@ -90,9 +90,6 @@ const DashboardAnalytics = () => {
     stats.countryStats.forEach(c => rows.push(['Country', c.country, String(c.count)]));
     stats.cityStats.forEach(c => rows.push(['City', c.city, String(c.count)]));
     stats.referrerStats.forEach(r => rows.push(['Referrer', r.referrer, String(r.count)]));
-    stats.deviceStats.forEach(d => rows.push(['Device', d.device, String(d.count)]));
-    stats.browserStats.forEach(b => rows.push(['Browser', b.browser, String(b.count)]));
-    stats.osStats.forEach(o => rows.push(['OS', o.os, String(o.count)]));
 
     const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
