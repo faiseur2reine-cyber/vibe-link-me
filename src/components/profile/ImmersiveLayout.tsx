@@ -307,7 +307,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
             </motion.div>
           )}
           {sections.map((section, sIdx) => (
-            <div key={sIdx}>
+            <div key={sIdx} className="flex flex-col gap-4">
               {/* Section header */}
               {section.title && (
                 <motion.div
