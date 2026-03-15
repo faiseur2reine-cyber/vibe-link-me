@@ -246,30 +246,55 @@ const DashboardAnalytics = () => {
           </div>
           <BreakdownList items={stats.referrerStats} labelKey="referrer" valueKey="count" max={10} />
 
-        {/* Device / Browser / OS */}
+        {/* Device / Browser / OS — Pie Charts */}
         {(stats.deviceStats.length > 0 || stats.browserStats.length > 0 || stats.osStats.length > 0) && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-5 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-2 mb-3">
-                <MousePointerClick className="w-4 h-4 text-muted-foreground" />
-                <h4 className="font-display font-semibold text-foreground">Appareils</h4>
+            {[
+              { title: 'Appareils', icon: <MousePointerClick className="w-4 h-4 text-muted-foreground" />, data: stats.deviceStats.map(d => ({ name: d.device === 'mobile' ? '📱 Mobile' : d.device === 'tablet' ? '📱 Tablet' : '💻 Desktop', value: d.count })) },
+              { title: 'Navigateurs', icon: <Globe className="w-4 h-4 text-muted-foreground" />, data: stats.browserStats.map(b => ({ name: b.browser, value: b.count })) },
+              { title: 'Systèmes', icon: <TrendingUp className="w-4 h-4 text-muted-foreground" />, data: stats.osStats.map(o => ({ name: o.os, value: o.count })) },
+            ].map(({ title, icon, data }) => (
+              <div key={title} className="p-5 rounded-xl border border-border bg-card">
+                <div className="flex items-center gap-2 mb-3">
+                  {icon}
+                  <h4 className="font-display font-semibold text-foreground">{title}</h4>
+                </div>
+                {data.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={75}
+                        paddingAngle={3}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {data.map((_, i) => (
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '0.75rem', color: 'hsl(var(--foreground))', fontSize: 12 }}
+                        formatter={(value: number) => {
+                          const total = data.reduce((s, d) => s + d.value, 0);
+                          return [`${value} (${Math.round((value / total) * 100)}%)`, ''];
+                        }}
+                      />
+                      <Legend
+                        iconType="circle"
+                        iconSize={8}
+                        formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-sm text-muted-foreground py-2">Pas encore de données</p>
+                )}
               </div>
-              <PercentList items={stats.deviceStats.map(d => ({ ...d, device: d.device === 'mobile' ? '📱 Mobile' : d.device === 'tablet' ? '📱 Tablet' : '💻 Desktop' }))} labelKey="device" valueKey="count" />
-            </div>
-            <div className="p-5 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-2 mb-3">
-                <Globe className="w-4 h-4 text-muted-foreground" />
-                <h4 className="font-display font-semibold text-foreground">Navigateurs</h4>
-              </div>
-              <PercentList items={stats.browserStats} labelKey="browser" valueKey="count" />
-            </div>
-            <div className="p-5 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                <h4 className="font-display font-semibold text-foreground">Systèmes</h4>
-              </div>
-              <PercentList items={stats.osStats} labelKey="os" valueKey="count" />
-            </div>
+            ))}
           </div>
         )}
       </div>
