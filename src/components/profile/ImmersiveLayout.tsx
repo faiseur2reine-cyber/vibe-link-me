@@ -387,38 +387,51 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     viewport={{ once: true, margin: '-10px' }}
                     transition={{ delay: idx < 5 ? idx * 0.06 : 0, duration: 0.45, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center gap-[14px] text-left transition-all ${
-                      paymentIssue
-                        ? 'cursor-default'
-                        : 'active:scale-[0.975] hover:-translate-y-[2px]'
+                    className={`group relative w-full flex items-center gap-[14px] text-left ${
+                      paymentIssue ? 'cursor-default' : ''
                     }`}
                     style={{
-                      backgroundColor: isFeatured ? '#FFFFFF' : 'rgba(255,255,255,0.97)',
-                      borderRadius: 20,
+                      background: isFeatured
+                        ? `linear-gradient(135deg, #FFFFFF 0%, #F8F8FA 100%)`
+                        : 'rgba(255,255,255,0.96)',
+                      borderRadius: 18,
                       minHeight: isFeatured ? 72 : 64,
-                      padding: '12px 16px 12px 12px',
+                      padding: '12px 14px 12px 12px',
+                      border: '1px solid rgba(255,255,255,0.12)',
                       boxShadow: isFeatured
-                        ? `0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px ${iconBg}12, 0 8px 28px ${iconBg}10`
-                        : '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)',
-                      transition: 'transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1)',
+                        ? `0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 1px ${iconBg}10`
+                        : '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4)',
+                      transition: 'transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1)',
+                      transform: 'translateY(0)',
                     }}
-                    onMouseEnter={(e) => {
-                      if (paymentIssue) return;
-                      (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
-                        ? `0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.1), 0 0 0 1px ${iconBg}18, 0 12px 36px ${iconBg}15`
-                        : '0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
-                        ? `0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px ${iconBg}12, 0 8px 28px ${iconBg}10`
-                        : '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)';
-                    }}
+                    {...(!paymentIssue ? {
+                      onPointerDown: (e: React.PointerEvent) => {
+                        (e.currentTarget as HTMLElement).style.transform = 'scale(0.975)';
+                      },
+                      onPointerUp: (e: React.PointerEvent) => {
+                        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                      },
+                      onPointerLeave: (e: React.PointerEvent) => {
+                        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                        (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
+                          ? `0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 1px ${iconBg}10`
+                          : '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4)';
+                      },
+                      onMouseEnter: (e: React.MouseEvent) => {
+                        (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
+                        (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
+                          ? `0 2px 4px rgba(0,0,0,0.04), 0 14px 36px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6), 0 0 0 1px ${iconBg}15`
+                          : '0 2px 4px rgba(0,0,0,0.04), 0 14px 36px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.5)';
+                      },
+                    } : {})}
                   >
                     {/* Icon / Thumbnail */}
                     {link.thumbnail_url ? (
-                      <div className={`w-[46px] h-[46px] rounded-[14px] overflow-hidden shrink-0 transition-transform duration-250 ${
-                        paymentIssue ? '' : 'group-hover:scale-[1.08]'
-                      }`}>
+                      <div className={`w-[46px] h-[46px] rounded-[13px] overflow-hidden shrink-0 transition-transform duration-200 ${
+                        paymentIssue ? '' : 'group-hover:scale-[1.06]'
+                      }`}
+                        style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
+                      >
                         <img
                           src={link.thumbnail_url}
                           alt={link.title}
@@ -428,12 +441,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                       </div>
                     ) : (
                       <div
-                        className={`w-[46px] h-[46px] rounded-[14px] flex items-center justify-center shrink-0 transition-transform duration-250 ${
-                          paymentIssue ? '' : 'group-hover:scale-[1.08]'
+                        className={`w-[46px] h-[46px] rounded-[13px] flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                          paymentIssue ? '' : 'group-hover:scale-[1.06]'
                         }`}
                         style={{
                           backgroundColor: iconBg,
-                          boxShadow: `0 2px 10px ${iconBg}25`,
+                          boxShadow: `0 2px 8px ${iconBg}20, inset 0 1px 0 rgba(255,255,255,0.15)`,
                         }}
                       >
                         <LinkFavicon url={link.url} size="sm" />
@@ -446,23 +459,23 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         {link.title}
                       </span>
                       {link.description && (
-                        <span className="block text-[12px] mt-[3px] truncate text-[#111]/30 font-medium">
+                        <span className="block text-[12px] mt-[3px] truncate text-[#999] font-medium">
                           {link.description}
                         </span>
                       )}
                     </div>
 
-                    {/* Arrow */}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-250 ${
-                      paymentIssue ? 'bg-black/[0.03]' : 'bg-black/[0.03] group-hover:bg-black/[0.06] group-hover:translate-x-0.5'
+                    {/* Arrow — squircle to match */}
+                    <div className={`w-7 h-7 rounded-[9px] flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      paymentIssue ? 'bg-black/[0.03]' : 'bg-black/[0.04] group-hover:bg-black/[0.07] group-hover:translate-x-0.5'
                     }`}>
-                      <ChevronRight className="w-[14px] h-[14px] text-black/20 group-hover:text-black/40 transition-colors duration-250" />
+                      <ChevronRight className="w-[13px] h-[13px] text-black/25 group-hover:text-black/45 transition-colors duration-200" />
                     </div>
 
-                    {/* First link pulse ring */}
+                    {/* First link pulse */}
                     {idx === 0 && !paymentIssue && (
-                      <div className="absolute inset-0 rounded-[20px] animate-ring-glow pointer-events-none"
-                        style={{ border: '1px solid rgba(0,0,0,0.02)' }}
+                      <div className="absolute inset-0 rounded-[18px] animate-ring-glow pointer-events-none"
+                        style={{ border: '1px solid rgba(255,255,255,0.06)' }}
                       />
                     )}
                   </motion.button>

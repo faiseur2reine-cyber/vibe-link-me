@@ -171,7 +171,7 @@ const PublicProfile = () => {
         {/* Button skeletons */}
         <div className="px-5 pt-5 max-w-[460px] w-full mx-auto space-y-[14px]">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-[64px] rounded-[20px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+            <div key={i} className="h-[64px] rounded-[18px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>
@@ -600,7 +600,7 @@ const PublicProfile = () => {
                           onClick={(e) => { e.preventDefault(); if (isDemo) return; handleLinkClick(link); }}
                           variants={fadeUp}
                           whileHover={isDemo ? {} : { scale: 1.015, y: -2 }} whileTap={isDemo ? {} : { scale: 0.98 }}
-                          className={`group relative rounded-[20px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
+                          className={`group relative rounded-[18px] overflow-hidden aspect-[2.2/1] transition-shadow duration-500 ${isDemo ? 'cursor-default opacity-80' : 'hover:shadow-2xl'}`}
                         >
                           <PopularBadge />
                           <img src={link.thumbnail_url} alt={link.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" decoding="async" />
