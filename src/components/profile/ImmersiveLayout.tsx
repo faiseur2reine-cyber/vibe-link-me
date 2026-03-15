@@ -1,6 +1,6 @@
 // src/components/profile/ImmersiveLayout.tsx
-// ═══ IMMERSIVE LAYOUT ═══
-// Full-screen hero, pill buttons, Public Sans, deeplink engine.
+// Premium mobile-first link-in-bio. Black background, full-bleed hero,
+// frosted glass buttons, cinematic gradients, touch-optimized.
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { TapMapPin as MapPin, TapChevronRight as ChevronRight, TapChevronDown as ChevronDownIcon, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
@@ -51,11 +51,12 @@ interface Props { page: PageData; links: LinkData[]; abVariant: 'A' | 'B'; payme
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-// ── Hero image with blur-up loading ──
+// ── Hero image — blur-up + parallax ──
 const HeroImage = ({ src }: { src: string }) => {
   const [loaded, setLoaded] = useState(false);
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 80]);
+  const y = useTransform(scrollY, [0, 600], [0, 100]);
+  const scale = useTransform(scrollY, [0, 300], [1, 1.06]);
 
   useEffect(() => {
     const img = new Image();
@@ -65,16 +66,18 @@ const HeroImage = ({ src }: { src: string }) => {
 
   return (
     <motion.div
-      className="absolute inset-0 bg-cover bg-center will-change-transform"
+      className="absolute inset-0 will-change-transform"
       style={{
         backgroundImage: `url(${src})`,
-        backgroundPosition: 'center 15%',
-        height: '120%',
-        top: '-10%',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 20%',
+        height: '125%',
+        top: '-12%',
         y,
-        filter: loaded ? 'none' : 'blur(20px)',
-        transform: loaded ? undefined : 'scale(1.05)',
-        transition: 'filter 0.6s ease, transform 0.6s ease',
+        scale,
+        filter: loaded ? 'none' : 'blur(24px)',
+        transform: loaded ? undefined : 'scale(1.08)',
+        transition: 'filter 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)',
       }}
     />
   );
@@ -87,9 +90,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
   usePageView(page.id);
 
-  // Hide scroll indicator after user scrolls
   useEffect(() => {
-    const handler = () => { if (window.scrollY > 50) setScrolled(true); };
+    const handler = () => { if (window.scrollY > 40) setScrolled(true); };
     window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);
   }, []);
@@ -115,7 +117,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   };
 
   const handleLinkClick = (link: LinkData) => {
-    if (paymentIssue) return; // links disabled during payment issue
+    if (paymentIssue) return;
     if (!throttleClick(link.id)) return;
     const finalUrl = appendUtm(link.url, utmParams);
     recordClick(link.id, clickVariant);
@@ -129,7 +131,6 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       await navigator.share({ title: displayName, url });
     } else {
       await navigator.clipboard.writeText(url);
-      // Small visual feedback without toast (cleaner on public page)
     }
   };
 
@@ -163,7 +164,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         <meta name="twitter:title" content={`${displayName} | MyTaptap`} />
         {heroSrc && <meta name="twitter:image" content={heroSrc} />}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
         {page.is_nsfw && <meta name="rating" content="adult" />}
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -177,139 +178,150 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       {showUrgency && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
       {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && <ProfileLocationToast enabled={true} pageId={page.id} />}
 
-      <div className="min-h-screen min-h-[100dvh] bg-black text-white" style={{ fontFamily: "'Public Sans', sans-serif" }}>
+      <div className="min-h-screen min-h-[100dvh] bg-[#0a0a0a] text-white antialiased" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
 
         {/* ═══ HERO ═══ */}
-        <div ref={heroRef} className="relative w-full overflow-hidden" style={{ height: '62dvh', minHeight: 400, maxHeight: 560 }}>
-          {/* Image with blur-up */}
+        <div ref={heroRef} className="relative w-full overflow-hidden" style={{ height: '55dvh', minHeight: 380, maxHeight: 520 }}>
           {heroSrc ? (
             <HeroImage src={heroSrc} />
           ) : (
             <div className="absolute inset-0" style={{
-              background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a1a2e 100%)',
-              backgroundSize: '200% 200%',
-              animation: 'gradient-shift 8s ease infinite',
+              background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)',
+              backgroundSize: '300% 300%',
+              animation: 'gradient-shift 12s ease infinite',
             }} />
           )}
 
-          {/* Grain texture overlay */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
-            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
+          {/* Film grain */}
+          <div className="absolute inset-0 opacity-[0.025] pointer-events-none mix-blend-overlay"
+            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
           />
 
-          {/* Gradient overlay — cinematic */}
+          {/* Cinematic gradient — 5 stops for smoothness */}
           <div className="absolute inset-0" style={{
-            background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 20%, transparent 35%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.88) 80%, #000 95%)',
+            background: `linear-gradient(180deg,
+              rgba(10,10,10,0.15) 0%,
+              transparent 25%,
+              transparent 40%,
+              rgba(10,10,10,0.35) 55%,
+              rgba(10,10,10,0.75) 72%,
+              rgba(10,10,10,0.95) 85%,
+              #0a0a0a 98%
+            )`,
           }} />
 
-          {/* Share button */}
+          {/* Share — safe area aware */}
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.6 }}
             onClick={handleShare}
-            className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/50 hover:text-white/80 hover:bg-white/20 transition-all active:scale-90"
+            className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/25 backdrop-blur-2xl border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white hover:bg-black/40 transition-all duration-200 active:scale-90"
+            style={{ top: 'max(16px, env(safe-area-inset-top, 16px))' }}
           >
-            <Share2 className="w-3.5 h-3.5" />
+            <Share2 className="w-4 h-4" />
           </motion.button>
 
-          {/* Profile info at bottom of hero */}
-          <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 text-center z-10">
-            <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-2" />
+          {/* ── Profile info ── */}
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 text-center z-10">
+            <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-3" />
 
             {/* Avatar */}
             {page.avatar_url && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, ease }}
-                className="flex justify-center mb-3"
+                initial={{ opacity: 0, scale: 0.85, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.5, ease }}
+                className="flex justify-center mb-4"
               >
                 <div className="relative">
                   <img
                     src={page.avatar_url}
                     alt={displayName}
-                    className="w-20 h-20 rounded-full object-cover ring-[3px] ring-black/40 ring-offset-2 ring-offset-black/20"
+                    className="w-[88px] h-[88px] rounded-full object-cover shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
+                    style={{ border: '3px solid rgba(255,255,255,0.15)' }}
                   />
-                  <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-emerald-400 border-[2.5px] border-black flex items-center justify-center">
-                    <span className="block w-1.5 h-1.5 rounded-full bg-white" />
-                  </div>
+                  <div className="absolute bottom-0 right-0 w-[22px] h-[22px] rounded-full bg-emerald-400 border-[3px] border-[#0a0a0a] shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
                 </div>
               </motion.div>
             )}
 
+            {/* Name */}
             <motion.h1
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease }}
-              className="text-[28px] font-bold tracking-tight leading-tight mb-2"
+              transition={{ duration: 0.5, delay: 0.05, ease }}
+              className="text-[26px] sm:text-[30px] font-extrabold tracking-[-0.02em] leading-none"
             >
               {displayName}
             </motion.h1>
 
+            {/* Status line */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.12, duration: 0.4 }}
-              className="flex items-center justify-center gap-1.5 text-[13px] text-white/45 mb-3"
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="flex items-center justify-center gap-2 mt-2 text-[13px] text-white/40"
             >
               {!page.avatar_url && (
-                <span className="relative w-2 h-2 shrink-0">
-                  <span className="absolute inset-0 rounded-full bg-emerald-400 animate-pulse-soft" />
-                  <span className="relative block w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="relative w-[7px] h-[7px] shrink-0">
+                  <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-40" />
+                  <span className="relative block w-[7px] h-[7px] rounded-full bg-emerald-400" />
                 </span>
               )}
-              <span>{connectedLabel}</span>
+              <span className="font-medium">{connectedLabel}</span>
               {location && (
                 <>
-                  <span className="opacity-25 mx-0.5">·</span>
+                  <span className="text-white/15">·</span>
                   <span className="flex items-center gap-0.5">
-                    <MapPin className="w-3 h-3 text-white/30" />
+                    <MapPin className="w-3 h-3 text-white/25" />
                     {location}
                   </span>
                 </>
               )}
             </motion.div>
 
+            {/* Bio */}
             {page.bio && (
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className="text-[14px] text-white/65 leading-relaxed max-w-[320px] mx-auto mb-4"
+                transition={{ delay: 0.22, duration: 0.4 }}
+                className="text-[14px] sm:text-[15px] text-white/55 leading-[1.55] max-w-[300px] mx-auto mt-3"
               >
                 {page.bio}
               </motion.p>
             )}
 
+            {/* Scarcity below bio */}
             {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.position === 'below-bio' && (
-              <div className="mt-3">
+              <div className="mt-4">
                 <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
               </div>
             )}
 
+            {/* Social icons */}
             {page.social_links.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-3">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-4">
                 <SocialIcons links={page.social_links} theme={getTheme('midnight')} />
               </motion.div>
             )}
 
-            {/* Scroll indicator — fades on scroll */}
+            {/* Scroll hint */}
             <AnimatePresence>
               {links.length > 0 && !scrolled && (
                 <motion.div
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  animate={{ opacity: 0.3 }}
                   exit={{ opacity: 0 }}
-                  transition={{ delay: 0.8, duration: 0.3 }}
-                  className="mt-5 flex justify-center"
+                  transition={{ delay: 1, duration: 0.5 }}
+                  className="mt-6 flex justify-center"
                 >
                   <motion.div
-                    animate={{ y: [0, 4, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                    className="text-white/15"
+                    animate={{ y: [0, 5, 0] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                   >
-                    <ChevronDownIcon className="w-5 h-5" />
+                    <ChevronDownIcon className="w-5 h-5 text-white" />
                   </motion.div>
                 </motion.div>
               )}
@@ -317,35 +329,31 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           </div>
         </div>
 
-        {/* Subtle glow transition */}
-        <div className="relative h-px mx-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-        </div>
-
         {/* Scarcity above links */}
         {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.position === 'above-links' && (
-          <div className="px-4 pt-4">
+          <div className="px-5 pt-4 max-w-[460px] mx-auto">
             <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
           </div>
         )}
 
-        {/* ═══ BUTTONS ═══ */}
+        {/* ═══ LINKS ═══ */}
         {paymentIssue && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.4, ease }}
-            className="mx-4 sm:mx-6 mt-4 max-w-[440px] sm:max-w-[480px] mx-auto"
+            transition={{ delay: 0.2, duration: 0.4, ease }}
+            className="px-5 mt-4 max-w-[460px] mx-auto"
           >
-            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.06] backdrop-blur-md border border-white/[0.06]">
-              <span className="text-[18px] shrink-0">💤</span>
-              <p className="text-[12px] text-white/50 leading-relaxed">
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/[0.05]">
+              <span className="text-[17px] shrink-0">💤</span>
+              <p className="text-[12px] text-white/40 leading-relaxed">
                 Les liens de cette page sont temporairement indisponibles. Revenez bientôt !
               </p>
             </div>
           </motion.div>
         )}
-        <div className={`px-4 sm:px-6 pt-5 pb-4 max-w-[440px] sm:max-w-[480px] mx-auto flex flex-col gap-3 ${paymentIssue ? 'opacity-40 pointer-events-none select-none' : ''}`}>
+
+        <div className={`px-5 pt-5 pb-6 max-w-[460px] mx-auto flex flex-col gap-[14px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
           {sections.map((section, sIdx) => (
             <div key={sIdx}>
               {/* Section header */}
@@ -355,11 +363,11 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
-                  className="flex items-center gap-3 mt-3 mb-2 px-1"
+                  className="flex items-center gap-3 mt-2 mb-1 px-1"
                 >
-                  <div className="h-px flex-1 bg-white/[0.06]" />
-                  <span className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em]">{section.title}</span>
-                  <div className="h-px flex-1 bg-white/[0.06]" />
+                  <div className="h-px flex-1 bg-white/[0.05]" />
+                  <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">{section.title}</span>
+                  <div className="h-px flex-1 bg-white/[0.05]" />
                 </motion.div>
               )}
 
@@ -373,34 +381,43 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 const linkButton = (
                   <motion.button
                     key={link.id}
-                    initial={{ opacity: 0, y: 12 }}
+                    initial={{ opacity: 0, y: 14 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-20px' }}
-                    transition={{ delay: idx < 4 ? idx * 0.06 : 0, duration: 0.4, ease }}
+                    viewport={{ once: true, margin: '-10px' }}
+                    transition={{ delay: idx < 5 ? idx * 0.06 : 0, duration: 0.45, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-250 ${
+                    className={`group relative w-full flex items-center gap-[14px] text-left transition-all ${
                       paymentIssue
                         ? 'cursor-default'
-                        : 'active:scale-[0.97] hover:-translate-y-[2px] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]'
-                    } ${idx === 0 && !paymentIssue ? 'animate-bounce-subtle' : ''}`}
+                        : 'active:scale-[0.975] hover:-translate-y-[2px]'
+                    }`}
                     style={{
-                      backgroundColor: '#FFFFFF',
-                      color: '#000000',
-                      minHeight: isFeatured ? 72 : 66,
-                      padding: '11px 18px 11px 11px',
+                      backgroundColor: isFeatured ? '#FFFFFF' : 'rgba(255,255,255,0.97)',
+                      borderRadius: 20,
+                      minHeight: isFeatured ? 72 : 64,
+                      padding: '12px 16px 12px 12px',
                       boxShadow: isFeatured
-                        ? `0 2px 8px rgba(0,0,0,0.06), 0 0 0 1.5px ${iconBg}18, 0 8px 24px ${iconBg}14`
-                        : '0 2px 8px rgba(0,0,0,0.06)',
+                        ? `0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px ${iconBg}12, 0 8px 28px ${iconBg}10`
+                        : '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)',
+                      transition: 'transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1)',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (paymentIssue) return;
+                      (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
+                        ? `0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.1), 0 0 0 1px ${iconBg}18, 0 12px 36px ${iconBg}15`
+                        : '0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
+                        ? `0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px ${iconBg}12, 0 8px 28px ${iconBg}10`
+                        : '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)';
                     }}
                   >
                     {/* Icon / Thumbnail */}
                     {link.thumbnail_url ? (
-                      <div
-                        className={`w-[44px] h-[44px] rounded-full overflow-hidden shrink-0 transition-all duration-250 ${
-                          paymentIssue ? '' : 'group-hover:scale-110 group-hover:shadow-lg'
-                        }`}
-                        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                      >
+                      <div className={`w-[46px] h-[46px] rounded-[14px] overflow-hidden shrink-0 transition-transform duration-250 ${
+                        paymentIssue ? '' : 'group-hover:scale-[1.08]'
+                      }`}>
                         <img
                           src={link.thumbnail_url}
                           alt={link.title}
@@ -410,12 +427,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                       </div>
                     ) : (
                       <div
-                        className={`w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0 transition-all duration-250 ${
-                          paymentIssue ? '' : 'group-hover:scale-110 group-hover:shadow-lg'
+                        className={`w-[46px] h-[46px] rounded-[14px] flex items-center justify-center shrink-0 transition-transform duration-250 ${
+                          paymentIssue ? '' : 'group-hover:scale-[1.08]'
                         }`}
                         style={{
                           backgroundColor: iconBg,
-                          boxShadow: `0 2px 8px ${iconBg}30`,
+                          boxShadow: `0 2px 10px ${iconBg}25`,
                         }}
                       >
                         <LinkFavicon url={link.url} size="sm" />
@@ -423,24 +440,29 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     )}
 
                     {/* Text */}
-                    <div className="flex-1 min-w-0">
-                      <span className="block text-[15px] font-semibold leading-tight truncate text-black">
+                    <div className="flex-1 min-w-0 py-0.5">
+                      <span className="block text-[15px] sm:text-[16px] font-semibold leading-tight truncate text-[#111]">
                         {link.title}
                       </span>
                       {link.description && (
-                        <span className="block text-[12px] mt-0.5 truncate text-black/35">
+                        <span className="block text-[12px] mt-[3px] truncate text-[#111]/30 font-medium">
                           {link.description}
                         </span>
                       )}
                     </div>
 
-                    <ChevronRight className={`w-4 h-4 shrink-0 text-black/10 transition-all duration-250 ${
-                      paymentIssue ? '' : 'group-hover:text-black/30 group-hover:translate-x-1'
-                    }`} />
+                    {/* Arrow */}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-250 ${
+                      paymentIssue ? 'bg-black/[0.03]' : 'bg-black/[0.03] group-hover:bg-black/[0.06] group-hover:translate-x-0.5'
+                    }`}>
+                      <ChevronRight className="w-[14px] h-[14px] text-black/20 group-hover:text-black/40 transition-colors duration-250" />
+                    </div>
 
-                    {/* Subtle glow on first link */}
+                    {/* First link pulse ring */}
                     {idx === 0 && !paymentIssue && (
-                      <div className="absolute inset-0 rounded-full border border-black/[0.03] animate-ring-glow pointer-events-none" />
+                      <div className="absolute inset-0 rounded-[20px] animate-ring-glow pointer-events-none"
+                        style={{ border: '1px solid rgba(0,0,0,0.02)' }}
+                      />
                     )}
                   </motion.button>
                 );
@@ -465,19 +487,19 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
         {/* Scarcity bottom */}
         {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.position === 'bottom' && (
-          <div className="px-4 pb-4">
+          <div className="px-5 pb-4 max-w-[460px] mx-auto">
             <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
           </div>
         )}
 
-        {/* Footer — hidden on paid plans */}
+        {/* Footer */}
         {(!page.plan || page.plan === 'free') && (
-          <div className="text-center py-10 pb-safe">
+          <div className="text-center pt-6 pb-8" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom, 32px))' }}>
             <a
               href={BRAND.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[10px] text-white/10 hover:text-white/25 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] text-[10px] text-white/15 hover:text-white/30 hover:bg-white/[0.06] transition-all duration-200"
             >
               {t('footer.madeWith')} <Heart className="w-2.5 h-2.5" /> {BRAND.name}
             </a>
@@ -485,7 +507,6 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         )}
       </div>
 
-      {/* Gradient shift animation for fallback hero */}
       <style>{`
         @keyframes gradient-shift {
           0%, 100% { background-position: 0% 50%; }
