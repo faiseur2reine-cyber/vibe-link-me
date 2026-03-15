@@ -299,6 +299,8 @@ const Dashboard = () => {
             <Route path="/profile" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>}><DashboardProfile /></Suspense>} />
             <Route path="/settings" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>}><DashboardSettings /></Suspense>} />
           </Routes>
+
+          <RetentionModal />
         </div>
       </div>
     </SidebarProvider>
