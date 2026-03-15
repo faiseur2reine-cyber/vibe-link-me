@@ -350,6 +350,7 @@ const DashboardAnalytics = () => {
             ))}
           </div>
         )}
+        </ProFeatureGate>
       </div>
       </div>
     </div>
