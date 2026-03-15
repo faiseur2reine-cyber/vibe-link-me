@@ -240,6 +240,7 @@ Deno.serve(async (req) => {
           .from("links")
           .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title, is_visible, scheduled_at, expires_at")
           .eq("page_id", pageData.id)
+          .eq("is_visible", true)
           .order("position", { ascending: true }),
         supabase
           .from("profiles")
@@ -254,7 +255,12 @@ Deno.serve(async (req) => {
       // Enforce plan PAGE limits — count user's pages, flag if this page is over limit
       const userPlan = profileRes.data?.plan || 'free';
       const maxPages = userPlan === 'pro' ? Infinity : userPlan === 'starter' ? 10 : 1;
-      const allLinks = linksRes.data || [];
+      const now = new Date().toISOString();
+      const allLinks = (linksRes.data || []).filter((l: any) => {
+        if (l.scheduled_at && l.scheduled_at > now) return false; // not yet active
+        if (l.expires_at && l.expires_at < now) return false; // expired
+        return true;
+      });
 
       let paymentIssue = false;
       if (maxPages !== Infinity) {
@@ -313,13 +319,19 @@ Deno.serve(async (req) => {
 
     const { data: linksData } = await supabase
       .from("links")
-      .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title")
+      .select("id, title, url, icon, position, thumbnail_url, description, bg_color, text_color, style, section_title, is_visible, scheduled_at, expires_at")
       .eq("user_id", profileData.user_id)
+      .eq("is_visible", true)
       .is("page_id", null)
       .order("position", { ascending: true });
 
-    // Legacy path = single profile page = always within page limit (no payment issue)
-    const allLegacyLinks = linksData || [];
+    // Filter scheduled/expired
+    const legacyNow = new Date().toISOString();
+    const allLegacyLinks = (linksData || []).filter((l: any) => {
+      if (l.scheduled_at && l.scheduled_at > legacyNow) return false;
+      if (l.expires_at && l.expires_at < legacyNow) return false;
+      return true;
+    });
     const legacyPaymentIssue = false;
 
     const legacyBody = JSON.stringify({ page: profileData, links: allLegacyLinks, payment_issue: legacyPaymentIssue, source: "profiles" });

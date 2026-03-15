@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { cleanUsername, checkUsernameAvailability } from '@/lib/username';
 import { lovable } from '@/integrations/lovable/index';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -116,7 +117,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'reserved'>('idle');
   const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
 
   const passwordStrength = useMemo(() => getPasswordStrength(password, t), [password, t]);
@@ -146,15 +147,14 @@ const Auth = () => {
   };
 
   const checkUsername = (value: string) => {
-    setUsername(value);
     if (usernameTimer) clearTimeout(usernameTimer);
-    const cleaned = value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-    if (cleaned !== value) setUsername(cleaned);
+    const cleaned = cleanUsername(value);
+    setUsername(cleaned);
     if (cleaned.length < 3) { setUsernameStatus('idle'); return; }
     setUsernameStatus('checking');
     const timer = setTimeout(async () => {
-      const { data } = await supabase.from('profiles').select('username').eq('username', cleaned).maybeSingle();
-      setUsernameStatus(data ? 'taken' : 'available');
+      const result = await checkUsernameAvailability(cleaned);
+      setUsernameStatus(result);
     }, 500);
     setUsernameTimer(timer);
   };
@@ -294,10 +294,11 @@ const Auth = () => {
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                         {usernameStatus === 'available' && <Check className="w-4 h-4 text-primary" />}
-                        {usernameStatus === 'taken' && <X className="w-4 h-4 text-destructive" />}
+                        {(usernameStatus === 'taken' || usernameStatus === 'reserved') && <X className="w-4 h-4 text-destructive" />}
                       </div>
                     </div>
                     {usernameStatus === 'taken' && <p className="text-xs text-destructive">{t('auth.usernameTaken')}</p>}
+                    {usernameStatus === 'reserved' && <p className="text-xs text-destructive">Ce nom est réservé</p>}
                     {usernameStatus === 'available' && <p className="text-xs text-primary">{t('auth.usernameAvailable')}</p>}
                   </div>
                   <div className="space-y-2">
