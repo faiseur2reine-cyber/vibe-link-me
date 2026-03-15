@@ -217,7 +217,7 @@ const DashboardSettings = () => {
     setEmailWeekly(value);
     const { error } = await supabase
       .from('profiles')
-      .update({ email_weekly: value })
+      .update({ email_weekly: value } as any)
       .eq('user_id', user!.id);
     if (error) {
       setEmailWeekly(!value);
