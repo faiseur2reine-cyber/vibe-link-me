@@ -161,23 +161,26 @@ const PublicProfile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
-        {/* Hero shimmer */}
-        <div className="relative w-full overflow-hidden" style={{ height: '55dvh', minHeight: 380, maxHeight: 520 }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent animate-pulse" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 40%, rgba(10,10,10,0.6) 70%, #0a0a0a 95%)' }} />
-          {/* Profile placeholder at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 px-6 pb-8 flex flex-col items-center">
-            <div className="w-[88px] h-[88px] rounded-full bg-white/[0.06] animate-pulse mb-5" />
-            <div className="h-5 w-28 rounded-full bg-white/[0.06] animate-pulse mb-2" />
-            <div className="h-3 w-20 rounded-full bg-white/[0.04] animate-pulse mb-2" />
-            <div className="h-3 w-40 rounded-full bg-white/[0.03] animate-pulse" />
+        {/* Background shimmer */}
+        <div className="fixed inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent animate-pulse" />
+        {/* Spacer for cover photo area */}
+        <div style={{ height: '62dvh', minHeight: 340 }} />
+        {/* Content area */}
+        <div className="relative bg-[#0a0a0a] px-6 max-w-[480px] w-full mx-auto">
+          {/* Profile placeholder */}
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-[52px] h-[52px] rounded-full bg-white/[0.06] animate-pulse shrink-0" />
+            <div className="flex-1">
+              <div className="h-5 w-28 rounded-full bg-white/[0.06] animate-pulse mb-2" />
+              <div className="h-3 w-20 rounded-full bg-white/[0.04] animate-pulse" />
+            </div>
           </div>
-        </div>
-        {/* Button skeletons */}
-        <div className="px-5 pt-7 max-w-[480px] w-full mx-auto space-y-[16px]">
-          {[1, 2, 3].map(i => (
-            <div key={i} className={`${i === 1 ? 'h-[72px]' : 'h-[64px]'} rounded-[16px] bg-white/[0.04] animate-pulse`} style={{ animationDelay: `${i * 120}ms` }} />
-          ))}
+          {/* Button skeletons */}
+          <div className="space-y-[14px] pt-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-[68px] rounded-[16px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+            ))}
+          </div>
         </div>
       </div>
     );
