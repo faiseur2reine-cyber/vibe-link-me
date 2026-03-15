@@ -223,8 +223,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           </motion.button>
 
           {/* ── Profile info ── */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 text-center z-10">
-            <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-3" />
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-8 text-center z-10">
+            <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-4" />
 
             {/* Avatar */}
             {page.avatar_url && (
@@ -232,7 +232,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 initial={{ opacity: 0, scale: 0.85, y: 8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.5, ease }}
-                className="flex justify-center mb-4"
+                className="flex justify-center mb-5"
               >
                 <div className="relative">
                   <img
@@ -261,7 +261,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.15, duration: 0.4 }}
-              className="flex items-center justify-center gap-2 mt-2 text-[13px] text-white/40"
+              className="flex items-center justify-center gap-2 mt-3 text-[13px] text-white/40"
             >
               {!page.avatar_url && (
                 <span className="relative w-[7px] h-[7px] shrink-0">
@@ -287,7 +287,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.22, duration: 0.4 }}
-                className="text-[14px] sm:text-[15px] text-white/55 leading-[1.55] max-w-[300px] mx-auto mt-3 line-clamp-3"
+                className="text-[14px] sm:text-[15px] text-white/55 leading-[1.6] max-w-[340px] mx-auto mt-4 line-clamp-3"
               >
                 {page.bio}
               </motion.p>
@@ -295,14 +295,14 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
             {/* Scarcity below bio */}
             {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.position === 'below-bio' && (
-              <div className="mt-4">
+              <div className="mt-5">
                 <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
               </div>
             )}
 
             {/* Social icons */}
             {page.social_links.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-4">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-5">
                 <SocialIcons links={page.social_links} theme={getTheme('midnight')} />
               </motion.div>
             )}
@@ -315,7 +315,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   animate={{ opacity: 0.3 }}
                   exit={{ opacity: 0 }}
                   transition={{ delay: 1, duration: 0.5 }}
-                  className="mt-6 flex justify-center"
+                  className="mt-7 flex justify-center"
                 >
                   <motion.div
                     animate={{ y: [0, 5, 0] }}
@@ -331,7 +331,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
         {/* Scarcity above links */}
         {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.position === 'above-links' && (
-          <div className="px-5 pt-4 max-w-[460px] mx-auto">
+          <div className="px-5 pt-4 max-w-[480px] mx-auto">
             <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
           </div>
         )}
@@ -342,7 +342,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4, ease }}
-            className="px-5 mt-4 max-w-[460px] mx-auto"
+            className="px-5 mt-4 max-w-[480px] mx-auto"
           >
             <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/[0.05]">
               <span className="text-[17px] shrink-0">💤</span>
@@ -353,7 +353,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           </motion.div>
         )}
 
-        <div className={`px-5 pt-5 pb-6 max-w-[460px] mx-auto flex flex-col gap-[14px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
+        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-[16px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
           {links.length === 0 && !paymentIssue && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -373,7 +373,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
-                  className="flex items-center gap-3 mt-2 mb-1 px-1"
+                  className="flex items-center gap-3 mt-3 mb-2 px-1"
                 >
                   <div className="h-px flex-1 bg-white/[0.05]" />
                   <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">{section.title}</span>
@@ -404,8 +404,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         ? `linear-gradient(135deg, #FFFFFF 0%, #F8F8FA 100%)`
                         : 'rgba(255,255,255,0.96)',
                       borderRadius: 18,
-                      minHeight: isFeatured ? 72 : 64,
-                      padding: '12px 14px 12px 12px',
+                      minHeight: isFeatured ? 76 : 68,
+                      padding: '14px 16px 14px 14px',
                       border: '1px solid rgba(255,255,255,0.12)',
                       boxShadow: isFeatured
                         ? `0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 1px ${iconBg}10`
@@ -436,7 +436,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   >
                     {/* Icon / Thumbnail */}
                     {link.thumbnail_url ? (
-                      <div className={`w-[46px] h-[46px] rounded-[13px] overflow-hidden shrink-0 transition-transform duration-200 ${
+                      <div className={`w-[48px] h-[48px] rounded-[13px] overflow-hidden shrink-0 transition-transform duration-200 ${
                         paymentIssue ? '' : 'group-hover:scale-[1.06]'
                       }`}
                         style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
@@ -450,7 +450,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                       </div>
                     ) : (
                       <div
-                        className={`w-[46px] h-[46px] rounded-[13px] flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                        className={`w-[48px] h-[48px] rounded-[13px] flex items-center justify-center shrink-0 transition-transform duration-200 ${
                           paymentIssue ? '' : 'group-hover:scale-[1.06]'
                         }`}
                         style={{
@@ -468,7 +468,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         {link.title}
                       </span>
                       {link.description && (
-                        <span className="block text-[12px] mt-[3px] truncate text-[#999] font-medium">
+                        <span className="block text-[12px] mt-[4px] truncate text-[#999] font-medium">
                           {link.description}
                         </span>
                       )}
@@ -510,14 +510,14 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
         {/* Scarcity bottom */}
         {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.position === 'bottom' && (
-          <div className="px-5 pb-4 max-w-[460px] mx-auto">
+          <div className="px-5 pb-4 max-w-[480px] mx-auto">
             <ProfileScarcityWidgets config={urgency.scarcity} pageId={page.id} />
           </div>
         )}
 
         {/* Footer */}
         {(!page.plan || page.plan === 'free') && (
-          <div className="text-center pt-6 pb-8" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom, 32px))' }}>
+          <div className="text-center pt-8 pb-10" style={{ paddingBottom: 'max(40px, env(safe-area-inset-bottom, 40px))' }}>
             <a
               href={BRAND.url}
               target="_blank"

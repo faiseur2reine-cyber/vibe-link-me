@@ -161,17 +161,17 @@ const PublicProfile = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent animate-pulse" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 40%, rgba(10,10,10,0.6) 70%, #0a0a0a 95%)' }} />
           {/* Profile placeholder at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 flex flex-col items-center">
-            <div className="w-[88px] h-[88px] rounded-full bg-white/[0.06] animate-pulse mb-4" />
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-8 flex flex-col items-center">
+            <div className="w-[88px] h-[88px] rounded-full bg-white/[0.06] animate-pulse mb-5" />
             <div className="h-5 w-28 rounded-full bg-white/[0.06] animate-pulse mb-2" />
             <div className="h-3 w-20 rounded-full bg-white/[0.04] animate-pulse mb-2" />
             <div className="h-3 w-40 rounded-full bg-white/[0.03] animate-pulse" />
           </div>
         </div>
         {/* Button skeletons */}
-        <div className="px-5 pt-5 max-w-[460px] w-full mx-auto space-y-[14px]">
+        <div className="px-5 pt-7 max-w-[480px] w-full mx-auto space-y-[16px]">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-[64px] rounded-[18px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+            <div key={i} className="h-[68px] rounded-[18px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>
