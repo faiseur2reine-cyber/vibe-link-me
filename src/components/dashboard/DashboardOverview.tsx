@@ -11,9 +11,11 @@ import {
   TapArrowRight as ArrowRight, TapPlus as Plus, TapDollar as DollarSign,
   TapTrending as TrendingUp, TapExternalLink as ExternalLink,
   TapZap as Zap, TapEye as Eye, TapSparkles as Sparkles,
+  TapShare as Share,
 } from '@/components/icons/TapIcons';
 import { AlertTriangle, ImageOff, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -475,6 +477,41 @@ const DashboardOverview = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* ── Invite a friend ── */}
+        {!stats.loading && stats.totalClicks >= 5 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.3, ease }}
+            className="p-4 rounded-xl glass flex items-center gap-4"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-foreground">Un pote créateur ?</p>
+              <p className="text-[11px] text-muted-foreground/60 mt-0.5">Envoie-lui MyTaptap. Il te remerciera.</p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 rounded-lg text-[11px] gap-1.5 shrink-0"
+              onClick={() => {
+                const text = 'Je viens de créer ma page de liens sur MyTaptap, c\'est gratuit et bien mieux que Linktree.';
+                const url = 'https://mytaptap.com';
+                if (navigator.share) {
+                  navigator.share({ title: 'MyTaptap', text, url });
+                } else {
+                  navigator.clipboard.writeText(`${text} ${url}`);
+                  toast.success('Lien copié');
+                }
+              }}
+            >
+              <Share className="w-3 h-3" /> Inviter
+            </Button>
+          </motion.div>
+        )}
       </main>
     </div>
   );
