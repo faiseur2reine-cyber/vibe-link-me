@@ -368,7 +368,8 @@ const PublicProfile = () => {
             "url": `${window.location.origin}/${username}`,
           }
         })}</script>
-        {fontUrl && <link rel="stylesheet" href={fontUrl} />}
+        {fontUrl && <link rel="preload" as="style" href={fontUrl} />}
+        {fontUrl && <link href={fontUrl} rel="stylesheet" media="print" onLoad="this.media='all'" />}
         {page.custom_css && <style>{page.custom_css}</style>}
       </Helmet>
 

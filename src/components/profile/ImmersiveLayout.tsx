@@ -127,7 +127,9 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         <meta name="twitter:title" content={`${displayName} | MyTaptap`} />
         {ogImage && <meta name="twitter:image" content={ogImage} />}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onLoad="this.media='all'" />
         {page.is_nsfw && <meta name="rating" content="adult" />}
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -179,7 +181,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.2 }}
             onClick={handleShare}
             className="fixed top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/30 backdrop-blur-xl border border-white/[0.08] flex items-center justify-center text-white/60 hover:text-white hover:bg-black/50 transition-all active:scale-90"
             style={{ top: 'max(16px, env(safe-area-inset-top, 16px))' }}
@@ -247,7 +249,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.12, duration: 0.4 }}
+                    transition={{ delay: 0.05, duration: 0.3 }}
                     className="text-[14px] text-white/50 leading-[1.65] mt-4 line-clamp-3"
                   >
                     {page.bio}
@@ -263,7 +265,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
                 {/* Social icons */}
                 {page.social_links.length > 0 && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-5">
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }} className="mt-5">
                     <SocialIcons links={page.social_links} theme={getTheme('midnight')} />
                   </motion.div>
                 )}
@@ -281,7 +283,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4, ease }}
+            transition={{ delay: 0.05, duration: 0.35, ease }}
             className="px-5 mt-4 max-w-[480px] mx-auto"
           >
             <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/[0.05]">
@@ -293,12 +295,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           </motion.div>
         )}
 
-        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-3 ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
+        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-[14px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
           {links.length === 0 && !paymentIssue && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.1 }}
               className="text-center py-8"
             >
               <p className="text-[13px] text-white/20">Pas encore de liens</p>
@@ -334,7 +336,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     initial={{ opacity: 0, y: 14 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-10px' }}
-                    transition={{ delay: idx < 5 ? idx * 0.06 : 0, duration: 0.45, ease }}
+                    transition={{ delay: idx < 4 ? idx * 0.03 : 0, duration: 0.3, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
                     className={`group relative w-full flex items-center gap-3 text-left ${
                       paymentIssue ? 'cursor-default' : ''
