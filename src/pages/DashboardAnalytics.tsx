@@ -243,7 +243,7 @@ const DashboardAnalytics = () => {
           </div>
           <BreakdownList items={stats.referrerStats} labelKey="referrer" valueKey="count" max={10} />
         </div>
-
+      </div>
     </div>
   );
 };
