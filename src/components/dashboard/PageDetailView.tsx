@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreatorPage } from '@/hooks/useCreatorPages';
 import { usePageLinks } from '@/hooks/useCreatorPages';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import {
@@ -91,6 +92,8 @@ const SettingsSection = ({ icon: Icon, title, children, defaultOpen = false }: {
 
 const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPages }: PageDetailViewProps) => {
   const { t } = useTranslation();
+  const { subscription } = useAuth();
+  const userPlan = subscription.plan || 'free';
   const { links, loading: linksLoading, addLink, updateLink, deleteLink, reorderLinks, refetch: refetchLinks } = usePageLinks(page.id);
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('links');
@@ -246,7 +249,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             {/* ── Tab: Links ── */}
             <TabsContent value="links" className="mt-0">
               <LinksManager
-                links={links} plan="pro" onAdd={addLink} onUpdate={updateLink}
+                links={links} plan={userPlan} onAdd={addLink} onUpdate={updateLink}
                 onDelete={deleteLink} onReorder={reorderLinks} onRefetch={refetchLinks} pageId={page.id}
               />
             </TabsContent>
@@ -265,7 +268,7 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             {/* ── Tab: Appearance ── */}
             <TabsContent value="apparence" className="mt-0">
               <Suspense fallback={<TabLoader />}>
-                <AppearanceEditor page={page} links={links} plan="pro" onUpdate={handleUpdate} onPreviewChange={setPreviewOverrides} />
+                <AppearanceEditor page={page} links={links} plan={userPlan} onUpdate={handleUpdate} onPreviewChange={setPreviewOverrides} />
               </Suspense>
             </TabsContent>
 

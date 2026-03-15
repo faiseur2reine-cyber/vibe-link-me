@@ -10,6 +10,7 @@ import {
   TapExternalLink as ExternalLink, TapLayout as LayoutTemplate, TapBookmark as BookmarkPlus,
   TapLink as LinkIcon, TapClock as Clock, TapClick as MousePointerClick,
   TapEyeOff as EyeOff, TapCopy as Copy, TapSortAZ as ArrowDownAZ, TapTrendingDown as TrendingDown,
+  TapCrown as Crown,
 } from '@/components/icons/TapIcons';
 import { detectPlatform } from '@/lib/platforms';
 import LinkFavicon from '@/components/LinkFavicon';
@@ -45,6 +46,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
 
   const maxLinks = plan === 'pro' ? Infinity : plan === 'starter' ? 20 : 5;
   const canAddMore = links.length < maxLinks;
+  const hiddenCount = Math.max(0, links.length - maxLinks);
 
   // Sort
   const sortedLinks = sortBy === 'manual' ? links : [...links].sort((a, b) => {
@@ -154,6 +156,24 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
         </div>
       </div>
 
+      {/* ── Hidden links warning ── */}
+      {hiddenCount > 0 && (
+        <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl bg-amber-500/[0.06] border border-amber-500/15">
+          <EyeOff className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[12px] font-medium text-amber-700 dark:text-amber-300">
+              {hiddenCount} lien{hiddenCount > 1 ? 's' : ''} masqué{hiddenCount > 1 ? 's' : ''} sur votre page publique
+            </p>
+            <p className="text-[11px] text-amber-600/60 dark:text-amber-400/50 mt-0.5">
+              Plan {plan === 'free' ? 'gratuit' : 'Starter'} : {maxLinks} liens max. Passez au plan supérieur pour tout afficher.
+            </p>
+          </div>
+          <a href="/dashboard/settings" className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[11px] font-semibold hover:bg-amber-500/25 transition-colors">
+            <Crown className="w-3 h-3" /> Upgrade
+          </a>
+        </div>
+      )}
+
       {/* ── Sort controls ── */}
       {links.length > 2 && (
         <div className="flex items-center gap-1.5">
@@ -220,6 +240,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
               {sortedLinks.map((link, index) => {
                 const prevLink = index > 0 ? sortedLinks[index - 1] : null;
                 const showSectionHeader = link.section_title && (!prevLink || prevLink.section_title !== link.section_title);
+                const isOverLimit = maxLinks !== Infinity && index >= maxLinks;
 
                 return (
                   <div key={link.id}>
@@ -232,6 +253,17 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                       </div>
                     )}
 
+                    {/* Separator before first hidden link */}
+                    {isOverLimit && index === maxLinks && (
+                      <div className="flex items-center gap-2 pt-2 pb-1 px-2">
+                        <div className="h-px flex-1 bg-amber-500/20" />
+                        <span className="text-[9px] font-semibold text-amber-600/50 dark:text-amber-400/40 uppercase tracking-widest flex items-center gap-1">
+                          <EyeOff className="w-2.5 h-2.5" /> masqués
+                        </span>
+                        <div className="h-px flex-1 bg-amber-500/20" />
+                      </div>
+                    )}
+
                     <Draggable draggableId={link.id} index={index}>
                       {(provided, snapshot) => (
                         <div
@@ -241,7 +273,7 @@ const LinksManager = ({ links, plan, onAdd, onUpdate, onDelete, onReorder, onRef
                             snapshot.isDragging
                               ? 'bg-card shadow-xl shadow-black/[0.08] ring-1 ring-border/50 scale-[1.02]'
                               : 'hover:bg-accent/30'
-                          } ${link.is_visible === false ? 'opacity-35' : ''}`}
+                          } ${link.is_visible === false || isOverLimit ? 'opacity-35' : ''}`}
                         >
                           {/* Drag handle */}
                           <div
