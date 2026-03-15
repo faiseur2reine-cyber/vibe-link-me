@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { TapMapPin as MapPin, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm, type UtmParams } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
@@ -88,10 +88,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   }, 400);
 
   const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      await navigator.share({ title: displayName, url });
-    }
+    try {
+      const url = window.location.href;
+      if (navigator.share) {
+        await navigator.share({ title: displayName, url });
+      }
+    } catch {}
   };
 
   // Group links into sections
@@ -110,10 +112,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       <Helmet>
         <title>{displayName} | MyTaptap</title>
         <meta name="description" content={page.bio || `${displayName}'s links`} />
-        {page.is_nsfw && <meta name="robots" content="noindex, nofollow" />}
         <meta property="og:title" content={`${displayName} | MyTaptap`} />
         <meta property="og:description" content={page.bio || `${displayName}'s links`} />
-        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta name="twitter:card" content="summary_large_image" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -123,6 +123,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           ...(ogImage ? { "image": ogImage } : {}),
         })}</script>
       </Helmet>
+      {page.is_nsfw && (
+        <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
+      )}
+      {ogImage && (
+        <Helmet><meta property="og:image" content={ogImage} /></Helmet>
+      )}
 
       {showUrgency && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
       {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && <ProfileLocationToast enabled={true} pageId={page.id} />}
