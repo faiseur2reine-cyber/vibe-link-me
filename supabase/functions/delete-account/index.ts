@@ -112,6 +112,10 @@ serve(async (req) => {
     await supabase.from("custom_templates").delete().eq("user_id", userId);
     log("Deleted custom_templates");
 
+    // ── 6b. Delete urgency_templates ──
+    await supabase.from("urgency_templates").delete().eq("user_id", userId);
+    log("Deleted urgency_templates");
+
     // ── 7. Delete onboarding_state ──
     await supabase.from("onboarding_state").delete().eq("user_id", userId);
     log("Deleted onboarding_state");
@@ -122,6 +126,7 @@ serve(async (req) => {
 
     // ── 9. Delete storage files ──
     try {
+      // Clean media bucket (covers, thumbnails)
       const { data: files } = await supabase.storage
         .from("media")
         .list(userId, { limit: 1000 });
@@ -130,7 +135,6 @@ serve(async (req) => {
         const paths = files.map((f: { name: string }) => `${userId}/${f.name}`);
         await supabase.storage.from("media").remove(paths);
 
-        // Also check subdirectories (thumbnails)
         const { data: thumbFiles } = await supabase.storage
           .from("media")
           .list(`${userId}/thumbnails`, { limit: 1000 });
@@ -140,6 +144,33 @@ serve(async (req) => {
           await supabase.storage.from("media").remove(thumbPaths);
         }
       }
+
+      // Clean avatars bucket
+      const { data: avatarFiles } = await supabase.storage
+        .from("avatars")
+        .list(userId, { limit: 1000 });
+
+      if (avatarFiles && avatarFiles.length > 0) {
+        // Avatars are nested: {userId}/pages/{pageId}/avatar.ext
+        // List subdirectories and clean recursively
+        const { data: pageDirs } = await supabase.storage
+          .from("avatars")
+          .list(`${userId}/pages`, { limit: 1000 });
+
+        if (pageDirs && pageDirs.length > 0) {
+          for (const dir of pageDirs) {
+            const { data: avatarInDir } = await supabase.storage
+              .from("avatars")
+              .list(`${userId}/pages/${dir.name}`, { limit: 100 });
+
+            if (avatarInDir && avatarInDir.length > 0) {
+              const avPaths = avatarInDir.map((f: { name: string }) => `${userId}/pages/${dir.name}/${f.name}`);
+              await supabase.storage.from("avatars").remove(avPaths);
+            }
+          }
+        }
+      }
+
       log("Deleted storage files");
     } catch (e) {
       log("Storage deletion error (non-blocking)", { error: String(e) });
