@@ -209,6 +209,27 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 text-center z-10">
             <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-2" />
 
+            {/* Avatar */}
+            {page.avatar_url && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, ease }}
+                className="flex justify-center mb-3"
+              >
+                <div className="relative">
+                  <img
+                    src={page.avatar_url}
+                    alt={displayName}
+                    className="w-20 h-20 rounded-full object-cover ring-[3px] ring-black/40 ring-offset-2 ring-offset-black/20"
+                  />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-emerald-400 border-[2.5px] border-black flex items-center justify-center">
+                    <span className="block w-1.5 h-1.5 rounded-full bg-white" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             <motion.h1
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -224,10 +245,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
               transition={{ delay: 0.12, duration: 0.4 }}
               className="flex items-center justify-center gap-1.5 text-[13px] text-white/45 mb-3"
             >
-              <span className="relative w-2 h-2 shrink-0">
-                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-pulse-soft" />
-                <span className="relative block w-2 h-2 rounded-full bg-emerald-400" />
-              </span>
+              {!page.avatar_url && (
+                <span className="relative w-2 h-2 shrink-0">
+                  <span className="absolute inset-0 rounded-full bg-emerald-400 animate-pulse-soft" />
+                  <span className="relative block w-2 h-2 rounded-full bg-emerald-400" />
+                </span>
+              )}
               <span>{connectedLabel}</span>
               {location && (
                 <>
@@ -337,19 +360,30 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 + idx * 0.05, duration: 0.35, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-200 ${paymentIssue ? 'cursor-default' : 'active:scale-[0.98] hover:-translate-y-[1px]'} ${idx === 0 && !paymentIssue ? 'animate-bounce-subtle' : ''}`}
+                    className={`group relative w-full flex items-center gap-4 rounded-full text-left transition-all duration-250 ${
+                      paymentIssue
+                        ? 'cursor-default'
+                        : 'active:scale-[0.97] hover:-translate-y-[2px] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]'
+                    } ${idx === 0 && !paymentIssue ? 'animate-bounce-subtle' : ''}`}
                     style={{
                       backgroundColor: '#FFFFFF',
                       color: '#000000',
-                      minHeight: isFeatured ? 70 : 66,
+                      minHeight: isFeatured ? 72 : 66,
                       padding: '11px 18px 11px 11px',
-                      ...(isFeatured ? { boxShadow: `0 0 0 1.5px ${iconBg}15, 0 6px 20px ${iconBg}12` } : {}),
+                      boxShadow: isFeatured
+                        ? `0 2px 8px rgba(0,0,0,0.06), 0 0 0 1.5px ${iconBg}18, 0 8px 24px ${iconBg}14`
+                        : '0 2px 8px rgba(0,0,0,0.06)',
                     }}
                   >
                     {/* Colored icon circle */}
                     <div
-                      className="w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105"
-                      style={{ backgroundColor: iconBg }}
+                      className={`w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0 transition-all duration-250 ${
+                        paymentIssue ? '' : 'group-hover:scale-110 group-hover:shadow-lg'
+                      }`}
+                      style={{
+                        backgroundColor: iconBg,
+                        boxShadow: `0 2px 8px ${iconBg}30`,
+                      }}
                     >
                       <LinkFavicon url={link.url} size="sm" />
                     </div>
@@ -366,10 +400,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                       )}
                     </div>
 
-                    <ChevronRight className="w-4 h-4 shrink-0 text-black/10 group-hover:text-black/25 group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className={`w-4 h-4 shrink-0 text-black/10 transition-all duration-250 ${
+                      paymentIssue ? '' : 'group-hover:text-black/30 group-hover:translate-x-1'
+                    }`} />
 
                     {/* Subtle glow on first link */}
-                    {idx === 0 && (
+                    {idx === 0 && !paymentIssue && (
                       <div className="absolute inset-0 rounded-full border border-black/[0.03] animate-ring-glow pointer-events-none" />
                     )}
                   </motion.button>
