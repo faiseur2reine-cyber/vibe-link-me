@@ -17,3 +17,12 @@ verify_jwt = false
 
 [functions.customer-portal]
 verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = false
+
+[functions.sitemap]
+verify_jwt = false
+
+[functions.weekly-summary]
+verify_jwt = false
