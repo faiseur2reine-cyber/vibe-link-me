@@ -13,14 +13,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>MyTaptap — Tes abonnés cliquent. Ils atterrissent au bon endroit.</title>
-        <meta name="description" content="Le navigateur Instagram bloque tes conversions. MyTaptap ouvre tes liens dans Safari ou Chrome, là où tes visiteurs sont déjà connectés." />
-        <meta property="og:title" content="MyTaptap — Tes abonnés cliquent. Ils atterrissent au bon endroit." />
-        <meta property="og:description" content="Le navigateur Instagram bloque tes conversions. MyTaptap ouvre tes liens dans Safari ou Chrome." />
+        <title>MyTaptap — Le lien en bio qui transforme tes vues en revenus</title>
+        <meta name="description" content="Deeplinks, safe page, urgency, pixels. Chaque feature est là pour une raison : plus de conversions. Gratuit." />
+        <meta property="og:title" content="MyTaptap — Le lien en bio qui transforme tes vues en revenus" />
+        <meta property="og:description" content="Deeplinks, safe page, urgency, pixels. Chaque feature est là pour une raison : plus de conversions." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://mytaptap.com" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="MyTaptap — Tes abonnés cliquent. Ils atterrissent au bon endroit." />
+        <meta name="twitter:title" content="MyTaptap — Le lien en bio qui transforme tes vues en revenus" />
         <link rel="canonical" href="https://mytaptap.com" />
       </Helmet>
 

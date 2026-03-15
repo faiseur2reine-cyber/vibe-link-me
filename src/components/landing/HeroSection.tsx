@@ -76,8 +76,8 @@ const HeroSection = () => {
             variants={item}
             className="text-4xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.08] text-foreground"
           >
-            Tes abonnés cliquent.{' '}
-            <span className="text-pop-gradient">Ils atterrissent au bon endroit.</span>
+            Le lien en bio qui transforme{' '}
+            <span className="text-pop-gradient">tes vues en revenus.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -85,7 +85,7 @@ const HeroSection = () => {
             variants={item}
             className="mt-5 text-muted-foreground text-[15px] sm:text-base leading-relaxed max-w-lg mx-auto"
           >
-            Le navigateur Instagram bloque tes conversions. MyTaptap ouvre tes liens dans Safari ou Chrome, là où tes visiteurs sont déjà connectés.
+            Deeplinks, safe page, urgency, pixels. Chaque feature est là pour une raison : plus de conversions.
           </motion.p>
 
           {/* ── Username claim ── */}
