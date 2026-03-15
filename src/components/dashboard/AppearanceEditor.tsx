@@ -119,6 +119,7 @@ const AppearanceEditor = ({ page, links = [], plan = 'free', onUpdate, onPreview
   };
 
   // Live preview — fires on every state change, always reads fresh values
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     onPreviewChange?.({
       theme: 'immersive',

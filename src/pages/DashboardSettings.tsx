@@ -173,7 +173,7 @@ const DashboardSettings = () => {
       if (error) {
         toast.error(t('common.error'));
       } else if (data?.url) {
-        window.open(data.url, '_blank');
+        window.location.href = data.url;
       }
     } catch (e) {
       toast.error(t('common.error'));
@@ -194,7 +194,8 @@ const DashboardSettings = () => {
       if (error) {
         toast.error(t('common.error'));
       } else if (data?.url) {
-        window.open(data.url, '_blank');
+        // Use location.href — window.open is blocked by popup blockers on mobile
+        window.location.href = data.url;
       }
     } catch (e) {
       toast.error(t('common.error'));

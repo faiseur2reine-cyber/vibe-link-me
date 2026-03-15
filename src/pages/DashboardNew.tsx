@@ -36,7 +36,7 @@ const DashboardHome = () => {
   const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showTour, setShowTour] = useState(false);
 
   const userPlan = (subscription?.plan || 'free') as PlanKey;
@@ -59,6 +59,9 @@ const DashboardHome = () => {
     if (searchParams.get('checkout') === 'success') {
       checkSubscription().then(() => refetchPages());
       toast.success(t('common.success'));
+      // Clean URL so refresh doesn't re-trigger
+      searchParams.delete('checkout');
+      setSearchParams(searchParams, { replace: true });
     }
     // Auto-select page from URL param (from overview click)
     const pageParam = searchParams.get('page');
