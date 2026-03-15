@@ -4,33 +4,59 @@ import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  TapClick as MousePointerClick, TapLink as Link2, TapGrid as LayoutGrid, TapTrending as TrendingUp,
-  TapArrowRight as ArrowRight, TapPlus as Plus, TapZap as Zap, TapEye as Eye, TapDollar as DollarSign,
+  TapClick as MousePointerClick, TapLink as Link2, TapGrid as LayoutGrid,
+  TapArrowRight as ArrowRight, TapPlus as Plus, TapDollar as DollarSign,
+  TapTrending as TrendingUp, TapExternalLink as ExternalLink,
+  TapZap as Zap, TapEye as Eye, TapSparkles as Sparkles,
 } from '@/components/icons/TapIcons';
+import { AlertTriangle, ImageOff, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-function getTimeAgo(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return 'à l\'instant';
-  if (diffMin < 60) return `il y a ${diffMin}min`;
-  const diffH = Math.floor(diffMin / 60);
-  if (diffH < 24) return `il y a ${diffH}h`;
-  const diffD = Math.floor(diffH / 24);
-  if (diffD < 7) return `il y a ${diffD}j`;
-  if (diffD < 30) return `il y a ${Math.floor(diffD / 7)}sem`;
-  return `il y a ${Math.floor(diffD / 30)}m`;
+function timeAgo(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const min = Math.floor(diffMs / 60000);
+  if (min < 1) return 'à l\'instant';
+  if (min < 60) return `${min}min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}j`;
+  return `${Math.floor(d / 7)}sem`;
 }
+
+// ── Sparkline SVG (last 7 days) ──
+const Sparkline = ({ data, color = 'currentColor' }: { data: number[]; color?: string }) => {
+  if (data.length < 2) return null;
+  const max = Math.max(...data, 1);
+  const w = 80, h = 28, pad = 2;
+  const points = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2);
+    const y = h - pad - (v / max) * (h - pad * 2);
+    return `${x},${y}`;
+  }).join(' ');
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="shrink-0">
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={0.6}
+      />
+    </svg>
+  );
+};
 
 const DashboardOverview = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, subscription } = useAuth();
   const { pages, loading: pagesLoading } = useCreatorPages();
   const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
   const stats = useGlobalAnalytics(pages.map(p => p.id));
@@ -44,214 +70,388 @@ const DashboardOverview = () => {
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]
-    || 'there';
+    || '';
 
-  // Revenue calculations
+  // ── Computed ──
+  const activePages = pages.filter(p => p.status === 'active').length;
   const totalRevenue = pages.reduce((sum, p) => sum + (p.revenue_monthly || 0), 0);
   const totalNet = pages.reduce((sum, p) => {
-    const rev = p.revenue_monthly || 0;
-    const com = p.revenue_commission || 20;
-    return sum + Math.round(rev * com / 100);
+    return sum + Math.round((p.revenue_monthly || 0) * (p.revenue_commission || 20) / 100);
   }, 0);
-  const activePages = pages.filter(p => p.status === 'active').length;
 
-  const kpis = [
-    { label: 'Total clics', value: stats.totalClicks, icon: MousePointerClick, color: 'text-pop-cyan', bg: 'bg-pop-cyan/12' },
-    { label: 'Pages actives', value: activePages, icon: LayoutGrid, color: 'text-pop-lime', bg: 'bg-pop-lime/12' },
-    { label: 'Liens actifs', value: stats.totalLinks, icon: Link2, color: 'text-pop-yellow', bg: 'bg-pop-yellow/12' },
-  ];
+  // Last 7 days sparkline data
+  const last7 = useMemo(() => {
+    const days: number[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      const found = stats.dailyClicks.find(dc => dc.date === key);
+      days.push(found?.clicks ?? 0);
+    }
+    return days;
+  }, [stats.dailyClicks]);
+
+  const last7Total = last7.reduce((a, b) => a + b, 0);
+  const prev7Total = useMemo(() => {
+    let sum = 0;
+    for (let i = 13; i >= 7; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      const found = stats.dailyClicks.find(dc => dc.date === key);
+      sum += found?.clicks ?? 0;
+    }
+    return sum;
+  }, [stats.dailyClicks]);
+
+  const clickTrend = prev7Total > 0
+    ? Math.round(((last7Total - prev7Total) / prev7Total) * 100)
+    : last7Total > 0 ? 100 : 0;
+
+  // ── Alerts ──
+  const alerts = useMemo(() => {
+    const list: { icon: any; text: string; action?: () => void; severity: 'warn' | 'info' }[] = [];
+
+    // Pages without avatar
+    const noAvatar = pages.filter(p => !p.avatar_url);
+    if (noAvatar.length > 0) {
+      list.push({
+        icon: ImageOff,
+        text: `${noAvatar.length} page${noAvatar.length > 1 ? 's' : ''} sans avatar`,
+        action: () => navigate(`/dashboard/pages?page=${noAvatar[0].id}`),
+        severity: 'warn',
+      });
+    }
+
+    // Pages still in draft
+    const drafts = pages.filter(p => !p.status || p.status === 'draft');
+    if (drafts.length > 0 && pages.length > 1) {
+      list.push({
+        icon: Clock,
+        text: `${drafts.length} page${drafts.length > 1 ? 's' : ''} en draft`,
+        action: () => navigate('/dashboard/pages'),
+        severity: 'info',
+      });
+    }
+
+    // Pages with 0 clicks (if there are pages with clicks for comparison)
+    const zeroClicks = pages.filter(p => {
+      const pc = stats.topPages.find(tp => tp.pageId === p.id);
+      return (!pc || pc.clicks === 0);
+    });
+    if (zeroClicks.length > 0 && pages.length > zeroClicks.length) {
+      list.push({
+        icon: MousePointerClick,
+        text: `${zeroClicks.length} page${zeroClicks.length > 1 ? 's' : ''} sans clic`,
+        action: () => navigate(`/dashboard/pages?page=${zeroClicks[0].id}`),
+        severity: 'info',
+      });
+    }
+
+    return list;
+  }, [pages, stats.topPages, navigate]);
+
+  // ── Recently edited ──
+  const recentlyEdited = useMemo(() => {
+    return [...pages]
+      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+      .slice(0, 4);
+  }, [pages]);
 
   return (
     <div className="flex-1 flex flex-col">
-      <main className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
-        {/* Greeting */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10 space-y-6">
+        {/* ── Header ── */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease }}
-          className="mb-8"
+          transition={{ duration: 0.3, ease }}
+          className="flex items-center justify-between"
         >
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-            Bonjour, {firstName} 👋
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Voici un aperçu de vos performances.
-          </p>
+          <div>
+            <h1 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">
+              {firstName ? `Bonjour, ${firstName}` : 'Bonjour'}
+            </h1>
+            <p className="text-[12px] text-muted-foreground/50 mt-0.5">
+              {pages.length} page{pages.length !== 1 ? 's' : ''} · {stats.totalLinks} lien{stats.totalLinks !== 1 ? 's' : ''}
+            </p>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => navigate('/dashboard/pages')}
+            className="h-8 px-3 text-[11px] gap-1.5 rounded-xl"
+          >
+            <Plus className="w-3 h-3" /> Nouvelle page
+          </Button>
         </motion.div>
 
-        {/* KPIs */}
+        {/* ── KPI row ── */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05, duration: 0.4, ease }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+          transition={{ delay: 0.04, duration: 0.3, ease }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-3"
         >
-          {kpis.map((kpi, i) => (
-            <motion.div
-              key={kpi.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease }}
-              className="flex items-center gap-4 p-4 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5 hover:-translate-y-1"
-            >
-              <div className={`w-10 h-10 rounded-2xl ${kpi.bg} flex items-center justify-center shrink-0`}>
-                <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{kpi.label}</p>
-                <p className="text-2xl font-bold text-foreground tabular-nums">{stats.loading ? '—' : kpi.value.toLocaleString()}</p>
-              </div>
-            </motion.div>
-          ))}
+          {/* Clics 7j */}
+          <div className="p-3.5 rounded-xl glass">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Clics 7j</span>
+              <Sparkline data={last7} color="hsl(var(--pop-cyan))" />
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold tabular-nums">{stats.loading ? '—' : last7Total.toLocaleString()}</span>
+              {!stats.loading && clickTrend !== 0 && (
+                <span className={`text-[10px] font-semibold tabular-nums ${clickTrend > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                  {clickTrend > 0 ? '+' : ''}{clickTrend}%
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Total clics */}
+          <div className="p-3.5 rounded-xl glass">
+            <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Total clics</span>
+            <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : stats.totalClicks.toLocaleString()}</p>
+          </div>
+
+          {/* Pages actives */}
+          <div className="p-3.5 rounded-xl glass">
+            <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Pages actives</span>
+            <div className="flex items-baseline gap-1.5 mt-2">
+              <span className="text-2xl font-bold tabular-nums">{activePages}</span>
+              <span className="text-[12px] text-muted-foreground/40">/ {pages.length}</span>
+            </div>
+          </div>
+
+          {/* Revenue net (or liens count if no revenue) */}
+          {totalRevenue > 0 ? (
+            <div className="p-3.5 rounded-xl glass border border-emerald-500/10 bg-emerald-500/[0.03]">
+              <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Net agence</span>
+              <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400 mt-2">{totalNet.toLocaleString()}€</p>
+            </div>
+          ) : (
+            <div className="p-3.5 rounded-xl glass">
+              <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Liens actifs</span>
+              <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : stats.totalLinks.toLocaleString()}</p>
+            </div>
+          )}
         </motion.div>
 
-        {/* Revenue summary — only shown if any revenue entered */}
+        {/* ── Revenue breakdown (only if revenue > 0) ── */}
         {totalRevenue > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12, duration: 0.4, ease }}
-            className="flex items-center gap-4 p-4 rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/5 mb-8"
+            transition={{ delay: 0.08, duration: 0.3, ease }}
+            className="flex items-center gap-6 p-4 rounded-xl border border-emerald-500/10 bg-emerald-500/[0.02]"
           >
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-              <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div className="flex-1 flex items-center gap-6">
-              <div>
-                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium uppercase tracking-wider">Revenue brut</p>
-                <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{totalRevenue.toLocaleString()} €</p>
-              </div>
-              <div className="w-px h-8 bg-emerald-200 dark:bg-emerald-500/20" />
-              <div>
-                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium uppercase tracking-wider">Net agence</p>
-                <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{totalNet.toLocaleString()} €</p>
-              </div>
-              <div className="w-px h-8 bg-emerald-200 dark:bg-emerald-500/20" />
-              <div>
-                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium uppercase tracking-wider">Pages</p>
-                <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{activePages}/{pages.length}</p>
+            <div className="flex items-center gap-3 flex-1">
+              <DollarSign className="w-4 h-4 text-emerald-500 shrink-0" />
+              <div className="flex items-center gap-6">
+                <div>
+                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">Brut</p>
+                  <p className="text-[15px] font-bold tabular-nums">{totalRevenue.toLocaleString()}€</p>
+                </div>
+                <div className="w-px h-6 bg-border/30" />
+                <div>
+                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">Net agence</p>
+                  <p className="text-[15px] font-bold tabular-nums text-emerald-600 dark:text-emerald-400">{totalNet.toLocaleString()}€</p>
+                </div>
+                <div className="w-px h-6 bg-border/30" />
+                <div>
+                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">Liens</p>
+                  <p className="text-[15px] font-bold tabular-nums">{stats.totalLinks}</p>
+                </div>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* Quick actions + Top pages */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Quick actions */}
+        {/* ── Alerts ── */}
+        {alerts.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4, ease }}
-            className="p-5 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5"
+            transition={{ delay: 0.1, duration: 0.3, ease }}
+            className="space-y-1.5"
           >
-            <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-pop-yellow" />
-              Actions rapides
-            </h3>
-            <div className="space-y-2">
-              <button
-                onClick={() => navigate('/dashboard/pages')}
-                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-pop-lime/12 flex items-center justify-center">
-                    <Plus className="w-4 h-4 text-pop-lime" />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-medium text-foreground">Créer une nouvelle page</p>
-                    <p className="text-[11px] text-muted-foreground">Ajouter un link-in-bio pour un créateur</p>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-
-              <button
-                onClick={() => navigate('/dashboard/analytics')}
-                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-pop-cyan/12 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-pop-cyan" />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-medium text-foreground">Voir les analytics</p>
-                    <p className="text-[11px] text-muted-foreground">Clics, pays, sources de trafic</p>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-
-              <button
-                onClick={() => navigate('/dashboard/themes')}
-                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-pop-violet/12 flex items-center justify-center">
-                    <Eye className="w-4 h-4 text-pop-violet" />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-medium text-foreground">Personnaliser les thèmes</p>
-                    <p className="text-[11px] text-muted-foreground">Midnight, Neon, Immersive et plus</p>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-            </div>
+            {alerts.map((alert, i) => {
+              const Icon = alert.icon;
+              return (
+                <button
+                  key={i}
+                  onClick={alert.action}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
+                    alert.severity === 'warn'
+                      ? 'bg-amber-500/[0.06] hover:bg-amber-500/[0.1] text-amber-700 dark:text-amber-400'
+                      : 'bg-muted/30 hover:bg-muted/50 text-muted-foreground'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5 shrink-0 opacity-70" />
+                  <span className="text-[12px] font-medium flex-1">{alert.text}</span>
+                  <ArrowRight className="w-3 h-3 opacity-30" />
+                </button>
+              );
+            })}
           </motion.div>
+        )}
 
-          {/* Top pages */}
+        {/* ── Two columns ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Leaderboard — 3 col */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.4, ease }}
-            className="p-5 rounded-2xl glass transition-all duration-200 hover:shadow-lg hover:shadow-foreground/5"
+            transition={{ delay: 0.14, duration: 0.3, ease }}
+            className="lg:col-span-3 p-4 rounded-xl glass"
           >
-            <h3 className="text-[13px] font-semibold text-foreground mb-4 flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4 text-pop-lime" />
-              Vos pages
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[12px] font-semibold text-foreground flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-muted-foreground" />
+                Top pages
+              </h3>
+              {pages.length > 5 && (
+                <button onClick={() => navigate('/dashboard/pages')} className="text-[10px] text-muted-foreground/50 hover:text-foreground transition-colors">
+                  Tout voir
+                </button>
+              )}
+            </div>
+
             {pages.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground mb-3">Aucune page créée</p>
-                <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/pages')}>
-                  <Plus className="w-3.5 h-3.5 mr-1.5" /> Créer une page
+              <div className="text-center py-10">
+                <p className="text-[12px] text-muted-foreground/40 mb-3">Aucune page créée</p>
+                <Button size="sm" variant="outline" className="h-8 text-[11px] rounded-lg" onClick={() => navigate('/dashboard/pages')}>
+                  <Plus className="w-3 h-3 mr-1" /> Créer
                 </Button>
               </div>
             ) : (
-              <div className="space-y-2">
-                {stats.topPages.slice(0, 5).map((p, i) => {
+              <div className="space-y-0.5">
+                {stats.topPages.slice(0, 6).map((p, i) => {
                   const pageData = pages.find(pg => pg.id === p.pageId);
-                  const lastEdited = pageData?.updated_at
-                    ? new Date(pageData.updated_at)
-                    : null;
-                  const timeAgo = lastEdited ? getTimeAgo(lastEdited) : '';
+                  if (!pageData) return null;
+                  const commission = Math.round((pageData.revenue_monthly || 0) * (pageData.revenue_commission || 20) / 100);
+                  const status = pageData.status || 'draft';
+                  const statusDot = status === 'active' ? 'bg-emerald-500' : status === 'paused' ? 'bg-red-500' : 'bg-amber-500';
 
                   return (
                     <button
                       key={p.pageId}
                       onClick={() => navigate(`/dashboard/pages?page=${p.pageId}`)}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-accent/50 transition-colors text-left group"
+                      className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-muted/40 transition-colors text-left group"
                     >
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[12px] font-bold text-muted-foreground shrink-0">
-                        {(p.displayName || p.username).charAt(0).toUpperCase()}
+                      {/* Rank */}
+                      <span className="text-[11px] font-bold text-muted-foreground/25 w-4 text-center tabular-nums shrink-0">{i + 1}</span>
+
+                      {/* Avatar */}
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden bg-muted/60 shrink-0">
+                        {pageData.avatar_url ? (
+                          <img src={pageData.avatar_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-[11px] font-semibold text-muted-foreground/40">
+                              {(p.displayName || p.username).charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        <div className={`absolute bottom-0 right-0 w-2 h-2 rounded-full ${statusDot} ring-2 ring-background`} />
                       </div>
+
+                      {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-medium text-foreground truncate">
-                          {p.displayName || p.username}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">
-                          @{p.username}{timeAgo ? ` · ${timeAgo}` : ''}
-                        </p>
+                        <span className="text-[12px] font-medium truncate block">{p.displayName || p.username}</span>
+                        <span className="text-[10px] text-muted-foreground/40">@{p.username}</span>
                       </div>
+
+                      {/* Revenue */}
+                      {commission > 0 && (
+                        <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 tabular-nums hidden sm:block">
+                          {commission}€
+                        </span>
+                      )}
+
+                      {/* Clicks */}
                       <div className="text-right shrink-0">
-                        <p className="text-[13px] font-semibold text-foreground tabular-nums">{p.clicks}</p>
-                        <p className="text-[10px] text-muted-foreground">clics</p>
+                        <span className="text-[12px] font-semibold tabular-nums">{p.clicks.toLocaleString()}</span>
+                        <span className="text-[10px] text-muted-foreground/30 ml-0.5">clics</span>
                       </div>
+
+                      <ArrowRight className="w-3 h-3 text-muted-foreground/15 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
                     </button>
                   );
                 })}
               </div>
             )}
+          </motion.div>
+
+          {/* Right column — 2 col */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.18, duration: 0.3, ease }}
+            className="lg:col-span-2 space-y-4"
+          >
+            {/* Recent activity */}
+            <div className="p-4 rounded-xl glass">
+              <h3 className="text-[12px] font-semibold text-foreground flex items-center gap-1.5 mb-3">
+                <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                Activité récente
+              </h3>
+              {recentlyEdited.length === 0 ? (
+                <p className="text-[12px] text-muted-foreground/40 py-4 text-center">Aucune activité</p>
+              ) : (
+                <div className="space-y-1">
+                  {recentlyEdited.map(page => (
+                    <button
+                      key={page.id}
+                      onClick={() => navigate(`/dashboard/pages?page=${page.id}`)}
+                      className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-muted/40 transition-colors text-left"
+                    >
+                      <div className="w-6 h-6 rounded-full overflow-hidden bg-muted/50 shrink-0">
+                        {page.avatar_url ? (
+                          <img src={page.avatar_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-[9px] font-semibold text-muted-foreground/40">
+                              {(page.display_name || page.username)?.[0]?.toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-medium truncate flex-1">{page.display_name || page.username}</span>
+                      <span className="text-[10px] text-muted-foreground/30 tabular-nums shrink-0">
+                        {timeAgo(new Date(page.updated_at))}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Quick links */}
+            <div className="p-4 rounded-xl glass">
+              <h3 className="text-[12px] font-semibold text-foreground flex items-center gap-1.5 mb-3">
+                <Zap className="w-3.5 h-3.5 text-muted-foreground" />
+                Raccourcis
+              </h3>
+              <div className="grid grid-cols-2 gap-1.5">
+                {[
+                  { label: 'Mes pages', icon: LayoutGrid, path: '/dashboard/pages' },
+                  { label: 'Analytics', icon: TrendingUp, path: '/dashboard/analytics' },
+                  { label: 'Mon profil', icon: Users, path: '/dashboard/profile' },
+                  { label: 'Paramètres', icon: Sparkles, path: '/dashboard/settings' },
+                ].map(item => (
+                  <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-[11px] font-medium text-muted-foreground/60 hover:text-foreground hover:bg-muted/40 transition-all"
+                  >
+                    <item.icon className="w-3 h-3" />
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
       </main>
