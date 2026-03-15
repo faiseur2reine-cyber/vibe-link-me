@@ -15,14 +15,14 @@ const item = {
 };
 
 const FEATURES = [
-  { icon: Smartphone, label: 'Deeplinks', desc: 'Sort d\'Instagram, TikTok, Snapchat automatiquement' },
-  { icon: BarChart3, label: 'Analytics', desc: 'Clics, pays, referrers, conversion rate' },
-  { icon: ShieldCheck, label: 'Safe page', desc: 'Redirect anti-bot pour protéger tes liens' },
-  { icon: Zap, label: 'Urgency widgets', desc: 'Countdown, scarcity, live viewers' },
-  { icon: Palette, label: 'Design immersive', desc: 'Hero plein écran, boutons pill, custom CSS' },
-  { icon: Users, label: 'Multi-pages', desc: 'Gère plusieurs créateurs depuis un compte' },
-  { icon: Globe, label: 'Tracking pixels', desc: 'Meta Pixel, GA4, TikTok Pixel, UTM auto' },
-  { icon: Clock, label: 'Scheduling', desc: 'Programme l\'apparition et l\'expiration des liens' },
+  { icon: Smartphone, label: 'Deeplinks', desc: 'Tes visiteurs sortent du navigateur Instagram et TikTok. Ils atterrissent direct sur Chrome.' },
+  { icon: ShieldCheck, label: 'Safe page', desc: 'Les bots de Meta voient une page neutre. Tes vrais visiteurs voient tes liens.' },
+  { icon: BarChart3, label: 'Analytics', desc: 'Qui clique, depuis quel pays, quel referrer. Pas besoin de GA4 pour savoir ce qui marche.' },
+  { icon: Zap, label: 'Urgency', desc: 'Countdown, places restantes, "X personnes connectées". Les leviers qui font cliquer.' },
+  { icon: Users, label: 'Mode agence', desc: 'Un compte, plusieurs pages. Opérateur, revenus, commissions. Fait pour gérer une équipe.' },
+  { icon: Globe, label: 'Pixels & UTM', desc: 'Meta Pixel, TikTok Pixel, GA4. Les UTM se collent tout seuls sur chaque lien.' },
+  { icon: Palette, label: 'Design immersive', desc: 'Photo hero plein écran, boutons blancs, effet parallaxe. Pas un Linktree de plus.' },
+  { icon: Clock, label: 'Scheduling', desc: 'Un lien qui apparait vendredi soir et disparait lundi matin. Sans y toucher.' },
 ];
 
 const HeroSection = () => {
@@ -56,7 +56,7 @@ const HeroSection = () => {
 
   return (
     <section className="relative overflow-hidden">
-      {/* Background blobs */}
+      {/* Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-pop-yellow/10 rounded-full blur-3xl animate-blob" />
         <div className="absolute -top-20 -right-32 w-[400px] h-[400px] bg-pop-coral/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
@@ -76,8 +76,8 @@ const HeroSection = () => {
             variants={item}
             className="text-4xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.08] text-foreground"
           >
-            Ton link-in-bio.{' '}
-            <span className="text-pop-gradient">En 30 secondes.</span>
+            Le link-in-bio qui{' '}
+            <span className="text-pop-gradient">sort du navigateur Instagram.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -85,7 +85,7 @@ const HeroSection = () => {
             variants={item}
             className="mt-5 text-muted-foreground text-[15px] sm:text-base leading-relaxed max-w-lg mx-auto"
           >
-            Tout ce dont un créateur a besoin pour convertir son audience. Gratuit, sans limites cachées.
+            Tes abonnés cliquent depuis Instagram, ils atterrissent sur Chrome. Tes liens chargent dans un vrai navigateur. Ton taux de conversion change.
           </motion.p>
 
           {/* ── Username claim ── */}
@@ -123,7 +123,6 @@ const HeroSection = () => {
               </button>
             </div>
 
-            {/* Status message */}
             <div className="h-5 mt-2">
               {status === 'available' && username.length >= 3 && (
                 <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-[12px] text-emerald-600 font-medium">
@@ -132,32 +131,32 @@ const HeroSection = () => {
               )}
               {status === 'taken' && (
                 <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-[12px] text-red-500 font-medium">
-                  Ce nom est déjà pris, essaie un autre
+                  Déjà pris, essaie un autre
                 </motion.p>
               )}
             </div>
           </motion.div>
 
-          {/* Trust signals */}
+          {/* Trust */}
           <motion.div variants={item} className="mt-3 flex items-center gap-5 justify-center text-[12px] text-muted-foreground/50 font-medium">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Gratuit pour toujours
+              Gratuit
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-              Sans carte bancaire
+              Sans carte
             </span>
-            <span className="flex items-center gap-1.5 hidden sm:flex">
+            <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-              Setup en 30s
+              30 secondes
             </span>
           </motion.div>
 
-          {/* ── Features grid ── */}
+          {/* ── Features ── */}
           <motion.div
             variants={item}
-            className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5 text-left max-w-2xl mx-auto"
+            className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-left max-w-2xl mx-auto"
           >
             {FEATURES.map((f, i) => (
               <motion.div
@@ -165,11 +164,16 @@ const HeroSection = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.05, duration: 0.3 }}
-                className="group"
               >
-                <f.icon className="w-4 h-4 text-muted-foreground/40 mb-2 group-hover:text-foreground/60 transition-colors" />
-                <p className="text-[13px] font-semibold text-foreground leading-tight">{f.label}</p>
-                <p className="text-[11px] text-muted-foreground/50 mt-0.5 leading-snug">{f.desc}</p>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                    <f.icon className="w-4 h-4 text-muted-foreground/50" />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-foreground">{f.label}</p>
+                    <p className="text-[12px] text-muted-foreground/60 mt-0.5 leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </motion.div>

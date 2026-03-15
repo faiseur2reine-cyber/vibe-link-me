@@ -13,14 +13,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>MyTaptap — Le lien en bio pour créateurs</title>
-        <meta name="description" content="Créez votre page de liens en 30 secondes. Deeplinks, analytics, safe page. Gratuit." />
-        <meta property="og:title" content="MyTaptap — Le lien en bio pour créateurs" />
-        <meta property="og:description" content="Créez votre page de liens en 30 secondes. Deeplinks, analytics, safe page." />
+        <title>MyTaptap — Le link-in-bio qui sort du navigateur Instagram</title>
+        <meta name="description" content="Tes abonnés cliquent depuis Instagram, ils atterrissent sur Chrome. Deeplinks, safe page, analytics, mode agence. Gratuit." />
+        <meta property="og:title" content="MyTaptap — Le link-in-bio qui sort du navigateur Instagram" />
+        <meta property="og:description" content="Tes abonnés cliquent depuis Instagram, ils atterrissent sur Chrome. Deeplinks, safe page, analytics." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://mytaptap.com" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="MyTaptap — Le lien en bio pour créateurs" />
+        <meta name="twitter:title" content="MyTaptap — Le link-in-bio qui sort du navigateur Instagram" />
         <link rel="canonical" href="https://mytaptap.com" />
       </Helmet>
 
