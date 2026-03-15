@@ -27,8 +27,8 @@ export const OnboardingWizard = () => {
   const { createPage, addMultipleLinks } = useCreatorPages();
 
   const [selectedTemplate, setSelectedTemplate] = useState<OnboardingTemplate | null>(null);
-  const [username, setUsername] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [username, setUsername] = useState(() => user?.user_metadata?.username || '');
+  const [displayName, setDisplayName] = useState(() => user?.user_metadata?.display_name || user?.user_metadata?.username || '');
   const [bio, setBio] = useState('');
   const [creating, setCreating] = useState(false);
 
@@ -52,6 +52,7 @@ export const OnboardingWizard = () => {
 
   const handleSkip = async () => {
     await skip();
+    localStorage.setItem('onboarding_completed', '1');
     navigate('/dashboard');
   };
 
@@ -87,6 +88,7 @@ export const OnboardingWizard = () => {
       }
 
       await complete();
+      localStorage.setItem('onboarding_completed', '1');
       await updateStep('success');
     } catch (error) {
       console.error('Error creating page:', error);

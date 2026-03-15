@@ -259,26 +259,21 @@ const ImmersivePreview = ({ page, links, displayName }: {
   const visibleLinks = links.filter(l => l.is_visible !== false);
 
   return (
-    <div className="w-full h-full bg-[#0a0a0a] text-white flex flex-col relative overflow-hidden" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
-      {/* Fixed background */}
-      <div className="absolute inset-0">
+    <div className="w-full h-full bg-[#0a0a0a] text-white flex flex-col overflow-hidden" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
+      {/* Cover — landscape 16/9 */}
+      <div className="relative shrink-0 overflow-hidden" style={{ aspectRatio: '16/9', maxHeight: '35%' }}>
         {heroSrc ? (
-          <img src={heroSrc} alt="" className="w-full h-full object-cover" />
+          <img src={heroSrc} alt="" className="w-full h-full object-cover" style={{ objectPosition: `${(page as any).cover_focal_x ?? 50}% ${(page as any).cover_focal_y ?? 30}%` }} />
         ) : (
           <div className="w-full h-full" style={{ background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)' }} />
         )}
+        <div className="absolute bottom-0 left-0 right-0 h-[60%] pointer-events-none" style={{
+          background: 'linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.35) 50%, #0a0a0a 100%)',
+        }} />
       </div>
 
-      {/* Photo spacer */}
-      <div className="shrink-0" style={{ height: '50%' }} />
-
-      {/* Content overlay */}
-      <div className="relative flex-1 flex flex-col">
-        <div className="absolute -top-12 left-0 right-0 h-12 pointer-events-none" style={{
-          background: 'linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.5) 40%, #0a0a0a 100%)',
-        }} />
-
-        <div className="bg-[#0a0a0a] flex-1 flex flex-col px-3 pb-3">
+      {/* Content */}
+      <div className="flex-1 flex flex-col px-3 pb-3 bg-[#0a0a0a]">
           {/* Compact profile row */}
           <div className="flex items-center gap-2 mb-2.5">
             {page.avatar_url && (
@@ -344,7 +339,6 @@ const ImmersivePreview = ({ page, links, displayName }: {
               <p className="text-center text-[7px] text-white/15 pt-4">Pas encore de liens</p>
             )}
           </div>
-        </div>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ export interface CreatorPage {
   bio: string | null;
   avatar_url: string | null;
   cover_url: string | null;
+  cover_position: string;
   theme: string;
   is_nsfw: boolean;
   social_links: SocialLink[];
@@ -110,6 +111,7 @@ export function useCreatorPages() {
       bio: pageData.bio || null,
       avatar_url: pageData.avatar_url || null,
       cover_url: pageData.cover_url || null,
+      cover_position: pageData.cover_position || '50% 50%',
       theme: pageData.theme || 'immersive',
       is_nsfw: pageData.is_nsfw || false,
       status: 'active',
@@ -211,6 +213,7 @@ export function useCreatorPages() {
         bio: source.bio,
         avatar_url: source.avatar_url,
         cover_url: source.cover_url,
+        cover_position: source.cover_position || '50% 50%',
         theme: source.theme,
         is_nsfw: source.is_nsfw,
         status: 'active',

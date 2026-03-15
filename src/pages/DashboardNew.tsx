@@ -72,10 +72,22 @@ const DashboardHome = () => {
   }, [searchParams, pages]);
 
   useEffect(() => {
-    if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {
-      navigate('/onboarding');
+    // Fast path: if we already marked onboarding done, skip the DB check
+    if (localStorage.getItem('onboarding_completed')) return;
+    if (onboardingLoading || pagesLoading) return;
+    // If user has pages, they've been through onboarding — mark done
+    if (pages.length > 0) {
+      localStorage.setItem('onboarding_completed', '1');
+      return;
     }
-  }, [onboardingLoading, onboardingState.completed, pages.length, navigate]);
+    // If onboarding is completed/skipped in DB, cache it
+    if (onboardingState.completed) {
+      localStorage.setItem('onboarding_completed', '1');
+      return;
+    }
+    // No pages + not completed → onboarding
+    navigate('/onboarding');
+  }, [onboardingLoading, pagesLoading, onboardingState.completed, pages.length, navigate]);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('dashboard_tour_completed');
@@ -214,27 +226,9 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const checkProfile = async () => {
-      if (!user) {
-        setProfileChecked(true);
-        return;
-      }
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!data?.username || data.username.startsWith('user_')) {
-        navigate('/set-username', { replace: true });
-      } else {
-        setProfileChecked(true);
-      }
-    };
-
-    checkProfile();
-  }, [user, navigate]);
+    // Profile check — just mark as ready, onboarding handles username
+    if (user) setProfileChecked(true);
+  }, [user]);
 
   const toggleTheme = () => {
     const next = !isDark;

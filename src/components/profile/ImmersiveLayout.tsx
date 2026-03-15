@@ -62,8 +62,9 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   const urgency = page.urgency_config;
   const showUrgency = urgency && (urgency.abTest?.enabled ? abVariant === 'A' : true);
   const clickVariant = urgency?.abTest?.enabled ? abVariant : null;
-  const heroSrc = page.cover_url || null; // Never stretch avatar as hero
-  const ogImage = page.cover_url || page.avatar_url; // OG can use either
+  const heroSrc = page.cover_url || null;
+  const coverPos = (page as any).cover_position || '50% 50%';
+  const ogImage = page.cover_url || page.avatar_url;
 
   const trackingConfig = {
     metaPixel: page.tracking_meta_pixel,
@@ -143,40 +144,47 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       {showUrgency && urgency?.banner?.enabled && <ProfileUrgencyBanner config={urgency.banner} pageId={page.id} />}
       {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && <ProfileLocationToast enabled={true} pageId={page.id} />}
 
-      <div className="relative min-h-screen min-h-[100dvh] bg-[#0a0a0a] text-white antialiased overflow-x-hidden" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
+      <div className="relative min-h-screen min-h-[100dvh] bg-[#0a0a0a] text-white antialiased overflow-x-hidden" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif", scrollBehavior: 'smooth' }}>
 
-        {/* ═══ FIXED BACKGROUND ═══ */}
-        <div className="fixed inset-0 z-0">
-          {heroSrc ? (
-            <img
-              src={heroSrc}
-              alt=""
-              fetchPriority="high"
-              decoding="async"
-              onLoad={() => setImgLoaded(true)}
-              className="w-full h-full object-cover object-center"
-              style={{
-                filter: imgLoaded ? 'none' : 'blur(24px)',
-                transform: imgLoaded ? 'scale(1)' : 'scale(1.05)',
-                transition: 'filter 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)',
-              }}
-            />
-          ) : (
-            <div className="w-full h-full" style={{
-              background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)',
-              backgroundSize: '300% 300%',
-              animation: 'gradient-shift 12s ease infinite',
-            }} />
-          )}
+        {/* ═══ COVER PHOTO — landscape 16/9 ═══ */}
+        <div className="relative w-full overflow-hidden" style={{ maxHeight: '40vh' }}>
+          <div style={{ aspectRatio: '16/9' }}>
+            {heroSrc ? (
+              <img
+                src={heroSrc}
+                alt=""
+                fetchPriority="high"
+                decoding="async"
+                onLoad={() => setImgLoaded(true)}
+                className="w-full h-full object-cover"
+                style={{
+                  objectPosition: `${(page as any).cover_focal_x ?? 50}% ${(page as any).cover_focal_y ?? 30}%`,
+                  filter: imgLoaded ? 'none' : 'blur(24px)',
+                  transform: imgLoaded ? 'scale(1)' : 'scale(1.05)',
+                  transition: 'filter 0.6s ease-out, transform 0.6s ease-out',
+                }}
+              />
+            ) : (
+              <div className="w-full h-full" style={{
+                background: 'linear-gradient(135deg, #0f0f23 0%, #1a1035 35%, #0d2847 65%, #0a1628 100%)',
+                backgroundSize: '300% 300%',
+                animation: 'gradient-shift 12s ease infinite',
+              }} />
+            )}
+          </div>
+          {/* Smooth gradient into content */}
+          <div className="absolute bottom-0 left-0 right-0 h-[60%] pointer-events-none" style={{
+            background: 'linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.08) 25%, rgba(10,10,10,0.35) 50%, rgba(10,10,10,0.75) 75%, #0a0a0a 100%)',
+          }} />
+          {/* Film grain */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
             style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
           />
         </div>
 
-        {/* ═══ SCROLLABLE CONTENT ═══ */}
-        <div className="relative z-10">
+        {/* ═══ CONTENT ═══ */}
+        <div className="relative z-10 bg-[#0a0a0a]">
 
-          {/* ── In-app banner ── */}
           {/* ── Share button ── */}
           <button
             onClick={handleShare}
@@ -186,17 +194,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
             <Share2 className="w-4 h-4" />
           </button>
 
-          {/* ── Spacer — shows the cover photo ── */}
-          <div style={{ height: '60dvh', minHeight: 320 }} />
-
-          {/* ── Content overlay ── */}
-          <div className="relative">
-            <div className="absolute -top-[160px] left-0 right-0 h-[160px] pointer-events-none" style={{
-              background: 'linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.4) 30%, rgba(10,10,10,0.8) 65%, #0a0a0a 100%)',
-            }} />
-
-            <div className="bg-[#0a0a0a]">
-              <div className="max-w-[480px] mx-auto px-6" data-shield>
+          <div className="max-w-[480px] mx-auto px-6 pt-5" data-shield>
                 <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-4" />
 
                 {/* Name + avatar row */}
@@ -434,12 +432,11 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
             </a>
           </div>
         )}
-            </div>{/* close bg-[#0a0a0a] */}
-          </div>{/* close relative (content overlay) */}
-        </div>{/* close relative z-10 (scrollable content) */}
+        </div>{/* close relative z-10 bg */}
       </div>{/* close min-h-screen */}
 
       <style>{`
+        html { scroll-behavior: smooth; }
         @keyframes gradient-shift {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }

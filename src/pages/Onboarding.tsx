@@ -6,6 +6,11 @@ import { TapLoader as Loader2 } from '@/components/icons/TapIcons';
 const Onboarding = () => {
   const { user, loading } = useAuth();
 
+  // Fast bail: if already completed, don't show
+  if (!loading && localStorage.getItem('onboarding_completed')) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
