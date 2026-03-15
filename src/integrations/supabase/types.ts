@@ -318,6 +318,41 @@ export type Database = {
         }
         Relationships: []
       }
+      page_views: {
+        Row: {
+          city: string | null
+          country: string | null
+          id: string
+          page_id: string
+          referrer: string | null
+          viewed_at: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          id?: string
+          page_id: string
+          referrer?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          id?: string
+          page_id?: string
+          referrer?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_views_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "creator_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -425,6 +460,15 @@ export type Database = {
             }
             Returns: undefined
           }
+      record_page_view: {
+        Args: {
+          p_city?: string
+          p_country?: string
+          p_page_id: string
+          p_referrer?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
