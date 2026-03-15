@@ -64,12 +64,12 @@ const DashboardSettings = () => {
   const loadUsername = async () => {
     const { data } = await supabase
       .from('profiles')
-      .select('username, email_weekly')
+      .select('username')
       .eq('user_id', user!.id)
       .single();
     if (data) {
       setCurrentUsername(data.username);
-      setEmailWeekly(data.email_weekly ?? true);
+      setEmailWeekly((data as any).email_weekly ?? true);
     }
   };
 
