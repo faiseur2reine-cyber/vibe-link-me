@@ -362,6 +362,7 @@ export type Database = {
           custom_domain: string | null
           display_name: string | null
           domain_verified: boolean | null
+          email_weekly: boolean
           id: string
           is_nsfw: boolean
           onboarding_completed: boolean
@@ -380,6 +381,7 @@ export type Database = {
           custom_domain?: string | null
           display_name?: string | null
           domain_verified?: boolean | null
+          email_weekly?: boolean
           id?: string
           is_nsfw?: boolean
           onboarding_completed?: boolean
@@ -398,6 +400,7 @@ export type Database = {
           custom_domain?: string | null
           display_name?: string | null
           domain_verified?: boolean | null
+          email_weekly?: boolean
           id?: string
           is_nsfw?: boolean
           onboarding_completed?: boolean
