@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import ProFeatureGate from '@/components/dashboard/ProFeatureGate';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Sector } from 'recharts';
