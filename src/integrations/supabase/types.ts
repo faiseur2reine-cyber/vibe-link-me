@@ -176,29 +176,38 @@ export type Database = {
       link_clicks: {
         Row: {
           ab_variant: string | null
+          browser: string | null
           city: string | null
           clicked_at: string
           country: string | null
+          device_type: string | null
           id: string
           link_id: string
+          os: string | null
           referrer: string | null
         }
         Insert: {
           ab_variant?: string | null
+          browser?: string | null
           city?: string | null
           clicked_at?: string
           country?: string | null
+          device_type?: string | null
           id?: string
           link_id: string
+          os?: string | null
           referrer?: string | null
         }
         Update: {
           ab_variant?: string | null
+          browser?: string | null
           city?: string | null
           clicked_at?: string
           country?: string | null
+          device_type?: string | null
           id?: string
           link_id?: string
+          os?: string | null
           referrer?: string | null
         }
         Relationships: [
@@ -320,25 +329,34 @@ export type Database = {
       }
       page_views: {
         Row: {
+          browser: string | null
           city: string | null
           country: string | null
+          device_type: string | null
           id: string
+          os: string | null
           page_id: string
           referrer: string | null
           viewed_at: string
         }
         Insert: {
+          browser?: string | null
           city?: string | null
           country?: string | null
+          device_type?: string | null
           id?: string
+          os?: string | null
           page_id: string
           referrer?: string | null
           viewed_at?: string
         }
         Update: {
+          browser?: string | null
           city?: string | null
           country?: string | null
+          device_type?: string | null
           id?: string
+          os?: string | null
           page_id?: string
           referrer?: string | null
           viewed_at?: string
@@ -463,15 +481,41 @@ export type Database = {
             }
             Returns: undefined
           }
-      record_page_view: {
-        Args: {
-          p_city?: string
-          p_country?: string
-          p_page_id: string
-          p_referrer?: string
-        }
-        Returns: undefined
-      }
+        | {
+            Args: {
+              p_ab_variant?: string
+              p_browser?: string
+              p_city?: string
+              p_country?: string
+              p_device_type?: string
+              p_link_id: string
+              p_os?: string
+              p_referrer?: string
+            }
+            Returns: undefined
+          }
+      record_page_view:
+        | {
+            Args: {
+              p_city?: string
+              p_country?: string
+              p_page_id: string
+              p_referrer?: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_browser?: string
+              p_city?: string
+              p_country?: string
+              p_device_type?: string
+              p_os?: string
+              p_page_id: string
+              p_referrer?: string
+            }
+            Returns: undefined
+          }
     }
     Enums: {
       [_ in never]: never
