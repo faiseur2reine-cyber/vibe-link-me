@@ -6,7 +6,7 @@ import { TapExternalLink as ExternalLink, TapHeart as Heart, TapShare as Share2,
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { BRAND } from '@/lib/brand';
-import { deeplinkNavigate } from '@/lib/deeplink';
+import { deeplinkNavigate, isSocialUrl } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { detectPlatform } from '@/lib/platforms';
@@ -285,7 +285,7 @@ const PublicProfile = () => {
   });
 
   const wrapNsfw = (node: React.ReactNode, link: LinkItem) =>
-    isNsfwPage ? (
+    isNsfwPage && !isSocialUrl(link.url) ? (
       <NsfwInlineGate
         key={link.id}
         url={link.url}

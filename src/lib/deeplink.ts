@@ -49,10 +49,10 @@ export function detectBrowser(): BrowserInfo {
   };
 }
 
-// ── DOMAINS WITH NATIVE APPS (universal links) ──
-// iOS opens these in their native app automatically when you navigate to them.
-// We just need to do window.location.href — NO x-safari, NO custom schemes.
-const HAS_NATIVE_APP = [
+// ── DOMAINS WITH NATIVE APPS (social media / platforms) ──
+// These have universal links — iOS opens the app automatically.
+// Also used to skip NSFW gate on social media links.
+const SOCIAL_DOMAINS = [
   'twitter.com', 'x.com',
   'tiktok.com',
   'youtube.com', 'youtu.be',
@@ -72,8 +72,13 @@ const HAS_NATIVE_APP = [
 function hasNativeApp(url: string): boolean {
   try {
     const host = new URL(url).hostname.replace(/^www\./, '');
-    return HAS_NATIVE_APP.some(d => host === d || host.endsWith(`.${d}`));
+    return SOCIAL_DOMAINS.some(d => host === d || host.endsWith(`.${d}`));
   } catch { return false; }
+}
+
+/** Check if a URL points to a social media / app platform (not adult content) */
+export function isSocialUrl(url: string): boolean {
+  return hasNativeApp(url);
 }
 
 function getIOSVersion(): number {

@@ -7,7 +7,7 @@ import { TapMapPin as MapPin, TapHeart as Heart, TapShare as Share2 } from '@/co
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
+import { deeplinkNavigate, detectBrowser, isSocialUrl } from '@/lib/deeplink';
 import { appendUtm, type UtmParams } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { getTheme } from '@/lib/themes';
@@ -456,7 +456,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   </motion.button>
                 );
 
-                if (page.is_nsfw) {
+                if (page.is_nsfw && !isSocialUrl(link.url)) {
                   return (
                     <NsfwInlineGate
                       key={link.id}
