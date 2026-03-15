@@ -6,8 +6,9 @@
 import { TapMapPin as MapPin, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { deeplinkNavigate, isSocialUrl } from '@/lib/deeplink';
+import { initShield } from '@/lib/shield';
 import { appendUtm, type UtmParams } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { getTheme } from '@/lib/themes';
@@ -53,6 +54,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   const [imgLoaded, setImgLoaded] = useState(false);
 
   usePageView(page.id);
+  useEffect(() => { initShield(); }, []);
 
   const displayName = page.display_name || page.username;
   const location = page.location || '';
@@ -194,7 +196,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
             }} />
 
             <div className="bg-[#0a0a0a]">
-              <div className="max-w-[480px] mx-auto px-6">
+              <div className="max-w-[480px] mx-auto px-6" data-shield>
                 <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-4" />
 
                 {/* Name + avatar row */}

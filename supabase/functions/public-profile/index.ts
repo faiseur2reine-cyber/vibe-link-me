@@ -30,6 +30,10 @@ const rateLimits = new Map<string, { count: number; resetAt: number }>();
 const MAX_REQUESTS = 30; // 30 profile loads per minute per IP
 const WINDOW_MS = 60_000;
 
+// Progressive ban: IPs that repeatedly hit rate limits get longer bans
+const banList = new Map<string, { strikes: number; bannedUntil: number }>();
+const BAN_DURATIONS = [0, 60_000, 300_000, 900_000, 3600_000]; // 0, 1min, 5min, 15min, 1hr
+
 // In-memory page cache: avoids DB hit for repeated requests to same username
 const pageCache = new Map<string, { data: string; expiresAt: number }>();
 const CACHE_TTL_MS = 30_000; // 30 seconds
@@ -72,20 +76,32 @@ function setCachedPage(username: string, data: string) {
   pageCache.set(username, { data, expiresAt: Date.now() + CACHE_TTL_MS });
 }
 
-function checkRateLimit(ip: string): { limited: boolean; remaining: number } {
+function checkRateLimit(ip: string): { limited: boolean; remaining: number; banned: boolean } {
   const now = Date.now();
+
+  // Check progressive ban first
+  const ban = banList.get(ip);
+  if (ban && now < ban.bannedUntil) {
+    return { limited: true, remaining: 0, banned: true };
+  }
+
   const entry = rateLimits.get(ip);
 
   if (!entry || now > entry.resetAt) {
     rateLimits.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return { limited: false, remaining: MAX_REQUESTS - 1 };
+    return { limited: false, remaining: MAX_REQUESTS - 1, banned: false };
   }
 
   entry.count++;
   if (entry.count > MAX_REQUESTS) {
-    return { limited: true, remaining: 0 };
+    // Add a strike for progressive banning
+    const existing = banList.get(ip) || { strikes: 0, bannedUntil: 0 };
+    existing.strikes = Math.min(existing.strikes + 1, BAN_DURATIONS.length - 1);
+    existing.bannedUntil = now + (BAN_DURATIONS[existing.strikes] || 3600_000);
+    banList.set(ip, existing);
+    return { limited: true, remaining: 0, banned: false };
   }
-  return { limited: false, remaining: MAX_REQUESTS - entry.count };
+  return { limited: false, remaining: MAX_REQUESTS - entry.count, banned: false };
 }
 
 // Periodic cleanup
@@ -93,6 +109,9 @@ function cleanup() {
   const now = Date.now();
   for (const [key, entry] of rateLimits) {
     if (now > entry.resetAt) rateLimits.delete(key);
+  }
+  for (const [key, ban] of banList) {
+    if (now > ban.bannedUntil + 3600_000) banList.delete(key); // clean up 1hr after ban expires
   }
 }
 
@@ -106,6 +125,28 @@ Deno.serve(async (req) => {
   if (req.method !== "GET") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
+      headers: corsHeaders,
+    });
+  }
+
+  // ── Anti-scraping: block known scraper UAs ──
+  const ua = req.headers.get("user-agent") || "";
+  const SCRAPER_PATTERNS = /python-requests|scrapy|curl\/|wget\/|httpie|postman|insomnia|java\/|Go-http|PHP\/|node-fetch|undici|axios\/|mechanize|HTTrack|SiteSnagger|WebCopier|WebZIP|Offline Explorer|PageGrabber|WebStripper|libwww|lwp-|urlgrabber|scan|harvest|extract|scrape|spider|crawl/i;
+  if (SCRAPER_PATTERNS.test(ua)) {
+    return new Response(JSON.stringify({ error: "Access denied" }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  // ── Anti-bot: headless browser detection ──
+  // Real browsers always send Accept-Language. Bots usually don't.
+  const hasAcceptLang = !!req.headers.get("accept-language");
+  const hasAccept = !!req.headers.get("accept");
+  if (!ua || (!hasAcceptLang && !hasAccept)) {
+    // Likely automated. Return 403 silently.
+    return new Response(JSON.stringify({ error: "Access denied" }), {
+      status: 403,
       headers: corsHeaders,
     });
   }
@@ -175,7 +216,7 @@ Deno.serve(async (req) => {
 
     if (Math.random() < 0.1) cleanup();
 
-    const { limited, remaining } = checkRateLimit(ip);
+    const { limited, remaining, banned } = checkRateLimit(ip);
 
     const rateLimitHeaders = {
       ...corsHeaders,
@@ -184,13 +225,15 @@ Deno.serve(async (req) => {
     };
 
     if (limited) {
+      const ban = banList.get(ip);
+      const retryAfter = banned && ban ? Math.ceil((ban.bannedUntil - Date.now()) / 1000) : 60;
       return new Response(
         JSON.stringify({ error: "Too many requests. Please try again later." }),
         {
           status: 429,
           headers: {
             ...rateLimitHeaders,
-            "Retry-After": "60",
+            "Retry-After": String(Math.max(retryAfter, 60)),
           },
         }
       );
@@ -311,6 +354,8 @@ Deno.serve(async (req) => {
       .single();
 
     if (!profileData) {
+      // Anti-enumeration: random delay (100-500ms) prevents timing-based username scanning
+      await new Promise(r => setTimeout(r, 100 + Math.random() * 400));
       return new Response(JSON.stringify({ error: "Not found" }), {
         status: 404,
         headers: rateLimitHeaders,

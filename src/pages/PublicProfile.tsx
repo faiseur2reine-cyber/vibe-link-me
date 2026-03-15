@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { BRAND } from '@/lib/brand';
 import { deeplinkNavigate, isSocialUrl } from '@/lib/deeplink';
+import { initShield } from '@/lib/shield';
 import { appendUtm } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { detectPlatform } from '@/lib/platforms';
@@ -93,6 +94,7 @@ const PublicProfile = () => {
 
   // Track page view (once per session per page)
   usePageView(page?.id);
+  useEffect(() => { initShield(); }, []);
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
