@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/lib/plans';
 import { toast } from 'sonner';
-import { TapArrowRight as ArrowRight } from '@/components/icons/TapIcons';
+import { TapArrowRight as ArrowRight, TapCheck as Check, TapX as X, TapLoader as Loader2 } from '@/components/icons/TapIcons';
 import { motion } from 'framer-motion';
 import LanguageSelector from '@/components/LanguageSelector';
 import HeroSection from '@/components/landing/HeroSection';
@@ -113,27 +113,8 @@ const Index = () => {
       <TestimonialsSection />
       <PricingSection checkoutLoading={checkoutLoading} onUpgrade={handleUpgrade} />
 
-      {/* CTA section */}
-      <section className="px-4 sm:px-6 pt-20 pb-28 sm:pt-24 sm:pb-36 text-center relative overflow-hidden">
-        <CtaBlobs />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06),transparent_60%)]" />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="relative max-w-lg mx-auto"
-        >
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em]">{t('landing.ctaTitle')}</h2>
-          <p className="mt-4 text-muted-foreground text-sm sm:text-base">{t('landing.ctaSubtitle')}</p>
-          <Button size="lg" asChild className="mt-8 h-13 px-8 text-sm font-semibold shadow-lg shadow-primary/20 group">
-            <Link to="/auth?tab=signup">
-              {t('landing.ctaButton')}
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </motion.div>
-      </section>
+      {/* CTA section — claim your page */}
+      <BottomCta />
 
       {/* Footer */}
       <footer className="border-t border-border/10 py-8 px-4">
@@ -153,6 +134,100 @@ const Index = () => {
         </div>
       </footer>
     </div>
+  );
+};
+
+// ── Bottom CTA with username claim ──
+const BottomCta = () => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleChange = (value: string) => {
+    if (timer) clearTimeout(timer);
+    const cleaned = value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    setUsername(cleaned);
+    if (cleaned.length < 3) { setStatus('idle'); return; }
+    setStatus('checking');
+    const t = setTimeout(async () => {
+      const { data } = await supabase.from('profiles').select('username').eq('username', cleaned).maybeSingle();
+      setStatus(data ? 'taken' : 'available');
+    }, 400);
+    setTimer(t);
+  };
+
+  const handleClaim = () => {
+    if (username.length < 3) { inputRef.current?.focus(); return; }
+    navigate(`/auth?tab=signup&username=${encodeURIComponent(username)}`);
+  };
+
+  return (
+    <section className="px-4 sm:px-6 pt-20 pb-28 sm:pt-24 sm:pb-36 text-center relative overflow-hidden">
+      <CtaBlobs />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06),transparent_60%)]" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="relative max-w-lg mx-auto"
+      >
+        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em]">
+          Réserve ton lien maintenant
+        </h2>
+        <p className="mt-4 text-muted-foreground text-sm sm:text-base">
+          C'est gratuit, sans carte, et ça prend 30 secondes.
+        </p>
+
+        <div className="flex items-center max-w-sm mx-auto mt-8">
+          <div className="relative flex-1">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground/35 font-medium select-none pointer-events-none">
+              mytaptap.com/
+            </span>
+            <input
+              ref={inputRef}
+              type="text"
+              value={username}
+              onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleClaim()}
+              placeholder="tonnom"
+              maxLength={30}
+              className="w-full h-12 pl-[118px] pr-10 text-[14px] font-semibold text-foreground bg-card border-2 border-border/60 rounded-xl rounded-r-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-muted-foreground/25"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              {status === 'checking' && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground/40" />}
+              {status === 'available' && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+              {status === 'taken' && <X className="w-3.5 h-3.5 text-red-500" />}
+            </div>
+          </div>
+          <button
+            onClick={handleClaim}
+            className="h-12 px-5 bg-primary text-primary-foreground text-[13px] font-bold rounded-xl rounded-l-none border-2 border-primary hover:bg-primary/90 transition-all active:scale-[0.97] flex items-center gap-1.5 shrink-0"
+          >
+            Go
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="h-5 mt-2">
+          {status === 'available' && username.length >= 3 && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[12px] text-emerald-600 font-medium">
+              mytaptap.com/{username} est disponible ✓
+            </motion.p>
+          )}
+          {status === 'taken' && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[12px] text-red-500 font-medium">
+              Déjà pris — essaie un autre
+            </motion.p>
+          )}
+        </div>
+      </motion.div>
+    </section>
   );
 };
 
