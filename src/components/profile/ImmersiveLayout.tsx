@@ -2,7 +2,7 @@
 // Premium mobile-first link-in-bio. Black background, full-bleed hero,
 // frosted glass buttons, cinematic gradients, touch-optimized.
 
-import { motion } from 'framer-motion';
+
 import { TapMapPin as MapPin, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -47,8 +47,6 @@ interface LinkData {
 }
 
 interface Props { page: PageData; links: LinkData[]; abVariant: 'A' | 'B'; paymentIssue?: boolean; }
-
-const ease = [0.16, 1, 0.3, 1] as const;
 
 const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props) => {
   const { t } = useTranslation();
@@ -178,16 +176,13 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
           {/* ── In-app banner ── */}
           {/* ── Share button ── */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+          <button
             onClick={handleShare}
-            className="fixed top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/30 backdrop-blur-xl border border-white/[0.08] flex items-center justify-center text-white/60 hover:text-white hover:bg-black/50 transition-all active:scale-90"
-            style={{ top: 'max(16px, env(safe-area-inset-top, 16px))' }}
+            className="anim-fade fixed top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/30 backdrop-blur-xl border border-white/[0.08] flex items-center justify-center text-white/60 hover:text-white hover:bg-black/50 transition-all active:scale-90"
+            style={{ top: 'max(16px, env(safe-area-inset-top, 16px))', animationDelay: '0.2s' }}
           >
             <Share2 className="w-4 h-4" />
-          </motion.button>
+          </button>
 
           {/* ── Spacer — shows the cover photo ── */}
           <div style={{ height: '60dvh', minHeight: 320 }} />
@@ -203,11 +198,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 <GeoGreeting enabled={page.geo_greeting_enabled !== false} className="mb-4" />
 
                 {/* Name + avatar row */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, ease }}
-                  className="flex items-center gap-4"
+                <div
+                  className="anim-rise flex items-center gap-4"
                 >
                   {page.avatar_url && (
                     <img
@@ -242,18 +234,16 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Bio */}
                 {page.bio && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.05, duration: 0.3 }}
-                    className="text-[14px] text-white/50 leading-[1.65] mt-4 line-clamp-3"
+                  <p
+                    className="anim-fade text-[14px] text-white/50 leading-[1.65] mt-4 line-clamp-3"
+                    style={{ animationDelay: '0.05s' }}
                   >
                     {page.bio}
-                  </motion.p>
+                  </p>
                 )}
 
                 {/* Scarcity below bio */}
@@ -265,9 +255,9 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
                 {/* Social icons */}
                 {page.social_links.length > 0 && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }} className="mt-5">
+                  <div className="anim-fade mt-5" style={{ animationDelay: '0.08s' }}>
                     <SocialIcons links={page.social_links} theme={getTheme('midnight')} />
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
@@ -280,10 +270,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
         {/* ═══ LINKS ═══ */}
         {paymentIssue && (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05, duration: 0.35, ease }}
+          <div
             className="px-5 mt-4 max-w-[480px] mx-auto"
           >
             <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/[0.05]">
@@ -292,35 +279,28 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 Les liens de cette page sont temporairement indisponibles. Revenez bientôt !
               </p>
             </div>
-          </motion.div>
+          </div>
         )}
 
         <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-5 ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
           {links.length === 0 && !paymentIssue && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
+            <div
               className="text-center py-8"
             >
               <p className="text-[13px] text-white/20">Pas encore de liens</p>
-            </motion.div>
+            </div>
           )}
           {sections.map((section, sIdx) => (
             <div key={sIdx} className="flex flex-col gap-4">
               {/* Section header */}
               {section.title && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
+                <div
                   className="flex items-center gap-3 mt-3 mb-2 px-1"
                 >
                   <div className="h-px flex-1 bg-white/[0.05]" />
                   <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">{section.title}</span>
                   <div className="h-px flex-1 bg-white/[0.05]" />
-                </motion.div>
+                </div>
               )}
 
               {section.links.map((link) => {
@@ -331,17 +311,14 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                   : '#e8503a';
 
                 const linkButton = (
-                  <motion.button
+                  <button
                     key={link.id}
-                    initial={{ opacity: 0, y: 14 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-10px' }}
-                    transition={{ delay: idx < 4 ? idx * 0.03 : 0, duration: 0.3, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center gap-3 text-left ${
+                    className={`anim-rise group relative w-full flex items-center gap-3 text-left ${
                       paymentIssue ? 'cursor-default' : ''
                     }`}
                     style={{
+                      animationDelay: `${Math.min(idx, 4) * 30}ms`,
                       background: isFeatured ? iconBg : 'rgba(255,255,255,0.97)',
                       borderRadius: 50,
                       padding: '10px 18px 10px 10px',
@@ -414,7 +391,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         style={{ border: isFeatured ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(255,255,255,0.06)' }}
                       />
                     )}
-                  </motion.button>
+                  </button>
                 );
 
                 if (page.is_nsfw && !isSocialUrl(link.url)) {
@@ -464,6 +441,20 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         @keyframes gradient-shift {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes riseIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .anim-fade {
+          animation: fadeIn 0.35s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .anim-rise {
+          animation: riseIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
         }
       `}</style>
     </>
