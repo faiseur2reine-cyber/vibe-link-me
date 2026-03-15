@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { TapLoader as Loader2, TapCrown as Crown, TapCreditCard as CreditCard, TapAlert as AlertTriangle, TapLogOut as LogOut, TapRefresh as RefreshCw, TapCalendar as Calendar, TapSparkles as Sparkles, TapGlobe as Globe, TapCheck as Check, TapCopy as Copy, TapExternalLink as ExternalLink, TapAtSign as AtSign, TapX as X, TapTrash as Trash2 } from '@/components/icons/TapIcons';
 import { PLANS, type PlanKey } from '@/lib/plans';
+import { Mail } from 'lucide-react';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
 
@@ -45,6 +47,10 @@ const DashboardSettings = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm'>('idle');
 
+  // Email preferences
+  const [emailWeekly, setEmailWeekly] = useState(true);
+  const [emailLoading, setEmailLoading] = useState(false);
+
   const currentLocale = localeMap[i18n.language] || enUS;
   const isPro = subscription.plan === 'pro';
 
@@ -58,10 +64,13 @@ const DashboardSettings = () => {
   const loadUsername = async () => {
     const { data } = await supabase
       .from('profiles')
-      .select('username')
+      .select('username, email_weekly')
       .eq('user_id', user!.id)
       .single();
-    if (data) setCurrentUsername(data.username);
+    if (data) {
+      setCurrentUsername(data.username);
+      setEmailWeekly(data.email_weekly ?? true);
+    }
   };
 
   const checkNewUsername = (value: string) => {
@@ -202,6 +211,20 @@ const DashboardSettings = () => {
 
   const currentPlan = PLANS[subscription.plan as PlanKey] || PLANS.free;
   const isPremium = subscription.plan !== 'free';
+
+  const handleToggleWeeklyEmail = async (value: boolean) => {
+    setEmailLoading(true);
+    setEmailWeekly(value);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ email_weekly: value })
+      .eq('user_id', user!.id);
+    if (error) {
+      setEmailWeekly(!value);
+      toast.error(t('common.error'));
+    }
+    setEmailLoading(false);
+  };
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmEmail !== user?.email) {
@@ -477,6 +500,32 @@ const DashboardSettings = () => {
             </div>
             {usernameStatus === 'taken' && <p className="text-xs text-destructive">{t('auth.usernameTaken')}</p>}
             {usernameStatus === 'available' && <p className="text-xs text-primary">{t('auth.usernameAvailable')}</p>}
+          </CardContent>
+        </Card>
+
+        {/* Notifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Mail className="w-4 h-4 text-primary" />
+              Notifications
+            </CardTitle>
+            <CardDescription>Choisis ce que tu reçois par email</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between py-1">
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium text-foreground">Résumé hebdomadaire</p>
+                <p className="text-[12px] text-muted-foreground">
+                  Clics, vues et performances de la semaine, chaque lundi
+                </p>
+              </div>
+              <Switch
+                checked={emailWeekly}
+                onCheckedChange={handleToggleWeeklyEmail}
+                disabled={emailLoading}
+              />
+            </div>
           </CardContent>
         </Card>
 
