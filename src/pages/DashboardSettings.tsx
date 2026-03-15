@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { TapLoader as Loader2, TapCrown as Crown, TapCreditCard as CreditCard, TapAlert as AlertTriangle, TapLogOut as LogOut, TapRefresh as RefreshCw, TapCalendar as Calendar, TapSparkles as Sparkles, TapGlobe as Globe, TapCheck as Check, TapCopy as Copy, TapExternalLink as ExternalLink, TapAtSign as AtSign, TapX as X } from '@/components/icons/TapIcons';
+import { TapLoader as Loader2, TapCrown as Crown, TapCreditCard as CreditCard, TapAlert as AlertTriangle, TapLogOut as LogOut, TapRefresh as RefreshCw, TapCalendar as Calendar, TapSparkles as Sparkles, TapGlobe as Globe, TapCheck as Check, TapCopy as Copy, TapExternalLink as ExternalLink, TapAtSign as AtSign, TapX as X, TapTrash as Trash2 } from '@/components/icons/TapIcons';
 import { PLANS, type PlanKey } from '@/lib/plans';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
@@ -20,6 +21,7 @@ const localeMap: Record<string, Locale> = {
 const DashboardSettings = () => {
   const { t, i18n } = useTranslation();
   const { user, signOut, subscription, checkSubscription } = useAuth();
+  const navigate = useNavigate();
   const [portalLoading, setPortalLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -37,6 +39,11 @@ const DashboardSettings = () => {
   const [domainLoading, setDomainLoading] = useState(false);
   const [domainSaving, setDomainSaving] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+
+  // Delete account state
+  const [deleteConfirmEmail, setDeleteConfirmEmail] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm'>('idle');
 
   const currentLocale = localeMap[i18n.language] || enUS;
   const isPro = subscription.plan === 'pro';
@@ -195,6 +202,29 @@ const DashboardSettings = () => {
 
   const currentPlan = PLANS[subscription.plan as PlanKey] || PLANS.free;
   const isPremium = subscription.plan !== 'free';
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmEmail !== user?.email) {
+      toast.error('L\'email ne correspond pas.');
+      return;
+    }
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-account');
+      if (error) {
+        toast.error(error.message || 'Erreur lors de la suppression.');
+        setDeleting(false);
+        return;
+      }
+      toast.success('Compte supprimé. À bientôt.');
+      // Sign out and redirect to home
+      await signOut();
+      navigate('/');
+    } catch (e: any) {
+      toast.error(e.message || 'Erreur inattendue.');
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="flex-1 max-w-3xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
@@ -474,7 +504,7 @@ const DashboardSettings = () => {
         </Card>
 
         {/* Danger Zone */}
-        <Card className="border-destructive/50">
+        <Card className="border-destructive/30">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-4 h-4" />
@@ -484,6 +514,70 @@ const DashboardSettings = () => {
               {t('settings.dangerDesc')}
             </CardDescription>
           </CardHeader>
+          <CardContent>
+            {deleteStep === 'idle' ? (
+              <Button
+                variant="outline"
+                className="w-full justify-start border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setDeleteStep('confirm')}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Supprimer mon compte
+              </Button>
+            ) : (
+              <div className="space-y-4 p-4 rounded-lg border border-destructive/20 bg-destructive/[0.03]">
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground font-medium">
+                    Cette action est définitive et irréversible.
+                  </p>
+                  <p className="text-[12px] text-muted-foreground leading-relaxed">
+                    Toutes vos pages, liens, statistiques, templates et fichiers seront supprimés.
+                    {isPremium && ' Votre abonnement Stripe sera annulé automatiquement.'}
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">
+                    Tapez <span className="font-mono font-semibold text-foreground">{user?.email}</span> pour confirmer
+                  </Label>
+                  <Input
+                    value={deleteConfirmEmail}
+                    onChange={(e) => setDeleteConfirmEmail(e.target.value)}
+                    placeholder={user?.email || ''}
+                    className="border-destructive/20 focus:border-destructive/50"
+                    autoComplete="off"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setDeleteStep('idle'); setDeleteConfirmEmail(''); }}
+                    className="flex-1"
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    disabled={deleting || deleteConfirmEmail !== user?.email}
+                    onClick={handleDeleteAccount}
+                    className="flex-1"
+                  >
+                    {deleting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                        Supprimer définitivement
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
         </Card>
       </div>
     </div>
