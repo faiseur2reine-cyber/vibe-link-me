@@ -25,6 +25,7 @@ interface PagesListViewProps {
   onDuplicatePage?: (id: string) => Promise<{ error: any; data?: any }>;
   onDeletePage?: (id: string) => Promise<{ error: any }>;
   onBulkUpdate?: (ids: string[], updates: Partial<CreatorPage>) => Promise<{ error: any }>;
+  maxPages?: number;
 }
 
 // ── Status config ──
@@ -34,7 +35,7 @@ const STATUS = {
   paused: { label: 'Paused', dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400', bg: 'bg-red-500/10' },
 } as const;
 
-const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage, onBulkUpdate }: PagesListViewProps) => {
+const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onDeletePage, onBulkUpdate, maxPages }: PagesListViewProps) => {
   const { t } = useTranslation();
   const [deleteTarget, setDeleteTarget] = useState<CreatorPage | null>(null);
   const [search, setSearch] = useState('');
@@ -115,11 +116,28 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight font-display">{t('pages.title')}</h1>
-          <p className="text-[12px] text-muted-foreground/50 mt-0.5">
-            {pages.length} page{pages.length > 1 ? 's' : ''}
-            {globalStats.totalClicks > 0 && <> · {globalStats.totalClicks.toLocaleString()} clics</>}
-            {totalRevenue > 0 && <> · {totalRevenue.toLocaleString()}€</>}
-          </p>
+          <div className="flex items-center gap-2.5 mt-1">
+            <p className="text-[12px] text-muted-foreground/50">
+              {pages.length} page{pages.length > 1 ? 's' : ''}
+              {globalStats.totalClicks > 0 && <> · {globalStats.totalClicks.toLocaleString()} clics</>}
+              {totalRevenue > 0 && <> · {totalRevenue.toLocaleString()}€</>}
+            </p>
+            {maxPages !== undefined && maxPages !== Infinity && (
+              <div className="flex items-center gap-1.5">
+                <div className="w-14 h-1.5 rounded-full bg-muted/60 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      pages.length >= maxPages ? 'bg-red-500' : pages.length >= maxPages - 1 ? 'bg-amber-500' : 'bg-primary'
+                    }`}
+                    style={{ width: `${Math.min((pages.length / maxPages) * 100, 100)}%` }}
+                  />
+                </div>
+                <span className={`text-[10px] font-medium ${pages.length >= maxPages ? 'text-red-500' : 'text-muted-foreground/40'}`}>
+                  {pages.length}/{maxPages}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
         <Button onClick={onCreatePage} size="sm" className="h-9 px-4 text-[12px] gap-1.5 rounded-xl font-medium">
           <Plus className="w-3.5 h-3.5" /> Nouvelle page
@@ -281,6 +299,10 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                         <button
                           onClick={async (e) => {
                             e.stopPropagation();
+                            if (maxPages !== undefined && maxPages !== Infinity && pages.length >= maxPages) {
+                              onCreatePage(); // triggers the limit toast in DashboardNew
+                              return;
+                            }
                             const r = await onDuplicatePage(page.id);
                             r?.error ? toast.error('Erreur') : toast.success(t('pages.duplicated'));
                           }}

@@ -12,6 +12,9 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
 import { TapLogOut as LogOut, TapPlus as Plus, TapLoader as Loader2, TapSun as Sun, TapMoon as Moon, TapLink as Link2, TapShare as Share2 } from '@/components/icons/TapIcons';
 
+import { PLANS } from '@/lib/plans';
+import type { PlanKey } from '@/lib/plans';
+
 // Eagerly loaded (always visible on first dashboard load)
 import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import PagesListView from '@/components/dashboard/PagesListView';
@@ -28,13 +31,29 @@ const DashboardSettings = lazy(() => import('./DashboardSettings'));
 const DashboardHome = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, signOut, checkSubscription } = useAuth();
+  const { user, signOut, checkSubscription, subscription } = useAuth();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, bulkUpdatePages, refetch: refetchPages } = useCreatorPages();
   const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const [showTour, setShowTour] = useState(false);
+
+  const userPlan = (subscription?.plan || 'free') as PlanKey;
+  const maxPages = PLANS[userPlan]?.maxPages ?? 1;
+
+  const handleCreatePage = () => {
+    if (maxPages !== Infinity && pages.length >= maxPages) {
+      toast.error(
+        maxPages === 1
+          ? 'Ton plan Free est limité à 1 page. Passe en Starter ou Pro pour en créer plus.'
+          : `Tu as atteint la limite de ${maxPages} pages. Passe en Pro pour des pages illimitées.`,
+        { action: { label: 'Upgrade', onClick: () => navigate('/dashboard/settings') } }
+      );
+      return;
+    }
+    setCreateDialogOpen(true);
+  };
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -133,10 +152,11 @@ const DashboardHome = () => {
               <PagesListView
                 pages={pages}
                 onSelectPage={(id) => setSelectedPageId(id)}
-                onCreatePage={() => setCreateDialogOpen(true)}
+                onCreatePage={handleCreatePage}
                 onDuplicatePage={duplicatePage}
                 onDeletePage={deletePage}
                 onBulkUpdate={bulkUpdatePages}
+                maxPages={maxPages}
               />
             </div>
           </div>
