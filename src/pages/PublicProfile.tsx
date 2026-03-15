@@ -6,7 +6,7 @@ import { TapExternalLink as ExternalLink, TapHeart as Heart, TapShare as Share2,
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTheme } from '@/lib/themes';
 import { BRAND } from '@/lib/brand';
-import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
+import { deeplinkNavigate } from '@/lib/deeplink';
 import { appendUtm } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { detectPlatform } from '@/lib/platforms';
@@ -96,7 +96,7 @@ const PublicProfile = () => {
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
-    const isBot = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|pinterest|slackbot|discordbot|googlebot/i.test(ua);
+    const isBot = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|pinterest|slackbot|discordbot|googlebot|bingbot|applebot|yandexbot|baiduspider|duckduckbot|semrushbot|ahrefsbot|mj12bot/i.test(ua);
 
     const fetchData = async () => {
       if (!username) return;
