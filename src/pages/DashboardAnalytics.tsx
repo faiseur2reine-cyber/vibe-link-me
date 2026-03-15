@@ -300,9 +300,13 @@ const DashboardAnalytics = () => {
                         animationEasing="ease-out"
                         startAngle={90}
                         endAngle={-270}
+                        activeIndex={activeIndices[title]}
+                        activeShape={renderActiveShape}
+                        onMouseEnter={(_, index) => setActiveIndices(prev => ({ ...prev, [title]: index }))}
+                        onMouseLeave={() => setActiveIndices(prev => ({ ...prev, [title]: undefined }))}
                       >
                         {data.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} className="drop-shadow-lg" />
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} className="drop-shadow-lg" style={{ cursor: 'pointer' }} />
                         ))}
                       </Pie>
                       <Tooltip
