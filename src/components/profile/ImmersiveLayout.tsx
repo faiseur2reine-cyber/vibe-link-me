@@ -293,7 +293,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
           </motion.div>
         )}
 
-        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-[16px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
+        <div className={`px-5 pt-7 pb-8 max-w-[480px] mx-auto flex flex-col gap-3 ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
           {links.length === 0 && !paymentIssue && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -341,12 +341,12 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     }`}
                     style={{
                       background: isFeatured ? iconBg : 'rgba(255,255,255,0.97)',
-                      borderRadius: 16,
-                      padding: '12px 16px',
-                      border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 50,
+                      padding: '10px 18px 10px 10px',
+                      border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.08)',
                       boxShadow: isFeatured
-                        ? `0 4px 20px ${iconBg}40, 0 2px 8px rgba(0,0,0,0.15)`
-                        : '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06)',
+                        ? `0 4px 20px ${iconBg}35, 0 2px 8px rgba(0,0,0,0.12)`
+                        : '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease',
                       transform: 'translateY(0)',
                       WebkitTapHighlightColor: 'transparent',
@@ -362,23 +362,23 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                         (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
                       },
                       onMouseEnter: (e: React.MouseEvent) => {
-                        (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
+                        (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
                         (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
-                          ? `0 8px 32px ${iconBg}50, 0 4px 12px rgba(0,0,0,0.2)`
-                          : '0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.1)';
+                          ? `0 8px 28px ${iconBg}45, 0 4px 12px rgba(0,0,0,0.15)`
+                          : '0 2px 4px rgba(0,0,0,0.04), 0 10px 28px rgba(0,0,0,0.08)';
                       },
                     } : {})}
                   >
                     {/* Icon */}
                     {link.thumbnail_url ? (
-                      <div className={`w-[44px] h-[44px] rounded-[12px] overflow-hidden shrink-0 transition-transform duration-200 ${
+                      <div className={`w-[36px] h-[36px] rounded-full overflow-hidden shrink-0 transition-transform duration-200 ${
                         paymentIssue ? '' : 'group-hover:scale-[1.06]'
                       }`}>
-                        <img src={link.thumbnail_url} alt={link.title} width={44} height={44} decoding="async" loading="lazy" className="w-full h-full object-cover" />
+                        <img src={link.thumbnail_url} alt={link.title} width={36} height={36} decoding="async" loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     ) : (
                       <div
-                        className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                        className={`w-[36px] h-[36px] rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
                           paymentIssue ? '' : 'group-hover:scale-[1.06]'
                         }`}
                         style={{
@@ -392,14 +392,14 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
                     {/* Text */}
                     <div className="flex-1 min-w-0">
-                      <span className={`block font-bold leading-tight truncate ${
-                        isFeatured ? 'text-[16px] sm:text-[17px] text-white' : 'text-[15px] sm:text-[16px] text-[#111]'
+                      <span className={`block font-semibold leading-tight truncate ${
+                        isFeatured ? 'text-[15px] text-white' : 'text-[14px] text-[#111]'
                       }`}>
                         {link.title}
                       </span>
                       {link.description && (
-                        <span className={`block text-[12px] mt-[3px] truncate font-medium ${
-                          isFeatured ? 'text-white/60' : 'text-[#999]'
+                        <span className={`block text-[11px] mt-[2px] truncate font-medium ${
+                          isFeatured ? 'text-white/55' : 'text-[#999]'
                         }`}>
                           {link.description}
                         </span>
@@ -408,7 +408,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
 
                     {/* First link pulse */}
                     {idx === 0 && !paymentIssue && (
-                      <div className="absolute inset-0 rounded-[16px] animate-ring-glow pointer-events-none"
+                      <div className="absolute inset-0 rounded-full animate-ring-glow pointer-events-none"
                         style={{ border: isFeatured ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(255,255,255,0.06)' }}
                       />
                     )}

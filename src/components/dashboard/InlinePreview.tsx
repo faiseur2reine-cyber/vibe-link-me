@@ -222,7 +222,7 @@ const StandardPreview = ({ page, links, displayName }: {
               style={buttonStyle}
             >
               <div
-                className="w-[22px] h-[22px] rounded-lg flex items-center justify-center shrink-0"
+                className="w-[20px] h-[20px] rounded-full flex items-center justify-center shrink-0"
                 style={{ backgroundColor: platformColor || (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') }}
               >
                 <LinkFavicon url={link.url} size="xs" className={platformColor ? 'text-white' : ''} />
@@ -312,18 +312,18 @@ const ImmersivePreview = ({ page, links, displayName }: {
                   className="flex items-center gap-2"
                   style={{
                     background: isFeatured ? iconBg : 'rgba(255,255,255,0.97)',
-                    borderRadius: 8,
-                    padding: '5px 8px',
+                    borderRadius: 50,
+                    padding: '4px 8px 4px 4px',
                     border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.1)',
                     boxShadow: isFeatured ? `0 2px 8px ${iconBg}40` : '0 1px 3px rgba(0,0,0,0.04)',
                   }}
                 >
                   {link.thumbnail_url ? (
-                    <div className="w-[22px] h-[22px] rounded-[5px] overflow-hidden shrink-0">
+                    <div className="w-[20px] h-[20px] rounded-full overflow-hidden shrink-0">
                       <img src={link.thumbnail_url} alt="" className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className="w-[22px] h-[22px] rounded-[5px] flex items-center justify-center shrink-0"
+                    <div className="w-[20px] h-[20px] rounded-full flex items-center justify-center shrink-0"
                       style={{ backgroundColor: isFeatured ? 'rgba(255,255,255,0.2)' : iconBg }}>
                       <LinkFavicon url={link.url} size="xs" className="text-white" />
                     </div>
