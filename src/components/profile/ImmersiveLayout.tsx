@@ -3,7 +3,7 @@
 // frosted glass buttons, cinematic gradients, touch-optimized.
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { TapMapPin as MapPin, TapChevronRight as ChevronRight, TapChevronDown as ChevronDownIcon, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
+import { TapMapPin as MapPin, TapChevronDown as ChevronDownIcon, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect } from 'react';
@@ -397,21 +397,21 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                     viewport={{ once: true, margin: '-10px' }}
                     transition={{ delay: idx < 5 ? idx * 0.06 : 0, duration: 0.45, ease }}
                     onClick={(e) => { e.preventDefault(); handleLinkClick(link); }}
-                    className={`group relative w-full flex items-center gap-[14px] text-left ${
+                    className={`group relative w-full flex items-center text-left ${
                       paymentIssue ? 'cursor-default' : ''
                     }`}
                     style={{
                       background: isFeatured
-                        ? `linear-gradient(135deg, #FFFFFF 0%, #F8F8FA 100%)`
-                        : 'rgba(255,255,255,0.96)',
-                      borderRadius: 18,
-                      minHeight: isFeatured ? 76 : 68,
-                      padding: '14px 16px 14px 14px',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                        ? iconBg
+                        : 'rgba(255,255,255,0.97)',
+                      borderRadius: 16,
+                      minHeight: isFeatured ? 72 : 64,
+                      padding: isFeatured ? '0 20px 0 0' : '0 18px 0 0',
+                      border: isFeatured ? 'none' : '1px solid rgba(255,255,255,0.1)',
                       boxShadow: isFeatured
-                        ? `0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 1px ${iconBg}10`
-                        : '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4)',
-                      transition: 'transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1)',
+                        ? `0 4px 20px ${iconBg}40, 0 2px 8px rgba(0,0,0,0.15)`
+                        : '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06)',
+                      transition: 'transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease',
                       transform: 'translateY(0)',
                     }}
                     {...(!paymentIssue ? {
@@ -423,72 +423,72 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                       },
                       onPointerLeave: (e: React.PointerEvent) => {
                         (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                        (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
-                          ? `0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 1px ${iconBg}10`
-                          : '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4)';
                       },
                       onMouseEnter: (e: React.MouseEvent) => {
                         (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
                         (e.currentTarget as HTMLElement).style.boxShadow = isFeatured
-                          ? `0 2px 4px rgba(0,0,0,0.04), 0 14px 36px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6), 0 0 0 1px ${iconBg}15`
-                          : '0 2px 4px rgba(0,0,0,0.04), 0 14px 36px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.5)';
+                          ? `0 8px 32px ${iconBg}50, 0 4px 12px rgba(0,0,0,0.2)`
+                          : '0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.1)';
                       },
                     } : {})}
                   >
-                    {/* Icon / Thumbnail */}
+                    {/* Icon */}
                     {link.thumbnail_url ? (
-                      <div className={`w-[48px] h-[48px] rounded-[13px] overflow-hidden shrink-0 transition-transform duration-200 ${
-                        paymentIssue ? '' : 'group-hover:scale-[1.06]'
-                      }`}
-                        style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
+                      <div className="w-[64px] h-full flex items-center justify-center shrink-0"
+                        style={{ minHeight: isFeatured ? 72 : 64 }}
                       >
-                        <img
-                          src={link.thumbnail_url}
-                          alt={link.title}
-                          width={48}
-                          height={48}
-                          decoding="async"
-                          loading="lazy"
-                          className="w-full h-full object-cover"
-                        />
+                        <div className={`w-[44px] h-[44px] rounded-[12px] overflow-hidden transition-transform duration-200 ${
+                          paymentIssue ? '' : 'group-hover:scale-[1.06]'
+                        }`}>
+                          <img
+                            src={link.thumbnail_url}
+                            alt={link.title}
+                            width={44}
+                            height={44}
+                            decoding="async"
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       </div>
                     ) : (
-                      <div
-                        className={`w-[48px] h-[48px] rounded-[13px] flex items-center justify-center shrink-0 transition-transform duration-200 ${
-                          paymentIssue ? '' : 'group-hover:scale-[1.06]'
-                        }`}
-                        style={{
-                          backgroundColor: iconBg,
-                          boxShadow: `0 2px 8px ${iconBg}20, inset 0 1px 0 rgba(255,255,255,0.15)`,
-                        }}
+                      <div className="w-[64px] h-full flex items-center justify-center shrink-0"
+                        style={{ minHeight: isFeatured ? 72 : 64 }}
                       >
-                        <LinkFavicon url={link.url} size="sm" />
+                        <div
+                          className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center transition-transform duration-200 ${
+                            paymentIssue ? '' : 'group-hover:scale-[1.06]'
+                          }`}
+                          style={{
+                            backgroundColor: isFeatured ? 'rgba(255,255,255,0.2)' : iconBg,
+                            boxShadow: isFeatured ? 'none' : `0 2px 8px ${iconBg}25`,
+                          }}
+                        >
+                          <LinkFavicon url={link.url} size="sm" />
+                        </div>
                       </div>
                     )}
 
                     {/* Text */}
-                    <div className="flex-1 min-w-0 py-0.5">
-                      <span className="block text-[15px] sm:text-[16px] font-semibold leading-tight truncate text-[#111]">
+                    <div className="flex-1 min-w-0">
+                      <span className={`block font-bold leading-tight truncate ${
+                        isFeatured ? 'text-[16px] sm:text-[17px] text-white' : 'text-[15px] sm:text-[16px] text-[#111]'
+                      }`}>
                         {link.title}
                       </span>
                       {link.description && (
-                        <span className="block text-[12px] mt-[4px] truncate text-[#999] font-medium">
+                        <span className={`block text-[12px] mt-[3px] truncate font-medium ${
+                          isFeatured ? 'text-white/60' : 'text-[#999]'
+                        }`}>
                           {link.description}
                         </span>
                       )}
                     </div>
 
-                    {/* Arrow — squircle to match */}
-                    <div className={`w-7 h-7 rounded-[9px] flex items-center justify-center shrink-0 transition-all duration-200 ${
-                      paymentIssue ? 'bg-black/[0.03]' : 'bg-black/[0.04] group-hover:bg-black/[0.07] group-hover:translate-x-0.5'
-                    }`}>
-                      <ChevronRight className="w-[13px] h-[13px] text-black/25 group-hover:text-black/45 transition-colors duration-200" />
-                    </div>
-
                     {/* First link pulse */}
                     {idx === 0 && !paymentIssue && (
-                      <div className="absolute inset-0 rounded-[18px] animate-ring-glow pointer-events-none"
-                        style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+                      <div className="absolute inset-0 rounded-[16px] animate-ring-glow pointer-events-none"
+                        style={{ border: isFeatured ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(255,255,255,0.06)' }}
                       />
                     )}
                   </motion.button>

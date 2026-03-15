@@ -176,7 +176,7 @@ const PublicProfile = () => {
         {/* Button skeletons */}
         <div className="px-5 pt-7 max-w-[480px] w-full mx-auto space-y-[16px]">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-[68px] rounded-[18px] bg-white/[0.04] animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+            <div key={i} className={`${i === 1 ? 'h-[72px]' : 'h-[64px]'} rounded-[16px] bg-white/[0.04] animate-pulse`} style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>
