@@ -92,6 +92,7 @@ const DashboardAnalytics = () => {
   const { pages, loading: pagesLoading } = useCreatorPages();
   const pageIds = pages.map(p => p.id);
   const stats = useGlobalAnalytics(pageIds);
+  const [activeIndices, setActiveIndices] = useState<Record<string, number | undefined>>({});
 
   if (pagesLoading || stats.loading) {
     return (
