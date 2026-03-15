@@ -13,14 +13,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>MyTaptap — Tout ce que Linktree te fait payer</title>
-        <meta name="description" content="Deeplinks, safe page, pixels, urgency, mode agence. Gratuit et illimité. Le link-in-bio sans plan Pro pour débloquer un bouton." />
-        <meta property="og:title" content="MyTaptap — Tout ce que Linktree te fait payer" />
-        <meta property="og:description" content="Deeplinks, safe page, pixels, urgency, mode agence. Gratuit et illimité." />
+        <title>MyTaptap — Tes liens méritent mieux qu'un navigateur Instagram</title>
+        <meta name="description" content="Deeplinks, safe page, pixels, urgency, mode agence. Le link-in-bio avec les features pro, sans le prix pro." />
+        <meta property="og:title" content="MyTaptap — Tes liens méritent mieux qu'un navigateur Instagram" />
+        <meta property="og:description" content="Le link-in-bio avec les features pro, sans le prix pro." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://mytaptap.com" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="MyTaptap — Tout ce que Linktree te fait payer" />
+        <meta name="twitter:title" content="MyTaptap — Tes liens méritent mieux qu'un navigateur Instagram" />
         <link rel="canonical" href="https://mytaptap.com" />
       </Helmet>
 

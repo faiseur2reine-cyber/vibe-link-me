@@ -76,8 +76,8 @@ const HeroSection = () => {
             variants={item}
             className="text-4xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.08] text-foreground"
           >
-            Tout ce que Linktree{' '}
-            <span className="text-pop-gradient">te fait payer.</span>
+            Tes liens méritent{' '}
+            <span className="text-pop-gradient">mieux qu'un navigateur Instagram.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -85,7 +85,7 @@ const HeroSection = () => {
             variants={item}
             className="mt-5 text-muted-foreground text-[15px] sm:text-base leading-relaxed max-w-lg mx-auto"
           >
-            Deeplinks, safe page, pixels, urgency, mode agence. Ici c'est gratuit et illimité. Pas de plan Pro pour débloquer un bouton.
+            Deeplinks, safe page, pixels, urgency, mode agence. Le link-in-bio avec les features pro, sans le prix pro.
           </motion.p>
 
           {/* ── Username claim ── */}
