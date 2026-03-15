@@ -14,9 +14,6 @@ export interface GlobalStats {
   countryStats: { country: string; count: number }[];
   cityStats: { city: string; count: number }[];
   referrerStats: { referrer: string; count: number }[];
-  deviceStats: { device: string; count: number }[];
-  browserStats: { browser: string; count: number }[];
-  osStats: { os: string; count: number }[];
   loading: boolean;
 }
 
