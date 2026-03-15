@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Sector } from 'recharts';
+import { useState, useCallback } from 'react';
 import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,24 @@ const COLORS = [
   'hsl(45, 100%, 60%)',  // pop-yellow
   'hsl(330, 85%, 60%)',  // pop-pink
 ];
+
+const renderActiveShape = (props: any) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  return (
+    <g>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius - 3}
+        outerRadius={outerRadius + 8}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.25))', transition: 'all 0.2s ease-out' }}
+      />
+    </g>
+  );
+};
 
 const BreakdownList = ({ items, labelKey, valueKey, max = 8 }: {
   items: Record<string, any>[];
@@ -73,6 +92,7 @@ const DashboardAnalytics = () => {
   const { pages, loading: pagesLoading } = useCreatorPages();
   const pageIds = pages.map(p => p.id);
   const stats = useGlobalAnalytics(pageIds);
+  const [activeIndices, setActiveIndices] = useState<Record<string, number | undefined>>({});
 
   if (pagesLoading || stats.loading) {
     return (
@@ -280,9 +300,13 @@ const DashboardAnalytics = () => {
                         animationEasing="ease-out"
                         startAngle={90}
                         endAngle={-270}
+                        activeIndex={activeIndices[title]}
+                        activeShape={renderActiveShape}
+                        onMouseEnter={(_, index) => setActiveIndices(prev => ({ ...prev, [title]: index }))}
+                        onMouseLeave={() => setActiveIndices(prev => ({ ...prev, [title]: undefined }))}
                       >
                         {data.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} className="drop-shadow-lg" />
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} className="drop-shadow-lg" style={{ cursor: 'pointer' }} />
                         ))}
                       </Pie>
                       <Tooltip
