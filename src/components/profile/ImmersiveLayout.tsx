@@ -7,7 +7,7 @@ import { TapMapPin as MapPin, TapChevronDown as ChevronDownIcon, TapHeart as Hea
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect } from 'react';
-import { deeplinkNavigate } from '@/lib/deeplink';
+import { deeplinkNavigate, detectBrowser } from '@/lib/deeplink';
 import { appendUtm, type UtmParams } from '@/lib/utm';
 import { throttleClick } from '@/lib/throttle';
 import { getTheme } from '@/lib/themes';
@@ -83,6 +83,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   const { t } = useTranslation();
   const heroRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [browserInfo] = useState(() => detectBrowser());
+  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   usePageView(page.id);
 
@@ -176,6 +178,35 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       {showUrgency && urgency?.scarcity?.enabled && urgency.scarcity.locationToastEnabled && <ProfileLocationToast enabled={true} pageId={page.id} />}
 
       <div className="min-h-screen min-h-[100dvh] bg-[#0a0a0a] text-white antialiased" style={{ fontFamily: "'Public Sans', -apple-system, sans-serif" }}>
+
+        {/* ═══ IN-APP BROWSER BANNER ═══ */}
+        {browserInfo.isInApp && !bannerDismissed && (
+          <div className="sticky top-0 z-50 bg-white px-4 py-3 flex items-center gap-3"
+            style={{ paddingTop: 'max(12px, env(safe-area-inset-top, 12px))' }}
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-bold text-black">Ouvre dans ton navigateur</p>
+              <p className="text-[11px] text-black/40 mt-0.5">
+                {browserInfo.appName || 'Cette app'} limite l'expérience
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                const goUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/go?url=${encodeURIComponent(window.location.href)}`;
+                window.location.href = goUrl;
+              }}
+              className="shrink-0 bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full active:scale-95 transition-transform"
+            >
+              Ouvrir ↗
+            </button>
+            <button
+              onClick={() => setBannerDismissed(true)}
+              className="shrink-0 w-8 h-8 flex items-center justify-center text-black/20 hover:text-black/50"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* ═══ HERO ═══ */}
         <div ref={heroRef} className="relative w-full overflow-hidden" style={{ height: '55dvh', minHeight: 380, maxHeight: 520 }}>
