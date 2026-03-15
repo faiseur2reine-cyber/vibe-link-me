@@ -4,7 +4,6 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { TapMapPin as MapPin, TapChevronRight as ChevronRight, TapChevronDown as ChevronDownIcon, TapHeart as Heart, TapShare as Share2 } from '@/components/icons/TapIcons';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect } from 'react';
@@ -252,7 +251,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05, ease }}
-              className="text-[26px] sm:text-[30px] font-extrabold tracking-[-0.02em] leading-none"
+              className="text-[26px] sm:text-[30px] font-extrabold tracking-[-0.02em] leading-none line-clamp-2"
             >
               {displayName}
             </motion.h1>
@@ -288,7 +287,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.22, duration: 0.4 }}
-                className="text-[14px] sm:text-[15px] text-white/55 leading-[1.55] max-w-[300px] mx-auto mt-3"
+                className="text-[14px] sm:text-[15px] text-white/55 leading-[1.55] max-w-[300px] mx-auto mt-3 line-clamp-3"
               >
                 {page.bio}
               </motion.p>
@@ -355,6 +354,16 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         )}
 
         <div className={`px-5 pt-5 pb-6 max-w-[460px] mx-auto flex flex-col gap-[14px] ${paymentIssue ? 'opacity-30 pointer-events-none select-none' : ''}`}>
+          {links.length === 0 && !paymentIssue && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-center py-8"
+            >
+              <p className="text-[13px] text-white/20">Pas encore de liens</p>
+            </motion.div>
+          )}
           {sections.map((section, sIdx) => (
             <div key={sIdx}>
               {/* Section header */}
