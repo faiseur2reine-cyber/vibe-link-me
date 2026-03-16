@@ -385,7 +385,7 @@ const PublicProfile = () => {
           }
         })}</script>
         {fontUrl && <link rel="preload" as="style" href={fontUrl} />}
-        {fontUrl && <link href={fontUrl} rel="stylesheet" media="print" onLoad="this.media='all'" />}
+        {fontUrl && <link href={fontUrl} rel="stylesheet" media="print" onLoad={(e) => { (e.target as HTMLLinkElement).media = 'all'; }} />}
         {page.custom_css && <style>{page.custom_css}</style>}
       </Helmet>
 
