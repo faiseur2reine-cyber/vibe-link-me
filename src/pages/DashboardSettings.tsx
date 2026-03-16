@@ -16,6 +16,7 @@ import { checkUsernameAvailability } from '@/lib/username';
 import { Mail } from 'lucide-react';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
+import { motion } from 'framer-motion';
 
 const localeMap: Record<string, Locale> = {
   fr, en: enUS, es, de, it, pt: ptBR
