@@ -1,4 +1,4 @@
-import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapChart as BarChart3, TapUser as User, TapSparkles as Sparkles } from '@/components/icons/TapIcons';
+import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapChart as BarChart3, TapUser as User, TapSparkles as Sparkles, TapDollar as DollarSign } from '@/components/icons/TapIcons';
 import { NavLink } from '@/components/NavLink';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,6 +20,7 @@ const navItems = [
   { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3 },
   { title: 'Profil', url: '/dashboard/profile', icon: User },
   { title: 'Paramètres', url: '/dashboard/settings', icon: Settings },
+  { title: 'Affiliation', url: '/dashboard/affiliate', icon: DollarSign },
 ];
 
 interface NavItemProps {

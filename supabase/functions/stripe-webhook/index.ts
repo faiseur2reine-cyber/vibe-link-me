@@ -124,18 +124,51 @@ serve(async (req) => {
             .eq("referred_id", user.id)
             .maybeSingle();
 
-          if (referral && referral.status !== "converted") {
+          if (referral) {
             const amount = subscription.items.data[0]?.price?.unit_amount || 0;
+            const invoiceId = subscription.latest_invoice as string || null;
             const commission = Math.round(amount * (referral.commission_rate / 100));
+            const isFirstConversion = referral.status !== "converted";
+            const eventType = isFirstConversion ? "subscription" : "renewal";
+
+            // Update referral total
             await supabase
               .from("referrals")
               .update({
                 status: "converted",
-                converted_at: new Date().toISOString(),
+                converted_at: isFirstConversion ? new Date().toISOString() : referral.converted_at,
                 total_earned: (referral.total_earned || 0) + commission,
               })
               .eq("id", referral.id);
-            logStep("Referral commission credited", { referralId: referral.id, commission });
+
+            // Log commission event
+            await supabase
+              .from("affiliate_commissions")
+              .insert({
+                referral_id: referral.id,
+                referrer_id: referral.referrer_id,
+                referred_id: user.id,
+                amount: commission,
+                plan,
+                event_type: eventType,
+                stripe_invoice_id: invoiceId,
+              });
+
+            // Update referrer's balance
+            const { data: referrerProfile } = await supabase
+              .from("profiles")
+              .select("affiliate_balance")
+              .eq("user_id", referral.referrer_id)
+              .single();
+
+            await supabase
+              .from("profiles")
+              .update({
+                affiliate_balance: (referrerProfile?.affiliate_balance || 0) + commission,
+              })
+              .eq("user_id", referral.referrer_id);
+
+            logStep("Referral commission credited", { referralId: referral.id, commission, eventType, plan });
           }
         } else if (status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
           // All retries failed or subscription ended — downgrade
