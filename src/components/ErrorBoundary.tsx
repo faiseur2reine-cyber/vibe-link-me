@@ -31,18 +31,33 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="text-[80px] font-black leading-none tracking-tighter bg-gradient-to-b from-white/90 to-white/20 bg-clip-text text-transparent select-none mb-6">
               Oops
             </div>
-            <p className="text-white/40 text-sm mb-6">
-              Something went wrong. This has been logged.
+            <p className="text-white/40 text-sm mb-2">
+              Something went wrong.
             </p>
-            <button
-              onClick={() => {
-                this.setState({ hasError: false, error: null });
-                window.location.href = '/';
-              }}
-              className="px-6 py-2.5 rounded-full bg-white text-[#0a0a0a] text-sm font-semibold hover:bg-white/90 transition-all duration-200"
-            >
-              Go Home
-            </button>
+            <p className="text-red-400/60 text-xs mb-6 font-mono break-all max-h-32 overflow-auto">
+              {this.state.error?.message || 'Unknown error'}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = '/';
+                }}
+                className="px-6 py-2.5 rounded-full bg-white text-[#0a0a0a] text-sm font-semibold hover:bg-white/90 transition-all duration-200"
+              >
+                Go Home
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = '/auth';
+                }}
+                className="px-6 py-2.5 rounded-full bg-white/10 text-white/70 text-sm font-semibold hover:bg-white/20 transition-all duration-200"
+              >
+                Reset & Login
+              </button>
+            </div>
           </div>
         </div>
       );

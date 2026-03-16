@@ -83,15 +83,23 @@ const DashboardOverview = () => {
   const { t } = useTranslation();
   const { user, subscription } = useAuth();
   const { pages, loading: pagesLoading } = useCreatorPages();
-  const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
+  const { state: onboardingState } = useOnboarding(user?.id);
   const stats = useGlobalAnalytics(pages.map(p => p.id));
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {
-      navigate('/onboarding');
+    if (localStorage.getItem('onboarding_completed')) return;
+    if (pagesLoading) return;
+    if (pages.length > 0) {
+      localStorage.setItem('onboarding_completed', '1');
+      return;
     }
-  }, [onboardingLoading, onboardingState.completed, pages.length, navigate]);
+    if (onboardingState.completed) {
+      localStorage.setItem('onboarding_completed', '1');
+      return;
+    }
+    navigate('/onboarding');
+  }, [pagesLoading, onboardingState.completed, pages.length, navigate]);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]
