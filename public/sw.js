@@ -1,6 +1,6 @@
 // Service Worker — cache static assets + API responses
-const CACHE_NAME = 'mytaptap-v1';
-const API_CACHE = 'mytaptap-api-v1';
+const CACHE_NAME = 'mytaptap-v2';
+const API_CACHE = 'mytaptap-api-v2';
 
 // Static assets: cache first, network fallback
 const STATIC_EXTENSIONS = /\.(js|css|woff2?|ttf|otf|png|jpg|jpeg|webp|svg|ico)(\?.*)?$/;
@@ -44,19 +44,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // API — stale-while-revalidate (show cached immediately, update in background)
+  // API — network first, cache fallback (always try fresh, fall back to cache offline)
   if (API_PATTERNS.some((p) => p.test(url.pathname))) {
     event.respondWith(
       caches.open(API_CACHE).then((cache) =>
-        cache.match(event.request).then((cached) => {
-          const fetchPromise = fetch(event.request).then((response) => {
-            if (response.ok) cache.put(event.request, response.clone());
-            return response;
-          }).catch(() => cached); // offline fallback
-
-          // Return cached immediately if available, otherwise wait for network
-          return cached || fetchPromise;
-        })
+        fetch(event.request).then((response) => {
+          if (response.ok) cache.put(event.request, response.clone());
+          return response;
+        }).catch(() =>
+          cache.match(event.request).then((cached) => cached || new Response('{"error":"offline"}', { status: 503, headers: { 'Content-Type': 'application/json' } }))
+        )
       )
     );
     return;
