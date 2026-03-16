@@ -261,8 +261,8 @@ const DashboardSettings = () => {
           </p>
         </div>
 
-        {/* Subscription */}
-        <Card>
+        {/* Subscription & Plan Comparison */}
+        <Card className="overflow-hidden">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
@@ -280,49 +280,89 @@ const DashboardSettings = () => {
             </div>
             <CardDescription>{t('settings.manageSubscription')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {subscription.loading ? (
               <div className="flex items-center justify-center p-8">
                 <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="font-semibold text-foreground">{currentPlan.name}</p>
-                      <Badge variant={isPremium ? 'default' : 'secondary'}>
-                        {isPremium ? t('settings.premium') : t('settings.free')}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {currentPlan.maxPages === Infinity 
-                        ? 'Pages illimitées'
-                        : `${currentPlan.maxPages} page${currentPlan.maxPages > 1 ? 's' : ''} max`
-                      }
-                    </p>
-                    {subscription.subscriptionEnd && (
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {t('settings.nextRenewal', { 
-                          date: format(new Date(subscription.subscriptionEnd), 'dd MMMM yyyy', { locale: currentLocale })
-                        })}
+                {/* Current plan summary for premium users */}
+                {isPremium && (
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/50 border border-border/50">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold text-foreground">{currentPlan.name}</p>
+                        <Badge variant="default">{t('settings.premium')}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {currentPlan.maxPages === Infinity 
+                          ? 'Pages illimitées'
+                          : `${currentPlan.maxPages} page${currentPlan.maxPages > 1 ? 's' : ''} max`
+                        }
                       </p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    {isPremium && (
+                      {subscription.subscriptionEnd && (
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {t('settings.nextRenewal', { 
+                            date: format(new Date(subscription.subscriptionEnd), 'dd MMMM yyyy', { locale: currentLocale })
+                          })}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right">
                       <p className="text-2xl font-bold text-foreground">
                         {(currentPlan.price / 100).toFixed(2).replace('.', ',')} €
                         <span className="text-sm text-muted-foreground">
                           {currentPlan.interval === 'month' ? t('settings.perMonth') : t('settings.perYear')}
                         </span>
                       </p>
-                    )}
+                    </div>
                   </div>
+                )}
+
+                {/* Visual plan comparison grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Free Plan */}
+                  <PlanCard
+                    name="Free"
+                    price="0€"
+                    interval=""
+                    features={['1 page', '5 liens', '3 thèmes', '7 jours d\'analytics']}
+                    missingFeatures={['Thèmes premium', 'Domaine personnalisé', 'Analytics avancés']}
+                    isCurrent={subscription.plan === 'free'}
+                    variant="muted"
+                  />
+
+                  {/* Starter Plan */}
+                  <PlanCard
+                    name="Starter"
+                    price="19,99€"
+                    interval={t('settings.perMonth')}
+                    features={['10 pages', '20 liens', 'Tous les thèmes', '90 jours d\'analytics', 'Tracking pixels']}
+                    missingFeatures={['Domaine personnalisé']}
+                    isCurrent={subscription.plan === 'starter'}
+                    variant="accent"
+                    onUpgrade={subscription.plan === 'free' ? () => handleUpgrade('starter') : undefined}
+                    loading={checkoutLoading === 'starter'}
+                  />
+
+                  {/* Pro Plan */}
+                  <PlanCard
+                    name="Pro"
+                    price="115€"
+                    interval={t('settings.perYear')}
+                    badge="Populaire"
+                    features={['Pages illimitées', 'Liens illimités', 'Tous les thèmes', 'Analytics illimités', 'Domaine personnalisé', 'Tracking pixels', 'Support prioritaire']}
+                    missingFeatures={[]}
+                    isCurrent={subscription.plan === 'pro'}
+                    variant="primary"
+                    onUpgrade={subscription.plan !== 'pro' ? () => handleUpgrade('pro') : undefined}
+                    loading={checkoutLoading === 'pro'}
+                  />
                 </div>
 
-                {isPremium ? (
+                {isPremium && (
                   <Button 
                     onClick={handleManageSubscription} 
                     variant="outline" 
@@ -332,44 +372,6 @@ const DashboardSettings = () => {
                     {portalLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CreditCard className="w-4 h-4 mr-2" />}
                     {t('settings.manageBtn')}
                   </Button>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-sm text-muted-foreground text-center">
-                      {t('settings.upgradePrompt')}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => handleUpgrade('starter')}
-                        disabled={checkoutLoading === 'starter'}
-                        className="flex-col h-auto py-3"
-                      >
-                        {checkoutLoading === 'starter' ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <span className="font-semibold">Starter</span>
-                            <span className="text-xs text-muted-foreground">19,99€{t('settings.perMonth')}</span>
-                          </>
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={() => handleUpgrade('pro')}
-                        disabled={checkoutLoading === 'pro'}
-                        className="flex-col h-auto py-3"
-                      >
-                        {checkoutLoading === 'pro' ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4 mb-0.5" />
-                            <span className="font-semibold">Pro</span>
-                            <span className="text-xs opacity-80">115€{t('settings.perYear')}</span>
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
                 )}
               </>
             )}
