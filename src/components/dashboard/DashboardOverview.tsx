@@ -536,6 +536,34 @@ const DashboardOverview = () => {
             </Button>
           </motion.div>
         )}
+
+        {/* Referral Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.4, ease }}
+          className="rounded-2xl border border-primary/20 bg-gradient-to-br from-[hsl(var(--pop-violet)/0.06)] to-[hsl(var(--pop-coral)/0.06)] p-4"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[hsl(var(--pop-violet))] to-[hsl(var(--pop-coral))] flex items-center justify-center shadow-md">
+                <Share className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Gagne 20% à vie</p>
+                <p className="text-xs text-muted-foreground">Partage ton lien d'affiliation</p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-xs"
+              onClick={() => navigate('/dashboard/affiliate')}
+            >
+              Voir mon lien
+            </Button>
+          </div>
+        </motion.div>
       </main>
     </div>
   );
