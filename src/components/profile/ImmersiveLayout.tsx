@@ -13,7 +13,6 @@ import { throttleClick } from '@/lib/throttle';
 import { getTheme } from '@/lib/themes';
 import { BRAND } from '@/lib/brand';
 import { recordClick } from '@/hooks/useAnalytics';
-import { usePageView } from '@/hooks/usePageView';
 import { TrackingPixels, trackPixelClick } from '@/components/profile/TrackingPixels';
 import GeoGreeting from '@/components/profile/GeoGreeting';
 import NsfwInlineGate from '@/components/profile/NsfwInlineGate';
@@ -52,7 +51,6 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
   const { t } = useTranslation();
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  usePageView(page.id);
 
   const displayName = page.display_name || page.username;
   const location = page.location || '';
@@ -91,7 +89,8 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
       if (navigator.share) {
         await navigator.share({ title: displayName, url });
       } else {
-        await navigator.clipboard.writeText(url);
+        const { copyToClipboard } = await import('@/lib/clipboard');
+        await copyToClipboard(url);
       }
     } catch {}
   };

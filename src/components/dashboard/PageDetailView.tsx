@@ -197,8 +197,9 @@ const PageDetailView = ({ page, onBack, onUpdatePage, onDeletePage, onRefetchPag
             </div>
             <button
               onClick={() => {
-                navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
-                toast.success(t('pages.linkCopied'));
+                import('@/lib/clipboard').then(({ copyToClipboard }) => {
+                  copyToClipboard(`${window.location.origin}/${page.username}`).then(ok => { if (ok) toast.success(t('pages.linkCopied')); });
+                });
               }}
               className="text-[11px] text-muted-foreground/50 hover:text-primary mt-0.5 transition-colors cursor-pointer truncate block"
             >

@@ -524,10 +524,11 @@ const DashboardOverview = () => {
                 const text = 'Je viens de créer ma page de liens sur MyTaptap, c\'est gratuit et bien mieux que Linktree.';
                 const url = 'https://mytaptap.com';
                 if (navigator.share) {
-                  navigator.share({ title: 'MyTaptap', text, url });
+                  navigator.share({ title: 'MyTaptap', text, url }).catch(() => {});
                 } else {
-                  navigator.clipboard.writeText(`${text} ${url}`);
-                  toast.success('Lien copié');
+                  import('@/lib/clipboard').then(({ copyToClipboard }) => {
+                    copyToClipboard(`${text} ${url}`).then(ok => { if (ok) toast.success('Lien copié'); });
+                  });
                 }
               }}
             >

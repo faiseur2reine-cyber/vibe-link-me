@@ -305,8 +305,9 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigator.clipboard.writeText(`${window.location.origin}/${page.username}`);
-                          toast.success(t('pages.linkCopied'));
+                          import('@/lib/clipboard').then(({ copyToClipboard }) => {
+                            copyToClipboard(`${window.location.origin}/${page.username}`).then(ok => { if (ok) toast.success(t('pages.linkCopied')); });
+                          });
                         }}
                         className="hidden sm:inline-flex w-8 h-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors"
                         title="Copier le lien"

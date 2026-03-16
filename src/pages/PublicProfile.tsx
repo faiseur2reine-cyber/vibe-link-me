@@ -166,9 +166,11 @@ const PublicProfile = () => {
   }, [username]);
 
   const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) { await navigator.share({ title: page?.display_name || username, url }); }
-    else { await navigator.clipboard.writeText(url); toast.success(t('common.success') ); }
+    try {
+      const url = window.location.href;
+      if (navigator.share) { await navigator.share({ title: page?.display_name || username, url }); }
+      else { const { copyToClipboard } = await import('@/lib/clipboard'); const ok = await copyToClipboard(url); if (ok) toast.success(t('common.success')); }
+    } catch {}
   };
 
   /* ── Loading ── */

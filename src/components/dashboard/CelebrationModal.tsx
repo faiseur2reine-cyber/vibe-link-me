@@ -56,10 +56,9 @@ const CelebrationModal = ({ open, onOpenChange, username }: CelebrationModalProp
   }, [open]);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(pageUrl);
-    setCopied(true);
-    toast.success('Lien copié');
-    setTimeout(() => setCopied(false), 2000);
+    const { copyToClipboard } = await import('@/lib/clipboard');
+    const ok = await copyToClipboard(pageUrl);
+    if (ok) { setCopied(true); toast.success('Lien copié'); setTimeout(() => setCopied(false), 2000); }
   };
 
   const handleShare = async () => {

@@ -160,9 +160,9 @@ const DashboardSettings = () => {
   };
 
   const copyToClipboard = async (text: string, key: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(key);
-    setTimeout(() => setCopied(null), 2000);
+    const { copyToClipboard: safeCopy } = await import('@/lib/clipboard');
+    const ok = await safeCopy(text);
+    if (ok) { setCopied(key); setTimeout(() => setCopied(null), 2000); }
   };
 
   const handleManageSubscription = async () => {

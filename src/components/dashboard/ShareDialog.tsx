@@ -57,10 +57,9 @@ const ShareDialog = ({ open, onOpenChange, username, displayName }: ShareDialogP
   const shareText = `Check out my page`;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(pageUrl);
-    setCopied(true);
-    toast.success('Lien copié');
-    setTimeout(() => setCopied(false), 2000);
+    const { copyToClipboard } = await import('@/lib/clipboard');
+    const ok = await copyToClipboard(pageUrl);
+    if (ok) { setCopied(true); toast.success('Lien copié'); setTimeout(() => setCopied(false), 2000); }
   };
 
   const handleDownloadQR = () => {
@@ -126,8 +125,9 @@ const ShareDialog = ({ open, onOpenChange, username, displayName }: ShareDialogP
           <Button
             onClick={() => {
               const short = pageUrl.replace(/^https?:\/\//, '');
-              navigator.clipboard.writeText(short);
-              toast.success('Copié pour ta bio');
+              import('@/lib/clipboard').then(({ copyToClipboard }) => {
+                copyToClipboard(short).then(ok => { if (ok) toast.success('Copié pour ta bio'); });
+              });
             }}
             variant="outline"
             size="sm"
