@@ -33,7 +33,7 @@ const DashboardHome = () => {
   const navigate = useNavigate();
   const { user, signOut, checkSubscription, subscription } = useAuth();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, bulkUpdatePages, refetch: refetchPages } = useCreatorPages();
-  const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
+  const { state: onboardingState } = useOnboarding(user?.id);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -73,7 +73,7 @@ const DashboardHome = () => {
   useEffect(() => {
     // Fast path: if we already marked onboarding done, skip the DB check
     if (localStorage.getItem('onboarding_completed')) return;
-    if (onboardingLoading || pagesLoading) return;
+    if (pagesLoading) return;
     // If user has pages, they've been through onboarding — mark done
     if (pages.length > 0) {
       localStorage.setItem('onboarding_completed', '1');
@@ -86,7 +86,7 @@ const DashboardHome = () => {
     }
     // No pages + not completed → onboarding
     navigate('/onboarding');
-  }, [onboardingLoading, pagesLoading, onboardingState.completed, pages.length, navigate]);
+  }, [pagesLoading, onboardingState.completed, pages.length, navigate]);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('dashboard_tour_completed');
@@ -95,7 +95,7 @@ const DashboardHome = () => {
     }
   }, [pages.length, selectedPageId]);
 
-  if (pagesLoading || onboardingLoading) {
+  if (pagesLoading) {
     return (
       <div className="flex-1 flex flex-col">
         <main className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
@@ -199,7 +199,6 @@ const DashboardHome = () => {
 
 const Dashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const [profileChecked, setProfileChecked] = useState(false);
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem('theme');
@@ -224,11 +223,6 @@ const Dashboard = () => {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  useEffect(() => {
-    // Profile check — just mark as ready, onboarding handles username
-    if (user) setProfileChecked(true);
-  }, [user]);
-
   const toggleTheme = () => {
     const next = !isDark;
     setIsDark(next);
@@ -236,7 +230,7 @@ const Dashboard = () => {
     localStorage.setItem('theme', next ? 'dark' : 'light');
   };
 
-  if (authLoading || !profileChecked) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />

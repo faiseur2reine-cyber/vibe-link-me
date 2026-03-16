@@ -62,11 +62,13 @@ const CelebrationModal = ({ open, onOpenChange, username }: CelebrationModalProp
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      await navigator.share({ title: `@${username}`, url: pageUrl });
-    } else {
-      handleCopy();
-    }
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `@${username}`, url: pageUrl });
+      } else {
+        handleCopy();
+      }
+    } catch {}
   };
 
   return (

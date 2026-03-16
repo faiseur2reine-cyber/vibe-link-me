@@ -15,7 +15,6 @@ const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/DashboardNew"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const SetUsername = lazy(() => import("./pages/SetUsername"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const SafePage = lazy(() => import("./pages/SafePage"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));

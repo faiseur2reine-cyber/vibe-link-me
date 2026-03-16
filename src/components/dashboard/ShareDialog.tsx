@@ -165,7 +165,7 @@ const ShareDialog = ({ open, onOpenChange, username, displayName }: ShareDialogP
           {/* Native share (mobile) */}
           {typeof navigator.share === 'function' && (
             <Button
-              onClick={() => navigator.share({ title: `${displayName}`, url: pageUrl })}
+              onClick={() => navigator.share({ title: `${displayName}`, url: pageUrl }).catch(() => {})}
               size="sm"
               className="w-full h-10 rounded-xl text-[13px] gap-2 font-semibold"
             >
