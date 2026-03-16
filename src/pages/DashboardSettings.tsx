@@ -22,6 +22,97 @@ const localeMap: Record<string, Locale> = {
   fr, en: enUS, es, de, it, pt: ptBR
 };
 
+/* ── Plan Comparison Card ── */
+interface PlanCardProps {
+  name: string;
+  price: string;
+  interval: string;
+  features: string[];
+  missingFeatures: string[];
+  isCurrent: boolean;
+  variant: 'muted' | 'accent' | 'primary';
+  badge?: string;
+  onUpgrade?: () => void;
+  loading?: boolean;
+}
+
+const PlanCard = ({ name, price, interval, features, missingFeatures, isCurrent, variant, badge, onUpgrade, loading }: PlanCardProps) => {
+  const variantStyles = {
+    muted: 'border-border/50 bg-muted/30',
+    accent: 'border-border/60 bg-accent/20',
+    primary: 'border-primary/40 bg-primary/5 shadow-lg shadow-primary/10',
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className={`relative rounded-2xl border p-4 flex flex-col ${variantStyles[variant]} ${isCurrent ? 'ring-2 ring-primary/50' : ''}`}
+    >
+      {badge && (
+        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+          <Badge className="bg-gradient-to-r from-[hsl(var(--pop-violet))] to-[hsl(var(--pop-coral))] text-primary-foreground border-0 text-[10px] px-2.5 shadow-md">
+            {badge}
+          </Badge>
+        </div>
+      )}
+
+      {isCurrent && (
+        <div className="absolute -top-2.5 right-3">
+          <Badge variant="secondary" className="text-[10px] px-2">Plan actuel</Badge>
+        </div>
+      )}
+
+      <div className="text-center mb-3 pt-1">
+        <p className="text-sm font-semibold text-foreground">{name}</p>
+        <p className="text-2xl font-bold text-foreground mt-1">
+          {price}
+          {interval && <span className="text-xs font-normal text-muted-foreground">{interval}</span>}
+        </p>
+      </div>
+
+      <div className="flex-1 space-y-1.5 mb-4">
+        {features.map((f) => (
+          <div key={f} className="flex items-start gap-1.5 text-xs text-foreground">
+            <Check className="w-3.5 h-3.5 text-[hsl(var(--pop-lime))] shrink-0 mt-0.5" />
+            <span>{f}</span>
+          </div>
+        ))}
+        {missingFeatures.map((f) => (
+          <div key={f} className="flex items-start gap-1.5 text-xs text-muted-foreground/60">
+            <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            <span className="line-through">{f}</span>
+          </div>
+        ))}
+      </div>
+
+      {onUpgrade && (
+        <Button
+          size="sm"
+          onClick={onUpgrade}
+          disabled={loading}
+          className={`w-full rounded-xl text-xs h-8 ${variant === 'primary' ? 'bg-gradient-to-r from-[hsl(var(--pop-violet))] to-[hsl(var(--pop-coral))] text-primary-foreground hover:opacity-90 border-0 shadow-md' : ''}`}
+          variant={variant === 'primary' ? 'default' : 'outline'}
+        >
+          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (
+            <>
+              {variant === 'primary' && <Sparkles className="w-3 h-3" />}
+              Choisir {name}
+            </>
+          )}
+        </Button>
+      )}
+
+      {isCurrent && !onUpgrade && (
+        <div className="text-center">
+          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">✓ Actif</span>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
 const DashboardSettings = () => {
   const { t, i18n } = useTranslation();
   const { user, signOut, subscription, checkSubscription } = useAuth();
