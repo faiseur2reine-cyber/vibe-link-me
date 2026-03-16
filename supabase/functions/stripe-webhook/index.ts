@@ -22,16 +22,20 @@ async function findUserByEmail(supabase: ReturnType<typeof createClient>, email:
   return data?.users?.find(u => u.email === email);
 }
 
-async function updateUserPlan(supabase: ReturnType<typeof createClient>, userId: string, plan: string) {
+async function updateUserPlan(supabase: ReturnType<typeof createClient>, userId: string, plan: string, extra?: { subscription_end?: string; stripe_customer_id?: string }) {
+  const update: Record<string, any> = { plan };
+  if (extra?.subscription_end) update.subscription_end = extra.subscription_end;
+  if (extra?.stripe_customer_id) update.stripe_customer_id = extra.stripe_customer_id;
+  
   const { error } = await supabase
     .from("profiles")
-    .update({ plan })
+    .update(update)
     .eq("user_id", userId);
 
   if (error) {
     logStep("ERROR updating plan", { userId, plan, error: error.message });
   } else {
-    logStep("Plan updated successfully", { userId, plan });
+    logStep("Plan updated successfully", { userId, plan, ...extra });
   }
 }
 
@@ -110,11 +114,33 @@ serve(async (req) => {
 
         if (status === "active") {
           // Payment OK — grant the plan
-          await updateUserPlan(supabase, user.id, plan);
+          const subEnd = new Date(subscription.current_period_end * 1000).toISOString();
+          await updateUserPlan(supabase, user.id, plan, { subscription_end: subEnd, stripe_customer_id: customerId });
+
+          // Credit referrer commission if applicable
+          const { data: referral } = await supabase
+            .from("referrals")
+            .select("*")
+            .eq("referred_id", user.id)
+            .maybeSingle();
+
+          if (referral && referral.status !== "converted") {
+            const amount = subscription.items.data[0]?.price?.unit_amount || 0;
+            const commission = Math.round(amount * (referral.commission_rate / 100));
+            await supabase
+              .from("referrals")
+              .update({
+                status: "converted",
+                converted_at: new Date().toISOString(),
+                total_earned: (referral.total_earned || 0) + commission,
+              })
+              .eq("id", referral.id);
+            logStep("Referral commission credited", { referralId: referral.id, commission });
+          }
         } else if (status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
           // All retries failed or subscription ended — downgrade
           logStep("Downgrading user due to status", { userId: user.id, status });
-          await updateUserPlan(supabase, user.id, "free");
+          await updateUserPlan(supabase, user.id, "free", { subscription_end: undefined, stripe_customer_id: customerId });
         }
         // "past_due" → grace period, Stripe retries payment (configurable in Stripe Dashboard)
         // "trialing", "incomplete" → wait for resolution
@@ -135,7 +161,7 @@ serve(async (req) => {
 
         const user = await findUserByEmail(supabase, customer.email);
         if (user) {
-          await updateUserPlan(supabase, user.id, "free");
+          await updateUserPlan(supabase, user.id, "free", { subscription_end: undefined, stripe_customer_id: customerId });
         }
         break;
       }
