@@ -127,7 +127,7 @@ const ImmersiveLayout = ({ page, links, abVariant, paymentIssue = false }: Props
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
-        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onLoad="this.media='all'" />
+        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onLoad={(e) => { (e.target as HTMLLinkElement).media = 'all'; }} />
         {page.is_nsfw && <meta name="rating" content="adult" />}
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
