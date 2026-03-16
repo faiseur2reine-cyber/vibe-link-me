@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSubscription(prev => ({ ...prev, loading: true }));
       const { data } = await supabase
         .from('profiles')
-        .select('plan, subscription_end')
+        .select('plan')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSubscription({
         plan,
         subscribed: plan !== 'free',
-        subscriptionEnd: data?.subscription_end || null,
+        subscriptionEnd: null, // not available from DB, only from Stripe
         loading: false,
       });
     } catch {

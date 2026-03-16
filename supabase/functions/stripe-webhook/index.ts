@@ -22,20 +22,16 @@ async function findUserByEmail(supabase: ReturnType<typeof createClient>, email:
   return data?.users?.find(u => u.email === email);
 }
 
-async function updateUserPlan(supabase: ReturnType<typeof createClient>, userId: string, plan: string, extra?: { subscription_end?: string; stripe_customer_id?: string }) {
-  const update: Record<string, any> = { plan };
-  if (extra?.subscription_end) update.subscription_end = extra.subscription_end;
-  if (extra?.stripe_customer_id) update.stripe_customer_id = extra.stripe_customer_id;
-  
+async function updateUserPlan(supabase: ReturnType<typeof createClient>, userId: string, plan: string) {
   const { error } = await supabase
     .from("profiles")
-    .update(update)
+    .update({ plan })
     .eq("user_id", userId);
 
   if (error) {
     logStep("ERROR updating plan", { userId, plan, error: error.message });
   } else {
-    logStep("Plan updated successfully", { userId, plan, ...extra });
+    logStep("Plan updated successfully", { userId, plan });
   }
 }
 
@@ -114,66 +110,11 @@ serve(async (req) => {
 
         if (status === "active") {
           // Payment OK — grant the plan
-          const subEnd = new Date(subscription.current_period_end * 1000).toISOString();
-          await updateUserPlan(supabase, user.id, plan, { subscription_end: subEnd, stripe_customer_id: customerId });
-
-          // Credit referrer commission if applicable
-          const { data: referral } = await supabase
-            .from("referrals")
-            .select("*")
-            .eq("referred_id", user.id)
-            .maybeSingle();
-
-          if (referral) {
-            const amount = subscription.items.data[0]?.price?.unit_amount || 0;
-            const invoiceId = subscription.latest_invoice as string || null;
-            const commission = Math.round(amount * (referral.commission_rate / 100));
-            const isFirstConversion = referral.status !== "converted";
-            const eventType = isFirstConversion ? "subscription" : "renewal";
-
-            // Update referral total
-            await supabase
-              .from("referrals")
-              .update({
-                status: "converted",
-                converted_at: isFirstConversion ? new Date().toISOString() : referral.converted_at,
-                total_earned: (referral.total_earned || 0) + commission,
-              })
-              .eq("id", referral.id);
-
-            // Log commission event
-            await supabase
-              .from("affiliate_commissions")
-              .insert({
-                referral_id: referral.id,
-                referrer_id: referral.referrer_id,
-                referred_id: user.id,
-                amount: commission,
-                plan,
-                event_type: eventType,
-                stripe_invoice_id: invoiceId,
-              });
-
-            // Update referrer's balance
-            const { data: referrerProfile } = await supabase
-              .from("profiles")
-              .select("affiliate_balance")
-              .eq("user_id", referral.referrer_id)
-              .single();
-
-            await supabase
-              .from("profiles")
-              .update({
-                affiliate_balance: (referrerProfile?.affiliate_balance || 0) + commission,
-              })
-              .eq("user_id", referral.referrer_id);
-
-            logStep("Referral commission credited", { referralId: referral.id, commission, eventType, plan });
-          }
+          await updateUserPlan(supabase, user.id, plan);
         } else if (status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
           // All retries failed or subscription ended — downgrade
           logStep("Downgrading user due to status", { userId: user.id, status });
-          await updateUserPlan(supabase, user.id, "free", { subscription_end: undefined, stripe_customer_id: customerId });
+          await updateUserPlan(supabase, user.id, "free");
         }
         // "past_due" → grace period, Stripe retries payment (configurable in Stripe Dashboard)
         // "trialing", "incomplete" → wait for resolution
@@ -194,7 +135,7 @@ serve(async (req) => {
 
         const user = await findUserByEmail(supabase, customer.email);
         if (user) {
-          await updateUserPlan(supabase, user.id, "free", { subscription_end: undefined, stripe_customer_id: customerId });
+          await updateUserPlan(supabase, user.id, "free");
         }
         break;
       }

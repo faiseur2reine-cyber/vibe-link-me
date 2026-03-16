@@ -1,8 +1,7 @@
-import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapChart as BarChart3, TapUser as User, TapSparkles as Sparkles, TapDollar as DollarSign } from '@/components/icons/TapIcons';
+import { TapHome as Home, TapGrid as LayoutGrid, TapSettings as Settings, TapChart as BarChart3, TapUser as User, TapSparkles as Sparkles } from '@/components/icons/TapIcons';
 import { NavLink } from '@/components/NavLink';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { preloadRoute } from '@/lib/preload';
 import {
   Sidebar,
   SidebarContent,
@@ -16,16 +15,15 @@ import {
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { title: 'Aperçu', url: '/dashboard', icon: Home, end: true, key: '1' },
-  { title: 'Pages', url: '/dashboard/pages', icon: LayoutGrid, key: '2' },
-  { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3, key: '3' },
-  { title: 'Profil', url: '/dashboard/profile', icon: User, key: '4' },
-  { title: 'Paramètres', url: '/dashboard/settings', icon: Settings, key: '5' },
-  { title: 'Affiliation', url: '/dashboard/affiliate', icon: DollarSign, key: '6' },
+  { title: 'Aperçu', url: '/dashboard', icon: Home, end: true },
+  { title: 'Pages', url: '/dashboard/pages', icon: LayoutGrid },
+  { title: 'Analytics', url: '/dashboard/analytics', icon: BarChart3 },
+  { title: 'Profil', url: '/dashboard/profile', icon: User },
+  { title: 'Paramètres', url: '/dashboard/settings', icon: Settings },
 ];
 
 interface NavItemProps {
-  item: { title: string; url: string; icon: React.ElementType; end?: boolean; key?: string };
+  item: { title: string; url: string; icon: React.ElementType; end?: boolean };
   collapsed: boolean;
   isActive: boolean;
 }
@@ -39,9 +37,8 @@ const NavItem = ({ item, collapsed, isActive }: NavItemProps) => {
         <NavLink
           to={item.url}
           end={item.end}
-          onMouseEnter={() => preloadRoute(item.url)}
           className={cn(
-            "relative overflow-hidden transition-all duration-300 ease-out group/nav",
+            "relative overflow-hidden transition-all duration-300 ease-out",
             "hover:bg-accent/50",
             "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2",
             "before:w-1 before:rounded-r-full before:bg-primary",
@@ -60,21 +57,14 @@ const NavItem = ({ item, collapsed, isActive }: NavItemProps) => {
             )} 
           />
           {!collapsed && (
-            <>
-              <span 
-                className={cn(
-                  "flex-1 transition-colors duration-200",
-                  isActive ? "text-primary" : "text-foreground"
-                )}
-              >
-                {item.title}
-              </span>
-              {item.key && (
-                <kbd className="hidden group-hover/nav:inline-flex h-5 min-w-5 items-center justify-center rounded bg-muted/80 px-1 text-[10px] font-mono text-muted-foreground/60 transition-opacity">
-                  {item.key}
-                </kbd>
+            <span 
+              className={cn(
+                "transition-colors duration-200",
+                isActive ? "text-primary" : "text-foreground"
               )}
-            </>
+            >
+              {item.title}
+            </span>
           )}
         </NavLink>
       </SidebarMenuButton>

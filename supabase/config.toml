@@ -29,8 +29,3 @@ verify_jwt = false
 
 [functions.go]
 verify_jwt = false
-[functions.affiliate-payout]
-verify_jwt = false
-
-[functions.link-referral]
-verify_jwt = false

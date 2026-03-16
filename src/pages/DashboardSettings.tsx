@@ -453,83 +453,16 @@ const DashboardSettings = () => {
                   />
                 </div>
 
-                {isPremium ? (
-                  <div className="space-y-3">
-                    <Button 
-                      onClick={handleManageSubscription} 
-                      variant="outline" 
-                      className="w-full"
-                      disabled={portalLoading}
-                    >
-                      {portalLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CreditCard className="w-4 h-4 mr-2" />}
-                      {t('settings.manageBtn')}
-                    </Button>
-
-                    {/* Upgrade: Starter → Pro */}
-                    {subscription.plan === 'starter' && (
-                      <Button
-                        onClick={() => handleUpgrade('pro')}
-                        disabled={checkoutLoading === 'pro'}
-                        className="w-full flex-col h-auto py-3"
-                      >
-                        {checkoutLoading === 'pro' ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <div className="flex items-center gap-1.5">
-                              <Sparkles className="w-4 h-4" />
-                              <span className="font-semibold">Passer au Pro</span>
-                            </div>
-                            <span className="text-xs opacity-80">
-                              {(PLANS.pro.price / 100).toFixed(2).replace('.', ',')}€{PLANS.pro.interval === 'year' ? '/an' : '/mois'} — Pages illimitées
-                            </span>
-                          </>
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-sm text-muted-foreground text-center">
-                      {t('settings.upgradePrompt')}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => handleUpgrade('starter')}
-                        disabled={checkoutLoading === 'starter'}
-                        className="flex-col h-auto py-3"
-                      >
-                        {checkoutLoading === 'starter' ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <span className="font-semibold">Starter</span>
-                            <span className="text-xs text-muted-foreground">
-                              {(PLANS.starter.price / 100).toFixed(2).replace('.', ',')}€{PLANS.starter.interval === 'month' ? '/mois' : '/an'}
-                            </span>
-                          </>
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={() => handleUpgrade('pro')}
-                        disabled={checkoutLoading === 'pro'}
-                        className="flex-col h-auto py-3"
-                      >
-                        {checkoutLoading === 'pro' ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4 mb-0.5" />
-                            <span className="font-semibold">Pro</span>
-                            <span className="text-xs opacity-80">
-                              {(PLANS.pro.price / 100).toFixed(2).replace('.', ',')}€{PLANS.pro.interval === 'year' ? '/an' : '/mois'}
-                            </span>
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
+                {isPremium && (
+                  <Button 
+                    onClick={handleManageSubscription} 
+                    variant="outline" 
+                    className="w-full"
+                    disabled={portalLoading}
+                  >
+                    {portalLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CreditCard className="w-4 h-4 mr-2" />}
+                    {t('settings.manageBtn')}
+                  </Button>
                 )}
               </>
             )}

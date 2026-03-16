@@ -103,10 +103,10 @@ serve(async (req) => {
     const plan = PRICE_TO_PLAN[priceId] || "free";
     const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
 
-    // Sync plan + subscription_end to profiles table
+    // Sync plan to profiles table
     await supabaseClient
       .from("profiles")
-      .update({ plan, subscription_end: subscriptionEnd, stripe_customer_id: customerId })
+      .update({ plan })
       .eq("user_id", user.id);
 
     return new Response(JSON.stringify({
