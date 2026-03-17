@@ -61,6 +61,7 @@ const DashboardHome = () => {
     if (searchParams.get('checkout') === 'success') {
       checkSubscription().then(() => refetchPages());
       toast.success(t('common.success'));
+      setShowReferralModal(true);
       // Clean URL so refresh doesn't re-trigger
       searchParams.delete('checkout');
       setSearchParams(searchParams, { replace: true });
