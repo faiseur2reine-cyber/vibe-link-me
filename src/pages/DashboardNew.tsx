@@ -39,6 +39,7 @@ const DashboardHome = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [showTour, setShowTour] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
 
   const userPlan = (subscription?.plan || 'free') as PlanKey;
   const maxPages = PLANS[userPlan]?.maxPages ?? 1;
