@@ -11,6 +11,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
 import { TapLogOut as LogOut, TapPlus as Plus, TapLoader as Loader2, TapSun as Sun, TapMoon as Moon, TapLink as Link2, TapShare as Share2 } from '@/components/icons/TapIcons';
 import RetentionModal from '@/components/dashboard/RetentionModal';
+import ReferralShareModal from '@/components/dashboard/ReferralShareModal';
 
 import { PLANS } from '@/lib/plans';
 import type { PlanKey } from '@/lib/plans';
@@ -38,6 +39,7 @@ const DashboardHome = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [showTour, setShowTour] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
 
   const userPlan = (subscription?.plan || 'free') as PlanKey;
   const maxPages = PLANS[userPlan]?.maxPages ?? 1;
@@ -59,6 +61,7 @@ const DashboardHome = () => {
     if (searchParams.get('checkout') === 'success') {
       checkSubscription().then(() => refetchPages());
       toast.success(t('common.success'));
+      setShowReferralModal(true);
       // Clean URL so refresh doesn't re-trigger
       searchParams.delete('checkout');
       setSearchParams(searchParams, { replace: true });
@@ -193,6 +196,8 @@ const DashboardHome = () => {
           }}
         />
       )}
+
+      <ReferralShareModal open={showReferralModal} onOpenChange={setShowReferralModal} />
     </div>
   );
 };

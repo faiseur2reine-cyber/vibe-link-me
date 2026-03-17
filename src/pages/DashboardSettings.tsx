@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +17,8 @@ import { Mail } from 'lucide-react';
 import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
+
+const ReferralSection = lazy(() => import('@/components/dashboard/ReferralSection'));
 
 const localeMap: Record<string, Locale> = {
   fr, en: enUS, es, de, it, pt: ptBR
@@ -468,6 +470,11 @@ const DashboardSettings = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Referral / Affiliation */}
+        <Suspense fallback={<div className="h-32 animate-pulse bg-muted/30 rounded-xl" />}>
+          <ReferralSection />
+        </Suspense>
 
         {/* Custom Domain - Pro only */}
         {isPro && (

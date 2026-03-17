@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { getStoredReferralCode, clearStoredReferralCode } from '@/hooks/useReferral';
 import type { PlanKey } from '@/lib/plans';
 
 interface SubscriptionState {
@@ -111,15 +112,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const referralLinked = useRef(false);
+
+  const linkReferral = useCallback(async () => {
+    if (referralLinked.current) return;
+    const code = getStoredReferralCode();
+    if (!code) return;
+    referralLinked.current = true;
+    try {
+      await supabase.functions.invoke('link-referral', { body: { referralCode: code } });
+      clearStoredReferralCode();
+    } catch { /* silent */ }
+  }, []);
+
   useEffect(() => {
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setLoading(false);
       if (session?.user) {
         setTimeout(() => {
-          // Fast: read plan from DB (no Stripe call)
           loadPlanFromDb(session.user.id);
           checkUsernameNeeded(session.user.id);
+          linkReferral();
         }, 0);
       } else {
         setSubscription(defaultSubscription);
@@ -133,11 +147,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (session?.user) {
         loadPlanFromDb(session.user.id);
         checkUsernameNeeded(session.user.id);
+        linkReferral();
       }
     });
 
     return () => authSub.unsubscribe();
-  }, [loadPlanFromDb, checkUsernameNeeded]);
+  }, [loadPlanFromDb, checkUsernameNeeded, linkReferral]);
 
   // NOTE: No more 60-second polling interval.
   // Plan is read from profiles on login, and synced via Stripe webhook.
