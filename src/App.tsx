@@ -30,6 +30,25 @@ const PageLoader = () => (
 
 const queryClient = new QueryClient();
 
+const AppRoutes = () => {
+  useReferralCapture();
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/set-username" element={<Onboarding />} />
+        <Route path="/legal" element={<Legal />} />
+        <Route path="/safe/:username" element={<SafePage />} />
+        <Route path="/:username" element={<PublicProfile />} />
+      </Routes>
+    </Suspense>
+  );
+};
+
 const App = () => (
   <ErrorBoundary>
     <HelmetProvider>
@@ -39,19 +58,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/dashboard/*" element={<Dashboard />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/set-username" element={<Onboarding />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/safe/:username" element={<SafePage />} />
-                  <Route path="/:username" element={<PublicProfile />} />
-                </Routes>
-              </Suspense>
+              <AppRoutes />
             </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>
