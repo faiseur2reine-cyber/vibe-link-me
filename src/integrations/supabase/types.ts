@@ -385,6 +385,7 @@ export type Database = {
           is_nsfw: boolean
           onboarding_completed: boolean
           plan: string
+          referral_code: string | null
           social_links: Json
           theme: string
           updated_at: string
@@ -404,6 +405,7 @@ export type Database = {
           is_nsfw?: boolean
           onboarding_completed?: boolean
           plan?: string
+          referral_code?: string | null
           social_links?: Json
           theme?: string
           updated_at?: string
@@ -423,11 +425,48 @@ export type Database = {
           is_nsfw?: boolean
           onboarding_completed?: boolean
           plan?: string
+          referral_code?: string | null
           social_links?: Json
           theme?: string
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          commission_rate: number
+          converted_at: string | null
+          created_at: string
+          id: string
+          referral_code: string
+          referred_id: string
+          referrer_id: string
+          status: string
+          total_earned: number
+        }
+        Insert: {
+          commission_rate?: number
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_id: string
+          referrer_id: string
+          status?: string
+          total_earned?: number
+        }
+        Update: {
+          commission_rate?: number
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_id?: string
+          referrer_id?: string
+          status?: string
+          total_earned?: number
         }
         Relationships: []
       }
