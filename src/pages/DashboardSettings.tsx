@@ -18,6 +18,8 @@ import { format, type Locale } from 'date-fns';
 import { fr, enUS, es, de, it, ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 
+const ReferralSection = lazy(() => import('@/components/dashboard/ReferralSection'));
+
 const localeMap: Record<string, Locale> = {
   fr, en: enUS, es, de, it, pt: ptBR
 };
