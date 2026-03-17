@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
 import "@/i18n";
+import { useReferralCapture } from "@/hooks/useReferral";
 
 // Lazy load all pages — splits the 1.7MB bundle
 const Index = lazy(() => import("./pages/Index"));
