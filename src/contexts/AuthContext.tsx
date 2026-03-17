@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { getStoredReferralCode, clearStoredReferralCode } from '@/hooks/useReferral';
 import type { PlanKey } from '@/lib/plans';
 
 interface SubscriptionState {
