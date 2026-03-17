@@ -196,6 +196,8 @@ const DashboardHome = () => {
           }}
         />
       )}
+
+      <ReferralShareModal open={showReferralModal} onOpenChange={setShowReferralModal} />
     </div>
   );
 };

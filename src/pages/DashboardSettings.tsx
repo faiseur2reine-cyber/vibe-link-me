@@ -471,6 +471,11 @@ const DashboardSettings = () => {
           </CardContent>
         </Card>
 
+        {/* Referral / Affiliation */}
+        <Suspense fallback={<div className="h-32 animate-pulse bg-muted/30 rounded-xl" />}>
+          <ReferralSection />
+        </Suspense>
+
         {/* Custom Domain - Pro only */}
         {isPro && (
           <Card>
