@@ -219,7 +219,7 @@ const DashboardOverview = () => {
           {/* Total clics */}
           <div className="p-3.5 rounded-xl glass">
             <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Total clics</span>
-            <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <AnimatedCounter value={stats.totalClicks} />}</p>
+            <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <Counter value={stats.totalClicks} />}</p>
           </div>
 
           {/* Pages actives */}
