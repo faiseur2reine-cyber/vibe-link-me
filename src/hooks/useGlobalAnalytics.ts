@@ -20,7 +20,13 @@ export interface GlobalStats {
   loading: boolean;
 }
 
-export function useGlobalAnalytics(pageIds: string[]) {
+interface PageMeta {
+  id: string;
+  username: string;
+  display_name: string | null;
+}
+
+export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[]) {
   const { user } = useAuth();
   const [stats, setStats] = useState<GlobalStats>({
     totalClicks: 0, totalViews: 0, totalLinks: 0, totalPages: 0, conversionRate: '—',
@@ -36,16 +42,24 @@ export function useGlobalAnalytics(pageIds: string[]) {
       return;
     }
 
-    const [linksRes, viewsRes] = await Promise.all([
+    // Only fetch page metadata if not provided by caller
+    const fetchMeta = !pagesMeta || pagesMeta.length === 0;
+
+    const [linksRes, viewsRes, pagesRes] = await Promise.all([
       supabase.from('links').select('id, page_id').in('page_id', pageIds),
       supabase.from('page_views').select('page_id, viewed_at, country, city, referrer, device_type, browser, os').in('page_id', pageIds),
+      fetchMeta
+        ? supabase.from('creator_pages').select('id, username, display_name').in('id', pageIds)
+        : Promise.resolve({ data: null }),
     ]);
-
-    const pages = pageIds; // We already have pageIds, fetch page details only when needed
 
     const links = linksRes.data || [];
     const views = (viewsRes.data as any[]) || [];
-    const pages = pagesRes.data || [];
+    const pages: PageMeta[] = pagesMeta && pagesMeta.length > 0
+      ? pagesMeta
+      : (pagesRes.data || []) as PageMeta[];
+
+    const findPage = (id: string) => pages.find(p => p.id === id);
 
     if (links.length === 0) {
       const viewsByPage: Record<string, number> = {};
@@ -53,7 +67,7 @@ export function useGlobalAnalytics(pageIds: string[]) {
       views.forEach((v) => { if (v.page_id) viewsByPage[v.page_id] = (viewsByPage[v.page_id] || 0) + 1; });
 
       const topPages = pageIds.map(id => {
-        const page = pages.find(p => p.id === id);
+        const page = findPage(id);
         return { pageId: id, username: page?.username || '', displayName: page?.display_name || null, clicks: 0, views: viewsByPage[id] || 0 };
       }).sort((a, b) => b.views - a.views);
 
@@ -120,7 +134,7 @@ export function useGlobalAnalytics(pageIds: string[]) {
 
     const topPages = pageIds
       .map(id => {
-        const page = pages.find(p => p.id === id);
+        const page = findPage(id);
         return {
           pageId: id,
           username: page?.username || '',
