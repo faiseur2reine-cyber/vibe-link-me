@@ -36,11 +36,12 @@ export function useGlobalAnalytics(pageIds: string[]) {
       return;
     }
 
-    const [linksRes, viewsRes, pagesRes] = await Promise.all([
+    const [linksRes, viewsRes] = await Promise.all([
       supabase.from('links').select('id, page_id').in('page_id', pageIds),
       supabase.from('page_views').select('page_id, viewed_at, country, city, referrer, device_type, browser, os').in('page_id', pageIds),
-      supabase.from('creator_pages').select('id, username, display_name').in('id', pageIds),
     ]);
+
+    const pages = pageIds; // We already have pageIds, fetch page details only when needed
 
     const links = linksRes.data || [];
     const views = (viewsRes.data as any[]) || [];
