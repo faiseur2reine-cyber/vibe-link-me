@@ -39,10 +39,9 @@ async function processAffiliateCommission(
   stripe: Stripe,
   supabase: ReturnType<typeof createClient>,
   userId: string,
-  amountPaid: number, // in cents
+  amountPaid: number,
   currency: string
 ) {
-  // Find referral where this user is the referred
   const { data: referral } = await supabase
     .from("referrals")
     .select("*")
@@ -62,7 +61,6 @@ async function processAffiliateCommission(
     return;
   }
 
-  // Get referrer's Connect account
   const { data: referrerProfile } = await supabase
     .from("profiles")
     .select("stripe_connect_account_id")
@@ -72,7 +70,6 @@ async function processAffiliateCommission(
   const connectId = referrerProfile?.stripe_connect_account_id;
   if (!connectId) {
     logStep("Referrer has no Connect account, accumulating commission", { referrerId: referral.referrer_id });
-    // Still track the earned amount
     const newTotal = Number(referral.total_earned) + (commissionAmount / 100);
     await supabase
       .from("referrals")
@@ -86,7 +83,6 @@ async function processAffiliateCommission(
   }
 
   try {
-    // Create transfer to connected account
     const transfer = await stripe.transfers.create({
       amount: commissionAmount,
       currency: currency || "eur",
@@ -101,7 +97,6 @@ async function processAffiliateCommission(
 
     logStep("Transfer created", { transferId: transfer.id, amount: commissionAmount });
 
-    // Update referral earnings
     const newTotal = Number(referral.total_earned) + (commissionAmount / 100);
     await supabase
       .from("referrals")
@@ -191,21 +186,15 @@ serve(async (req) => {
         }
 
         if (status === "active") {
-          // Payment OK — grant the plan
           await updateUserPlan(supabase, user.id, plan);
 
-          // Process affiliate commission on invoice payment
           const latestInvoiceId = subscription.latest_invoice;
           if (latestInvoiceId && typeof latestInvoiceId === "string") {
             try {
               const invoice = await stripe.invoices.retrieve(latestInvoiceId);
               if (invoice.amount_paid > 0) {
                 await processAffiliateCommission(
-                  stripe,
-                  supabase,
-                  user.id,
-                  invoice.amount_paid,
-                  invoice.currency || "eur"
+                  stripe, supabase, user.id, invoice.amount_paid, invoice.currency || "eur"
                 );
               }
             } catch (e) {
@@ -213,12 +202,9 @@ serve(async (req) => {
             }
           }
         } else if (status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
-          // All retries failed or subscription ended — downgrade
           logStep("Downgrading user due to status", { userId: user.id, status });
           await updateUserPlan(supabase, user.id, "free");
         }
-        // "past_due" → grace period, Stripe retries payment (configurable in Stripe Dashboard)
-        // "trialing", "incomplete" → wait for resolution
         break;
       }
 
