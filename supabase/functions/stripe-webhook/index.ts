@@ -35,6 +35,88 @@ async function updateUserPlan(supabase: ReturnType<typeof createClient>, userId:
   }
 }
 
+async function processAffiliateCommission(
+  stripe: Stripe,
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+  amountPaid: number, // in cents
+  currency: string
+) {
+  // Find referral where this user is the referred
+  const { data: referral } = await supabase
+    .from("referrals")
+    .select("*")
+    .eq("referred_id", userId)
+    .maybeSingle();
+
+  if (!referral) {
+    logStep("No referral found for user", { userId });
+    return;
+  }
+
+  const commissionRate = Number(referral.commission_rate) / 100;
+  const commissionAmount = Math.round(amountPaid * commissionRate);
+
+  if (commissionAmount < 100) {
+    logStep("Commission too small to transfer", { commissionAmount });
+    return;
+  }
+
+  // Get referrer's Connect account
+  const { data: referrerProfile } = await supabase
+    .from("profiles")
+    .select("stripe_connect_account_id")
+    .eq("user_id", referral.referrer_id)
+    .single();
+
+  const connectId = referrerProfile?.stripe_connect_account_id;
+  if (!connectId) {
+    logStep("Referrer has no Connect account, accumulating commission", { referrerId: referral.referrer_id });
+    // Still track the earned amount
+    const newTotal = Number(referral.total_earned) + (commissionAmount / 100);
+    await supabase
+      .from("referrals")
+      .update({
+        total_earned: newTotal,
+        status: "converted",
+        converted_at: referral.converted_at || new Date().toISOString(),
+      })
+      .eq("id", referral.id);
+    return;
+  }
+
+  try {
+    // Create transfer to connected account
+    const transfer = await stripe.transfers.create({
+      amount: commissionAmount,
+      currency: currency || "eur",
+      destination: connectId,
+      description: `Commission affiliation MyTaptap - ${commissionRate * 100}%`,
+      metadata: {
+        referral_id: referral.id,
+        referrer_id: referral.referrer_id,
+        referred_id: userId,
+      },
+    });
+
+    logStep("Transfer created", { transferId: transfer.id, amount: commissionAmount });
+
+    // Update referral earnings
+    const newTotal = Number(referral.total_earned) + (commissionAmount / 100);
+    await supabase
+      .from("referrals")
+      .update({
+        total_earned: newTotal,
+        status: "converted",
+        converted_at: referral.converted_at || new Date().toISOString(),
+      })
+      .eq("id", referral.id);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logStep("Transfer failed", { error: msg, connectId });
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
