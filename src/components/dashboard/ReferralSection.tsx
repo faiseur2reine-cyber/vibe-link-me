@@ -36,6 +36,8 @@ const ReferralSection = () => {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showTable, setShowTable] = useState(false);
+  const [connectLoading, setConnectLoading] = useState(false);
+  const [hasConnect, setHasConnect] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -45,11 +47,12 @@ const ReferralSection = () => {
   const loadStats = async () => {
     setLoading(true);
     const [profileRes, referralsRes] = await Promise.all([
-      supabase.from('profiles').select('referral_code').eq('user_id', user!.id).single(),
+      supabase.from('profiles').select('referral_code, stripe_connect_account_id').eq('user_id', user!.id).single(),
       supabase.from('referrals').select('*').eq('referrer_id', user!.id).order('created_at', { ascending: false }),
     ]);
 
     const code = profileRes.data?.referral_code || '';
+    setHasConnect(!!profileRes.data?.stripe_connect_account_id);
     const rows = (referralsRes.data || []) as ReferralRow[];
     const converted = rows.filter(r => r.status === 'converted').length;
     const totalEarned = rows.reduce((sum, r) => sum + Number(r.total_earned || 0), 0);
@@ -57,6 +60,24 @@ const ReferralSection = () => {
     setStats({ totalReferred: rows.length, converted, totalEarned, referralCode: code });
     setReferrals(rows);
     setLoading(false);
+  };
+
+  const handleConnectOnboarding = async () => {
+    setConnectLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('connect-onboarding');
+      if (error) { toast.error('Erreur lors de la connexion Stripe'); return; }
+      if (data?.already_onboarded) {
+        setHasConnect(true);
+        toast.success('Compte Stripe Connect déjà configuré !');
+      } else if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      toast.error('Erreur inattendue');
+    } finally {
+      setConnectLoading(false);
+    }
   };
 
   const referralUrl = `https://mytaptap.com/?ref=${stats.referralCode}`;
