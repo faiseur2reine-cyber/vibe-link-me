@@ -5,7 +5,7 @@ import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useSpring, useTransform, useMotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   TapClick as MousePointerClick, TapLink as Link2, TapGrid as LayoutGrid,
   TapArrowRight as ArrowRight, TapPlus as Plus, TapDollar as DollarSign,
