@@ -64,7 +64,8 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
   }, [pages]);
 
   const pageIds = useMemo(() => pages.map(p => p.id), [pages]);
-  const globalStats = useGlobalAnalytics(pageIds);
+  const pagesMeta = useMemo(() => pages.map(p => ({ id: p.id, username: p.username, display_name: p.display_name })), [pages]);
+  const globalStats = useGlobalAnalytics(pageIds, pagesMeta);
 
   const toggleSelect = (id: string) => {
     setSelected(prev => {
