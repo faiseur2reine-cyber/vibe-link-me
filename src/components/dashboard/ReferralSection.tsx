@@ -47,12 +47,12 @@ const ReferralSection = () => {
   const loadStats = async () => {
     setLoading(true);
     const [profileRes, referralsRes] = await Promise.all([
-      supabase.from('profiles').select('referral_code, stripe_connect_account_id').eq('user_id', user!.id).single(),
+      supabase.from('profiles').select('referral_code, stripe_connect_account_id').eq('user_id', user!.id).single() as any,
       supabase.from('referrals').select('*').eq('referrer_id', user!.id).order('created_at', { ascending: false }),
     ]);
 
     const code = profileRes.data?.referral_code || '';
-    setHasConnect(!!profileRes.data?.stripe_connect_account_id);
+    setHasConnect(!!(profileRes.data as any)?.stripe_connect_account_id);
     const rows = (referralsRes.data || []) as ReferralRow[];
     const converted = rows.filter(r => r.status === 'converted').length;
     const totalEarned = rows.reduce((sum, r) => sum + Number(r.total_earned || 0), 0);
