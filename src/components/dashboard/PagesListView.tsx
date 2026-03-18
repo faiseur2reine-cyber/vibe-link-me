@@ -10,7 +10,7 @@ import {
 } from '@/components/icons/TapIcons';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
