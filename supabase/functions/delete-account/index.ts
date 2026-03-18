@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "npm:stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const ALLOWED_ORIGINS = [
   "https://vibe-link-me.lovable.app",
@@ -41,7 +41,6 @@ serve(async (req) => {
   );
 
   try {
-    // Authenticate user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Not authenticated" }), {
@@ -63,7 +62,6 @@ serve(async (req) => {
     const userEmail = userData.user.email;
     log("Starting account deletion", { userId, email: userEmail });
 
-    // ── 1. Cancel Stripe subscription if exists ──
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (stripeKey && userEmail) {
       try {
@@ -82,7 +80,6 @@ serve(async (req) => {
       }
     }
 
-    // ── 2. Get all user's links (needed to delete clicks) ──
     const { data: userLinks } = await supabase
       .from("links")
       .select("id")
@@ -90,9 +87,7 @@ serve(async (req) => {
 
     const linkIds = (userLinks || []).map((l: { id: string }) => l.id);
 
-    // ── 3. Delete link_clicks for user's links ──
     if (linkIds.length > 0) {
-      // Delete in batches of 100 to avoid query size limits
       for (let i = 0; i < linkIds.length; i += 100) {
         const batch = linkIds.slice(i, i + 100);
         await supabase.from("link_clicks").delete().in("link_id", batch);
@@ -100,33 +95,25 @@ serve(async (req) => {
       log("Deleted link_clicks", { count: linkIds.length });
     }
 
-    // ── 4. Delete links ──
     await supabase.from("links").delete().eq("user_id", userId);
     log("Deleted links");
 
-    // ── 5. Delete creator_pages ──
     await supabase.from("creator_pages").delete().eq("user_id", userId);
     log("Deleted creator_pages");
 
-    // ── 6. Delete custom_templates ──
     await supabase.from("custom_templates").delete().eq("user_id", userId);
     log("Deleted custom_templates");
 
-    // ── 6b. Delete urgency_templates ──
     await supabase.from("urgency_templates").delete().eq("user_id", userId);
     log("Deleted urgency_templates");
 
-    // ── 7. Delete onboarding_state ──
     await supabase.from("onboarding_state").delete().eq("user_id", userId);
     log("Deleted onboarding_state");
 
-    // ── 8. Delete profile ──
     await supabase.from("profiles").delete().eq("user_id", userId);
     log("Deleted profile");
 
-    // ── 9. Delete storage files ──
     try {
-      // Clean media bucket (covers, thumbnails)
       const { data: files } = await supabase.storage
         .from("media")
         .list(userId, { limit: 1000 });
@@ -145,14 +132,11 @@ serve(async (req) => {
         }
       }
 
-      // Clean avatars bucket
       const { data: avatarFiles } = await supabase.storage
         .from("avatars")
         .list(userId, { limit: 1000 });
 
       if (avatarFiles && avatarFiles.length > 0) {
-        // Avatars are nested: {userId}/pages/{pageId}/avatar.ext
-        // List subdirectories and clean recursively
         const { data: pageDirs } = await supabase.storage
           .from("avatars")
           .list(`${userId}/pages`, { limit: 1000 });
@@ -176,7 +160,6 @@ serve(async (req) => {
       log("Storage deletion error (non-blocking)", { error: String(e) });
     }
 
-    // ── 10. Delete auth user ──
     const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
     if (deleteError) {
       log("Auth deletion error", { error: deleteError.message });

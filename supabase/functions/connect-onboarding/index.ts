@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "npm:stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -43,7 +43,6 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Check if user already has a Connect account
     const { data: profile } = await supabase
       .from("profiles")
       .select("stripe_connect_account_id")
@@ -53,7 +52,6 @@ serve(async (req) => {
     let accountId = profile?.stripe_connect_account_id;
 
     if (!accountId) {
-      // Create a new Express account
       const account = await stripe.accounts.create({
         type: "express",
         email: user.email,
@@ -65,7 +63,6 @@ serve(async (req) => {
       accountId = account.id;
       logStep("Created Connect account", { accountId });
 
-      // Save to profile
       await supabase
         .from("profiles")
         .update({ stripe_connect_account_id: accountId })
@@ -74,7 +71,6 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://mytaptap.com";
 
-    // Check if already fully onboarded
     const account = await stripe.accounts.retrieve(accountId);
     if (account.charges_enabled && account.payouts_enabled) {
       logStep("Account already onboarded", { accountId });
@@ -84,7 +80,6 @@ serve(async (req) => {
       });
     }
 
-    // Create onboarding link
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
       refresh_url: `${origin}/dashboard/settings`,

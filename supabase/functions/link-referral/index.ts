@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,7 +42,6 @@ serve(async (req) => {
       });
     }
 
-    // Find referrer by referral_code
     const { data: referrer } = await supabase
       .from("profiles")
       .select("user_id")
@@ -55,7 +54,6 @@ serve(async (req) => {
       });
     }
 
-    // Check if already linked
     const { data: existing } = await supabase
       .from("referrals")
       .select("id")
@@ -68,7 +66,6 @@ serve(async (req) => {
       });
     }
 
-    // Create referral
     const { error: insertError } = await supabase
       .from("referrals")
       .insert({

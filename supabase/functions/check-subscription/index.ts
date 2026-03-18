@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "npm:stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const ALLOWED_ORIGINS = [
   "https://vibe-link-me.lovable.app",
@@ -22,9 +22,9 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-const PRICE_TO_PLAN: Record<string, string> = {
-  "price_1T8hm0F6s5PSwitkpD9F97lO": "starter",
-  "price_1T8hiXF6s5PSwitkQraXZXeN": "pro",
+const logStep = (step: string, details?: Record<string, unknown>) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -41,33 +41,31 @@ serve(async (req) => {
   );
 
   try {
+    logStep("Function started");
+
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    logStep("Stripe key verified");
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ subscribed: false, plan: "free" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
-    }
+    if (!authHeader) throw new Error("No authorization header provided");
+    logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
+    logStep("Authenticating user with token");
+
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !userData.user?.email) {
-      // Invalid/expired session — return free plan instead of error
-      return new Response(JSON.stringify({ subscribed: false, plan: "free" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
-    }
+    if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
+    if (!user?.email) throw new Error("User not authenticated or email not available");
+    logStep("User authenticated", { userId: user.id, email: user.email });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
     if (customers.data.length === 0) {
-      // No Stripe customer = free plan
+      logStep("No customer found, updating unsubscribed state");
+
       await supabaseClient
         .from("profiles")
         .update({ plan: "free" })
@@ -80,28 +78,32 @@ serve(async (req) => {
     }
 
     const customerId = customers.data[0].id;
+    logStep("Found Stripe customer", { customerId });
+
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
       limit: 1,
     });
+    const hasActiveSub = subscriptions.data.length > 0;
+    let plan = "free";
+    let subscriptionEnd = null;
 
-    if (subscriptions.data.length === 0) {
-      await supabaseClient
-        .from("profiles")
-        .update({ plan: "free" })
-        .eq("user_id", user.id);
+    if (hasActiveSub) {
+      const subscription = subscriptions.data[0];
+      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
-      return new Response(JSON.stringify({ subscribed: false, plan: "free" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      const priceId = subscription.items.data[0]?.price.id;
+      const PRICE_TO_PLAN: Record<string, string> = {
+        "price_1T8hm0F6s5PSwitkpD9F97lO": "starter",
+        "price_1T8hiXF6s5PSwitkQraXZXeN": "pro",
+      };
+      plan = PRICE_TO_PLAN[priceId] || "free";
+      logStep("Determined plan", { priceId, plan });
+    } else {
+      logStep("No active subscription found");
     }
-
-    const subscription = subscriptions.data[0];
-    const priceId = subscription.items.data[0].price.id;
-    const plan = PRICE_TO_PLAN[priceId] || "free";
-    const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
 
     // Sync plan to profiles table
     await supabaseClient
@@ -110,7 +112,7 @@ serve(async (req) => {
       .eq("user_id", user.id);
 
     return new Response(JSON.stringify({
-      subscribed: true,
+      subscribed: hasActiveSub,
       plan,
       subscription_end: subscriptionEnd,
     }), {
@@ -118,8 +120,9 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: msg }), {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep("ERROR in check-subscription", { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
