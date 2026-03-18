@@ -4,10 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { TapCopy as Copy, TapCheck as Check, TapShare as Share } from '@/components/icons/TapIcons';
-import { Users, DollarSign, UserPlus } from 'lucide-react';
+import { Users, DollarSign, UserPlus, ChevronDown, ChevronUp } from 'lucide-react';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface ReferralStats {
   totalReferred: number;
@@ -16,11 +19,23 @@ interface ReferralStats {
   referralCode: string;
 }
 
+interface ReferralRow {
+  id: string;
+  referred_id: string;
+  status: string;
+  total_earned: number;
+  created_at: string;
+  converted_at: string | null;
+  referred_email?: string;
+}
+
 const ReferralSection = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState<ReferralStats>({ totalReferred: 0, converted: 0, totalEarned: 0, referralCode: '' });
+  const [referrals, setReferrals] = useState<ReferralRow[]>([]);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showTable, setShowTable] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -31,15 +46,16 @@ const ReferralSection = () => {
     setLoading(true);
     const [profileRes, referralsRes] = await Promise.all([
       supabase.from('profiles').select('referral_code').eq('user_id', user!.id).single(),
-      supabase.from('referrals').select('status, total_earned').eq('referrer_id', user!.id),
+      supabase.from('referrals').select('*').eq('referrer_id', user!.id).order('created_at', { ascending: false }),
     ]);
 
     const code = profileRes.data?.referral_code || '';
-    const referrals = referralsRes.data || [];
-    const converted = referrals.filter(r => r.status === 'converted').length;
-    const totalEarned = referrals.reduce((sum, r) => sum + Number(r.total_earned || 0), 0);
+    const rows = (referralsRes.data || []) as ReferralRow[];
+    const converted = rows.filter(r => r.status === 'converted').length;
+    const totalEarned = rows.reduce((sum, r) => sum + Number(r.total_earned || 0), 0);
 
-    setStats({ totalReferred: referrals.length, converted, totalEarned, referralCode: code });
+    setStats({ totalReferred: rows.length, converted, totalEarned, referralCode: code });
+    setReferrals(rows);
     setLoading(false);
   };
 
