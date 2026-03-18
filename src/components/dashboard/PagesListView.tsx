@@ -194,22 +194,14 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
 
       {/* ── Page rows ── */}
       <div className="space-y-1">
-        <AnimatePresence mode="popLayout">
-          {filteredPages.map((page, i) => {
+          {filteredPages.map((page) => {
             const status = STATUS[(page.status || 'draft') as keyof typeof STATUS] || STATUS.draft;
             const clicks = globalStats.topPages.find(p => p.pageId === page.id)?.clicks ?? 0;
             const commission = Math.round((page.revenue_monthly ?? 0) * (page.revenue_commission ?? 20) / 100);
             const isSelected = selected.has(page.id);
 
             return (
-              <motion.div
-                key={page.id}
-                layout
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ delay: i * 0.015, duration: 0.2 }}
-              >
+              <div key={page.id}>
                 <div
                   onClick={() => bulkMode ? toggleSelect(page.id) : onSelectPage(page.id)}
                   className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
