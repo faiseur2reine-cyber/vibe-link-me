@@ -193,6 +193,25 @@ serve(async (req) => {
         if (status === "active") {
           // Payment OK — grant the plan
           await updateUserPlan(supabase, user.id, plan);
+
+          // Process affiliate commission on invoice payment
+          const latestInvoiceId = subscription.latest_invoice;
+          if (latestInvoiceId && typeof latestInvoiceId === "string") {
+            try {
+              const invoice = await stripe.invoices.retrieve(latestInvoiceId);
+              if (invoice.amount_paid > 0) {
+                await processAffiliateCommission(
+                  stripe,
+                  supabase,
+                  user.id,
+                  invoice.amount_paid,
+                  invoice.currency || "eur"
+                );
+              }
+            } catch (e) {
+              logStep("Failed to process affiliate commission", { error: String(e) });
+            }
+          }
         } else if (status === "unpaid" || status === "canceled" || status === "incomplete_expired") {
           // All retries failed or subscription ended — downgrade
           logStep("Downgrading user due to status", { userId: user.id, status });
