@@ -139,6 +139,68 @@ const ReferralSection = () => {
             Partager
           </Button>
         </div>
+
+        {/* Detailed table */}
+        {referrals.length > 0 && (
+          <div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => setShowTable(!showTable)}
+            >
+              {showTable ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              {showTable ? 'Masquer le détail' : `Voir le détail (${referrals.length} filleul${referrals.length > 1 ? 's' : ''})`}
+            </Button>
+
+            {showTable && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.25 }}
+                className="mt-2 rounded-xl border border-border/50 overflow-hidden"
+              >
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="text-xs">Filleul</TableHead>
+                      <TableHead className="text-xs">Date</TableHead>
+                      <TableHead className="text-xs">Statut</TableHead>
+                      <TableHead className="text-xs text-right">Commission</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {referrals.map((r) => (
+                      <TableRow key={r.id}>
+                        <TableCell className="text-xs font-mono text-muted-foreground">
+                          {r.referred_id.slice(0, 8)}…
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {format(new Date(r.created_at), 'dd MMM yyyy', { locale: fr })}
+                        </TableCell>
+                        <TableCell>
+                          {r.status === 'converted' ? (
+                            <Badge className="bg-[hsl(var(--pop-lime))]/15 text-[hsl(var(--pop-lime))] border-[hsl(var(--pop-lime))]/30 text-[10px]">
+                              Converti
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-[10px]">
+                              En attente
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-xs text-right font-medium">
+                          {Number(r.total_earned).toFixed(2)} €
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </motion.div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
