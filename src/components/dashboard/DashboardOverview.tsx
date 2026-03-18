@@ -4,8 +4,8 @@ import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useSpring, useTransform, useMotionValue } from 'framer-motion';
+import { useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
   TapClick as MousePointerClick, TapLink as Link2, TapGrid as LayoutGrid,
   TapArrowRight as ArrowRight, TapPlus as Plus, TapDollar as DollarSign,
@@ -56,35 +56,18 @@ const Sparkline = ({ data, color = 'currentColor' }: { data: number[]; color?: s
   );
 };
 
-// ── Animated counter ──
-const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    const duration = 800;
-    const startTime = performance.now();
-    const animate = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayValue(Math.round(eased * value));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [isInView, value]);
-
-  return <span ref={ref}>{displayValue.toLocaleString()}{suffix}</span>;
-};
+// ── Simple counter (no animation overhead) ──
+const Counter = ({ value, suffix = '' }: { value: number; suffix?: string }) => (
+  <span>{value.toLocaleString()}{suffix}</span>
+);
 
 const DashboardOverview = () => {
   const { t } = useTranslation();
   const { user, subscription } = useAuth();
   const { pages, loading: pagesLoading } = useCreatorPages();
   const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
-  const stats = useGlobalAnalytics(pages.map(p => p.id));
+  const pagesMeta = useMemo(() => pages.map(p => ({ id: p.id, username: p.username, display_name: p.display_name })), [pages]);
+  const stats = useGlobalAnalytics(pagesMeta.map(p => p.id), pagesMeta);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -225,7 +208,7 @@ const DashboardOverview = () => {
               <Sparkline data={last7} color="hsl(var(--pop-cyan))" />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold tabular-nums">{stats.loading ? '—' : <AnimatedCounter value={last7Total} />}</span>
+              <span className="text-2xl font-bold tabular-nums">{stats.loading ? '—' : <Counter value={last7Total} />}</span>
               {!stats.loading && clickTrend !== 0 && (
                 <span className={`text-[10px] font-semibold tabular-nums ${clickTrend > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                   {clickTrend > 0 ? '+' : ''}{clickTrend}%
@@ -237,7 +220,7 @@ const DashboardOverview = () => {
           {/* Total clics */}
           <div className="p-3.5 rounded-xl glass">
             <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Total clics</span>
-            <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <AnimatedCounter value={stats.totalClicks} />}</p>
+            <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <Counter value={stats.totalClicks} />}</p>
           </div>
 
           {/* Pages actives */}
@@ -258,7 +241,7 @@ const DashboardOverview = () => {
           ) : (
             <div className="p-3.5 rounded-xl glass">
               <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Liens actifs</span>
-              <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <AnimatedCounter value={stats.totalLinks} />}</p>
+              <p className="text-2xl font-bold tabular-nums mt-2">{stats.loading ? '—' : <Counter value={stats.totalLinks} />}</p>
             </div>
           )}
         </motion.div>
