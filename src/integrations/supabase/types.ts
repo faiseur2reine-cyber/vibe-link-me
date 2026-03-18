@@ -387,6 +387,7 @@ export type Database = {
           plan: string
           referral_code: string | null
           social_links: Json
+          stripe_connect_account_id: string | null
           theme: string
           updated_at: string
           user_id: string
@@ -407,6 +408,7 @@ export type Database = {
           plan?: string
           referral_code?: string | null
           social_links?: Json
+          stripe_connect_account_id?: string | null
           theme?: string
           updated_at?: string
           user_id: string
@@ -427,6 +429,7 @@ export type Database = {
           plan?: string
           referral_code?: string | null
           social_links?: Json
+          stripe_connect_account_id?: string | null
           theme?: string
           updated_at?: string
           user_id?: string

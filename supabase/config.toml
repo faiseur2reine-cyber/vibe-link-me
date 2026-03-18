@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.link-referral]
 verify_jwt = false
+
+[functions.connect-onboarding]
+verify_jwt = false
