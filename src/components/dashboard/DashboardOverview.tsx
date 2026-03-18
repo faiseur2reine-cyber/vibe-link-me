@@ -207,7 +207,7 @@ const DashboardOverview = () => {
               <Sparkline data={last7} color="hsl(var(--pop-cyan))" />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold tabular-nums">{stats.loading ? '—' : <AnimatedCounter value={last7Total} />}</span>
+              <span className="text-2xl font-bold tabular-nums">{stats.loading ? '—' : <Counter value={last7Total} />}</span>
               {!stats.loading && clickTrend !== 0 && (
                 <span className={`text-[10px] font-semibold tabular-nums ${clickTrend > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                   {clickTrend > 0 ? '+' : ''}{clickTrend}%
