@@ -326,10 +326,9 @@ const PagesListView = ({ pages, onSelectPage, onCreatePage, onDuplicatePage, onD
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
             );
           })}
-        </AnimatePresence>
 
         {/* No results */}
         {filteredPages.length === 0 && pages.length > 0 && (
