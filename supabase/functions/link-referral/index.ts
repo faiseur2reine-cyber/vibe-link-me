@@ -42,7 +42,6 @@ serve(async (req) => {
       });
     }
 
-    // Find referrer by referral_code
     const { data: referrer } = await supabase
       .from("profiles")
       .select("user_id")
@@ -55,7 +54,6 @@ serve(async (req) => {
       });
     }
 
-    // Check if already linked
     const { data: existing } = await supabase
       .from("referrals")
       .select("id")
@@ -68,7 +66,6 @@ serve(async (req) => {
       });
     }
 
-    // Create referral
     const { error: insertError } = await supabase
       .from("referrals")
       .insert({

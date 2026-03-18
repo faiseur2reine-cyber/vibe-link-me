@@ -6,23 +6,19 @@ const log = (step: string, details?: Record<string, unknown>) => {
 };
 
 serve(async (req) => {
-  // Only allow POST (from cron) or manual trigger with auth header
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204 });
   }
 
-  // Simple auth: check for a shared secret to prevent unauthorized triggers
   const authHeader = req.headers.get("Authorization");
   const cronSecret = Deno.env.get("CRON_SECRET");
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
 
-  // Called daily by Cronitor, but only send emails on Mondays
-  // Pass ?force=true to bypass day check (for testing)
   const url = new URL(req.url);
   const force = url.searchParams.get("force") === "true";
-  const today = new Date().getUTCDay(); // 0=Sun, 1=Mon
+  const today = new Date().getUTCDay();
   if (!force && today !== 1) {
     log("Skipped — not Monday", { day: today });
     return new Response(JSON.stringify({ skipped: true, reason: "not_monday", day: today }), { status: 200 });
@@ -43,7 +39,6 @@ serve(async (req) => {
   );
 
   try {
-    // ── 1. Get all users who want weekly emails ──
     const { data: users, error: usersError } = await supabase
       .from("profiles")
       .select("user_id, username, email_weekly")
@@ -70,12 +65,10 @@ serve(async (req) => {
 
     for (const profile of users) {
       try {
-        // Get user email from auth
         const { data: authData } = await supabase.auth.admin.getUserById(profile.user_id);
         const email = authData?.user?.email;
         if (!email) { skipped++; continue; }
 
-        // Get user's pages
         const { data: pages } = await supabase
           .from("creator_pages")
           .select("id, username, display_name")
@@ -85,7 +78,6 @@ serve(async (req) => {
 
         const pageIds = pages.map(p => p.id);
 
-        // Get clicks this week
         const { data: clicks } = await supabase
           .from("link_clicks")
           .select("id, link_id")
@@ -99,7 +91,6 @@ serve(async (req) => {
 
         const totalClicks = clicks?.length || 0;
 
-        // Get pageviews this week (if table exists)
         let totalViews = 0;
         try {
           const { data: views } = await supabase
@@ -108,29 +99,21 @@ serve(async (req) => {
             .in("page_id", pageIds)
             .gte("viewed_at", weekAgoIso);
           totalViews = views?.length || 0;
-        } catch {
-          // page_views table might not exist yet
-        }
+        } catch { /* page_views might not exist */ }
 
-        // Skip if zero activity
         if (totalClicks === 0 && totalViews === 0) { skipped++; continue; }
 
-        // ── Build email ──
         const firstName = profile.username || "there";
         const dashboardUrl = "https://mytaptap.com/dashboard";
         const unsubUrl = `https://mytaptap.com/dashboard/settings`;
 
         const html = buildEmailHtml({
-          firstName,
-          totalClicks,
-          totalViews,
+          firstName, totalClicks, totalViews,
           pageCount: pages.length,
           topPage: pages[0]?.display_name || pages[0]?.username || "—",
-          dashboardUrl,
-          unsubUrl,
+          dashboardUrl, unsubUrl,
         });
 
-        // ── Send via Resend ──
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -165,7 +148,6 @@ serve(async (req) => {
   }
 });
 
-// ── Email template ──
 function buildEmailHtml(data: {
   firstName: string;
   totalClicks: number;
@@ -182,19 +164,14 @@ function buildEmailHtml(data: {
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f8f8f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <div style="max-width:480px;margin:0 auto;padding:40px 20px;">
-    <!-- Logo -->
     <div style="text-align:center;margin-bottom:32px;">
       <span style="display:inline-block;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#10b981);line-height:32px;text-align:center;color:#fff;font-weight:bold;font-size:13px;">M</span>
     </div>
-
-    <!-- Card -->
     <div style="background:#fff;border-radius:16px;padding:32px 28px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
       <p style="margin:0 0 4px;font-size:14px;color:#888;">Salut ${firstName},</p>
       <h1 style="margin:0 0 24px;font-size:22px;font-weight:700;color:#111;line-height:1.3;">
         Ta semaine en un coup d'œil
       </h1>
-
-      <!-- Stats row -->
       <div style="display:flex;gap:16px;margin-bottom:24px;">
         <div style="flex:1;background:#f8f8f8;border-radius:12px;padding:16px;text-align:center;">
           <p style="margin:0;font-size:28px;font-weight:700;color:#111;">${totalClicks}</p>
@@ -211,7 +188,6 @@ function buildEmailHtml(data: {
           <p style="margin:4px 0 0;font-size:12px;color:#888;">page${pageCount !== 1 ? "s" : ""}</p>
         </div>
       </div>
-
       ${totalClicks >= 50 ? `
       <p style="margin:0 0 24px;font-size:13px;color:#666;line-height:1.6;">
         Belle semaine ! <strong>${topPage}</strong> a bien performé. Continue comme ça.
@@ -225,14 +201,10 @@ function buildEmailHtml(data: {
         C'est un début. Partage ta page sur tes réseaux pour booster tes clics.
       </p>
       `}
-
-      <!-- CTA -->
       <a href="${dashboardUrl}" style="display:block;text-align:center;background:#111;color:#fff;padding:14px 24px;border-radius:12px;text-decoration:none;font-size:14px;font-weight:600;">
         Voir mon dashboard
       </a>
     </div>
-
-    <!-- Footer -->
     <div style="text-align:center;margin-top:24px;">
       <p style="margin:0;font-size:11px;color:#bbb;">
         Tu reçois cet email car tu as un compte MyTaptap.

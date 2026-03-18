@@ -15,7 +15,6 @@ serve(async (req) => {
   try {
     const baseUrl = "https://mytaptap.com";
 
-    // Get all active, non-NSFW public pages
     const { data: pages, error } = await supabase
       .from("creator_pages")
       .select("username, updated_at")
