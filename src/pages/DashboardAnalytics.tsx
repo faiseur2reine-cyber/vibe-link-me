@@ -143,16 +143,19 @@ const DashboardAnalytics = () => {
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-display font-bold text-foreground">{t('dashboard.analytics')}</h1>
             <p className="text-sm text-muted-foreground mt-1">Vue d'ensemble de toutes vos pages</p>
           </div>
-          {stats.totalClicks > 0 && (
-            <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
-              <Download className="w-3 h-3" /> Export CSV
-            </Button>
-          )}
+          <div className="flex items-center gap-3">
+            <PeriodSelector value={period} onChange={setPeriod} />
+            {stats.totalClicks > 0 && (
+              <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+                <Download className="w-3 h-3" /> Export CSV
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Stats row */}
