@@ -1,8 +1,10 @@
-import { usePageAnalytics, PageLink } from '@/hooks/useCreatorPages';
+import { useState } from 'react';
+import { usePageAnalytics, PageLink, PageAnalyticsPeriod } from '@/hooks/useCreatorPages';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapClock as Clock } from '@/components/icons/TapIcons';
 import { FlaskConical, CheckCircle2, AlertTriangle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 
 const COLORS = [
   'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
