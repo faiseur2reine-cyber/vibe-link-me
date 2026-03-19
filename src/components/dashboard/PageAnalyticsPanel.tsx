@@ -1,8 +1,10 @@
-import { usePageAnalytics, PageLink } from '@/hooks/useCreatorPages';
+import { useState } from 'react';
+import { usePageAnalytics, PageLink, PageAnalyticsPeriod } from '@/hooks/useCreatorPages';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapClock as Clock } from '@/components/icons/TapIcons';
 import { FlaskConical, CheckCircle2, AlertTriangle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 
 const COLORS = [
   'hsl(270, 70%, 55%)', 'hsl(330, 80%, 60%)', 'hsl(25, 95%, 58%)',
@@ -57,7 +59,8 @@ interface PageAnalyticsPanelProps {
 }
 
 const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
-  const { clickStats, dailyClicks, dailyViews, totalClicks, totalViews, countryStats, cityStats, referrerStats, deviceStats, browserStats, osStats, abStats, loading } = usePageAnalytics(pageId);
+  const [period, setPeriod] = useState<Period>('30d');
+  const { clickStats, dailyClicks, dailyViews, totalClicks, totalViews, countryStats, cityStats, referrerStats, deviceStats, browserStats, osStats, abStats, loading } = usePageAnalytics(pageId, period as PageAnalyticsPeriod);
 
   if (loading) {
     return <p className="text-center text-muted-foreground py-8">Chargement...</p>;
@@ -96,13 +99,16 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
     <div className="space-y-8">
       {/* Stats row: Views, Clicks, Conversion */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <h4 className="font-display font-semibold text-foreground">Vue d'ensemble</h4>
-          {totalClicks > 0 && (
-            <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
-              <Download className="w-3 h-3" /> Export CSV
-            </Button>
-          )}
+          <div className="flex items-center gap-3">
+            <PeriodSelector value={period} onChange={setPeriod} />
+            {totalClicks > 0 && (
+              <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+                <Download className="w-3 h-3" /> Export CSV
+              </Button>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="p-4 rounded-xl bg-muted/50 border border-border">

@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import ProFeatureGate from '@/components/dashboard/ProFeatureGate';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
+import { useGlobalAnalytics, AnalyticsPeriod } from '@/hooks/useGlobalAnalytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Sector } from 'recharts';
 import { useState, useCallback } from 'react';
 import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 
 const COLORS = [
   'hsl(280, 80%, 55%)',  // pop-violet
@@ -100,7 +101,8 @@ const DashboardAnalytics = () => {
   const { t } = useTranslation();
   const { pages, loading: pagesLoading } = useCreatorPages();
   const pageIds = pages.map(p => p.id);
-  const stats = useGlobalAnalytics(pageIds);
+  const [period, setPeriod] = useState<Period>('30d');
+  const stats = useGlobalAnalytics(pageIds, undefined, period as AnalyticsPeriod);
   const [activeIndices, setActiveIndices] = useState<Record<string, number | undefined>>({});
 
   if (pagesLoading || stats.loading) {
@@ -141,16 +143,19 @@ const DashboardAnalytics = () => {
     <div className="flex-1 max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-10">
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-display font-bold text-foreground">{t('dashboard.analytics')}</h1>
             <p className="text-sm text-muted-foreground mt-1">Vue d'ensemble de toutes vos pages</p>
           </div>
-          {stats.totalClicks > 0 && (
-            <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
-              <Download className="w-3 h-3" /> Export CSV
-            </Button>
-          )}
+          <div className="flex items-center gap-3">
+            <PeriodSelector value={period} onChange={setPeriod} />
+            {stats.totalClicks > 0 && (
+              <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+                <Download className="w-3 h-3" /> Export CSV
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Stats row */}

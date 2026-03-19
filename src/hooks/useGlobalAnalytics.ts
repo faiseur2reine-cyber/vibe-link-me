@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { fetchAllRows } from '@/lib/supabasePaginate';
+
+export type AnalyticsPeriod = '7d' | '30d' | '90d' | 'all';
 
 export interface GlobalStats {
   totalClicks: number;
@@ -26,7 +29,22 @@ interface PageMeta {
   display_name: string | null;
 }
 
-export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[]) {
+function daysForPeriod(period: AnalyticsPeriod): number | null {
+  if (period === '7d') return 7;
+  if (period === '30d') return 30;
+  if (period === '90d') return 90;
+  return null;
+}
+
+function dateThreshold(period: AnalyticsPeriod): string | null {
+  const days = daysForPeriod(period);
+  if (!days) return null;
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString();
+}
+
+export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], period: AnalyticsPeriod = '30d') {
   const { user } = useAuth();
   const [stats, setStats] = useState<GlobalStats>({
     totalClicks: 0, totalViews: 0, totalLinks: 0, totalPages: 0, conversionRate: '—',
@@ -42,29 +60,31 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[]) {
       return;
     }
 
-    // Only fetch page metadata if not provided by caller
+    const threshold = dateThreshold(period);
     const fetchMeta = !pagesMeta || pagesMeta.length === 0;
 
-    const [linksRes, viewsRes, pagesRes] = await Promise.all([
-      supabase.from('links').select('id, page_id').in('page_id', pageIds),
-      supabase.from('page_views').select('page_id, viewed_at, country, city, referrer, device_type, browser, os').in('page_id', pageIds),
+    const [links, views, pagesData] = await Promise.all([
+      fetchAllRows(() => supabase.from('links').select('id, page_id').in('page_id', pageIds)),
+      fetchAllRows(() => {
+        let q = supabase.from('page_views').select('page_id, viewed_at, country, city, referrer, device_type, browser, os').in('page_id', pageIds);
+        if (threshold) q = q.gte('viewed_at', threshold);
+        return q;
+      }),
       fetchMeta
-        ? supabase.from('creator_pages').select('id, username, display_name').in('id', pageIds)
-        : Promise.resolve({ data: null }),
+        ? supabase.from('creator_pages').select('id, username, display_name').in('id', pageIds).then(r => r.data || [])
+        : Promise.resolve([]),
     ]);
 
-    const links = linksRes.data || [];
-    const views = (viewsRes.data as any[]) || [];
     const pages: PageMeta[] = pagesMeta && pagesMeta.length > 0
       ? pagesMeta
-      : (pagesRes.data || []) as PageMeta[];
+      : (pagesData as PageMeta[]);
 
     const findPage = (id: string) => pages.find(p => p.id === id);
 
     if (links.length === 0) {
       const viewsByPage: Record<string, number> = {};
       pageIds.forEach(id => { viewsByPage[id] = 0; });
-      views.forEach((v) => { if (v.page_id) viewsByPage[v.page_id] = (viewsByPage[v.page_id] || 0) + 1; });
+      views.forEach((v: any) => { if (v.page_id) viewsByPage[v.page_id] = (viewsByPage[v.page_id] || 0) + 1; });
 
       const topPages = pageIds.map(id => {
         const page = findPage(id);
@@ -75,73 +95,58 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[]) {
       return;
     }
 
-    const linkIds = links.map(l => l.id);
+    const linkIds = links.map((l: any) => l.id);
 
-    const { data: clicks } = await supabase
-      .from('link_clicks')
-      .select('link_id, clicked_at, country, city, referrer, device_type, browser, os')
-      .in('link_id', linkIds);
-
-    const allClicks = (clicks as any[]) || [];
+    const allClicks = await fetchAllRows(() => {
+      let q = supabase.from('link_clicks').select('link_id, clicked_at, country, city, referrer, device_type, browser, os').in('link_id', linkIds);
+      if (threshold) q = q.gte('clicked_at', threshold);
+      return q;
+    });
 
     const linkToPage: Record<string, string> = {};
-    links.forEach(l => { if (l.page_id) linkToPage[l.id] = l.page_id; });
+    links.forEach((l: any) => { if (l.page_id) linkToPage[l.id] = l.page_id; });
 
     const clicksPerPage: Record<string, number> = {};
     pageIds.forEach(id => { clicksPerPage[id] = 0; });
-    allClicks.forEach(c => {
+    allClicks.forEach((c: any) => {
       const pid = linkToPage[c.link_id];
       if (pid) clicksPerPage[pid] = (clicksPerPage[pid] || 0) + 1;
     });
 
     const viewsPerPage: Record<string, number> = {};
     pageIds.forEach(id => { viewsPerPage[id] = 0; });
-    views.forEach((v) => {
+    views.forEach((v: any) => {
       if (v.page_id) viewsPerPage[v.page_id] = (viewsPerPage[v.page_id] || 0) + 1;
     });
 
+    const days = daysForPeriod(period) || 90;
     const now = new Date();
     const dailyC: Record<string, number> = {};
     const dailyV: Record<string, number> = {};
-    for (let i = 29; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
       const d = new Date(now); d.setDate(d.getDate() - i);
       const key = d.toISOString().split('T')[0];
       dailyC[key] = 0;
       dailyV[key] = 0;
     }
-    allClicks.forEach(c => { const d = new Date(c.clicked_at).toISOString().split('T')[0]; if (dailyC[d] !== undefined) dailyC[d]++; });
-    views.forEach((v) => { const d = new Date(v.viewed_at).toISOString().split('T')[0]; if (dailyV[d] !== undefined) dailyV[d]++; });
+    allClicks.forEach((c: any) => { const d = new Date(c.clicked_at).toISOString().split('T')[0]; if (dailyC[d] !== undefined) dailyC[d]++; });
+    views.forEach((v: any) => { const d = new Date(v.viewed_at).toISOString().split('T')[0]; if (dailyV[d] !== undefined) dailyV[d]++; });
 
     const allEvents = [...allClicks, ...views] as any[];
 
-    const countries: Record<string, number> = {};
-    allEvents.forEach(e => { const c = e.country || null; if (c) countries[c] = (countries[c] || 0) + 1; });
-
-    const cities: Record<string, number> = {};
-    allEvents.forEach(e => { const c = e.city || null; if (c) cities[c] = (cities[c] || 0) + 1; });
+    const aggregate = (key: string) => {
+      const map: Record<string, number> = {};
+      allEvents.forEach(e => { const v = e[key] || null; if (v) map[v] = (map[v] || 0) + 1; });
+      return Object.entries(map).map(([k, count]) => ({ [key]: k, count })).sort((a, b) => b.count - a.count);
+    };
 
     const referrers: Record<string, number> = {};
     allEvents.forEach(e => { const r = e.referrer || 'Direct'; referrers[r] = (referrers[r] || 0) + 1; });
 
-    const devices: Record<string, number> = {};
-    allEvents.forEach(e => { const d = e.device_type || null; if (d) devices[d] = (devices[d] || 0) + 1; });
-
-    const browsers: Record<string, number> = {};
-    allEvents.forEach(e => { const b = e.browser || null; if (b) browsers[b] = (browsers[b] || 0) + 1; });
-
-    const oses: Record<string, number> = {};
-    allEvents.forEach(e => { const o = e.os || null; if (o) oses[o] = (oses[o] || 0) + 1; });
-
     const topPages = pageIds
       .map(id => {
         const page = findPage(id);
-        return {
-          pageId: id,
-          username: page?.username || '',
-          displayName: page?.display_name || null,
-          clicks: clicksPerPage[id] || 0,
-          views: viewsPerPage[id] || 0,
-        };
+        return { pageId: id, username: page?.username || '', displayName: page?.display_name || null, clicks: clicksPerPage[id] || 0, views: viewsPerPage[id] || 0 };
       })
       .sort((a, b) => b.clicks - a.clicks);
 
@@ -158,15 +163,15 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[]) {
       topPages,
       dailyClicks: Object.entries(dailyC).map(([date, clicks]) => ({ date, clicks })),
       dailyViews: Object.entries(dailyV).map(([date, views]) => ({ date, views })),
-      countryStats: Object.entries(countries).map(([country, count]) => ({ country, count })).sort((a, b) => b.count - a.count),
-      cityStats: Object.entries(cities).map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count),
+      countryStats: aggregate('country') as any,
+      cityStats: aggregate('city') as any,
       referrerStats: Object.entries(referrers).map(([referrer, count]) => ({ referrer, count })).sort((a, b) => b.count - a.count),
-      deviceStats: Object.entries(devices).map(([device, count]) => ({ device, count })).sort((a, b) => b.count - a.count),
-      browserStats: Object.entries(browsers).map(([browser, count]) => ({ browser, count })).sort((a, b) => b.count - a.count),
-      osStats: Object.entries(oses).map(([os, count]) => ({ os, count })).sort((a, b) => b.count - a.count),
+      deviceStats: aggregate('device_type').map(d => ({ device: (d as any).device_type, count: d.count })),
+      browserStats: aggregate('browser') as any,
+      osStats: aggregate('os') as any,
       loading: false,
     });
-  }, [user, pageIds.join(',')]);
+  }, [user, pageIds.join(','), period]);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
