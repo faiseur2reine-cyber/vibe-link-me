@@ -59,7 +59,8 @@ interface PageAnalyticsPanelProps {
 }
 
 const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
-  const { clickStats, dailyClicks, dailyViews, totalClicks, totalViews, countryStats, cityStats, referrerStats, deviceStats, browserStats, osStats, abStats, loading } = usePageAnalytics(pageId);
+  const [period, setPeriod] = useState<Period>('30d');
+  const { clickStats, dailyClicks, dailyViews, totalClicks, totalViews, countryStats, cityStats, referrerStats, deviceStats, browserStats, osStats, abStats, loading } = usePageAnalytics(pageId, period as PageAnalyticsPeriod);
 
   if (loading) {
     return <p className="text-center text-muted-foreground py-8">Chargement...</p>;
