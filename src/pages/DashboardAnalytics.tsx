@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import ProFeatureGate from '@/components/dashboard/ProFeatureGate';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
+import { useGlobalAnalytics, AnalyticsPeriod } from '@/hooks/useGlobalAnalytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Sector } from 'recharts';
 import { useState, useCallback } from 'react';
 import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 
 const COLORS = [
   'hsl(280, 80%, 55%)',  // pop-violet
