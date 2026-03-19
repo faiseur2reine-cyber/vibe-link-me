@@ -99,13 +99,16 @@ const PageAnalyticsPanel = ({ pageId, links }: PageAnalyticsPanelProps) => {
     <div className="space-y-8">
       {/* Stats row: Views, Clicks, Conversion */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <h4 className="font-display font-semibold text-foreground">Vue d'ensemble</h4>
-          {totalClicks > 0 && (
-            <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
-              <Download className="w-3 h-3" /> Export CSV
-            </Button>
-          )}
+          <div className="flex items-center gap-3">
+            <PeriodSelector value={period} onChange={setPeriod} />
+            {totalClicks > 0 && (
+              <Button onClick={exportCSV} variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
+                <Download className="w-3 h-3" /> Export CSV
+              </Button>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="p-4 rounded-xl bg-muted/50 border border-border">
