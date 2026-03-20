@@ -376,6 +376,9 @@ const DashboardAnalytics = () => {
           <PeriodComparisonChart stats={stats} period={period} />
         )}
 
+        {/* Activity Heatmap */}
+        <ActivityHeatmap heatmap={stats.heatmap} />
+
         {/* Top Pages — views + clicks */}
         <div className="p-5 rounded-xl border border-border bg-card">
           <div className="flex items-center gap-2 mb-4">
