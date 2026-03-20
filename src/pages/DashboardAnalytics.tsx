@@ -97,6 +97,86 @@ const PercentList = ({ items, labelKey, valueKey, max = 6 }: {
   );
 };
 
+const PERIOD_LABELS: Record<string, string> = { '7d': '7 derniers jours', '30d': '30 derniers jours', '90d': '90 derniers jours' };
+
+const PeriodComparisonChart = ({ stats, period }: { stats: GlobalStats; period: string }) => {
+  const comparisonData = useMemo(() => {
+    const current = stats.dailyClicks;
+    const prev = stats.dailyClicksPrev;
+    const currentViews = stats.dailyViews;
+    const prevViews = stats.dailyViewsPrev;
+    const len = Math.min(current.length, prev.length);
+    return Array.from({ length: len }, (_, i) => ({
+      day: i + 1,
+      clicksCurrent: current[i]?.clicks || 0,
+      clicksPrev: prev[i]?.clicks || 0,
+      viewsCurrent: currentViews[i]?.views || 0,
+      viewsPrev: prevViews[i]?.views || 0,
+    }));
+  }, [stats.dailyClicks, stats.dailyClicksPrev, stats.dailyViews, stats.dailyViewsPrev]);
+
+  const clicksDelta = stats.previousPeriod.totalClicks > 0
+    ? Math.round(((stats.totalClicks - stats.previousPeriod.totalClicks) / stats.previousPeriod.totalClicks) * 100)
+    : stats.totalClicks > 0 ? 100 : 0;
+  const viewsDelta = stats.previousPeriod.totalViews > 0
+    ? Math.round(((stats.totalViews - stats.previousPeriod.totalViews) / stats.previousPeriod.totalViews) * 100)
+    : stats.totalViews > 0 ? 100 : 0;
+
+  const label = PERIOD_LABELS[period] || period;
+
+  return (
+    <div className="p-5 rounded-xl border border-border bg-card">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-muted-foreground" />
+          <h4 className="font-display font-semibold text-foreground">Comparaison vs période précédente</h4>
+        </div>
+        <div className="flex items-center gap-4 text-[11px]">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Clics:</span>
+            <span className={`font-semibold tabular-nums ${clicksDelta > 0 ? 'text-emerald-500' : clicksDelta < 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
+              {clicksDelta > 0 ? '+' : ''}{clicksDelta}%
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Vues:</span>
+            <span className={`font-semibold tabular-nums ${viewsDelta > 0 ? 'text-emerald-500' : viewsDelta < 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
+              {viewsDelta > 0 ? '+' : ''}{viewsDelta}%
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 mb-3 text-[10px] text-muted-foreground">
+        <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 rounded bg-primary inline-block" /> {label}</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 rounded bg-primary/30 inline-block border border-dashed border-primary/50" /> Période précédente</span>
+      </div>
+      {comparisonData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={240}>
+          <LineChart data={comparisonData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis dataKey="day" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} label={{ value: 'Jour', position: 'insideBottom', offset: -2, fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+            <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} />
+            <Tooltip
+              contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '0.75rem', color: 'hsl(var(--foreground))', fontSize: 12 }}
+              labelFormatter={(v) => `Jour ${v}`}
+              formatter={(value: number, name: string) => {
+                const labels: Record<string, string> = { clicksCurrent: 'Clics (actuel)', clicksPrev: 'Clics (précédent)', viewsCurrent: 'Vues (actuel)', viewsPrev: 'Vues (précédent)' };
+                return [value, labels[name] || name];
+              }}
+            />
+            <Line type="monotone" dataKey="clicksCurrent" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="clicksPrev" stroke="hsl(var(--primary))" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} />
+            <Line type="monotone" dataKey="viewsCurrent" stroke="hsl(185, 85%, 50%)" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="viewsPrev" stroke="hsl(185, 85%, 50%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} />
+          </LineChart>
+        </ResponsiveContainer>
+      ) : (
+        <p className="text-center text-muted-foreground py-12">Pas assez de données</p>
+      )}
+    </div>
+  );
+};
+
 const DashboardAnalytics = () => {
   const { t } = useTranslation();
   const { pages, loading: pagesLoading } = useCreatorPages();
