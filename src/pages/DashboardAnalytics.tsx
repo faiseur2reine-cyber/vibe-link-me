@@ -216,6 +216,11 @@ const DashboardAnalytics = () => {
           )}
         </div>
 
+        {/* Period Comparison Chart */}
+        {period !== 'all' && stats.dailyClicksPrev.length > 0 && (
+          <PeriodComparisonChart stats={stats} period={period} />
+        )}
+
         {/* Top Pages — views + clicks */}
         <div className="p-5 rounded-xl border border-border bg-card">
           <div className="flex items-center gap-2 mb-4">
