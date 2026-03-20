@@ -62,6 +62,7 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
     topPages: [], dailyClicks: [], dailyViews: [],
     dailyClicksPrev: [], dailyViewsPrev: [],
     previousPeriod: { totalClicks: 0, totalViews: 0 },
+    heatmap: [],
     countryStats: [], cityStats: [], referrerStats: [],
     deviceStats: [], browserStats: [], osStats: [],
     loading: true,
