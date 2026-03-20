@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import ProFeatureGate from '@/components/dashboard/ProFeatureGate';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { useGlobalAnalytics, AnalyticsPeriod, GlobalStats } from '@/hooks/useGlobalAnalytics';
+import { useGlobalAnalytics, AnalyticsPeriod, GlobalStats, HeatmapCell } from '@/hooks/useGlobalAnalytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Sector, LineChart, Line } from 'recharts';
 import { useState, useCallback, useMemo } from 'react';
 import { TapClick as MousePointerClick, TapTrending as TrendingUp, TapGlobe as Globe, TapMapPin as MapPin, TapLink as Link2, TapLoader as Loader2 } from '@/components/icons/TapIcons';
