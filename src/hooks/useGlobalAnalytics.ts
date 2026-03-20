@@ -121,9 +121,13 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
     const linkToPage: Record<string, string> = {};
     links.forEach((l: any) => { if (l.page_id) linkToPage[l.id] = l.page_id; });
 
+    // Split current vs previous period clicks
+    const currentClicks = threshold ? allClicks.filter((c: any) => c.clicked_at >= threshold) : allClicks;
+    const prevClicks = threshold ? allClicks.filter((c: any) => c.clicked_at < threshold) : [];
+
     const clicksPerPage: Record<string, number> = {};
     pageIds.forEach(id => { clicksPerPage[id] = 0; });
-    allClicks.forEach((c: any) => {
+    currentClicks.forEach((c: any) => {
       const pid = linkToPage[c.link_id];
       if (pid) clicksPerPage[pid] = (clicksPerPage[pid] || 0) + 1;
     });
@@ -138,16 +142,35 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
     const now = new Date();
     const dailyC: Record<string, number> = {};
     const dailyV: Record<string, number> = {};
+    const dailyCPrev: Record<string, number> = {};
+    const dailyVPrev: Record<string, number> = {};
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(now); d.setDate(d.getDate() - i);
       const key = d.toISOString().split('T')[0];
       dailyC[key] = 0;
       dailyV[key] = 0;
+      // Previous period: offset by `days`
+      const dp = new Date(now); dp.setDate(dp.getDate() - i - days);
+      const keyP = dp.toISOString().split('T')[0];
+      dailyCPrev[keyP] = 0;
+      dailyVPrev[keyP] = 0;
     }
-    allClicks.forEach((c: any) => { const d = new Date(c.clicked_at).toISOString().split('T')[0]; if (dailyC[d] !== undefined) dailyC[d]++; });
+    currentClicks.forEach((c: any) => { const d = new Date(c.clicked_at).toISOString().split('T')[0]; if (dailyC[d] !== undefined) dailyC[d]++; });
     views.forEach((v: any) => { const d = new Date(v.viewed_at).toISOString().split('T')[0]; if (dailyV[d] !== undefined) dailyV[d]++; });
+    prevClicks.forEach((c: any) => { const d = new Date(c.clicked_at).toISOString().split('T')[0]; if (dailyCPrev[d] !== undefined) dailyCPrev[d]++; });
 
-    const allEvents = [...allClicks, ...views] as any[];
+    // Fetch previous period views
+    let prevViewsData: any[] = [];
+    if (prevDays && threshold) {
+      const prevViewThreshold = (() => { const d2 = new Date(); d2.setDate(d2.getDate() - prevDays * 2); return d2.toISOString(); })();
+      prevViewsData = await fetchAllRows(() =>
+        supabase.from('page_views').select('page_id, viewed_at').in('page_id', pageIds)
+          .gte('viewed_at', prevViewThreshold).lt('viewed_at', threshold)
+      );
+    }
+    prevViewsData.forEach((v: any) => { const d = new Date(v.viewed_at).toISOString().split('T')[0]; if (dailyVPrev[d] !== undefined) dailyVPrev[d]++; });
+
+    const allEvents = [...currentClicks, ...views] as any[];
 
     const aggregate = (key: string) => {
       const map: Record<string, number> = {};
@@ -165,7 +188,7 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
       })
       .sort((a, b) => b.clicks - a.clicks);
 
-    const totalClicks = allClicks.length;
+    const totalClicks = currentClicks.length;
     const totalViews = views.length;
     const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '—';
 
@@ -178,6 +201,9 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
       topPages,
       dailyClicks: Object.entries(dailyC).map(([date, clicks]) => ({ date, clicks })),
       dailyViews: Object.entries(dailyV).map(([date, views]) => ({ date, views })),
+      dailyClicksPrev: Object.entries(dailyCPrev).map(([date, clicks]) => ({ date, clicks })),
+      dailyViewsPrev: Object.entries(dailyVPrev).map(([date, views]) => ({ date, views })),
+      previousPeriod: { totalClicks: prevClicks.length, totalViews: prevViewsData.length },
       countryStats: aggregate('country') as any,
       cityStats: aggregate('city') as any,
       referrerStats: Object.entries(referrers).map(([referrer, count]) => ({ referrer, count })).sort((a, b) => b.count - a.count),
