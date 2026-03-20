@@ -196,6 +196,21 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
     const totalViews = views.length;
     const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '—';
 
+    // Heatmap: day-of-week × hour
+    const heatmapGrid: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0));
+    allEvents.forEach(e => {
+      const ts = e.clicked_at || e.viewed_at;
+      if (!ts) return;
+      const dt = new Date(ts);
+      heatmapGrid[dt.getDay()][dt.getHours()]++;
+    });
+    const heatmap: HeatmapCell[] = [];
+    for (let day = 0; day < 7; day++) {
+      for (let hour = 0; hour < 24; hour++) {
+        heatmap.push({ day, hour, count: heatmapGrid[day][hour] });
+      }
+    }
+
     setStats({
       totalClicks,
       totalViews,
@@ -208,6 +223,7 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
       dailyClicksPrev: Object.entries(dailyCPrev).map(([date, clicks]) => ({ date, clicks })),
       dailyViewsPrev: Object.entries(dailyVPrev).map(([date, views]) => ({ date, views })),
       previousPeriod: { totalClicks: prevClicks.length, totalViews: prevViewsData.length },
+      heatmap,
       countryStats: aggregate('country') as any,
       cityStats: aggregate('city') as any,
       referrerStats: Object.entries(referrers).map(([referrer, count]) => ({ referrer, count })).sort((a, b) => b.count - a.count),
