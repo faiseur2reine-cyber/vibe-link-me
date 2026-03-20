@@ -57,6 +57,8 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
   const [stats, setStats] = useState<GlobalStats>({
     totalClicks: 0, totalViews: 0, totalLinks: 0, totalPages: 0, conversionRate: '—',
     topPages: [], dailyClicks: [], dailyViews: [],
+    dailyClicksPrev: [], dailyViewsPrev: [],
+    previousPeriod: { totalClicks: 0, totalViews: 0 },
     countryStats: [], cityStats: [], referrerStats: [],
     deviceStats: [], browserStats: [], osStats: [],
     loading: true,
