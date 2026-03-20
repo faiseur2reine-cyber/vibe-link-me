@@ -107,9 +107,14 @@ export function useGlobalAnalytics(pageIds: string[], pagesMeta?: PageMeta[], pe
 
     const linkIds = links.map((l: any) => l.id);
 
+    // Fetch current + previous period clicks
+    const prevDays = daysForPeriod(period);
+    const prevThreshold = prevDays ? (() => { const d = new Date(); d.setDate(d.getDate() - prevDays * 2); return d.toISOString(); })() : null;
+
     const allClicks = await fetchAllRows(() => {
       let q = supabase.from('link_clicks').select('link_id, clicked_at, country, city, referrer, device_type, browser, os').in('link_id', linkIds);
-      if (threshold) q = q.gte('clicked_at', threshold);
+      if (prevThreshold) q = q.gte('clicked_at', prevThreshold);
+      else if (threshold) q = q.gte('clicked_at', threshold);
       return q;
     });
 
