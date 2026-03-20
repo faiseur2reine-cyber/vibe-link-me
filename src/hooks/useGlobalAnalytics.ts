@@ -5,6 +5,11 @@ import { fetchAllRows } from '@/lib/supabasePaginate';
 
 export type AnalyticsPeriod = '7d' | '30d' | '90d' | 'all';
 
+export interface PreviousPeriodStats {
+  totalClicks: number;
+  totalViews: number;
+}
+
 export interface GlobalStats {
   totalClicks: number;
   totalViews: number;
@@ -14,6 +19,9 @@ export interface GlobalStats {
   topPages: { pageId: string; username: string; displayName: string | null; clicks: number; views: number }[];
   dailyClicks: { date: string; clicks: number }[];
   dailyViews: { date: string; views: number }[];
+  dailyClicksPrev: { date: string; clicks: number }[];
+  dailyViewsPrev: { date: string; views: number }[];
+  previousPeriod: PreviousPeriodStats;
   countryStats: { country: string; count: number }[];
   cityStats: { city: string; count: number }[];
   referrerStats: { referrer: string; count: number }[];
