@@ -10,6 +10,8 @@ export interface PreviousPeriodStats {
   totalViews: number;
 }
 
+export type HeatmapCell = { day: number; hour: number; count: number };
+
 export interface GlobalStats {
   totalClicks: number;
   totalViews: number;
@@ -22,6 +24,7 @@ export interface GlobalStats {
   dailyClicksPrev: { date: string; clicks: number }[];
   dailyViewsPrev: { date: string; views: number }[];
   previousPeriod: PreviousPeriodStats;
+  heatmap: HeatmapCell[];
   countryStats: { country: string; count: number }[];
   cityStats: { city: string; count: number }[];
   referrerStats: { referrer: string; count: number }[];
