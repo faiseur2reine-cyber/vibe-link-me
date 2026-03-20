@@ -97,6 +97,81 @@ const PercentList = ({ items, labelKey, valueKey, max = 6 }: {
   );
 };
 
+const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+const ActivityHeatmap = ({ heatmap }: { heatmap: HeatmapCell[] }) => {
+  const max = useMemo(() => Math.max(...heatmap.map(c => c.count), 1), [heatmap]);
+  const total = useMemo(() => heatmap.reduce((s, c) => s + c.count, 0), [heatmap]);
+  const [hoveredCell, setHoveredCell] = useState<HeatmapCell | null>(null);
+
+  if (total === 0) return null;
+
+  const getOpacity = (count: number) => {
+    if (count === 0) return 0.04;
+    return 0.15 + (count / max) * 0.85;
+  };
+
+  return (
+    <div className="p-5 rounded-xl border border-border bg-card">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-muted-foreground" />
+          <h4 className="font-display font-semibold text-foreground">Activité par heure</h4>
+        </div>
+        {hoveredCell && hoveredCell.count > 0 && (
+          <span className="text-[11px] text-muted-foreground">
+            {DAY_LABELS[hoveredCell.day]} {hoveredCell.hour}h — <span className="font-semibold text-foreground">{hoveredCell.count}</span> événement{hoveredCell.count > 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+
+      <div className="overflow-x-auto">
+        <div className="min-w-[600px]">
+          {/* Hour labels */}
+          <div className="flex ml-10 mb-1">
+            {Array.from({ length: 24 }, (_, h) => (
+              <div key={h} className="flex-1 text-center text-[9px] text-muted-foreground/50 tabular-nums">
+                {h % 3 === 0 ? `${h}h` : ''}
+              </div>
+            ))}
+          </div>
+
+          {/* Grid rows */}
+          {[1, 2, 3, 4, 5, 6, 0].map(day => (
+            <div key={day} className="flex items-center gap-1 mb-0.5">
+              <span className="w-9 text-[10px] text-muted-foreground/60 text-right shrink-0 pr-1">{DAY_LABELS[day]}</span>
+              <div className="flex flex-1 gap-0.5">
+                {Array.from({ length: 24 }, (_, hour) => {
+                  const cell = heatmap.find(c => c.day === day && c.hour === hour);
+                  const count = cell?.count || 0;
+                  return (
+                    <div
+                      key={hour}
+                      className="flex-1 aspect-square rounded-sm cursor-default transition-transform hover:scale-125"
+                      style={{ backgroundColor: `hsl(var(--primary))`, opacity: getOpacity(count) }}
+                      onMouseEnter={() => setHoveredCell({ day, hour, count })}
+                      onMouseLeave={() => setHoveredCell(null)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {/* Legend */}
+          <div className="flex items-center justify-end gap-1.5 mt-3 mr-1">
+            <span className="text-[9px] text-muted-foreground/40">Moins</span>
+            {[0.04, 0.25, 0.5, 0.75, 1].map((op, i) => (
+              <div key={i} className="w-3 h-3 rounded-sm" style={{ backgroundColor: `hsl(var(--primary))`, opacity: op }} />
+            ))}
+            <span className="text-[9px] text-muted-foreground/40">Plus</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PERIOD_LABELS: Record<string, string> = { '7d': '7 derniers jours', '30d': '30 derniers jours', '90d': '90 derniers jours' };
 
 const PeriodComparisonChart = ({ stats, period }: { stats: GlobalStats; period: string }) => {
