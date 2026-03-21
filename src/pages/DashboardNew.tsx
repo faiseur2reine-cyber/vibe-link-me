@@ -2,7 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { useOnboarding } from '@/hooks/useOnboarding';
+// useOnboarding removed — pages.length is used as onboarding signal
 import { Navigate, useSearchParams, useNavigate, Routes, Route } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -34,7 +34,7 @@ const DashboardHome = () => {
   const navigate = useNavigate();
   const { user, signOut, checkSubscription, subscription } = useAuth();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, bulkUpdatePages, refetch: refetchPages } = useCreatorPages();
-  const { state: onboardingState } = useOnboarding(user?.id);
+  // removed onboardingState dependency — pages.length is the source of truth
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -74,22 +74,18 @@ const DashboardHome = () => {
   }, [searchParams, pages]);
 
   useEffect(() => {
-    // Fast path: if we already marked onboarding done, skip the DB check
-    if (localStorage.getItem('onboarding_completed')) return;
+    // Don't redirect while still loading pages
     if (pagesLoading) return;
-    // If user has pages, they've been through onboarding — mark done
+    // If user already has pages, they don't need onboarding
     if (pages.length > 0) {
       localStorage.setItem('onboarding_completed', '1');
       return;
     }
-    // If onboarding is completed/skipped in DB, cache it
-    if (onboardingState.completed) {
-      localStorage.setItem('onboarding_completed', '1');
-      return;
-    }
-    // No pages + not completed → onboarding
-    navigate('/onboarding');
-  }, [pagesLoading, onboardingState.completed, pages.length, navigate]);
+    // Fast path: localStorage says done → don't redirect
+    if (localStorage.getItem('onboarding_completed')) return;
+    // No pages + not completed → send to onboarding
+    navigate('/onboarding', { replace: true });
+  }, [pagesLoading, pages.length, navigate]);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('dashboard_tour_completed');
