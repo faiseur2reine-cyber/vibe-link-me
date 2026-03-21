@@ -73,19 +73,6 @@ const DashboardHome = () => {
     }
   }, [searchParams, pages]);
 
-  useEffect(() => {
-    // Don't redirect while still loading pages
-    if (pagesLoading) return;
-    // If user already has pages, they don't need onboarding
-    if (pages.length > 0) {
-      localStorage.setItem('onboarding_completed', '1');
-      return;
-    }
-    // Fast path: localStorage says done → don't redirect
-    if (localStorage.getItem('onboarding_completed')) return;
-    // No pages + not completed → send to onboarding
-    navigate('/onboarding', { replace: true });
-  }, [pagesLoading, pages.length, navigate]);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('dashboard_tour_completed');

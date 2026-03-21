@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
-import { useOnboarding } from '@/hooks/useOnboarding';
+
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
@@ -65,16 +65,11 @@ const DashboardOverview = () => {
   const { t } = useTranslation();
   const { user, subscription } = useAuth();
   const { pages, loading: pagesLoading } = useCreatorPages();
-  const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
+  
   const pagesMeta = useMemo(() => pages.map(p => ({ id: p.id, username: p.username, display_name: p.display_name })), [pages]);
   const stats = useGlobalAnalytics(pagesMeta.map(p => p.id), pagesMeta);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {
-      navigate('/onboarding');
-    }
-  }, [onboardingLoading, onboardingState.completed, pages.length, navigate]);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]

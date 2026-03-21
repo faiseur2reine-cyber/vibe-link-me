@@ -18,7 +18,7 @@ const Dashboard = lazy(() => import("./pages/DashboardNew"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const SafePage = lazy(() => import("./pages/SafePage"));
-const Onboarding = lazy(() => import("./pages/Onboarding"));
+
 const Legal = lazy(() => import("./pages/Legal"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -37,10 +37,10 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/onboarding" element={<Onboarding />} />
+        
         <Route path="/dashboard/*" element={<Dashboard />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/set-username" element={<Onboarding />} />
+        
         <Route path="/legal" element={<Legal />} />
         <Route path="/safe/:username" element={<SafePage />} />
         <Route path="/:username" element={<PublicProfile />} />
