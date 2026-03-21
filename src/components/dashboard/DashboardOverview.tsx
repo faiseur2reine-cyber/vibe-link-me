@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
 import { useGlobalAnalytics } from '@/hooks/useGlobalAnalytics';
-import { useOnboarding } from '@/hooks/useOnboarding';
+
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
