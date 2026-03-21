@@ -74,22 +74,18 @@ const DashboardHome = () => {
   }, [searchParams, pages]);
 
   useEffect(() => {
-    // Fast path: if we already marked onboarding done, skip the DB check
-    if (localStorage.getItem('onboarding_completed')) return;
+    // Don't redirect while still loading pages
     if (pagesLoading) return;
-    // If user has pages, they've been through onboarding — mark done
+    // If user already has pages, they don't need onboarding
     if (pages.length > 0) {
       localStorage.setItem('onboarding_completed', '1');
       return;
     }
-    // If onboarding is completed/skipped in DB, cache it
-    if (onboardingState.completed) {
-      localStorage.setItem('onboarding_completed', '1');
-      return;
-    }
-    // No pages + not completed → onboarding
-    navigate('/onboarding');
-  }, [pagesLoading, onboardingState.completed, pages.length, navigate]);
+    // Fast path: localStorage says done → don't redirect
+    if (localStorage.getItem('onboarding_completed')) return;
+    // No pages + not completed → send to onboarding
+    navigate('/onboarding', { replace: true });
+  }, [pagesLoading, pages.length, navigate]);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('dashboard_tour_completed');
