@@ -2,7 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreatorPages } from '@/hooks/useCreatorPages';
-import { useOnboarding } from '@/hooks/useOnboarding';
+// useOnboarding removed — pages.length is used as onboarding signal
 import { Navigate, useSearchParams, useNavigate, Routes, Route } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
