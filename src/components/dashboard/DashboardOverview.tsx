@@ -70,11 +70,6 @@ const DashboardOverview = () => {
   const stats = useGlobalAnalytics(pagesMeta.map(p => p.id), pagesMeta);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!onboardingLoading && !onboardingState.completed && pages.length === 0) {
-      navigate('/onboarding');
-    }
-  }, [onboardingLoading, onboardingState.completed, pages.length, navigate]);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]
