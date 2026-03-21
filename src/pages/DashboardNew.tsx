@@ -34,7 +34,7 @@ const DashboardHome = () => {
   const navigate = useNavigate();
   const { user, signOut, checkSubscription, subscription } = useAuth();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage, duplicatePage, bulkUpdatePages, refetch: refetchPages } = useCreatorPages();
-  const { state: onboardingState } = useOnboarding(user?.id);
+  // removed onboardingState dependency — pages.length is the source of truth
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
