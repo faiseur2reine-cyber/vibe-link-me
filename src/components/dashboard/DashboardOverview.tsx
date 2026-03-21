@@ -65,7 +65,7 @@ const DashboardOverview = () => {
   const { t } = useTranslation();
   const { user, subscription } = useAuth();
   const { pages, loading: pagesLoading } = useCreatorPages();
-  const { state: onboardingState, loading: onboardingLoading } = useOnboarding(user?.id);
+  
   const pagesMeta = useMemo(() => pages.map(p => ({ id: p.id, username: p.username, display_name: p.display_name })), [pages]);
   const stats = useGlobalAnalytics(pagesMeta.map(p => p.id), pagesMeta);
   const navigate = useNavigate();
